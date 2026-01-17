@@ -36,12 +36,6 @@ def get_model_configs(name_and_version):
         configs = yaml.safe_load(f)
 
     return configs[name_and_version]
-# ------------------------------------------
-# Helper function to save metadata
-# ------------------------------------------
-def save_metadata(metadata, metadata_file):
-    with open(metadata_file, "w") as f:
-        json.dump(metadata, f, indent=2)
 
 # ------------------------------------------
 # Main evaluation script
