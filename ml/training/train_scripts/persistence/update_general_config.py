@@ -8,11 +8,12 @@ def update_general_config(cfg):
     general_config = {
         model_key: {
             "name": cfg["name"],
+            "version": cfg["version"],
             "task": cfg["task"],
             "target": cfg["data"]["target"],
             "algorithm": cfg["model"]["algorithm"],
             "features": {
-                "version": cfg["version"],
+                "version": cfg["data"]["features_version"],
                 "path": cfg["data"]["features_path"],
                 "schema": cfg["data"]["features_path"] + "schema.csv"
             },

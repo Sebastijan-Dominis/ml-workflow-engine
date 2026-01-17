@@ -3,6 +3,7 @@ task: binary_classification
 version: v1
 data:
   features_path: data/features/cancellation/v1/
+  features_version: v1
   target: is_canceled
   train_file: X_train.parquet
   val_file: X_val.parquet

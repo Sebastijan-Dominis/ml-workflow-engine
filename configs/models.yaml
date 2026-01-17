@@ -16,3 +16,4 @@ cancellation_v1:
     shap: tree_explainer_mean_abs
   threshold: 0.44
   name: cancellation
+  version: v1
