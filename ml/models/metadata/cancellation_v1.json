@@ -1,0 +1,1 @@
+{"model_name": "cancellation_v1", "task": "binary_classification", "trained_on": "2026-01-17", "features_version": "v1", "model_class": "CatBoostClassifier"}
