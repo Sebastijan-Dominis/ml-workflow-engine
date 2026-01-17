@@ -34,5 +34,5 @@ pipeline:
   feature_engineering: true
   feature_selection: true
 explainability:
-  feature_importance_method: total_gain
-  shap: tree_explainer_mean_abs
+  feature_importance_method: PredictionValuesChange
+  shap_method: tree_explainer_mean_abs

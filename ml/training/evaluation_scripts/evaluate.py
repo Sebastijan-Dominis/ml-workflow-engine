@@ -35,7 +35,11 @@ def get_model_configs(name_and_version):
     with open("configs/models.yaml") as f:
         configs = yaml.safe_load(f)
 
-    return configs[name_and_version]
+    try:
+        return configs[name_and_version]
+    except KeyError:
+        raise KeyError(f"Model config '{name_and_version}' not found in models.yaml")
+
 
 # ------------------------------------------
 # Main evaluation script

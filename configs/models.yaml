@@ -1,4 +1,6 @@
 cancellation_v1:
+  name: cancellation
+  version: v1
   task: binary_classification
   target: is_canceled
   algorithm: catboost
@@ -9,11 +11,9 @@ cancellation_v1:
   artifacts:
     model: ml/models/trained/cancellation_v1.joblib
     metadata: ml/models/metadata/cancellation_v1.json
-    feature_importance: ml/models/explainability/cancellation_v1/feature_importance.csv
-    shap: ml/models/explainability/cancellation_v1/shap_values.parquet
+    feature_importances: ml/models/explainability/cancellation_v1/feature_importances.csv
+    shap_importances: ml/models/explainability/cancellation_v1/shap_importances.csv
   explainability:
-    feature_importance_method: total_gain
-    shap: tree_explainer_mean_abs
+    feature_importance_method: PredictionValuesChange
+    shap_method: tree_explainer_mean_abs
   threshold: 0.44
-  name: cancellation
-  version: v1

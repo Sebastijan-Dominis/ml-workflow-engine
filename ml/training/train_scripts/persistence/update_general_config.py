@@ -20,12 +20,12 @@ def update_general_config(cfg):
             "artifacts": {
                 "model": f"ml/models/trained/{cfg['name']}_{cfg['version']}.joblib",
                 "metadata": f"ml/models/metadata/{cfg['name']}_{cfg['version']}.json",
-                "feature_importance": f"ml/models/explainability/{cfg['name']}_{cfg['version']}/feature_importance.csv",
-                "shap": f"ml/models/explainability/{cfg['name']}_{cfg['version']}/shap_values.parquet"
+                "feature_importances": f"ml/models/explainability/{cfg['name']}_{cfg['version']}/feature_importances.csv",
+                "shap_importances": f"ml/models/explainability/{cfg['name']}_{cfg['version']}/shap_importances.csv"
             },
             "explainability": {
                 "feature_importance_method": cfg["explainability"]["feature_importance_method"],
-                "shap": cfg["explainability"]["shap"]
+                "shap_method": cfg["explainability"]["shap_method"]
             },
             "threshold": cfg["model"].get("threshold", 0.5)
         }
