@@ -2,5 +2,23 @@
   "model_name": "cancellation_v1",
   "task": "binary_classification",
   "trained_on": "2026-01-18",
-  "features_version": "v1"
+  "features_version": "v1",
+  "metrics": {
+    "train": {
+      "accuracy": 0.9415525226645645,
+      "f1": 0.9220380198149943,
+      "roc_auc": 0.9883297719948045
+    },
+    "val": {
+      "accuracy": 0.8851818245271166,
+      "f1": 0.8469340281008654,
+      "roc_auc": 0.9578704672780837
+    },
+    "test": {
+      "accuracy": 0.8842030320797387,
+      "f1": 0.8448459682397171,
+      "roc_auc": 0.9560067531099943
+    }
+  },
+  "threshold": 0.44
 }

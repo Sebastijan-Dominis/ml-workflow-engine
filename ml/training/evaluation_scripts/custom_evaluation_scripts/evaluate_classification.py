@@ -1,13 +1,38 @@
+"""Classification evaluation helpers.
+
+This module contains utilities to load a trained classifier, read feature
+parquet datasets, compute standard classification metrics and evaluate the
+model across train/validation/test splits.
+
+Key functions:
+- `evaluate_classification`: high-level entrypoint used by the evaluation
+    runner to compute metrics and return a structured result mapping.
+"""
+
+# General imports
+import importlib
 import pandas as pd
 import joblib
+import logging
+logger = logging.getLogger(__name__)
 
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from pathlib import Path
 
-# ------------------------------------------
-# Helper function to get file paths
-# ------------------------------------------
+# Utility imports
+from ml.training.evaluation_scripts.utils import assert_keys
+
 def get_file_paths(model_configs):
+    """Resolve artifact and features paths from model configuration.
+
+    Args:
+        model_configs (dict): Model configuration mapping containing
+            `artifacts.model` and `features.path` entries.
+
+    Returns:
+        tuple[pathlib.Path, pathlib.Path]: `(model_file, features_folder)`.
+    """
+
     # Get file paths
     model_file = Path(model_configs["artifacts"]["model"])
     features_folder = Path(model_configs["features"]["path"])
@@ -15,17 +40,24 @@ def get_file_paths(model_configs):
     # Return paths and threshold
     return model_file, features_folder
 
-# ------------------------------------------
-# Helper function to load the model
-# ------------------------------------------
-def load_model(model_file):
+def load_model(model_file, model_configs):
+    """Load a serialized model from disk.
+
+    Some model classes or custom objects may live in `ml.components.*` and
+    must be imported prior to joblib deserialization. This function performs
+    that import and returns the loaded estimator.
+
+    Args:
+        model_file (pathlib.Path): Path to the serialized model file.
+        model_configs (dict): Model configuration used to determine the
+            deserialization import path.
+
+    Returns:
+        object: Deserialized model/estimator.
+    """
+
     # Import necessary components for deserialization
-    from ml.components.cancellation_v1 import (
-        SchemaValidator,
-        FillCategoricalMissing,
-        FeatureEngineer,
-        FeatureSelector
-    )
+    importlib.import_module(f"ml.components.{model_configs['name']}_{model_configs['version']}")
 
     # Load the model
     with open(model_file, "rb") as f:
@@ -34,10 +66,18 @@ def load_model(model_file):
     # Return the loaded model
     return model
 
-# ------------------------------------------
-# Helper function to get data splits
-# ------------------------------------------
 def get_data_splits(features_folder):
+    """Load train/validation/test feature and label parquet files.
+
+    Args:
+        features_folder (pathlib.Path): Directory containing the parquet files
+            named `X_train.parquet`, `y_train.parquet`, etc.
+
+    Returns:
+        dict: Mapping of split name to a tuple `(X, y)` where `X` is a
+            DataFrame and `y` is a pandas Series.
+    """
+
     # Load data
     X_train = pd.read_parquet(features_folder / "X_train.parquet")
     y_train = pd.read_parquet(features_folder / "y_train.parquet")
@@ -62,10 +102,19 @@ def get_data_splits(features_folder):
     # Return data splits
     return data_splits
 
-# ------------------------------------------
-# Helper function to compute metrics
-# ------------------------------------------
-def compute_metrics(y_true, y_pred, y_prob):
+def compute_metrics(y_true, y_pred, y_prob=None):
+    """Compute commonly used classification metrics.
+
+    Args:
+        y_true (Sequence): Ground-truth binary labels.
+        y_pred (Sequence): Binary predictions.
+        y_prob (Sequence, optional): Predicted probabilities for the positive class.
+
+    Returns:
+        dict: Metric values for `accuracy`, `f1`, and `roc_auc` (or `None`
+            when `roc_auc` is not defined for the provided inputs).
+    """
+
     # Compute basic classification metrics
     metrics = {
         "accuracy": accuracy_score(y_true, y_pred),
@@ -74,17 +123,28 @@ def compute_metrics(y_true, y_pred, y_prob):
 
     # Compute ROC AUC, handle case where it's not applicable
     try:
-        metrics["roc_auc"] = roc_auc_score(y_true, y_prob)
+        metrics["roc_auc"] = roc_auc_score(y_true, y_prob if y_prob is not None else [])
     except ValueError:
+        logger.warning("ROC AUC score is not defined for the provided inputs.")
         metrics["roc_auc"] = None
 
     # Return computed metrics
     return metrics
 
-# ------------------------------------------
-# Helper function to evaluate one data split
-# ------------------------------------------
 def evaluate_split(model, X, y, best_threshold=0.5): # default threshold=0.5
+    """Evaluate a single split and return metrics.
+
+    Args:
+        model: Fitted classifier implementing `predict_proba`.
+        X (DataFrame): Feature matrix for the split.
+        y (Series): True labels for the split.
+        best_threshold (float): Probability threshold for converting
+            predicted probabilities into binary labels.
+
+    Returns:
+        dict: Metrics computed for the split.
+    """
+
     # Predict probabilities for the positive class
     y_prob = model.predict_proba(X)[:, 1]
 
@@ -94,10 +154,19 @@ def evaluate_split(model, X, y, best_threshold=0.5): # default threshold=0.5
     # Compute and return metrics
     return compute_metrics(y, y_pred, y_prob)
 
-# ------------------------------------------
-# Helper function to evaluate the whole model
-# ------------------------------------------
 def evaluate_model(model, data_splits, best_threshold=0.5):
+    """Evaluate `model` across all provided data splits.
+
+    Args:
+        model: Fitted classifier.
+        data_splits (dict): Mapping of split name to `(X, y)` tuple.
+        best_threshold (float): Threshold for converting probabilities to
+            binary predictions.
+
+    Returns:
+        dict: Mapping from split name to computed metrics dictionary.
+    """
+
     # Create a dictionary to hold evaluation results
     evaluation_results = {}
 
@@ -109,24 +178,36 @@ def evaluate_model(model, data_splits, best_threshold=0.5):
     #  Return evaluation results
     return evaluation_results
 
-# ------------------------------------------
-# Main evaluation function
-# ------------------------------------------
 def evaluate_classification(model_configs, best_threshold):
-    # Step 1 - Get file paths
+    """High-level evaluation entrypoint for binary classification tasks.
+
+    Args:
+        model_configs (dict): Model configuration mapping.
+        best_threshold (float): Probability threshold to use when
+            converting probabilities to binary labels.
+
+    Returns:
+        dict: Nested mapping of split names to metric dictionaries.
+    """
+
+    # Step 1 - Ensure required keys are present
+    assert_keys(model_configs["artifacts"], ["model"])
+    assert_keys(model_configs["features"], ["path"])
+
+    # Step 2 - Get file paths
     model_file, features_folder = get_file_paths(model_configs)
 
-    # Step 2 - Load model
-    model = load_model(model_file)
+    # Step 3 - Load model
+    model = load_model(model_file, model_configs)
 
-    # Step 3 - Get data splits
+    # Step 4 - Get data splits
     data_splits = get_data_splits(features_folder)
 
-    # Step 4 - Evaluate the model
+    # Step 5 - Evaluate the model
     evaluation_results = evaluate_model(model, data_splits, best_threshold=best_threshold)
 
-    # Step 5 - Print success message
-    print("Evaluation completed successfully.")
+    # Step 6 - Log success message
+    logger.info(f"Evaluation completed successfully for model '{model_configs['name']}_{model_configs['version']}'.")
 
-    # Step 6 - Return evaluation results
+    # Step 7 - Return evaluation results
     return evaluation_results

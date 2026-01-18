@@ -212,3 +212,6 @@ __marimo__/
 
 # CatBoost model snapshot files
 catboost_info/
+
+# VSCodeCounter cache
+.vscodecounter/

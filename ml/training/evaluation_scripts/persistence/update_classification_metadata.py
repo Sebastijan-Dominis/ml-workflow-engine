@@ -1,53 +1,102 @@
+"""Persistence helpers to update classification metadata.
+
+This module provides small, focused functions to open an existing JSON
+metadata file, merge evaluation metrics into it, and persist the result. It
+is intended to be used by evaluation runners to record per-split metrics and
+the selected decision threshold.
+"""
+
+# General imports
 import json
+import logging
+logger = logging.getLogger(__name__)
 
 from pathlib import Path
 
-# ------------------------------------------
-# Helper function to get metadata file path
-# ------------------------------------------
+# Utility imports
+from ml.training.evaluation_scripts.utils import assert_keys
+
 def get_file(model_configs):
+    """Return the `Path` to the metadata file declared in the config.
+
+    Args:
+        model_configs (dict): Model configuration mapping.
+
+    Returns:
+        pathlib.Path: Path to the JSON metadata file.
+    """
+
     metadata_file = Path(model_configs["artifacts"]["metadata"])
     return metadata_file
 
-# ------------------------------------------
-# Helper function to load metadata
-# ------------------------------------------
 def load_metadata(metadata_file):
+    """Load and return JSON metadata from disk.
+
+    Args:
+        metadata_file (pathlib.Path): Path to the metadata JSON file.
+
+    Returns:
+        dict: Parsed JSON metadata.
+    """
+
     with open(metadata_file, "r") as f:
         metadata = json.load(f)
     return metadata
 
-# ------------------------------------------
-# Helper function to update metadata content with evaluation results
-# ------------------------------------------
 def update_content(metadata, evaluation_results, best_threshold):
+    """Merge evaluation results and threshold into the metadata dict.
+
+    The function mutates the provided `metadata` mapping by ensuring a
+    top-level `metrics` key exists and storing per-split metric dicts.
+
+    Args:
+        metadata (dict): Existing metadata mapping to update in-place.
+        evaluation_results (dict): Mapping from split name to metrics.
+        best_threshold (float): Selected probability threshold.
+    """
+
     metadata.setdefault("metrics", {})
     for split_name, metrics in evaluation_results.items():
+        if split_name in metadata["metrics"]:
+            logger.warning(f"Overwriting existing metrics for split '{split_name}'.")
         metadata["metrics"][split_name] = metrics
     metadata["threshold"] = best_threshold
 
-# ------------------------------------------
-# Helper function to save metadata
-# ------------------------------------------
 def save_metadata(metadata, metadata_file):
+    """Persist metadata mapping to the provided file path as JSON.
+
+    Args:
+        metadata (dict): Metadata to write.
+        metadata_file (pathlib.Path): File path where JSON will be written.
+    """
+
     with open(metadata_file, "w") as f:
         json.dump(metadata, f, indent=2)
 
-# ------------------------------------------
-# Main function to update metadata with evaluation results
-# ------------------------------------------
 def update_classification_metadata(model_configs, evaluation_results, best_threshold):
-    # Step 1 - get metadata file path
+    """Top-level helper to update classification metadata on disk.
+
+    Args:
+        model_configs (dict): Model configuration mapping containing the
+            `artifacts.metadata` path.
+        evaluation_results (dict): Mapping of split name to metric dicts.
+        best_threshold (float): Selected probability threshold.
+    """
+
+    # Step 1 - Ensure required keys are present
+    assert_keys(model_configs["artifacts"], ["metadata"])
+
+    # Step 2 - get metadata file path
     metadata_file = get_file(model_configs)
 
-    # Step 2 - load existing metadata
+    # Step 3 - load existing metadata
     metadata = load_metadata(metadata_file)
 
-    # Step 3 - update metadata content
+    # Step 4 - update metadata content
     update_content(metadata, evaluation_results, best_threshold)
 
-    # Step 4 - save updated metadata
+    # Step 5 - save updated metadata
     save_metadata(metadata, metadata_file)
 
-    # Step 5 - print success message
-    print("Metadata updated successfully.")
+    # Step 6 - log success message
+    logger.info(f"Metadata updated successfully for model '{model_configs['name']}_{model_configs['version']}'.")
