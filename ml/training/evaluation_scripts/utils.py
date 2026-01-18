@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def assert_keys(d: dict, keys: list[str]):
+def assert_keys(d: dict, keys: list[str]) -> None:
     """Assert that all `keys` are present in mapping `d`.
 
     Args:

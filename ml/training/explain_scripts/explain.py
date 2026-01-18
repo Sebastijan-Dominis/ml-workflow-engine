@@ -47,6 +47,7 @@ def main():
     algorithm = model_configs["algorithm"]
 
     # Step 4 - Define explainer based on algorithm
+    # Explainer directory - update as new explainers are added
     EXPLAINERS = {
         "catboost": explain_catboost
     }

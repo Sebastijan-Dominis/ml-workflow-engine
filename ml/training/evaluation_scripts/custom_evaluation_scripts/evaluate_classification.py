@@ -12,17 +12,23 @@ Key functions:
 # General imports
 import importlib
 import pandas as pd
+import numpy as np
 import joblib
 import logging
 logger = logging.getLogger(__name__)
 
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from pathlib import Path
+from typing import Optional, Protocol
 
 # Utility imports
 from ml.training.evaluation_scripts.utils import assert_keys
 
-def get_file_paths(model_configs):
+# Define a Protocol for classifiers with predict_proba method
+class ProbabilisticClassifier(Protocol):
+    def predict_proba(self, X: pd.DataFrame) -> np.ndarray: ...
+
+def get_file_paths(model_configs: dict) -> tuple[Path, Path]:
     """Resolve artifact and features paths from model configuration.
 
     Args:
@@ -40,7 +46,7 @@ def get_file_paths(model_configs):
     # Return paths and threshold
     return model_file, features_folder
 
-def load_model(model_file, model_configs):
+def load_model(model_file: Path, model_configs: dict) -> ProbabilisticClassifier:
     """Load a serialized model from disk.
 
     Some model classes or custom objects may live in `ml.components.*` and
@@ -53,7 +59,7 @@ def load_model(model_file, model_configs):
             deserialization import path.
 
     Returns:
-        object: Deserialized model/estimator.
+        ProbabilisticClassifier: Deserialized model/estimator.
     """
 
     # Import necessary components for deserialization
@@ -66,7 +72,8 @@ def load_model(model_file, model_configs):
     # Return the loaded model
     return model
 
-def get_data_splits(features_folder):
+
+def get_data_splits(features_folder: Path) -> dict[str, tuple[pd.DataFrame, pd.Series]]:
     """Load train/validation/test feature and label parquet files.
 
     Args:
@@ -87,9 +94,10 @@ def get_data_splits(features_folder):
     y_test = pd.read_parquet(features_folder / "y_test.parquet")
 
     # Ensure y are 1D arrays
-    y_train = y_train.squeeze()
-    y_val = y_val.squeeze()
-    y_test = y_test.squeeze()
+    y_train = y_train.iloc[:, 0]
+    y_val = y_val.iloc[:, 0]
+    y_test = y_test.iloc[:, 0]
+
 
 
     # Create data splits
@@ -102,13 +110,13 @@ def get_data_splits(features_folder):
     # Return data splits
     return data_splits
 
-def compute_metrics(y_true, y_pred, y_prob=None):
+def compute_metrics(y_true: pd.Series, y_pred: pd.Series, y_prob: Optional[pd.Series] = None) -> dict[str, float]:
     """Compute commonly used classification metrics.
 
     Args:
-        y_true (Sequence): Ground-truth binary labels.
-        y_pred (Sequence): Binary predictions.
-        y_prob (Sequence, optional): Predicted probabilities for the positive class.
+        y_true (pd.Series): Ground-truth binary labels.
+        y_pred (pd.Series): Binary predictions.
+        y_prob (Optional[pd.Series], optional): Predicted probabilities for the positive class.
 
     Returns:
         dict: Metric values for `accuracy`, `f1`, and `roc_auc` (or `None`
@@ -131,7 +139,7 @@ def compute_metrics(y_true, y_pred, y_prob=None):
     # Return computed metrics
     return metrics
 
-def evaluate_split(model, X, y, best_threshold=0.5): # default threshold=0.5
+def evaluate_split(model: ProbabilisticClassifier, X: pd.DataFrame, y: pd.Series, best_threshold: float = 0.5) -> dict[str, float]: # default threshold=0.5
     """Evaluate a single split and return metrics.
 
     Args:
@@ -146,15 +154,26 @@ def evaluate_split(model, X, y, best_threshold=0.5): # default threshold=0.5
     """
 
     # Predict probabilities for the positive class
-    y_prob = model.predict_proba(X)[:, 1]
+    y_prob_arr = model.predict_proba(X)[:, 1]
+
+    y_prob = pd.Series(
+        y_prob_arr,
+        index=y.index,
+        name="y_prob",
+    )
 
     # Convert probabilities to binary predictions based on the threshold
-    y_pred = (y_prob >= best_threshold).astype(int)
+    y_pred = pd.Series(
+        (y_prob >= best_threshold).astype(int),
+        index=y.index,
+        name="y_pred",
+    )
+
 
     # Compute and return metrics
     return compute_metrics(y, y_pred, y_prob)
 
-def evaluate_model(model, data_splits, best_threshold=0.5):
+def evaluate_model(model: ProbabilisticClassifier, data_splits: dict[str, tuple[pd.DataFrame, pd.Series]], best_threshold: float = 0.5) -> dict[str, dict[str, float]]:
     """Evaluate `model` across all provided data splits.
 
     Args:
@@ -178,7 +197,7 @@ def evaluate_model(model, data_splits, best_threshold=0.5):
     #  Return evaluation results
     return evaluation_results
 
-def evaluate_classification(model_configs, best_threshold):
+def evaluate_classification(model_configs: dict, best_threshold: float) -> dict[str, dict[str, float]]:
     """High-level evaluation entrypoint for binary classification tasks.
 
     Args:

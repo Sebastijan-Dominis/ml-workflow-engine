@@ -36,7 +36,7 @@ from ml.training.evaluation_scripts.utils import (
     assert_keys
 )
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse CLI arguments.
 
     Returns:
@@ -55,7 +55,7 @@ def parse_args():
 
     return parser.parse_args()
 
-def get_model_configs(name_and_version):
+def get_model_configs(name_and_version: str) -> dict:
     """Load and return model configuration for a given model identifier.
 
     Args:
@@ -77,7 +77,7 @@ def get_model_configs(name_and_version):
     except KeyError:
         raise KeyError(f"Model config '{name_and_version}' not found in models.yaml")
 
-def validate_threshold(threshold):
+def validate_threshold(threshold: float) -> None:
     """Validate a probability threshold is within [0.0, 1.0].
 
     Args:
@@ -91,7 +91,7 @@ def validate_threshold(threshold):
         logger.error(f"Invalid threshold value: {threshold}. It must be between 0 and 1.")
         raise ValueError(f"Invalid threshold value: {threshold}. It must be between 0 and 1.")
 
-def main():
+def main() -> None:
     """Orchestrate evaluation: parse args, run evaluator, persist results.
 
     The function executes the following high-level steps:

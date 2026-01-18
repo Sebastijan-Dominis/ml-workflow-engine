@@ -16,7 +16,7 @@ from pathlib import Path
 # Utility imports
 from ml.training.evaluation_scripts.utils import assert_keys
 
-def get_file(model_configs):
+def get_file(model_configs: dict) -> Path:
     """Return the `Path` to the metadata file declared in the config.
 
     Args:
@@ -29,7 +29,7 @@ def get_file(model_configs):
     metadata_file = Path(model_configs["artifacts"]["metadata"])
     return metadata_file
 
-def load_metadata(metadata_file):
+def load_metadata(metadata_file: Path) -> dict:
     """Load and return JSON metadata from disk.
 
     Args:
@@ -43,7 +43,7 @@ def load_metadata(metadata_file):
         metadata = json.load(f)
     return metadata
 
-def update_content(metadata, evaluation_results, best_threshold):
+def update_content(metadata: dict, evaluation_results: dict, best_threshold: float) -> None:
     """Merge evaluation results and threshold into the metadata dict.
 
     The function mutates the provided `metadata` mapping by ensuring a
@@ -62,7 +62,7 @@ def update_content(metadata, evaluation_results, best_threshold):
         metadata["metrics"][split_name] = metrics
     metadata["threshold"] = best_threshold
 
-def save_metadata(metadata, metadata_file):
+def save_metadata(metadata: dict, metadata_file: Path) -> None:
     """Persist metadata mapping to the provided file path as JSON.
 
     Args:
@@ -73,7 +73,7 @@ def save_metadata(metadata, metadata_file):
     with open(metadata_file, "w") as f:
         json.dump(metadata, f, indent=2)
 
-def update_classification_metadata(model_configs, evaluation_results, best_threshold):
+def update_classification_metadata(model_configs: dict, evaluation_results: dict, best_threshold: float) -> None:
     """Top-level helper to update classification metadata on disk.
 
     Args:
