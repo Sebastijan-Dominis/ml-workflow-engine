@@ -1,25 +1,6 @@
 {
   "model_name": "cancellation_v1",
   "task": "binary_classification",
-  "trained_on": "2026-01-17",
-  "features_version": "v1",
-  "model_class": "CatBoostClassifier",
-  "metrics": {
-    "train": {
-      "accuracy": 0.9411090855340953,
-      "f1": 0.9195835365751097,
-      "roc_auc": 0.9883297719948045
-    },
-    "val": {
-      "accuracy": 0.8853214210930411,
-      "f1": 0.8431204048505682,
-      "roc_auc": 0.9578704672780837
-    },
-    "test": {
-      "accuracy": 0.8867576848982327,
-      "f1": 0.8437716662814884,
-      "roc_auc": 0.9560067531099943
-    }
-  },
-  "threshold": 0.5
+  "trained_on": "2026-01-18",
+  "features_version": "v1"
 }

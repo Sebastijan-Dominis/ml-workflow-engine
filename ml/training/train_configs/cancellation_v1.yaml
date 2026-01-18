@@ -12,7 +12,6 @@ data:
   y_val: y_val.parquet
   y_test: y_test.parquet
 model:
-  class: CatBoostClassifier
   algorithm: catboost
   params:
     random_strength: 4
