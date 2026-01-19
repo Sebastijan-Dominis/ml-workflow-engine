@@ -124,11 +124,19 @@ def define_model(cfg: dict, cat_features: list) -> CatBoostClassifier:
     """
 
     # The model uses CPU for compatibility in production environments
+    # Extract only non-None parameters to allow defaults
+    params = {
+        k: v
+        for k, v in cfg["model"]["params"].items()
+        if v is not None
+    }
+
     model_class = CatBoostClassifier(
-        **cfg["model"]["params"],
+        **params,
         cat_features=cat_features,
         early_stopping_rounds=100,
     )
+    
     return model_class
 
 def build_pipeline_steps(
@@ -264,7 +272,7 @@ def train_binary_classification_with_catboost(name_and_version: str, cfg: dict) 
 
         pipeline = train_model(steps, X_train, y_train, X_val, y_val) # Train model
 
-        logger.info(f"Model {cfg['name']}_{cfg['version']} trained and saved successfully.") # Log success
+        logger.info(f"Model {cfg['name']}_{cfg['version']} trained successfully.") # Log success
 
         return pipeline # Return fitted pipeline
     except Exception:

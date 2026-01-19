@@ -38,14 +38,17 @@ class ModelParams(BaseModel):
     configs while still validating their presence and types when provided.
     """
 
-    random_strength: Optional[int]
-    min_data_in_leaf: Optional[int]
-    learning_rate: Optional[float]
-    l2_leaf_reg: Optional[float]
-    depth: Optional[int]
-    colsample_bylevel: Optional[float]
-    border_count: Optional[int]
-    bagging_temperature: Optional[float]
+    # Additional CatBoost parameters can be added as needed
+    random_strength: Optional[int] = None
+    min_data_in_leaf: Optional[int] = None
+    learning_rate: Optional[float] = None
+    l2_leaf_reg: Optional[float] = None
+    depth: Optional[int] = None
+    colsample_bylevel: Optional[float] = None
+    border_count: Optional[int] = None
+    bagging_temperature: Optional[float] = None
+
+    # Default values for commonly used parameters
     iterations: Optional[int] = 2500
     task_type: Optional[str] = "CPU"
     random_state: Optional[int] = 42

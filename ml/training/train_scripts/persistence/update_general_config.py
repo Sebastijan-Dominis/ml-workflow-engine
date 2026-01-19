@@ -47,7 +47,7 @@ def update_general_config(cfg: dict) -> None:
             "features": {
                 "version": cfg["data"]["features_version"],
                 "path": cfg["data"]["features_path"],
-                "schema": cfg["data"]["features_path"] + "/schema.csv",
+                "schema": cfg["data"]["features_path"] + "schema.csv",
             },
             "artifacts": {
                 "model": f"{model_dir}/{cfg['name']}_{cfg['version']}.joblib",

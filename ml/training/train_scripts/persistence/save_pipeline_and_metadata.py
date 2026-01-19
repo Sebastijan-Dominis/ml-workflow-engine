@@ -41,7 +41,7 @@ def save_pipeline_and_metadata(pipeline: Pipeline, cfg: dict):
     Path(metadata_dir).mkdir(parents=True, exist_ok=True)
 
     # Step 2 - Save the trained model pipeline
-    model_file = f"{model_dir}/{cfg['name']}_{cfg['version']}.joblib"
+    model_file = Path(model_dir)/f"{cfg['name']}_{cfg['version']}.joblib"
 
     try:
         joblib.dump(pipeline, model_file)
@@ -59,7 +59,7 @@ def save_pipeline_and_metadata(pipeline: Pipeline, cfg: dict):
         "features_version": cfg["data"]["features_version"],
     }
 
-    metadata_file = f"{metadata_dir}/{cfg['name']}_{cfg['version']}.json"
+    metadata_file = Path(metadata_dir)/f"{cfg['name']}_{cfg['version']}.json"
     try:
         with open(metadata_file, "w") as f:
             json.dump(metadata, f, indent=2)

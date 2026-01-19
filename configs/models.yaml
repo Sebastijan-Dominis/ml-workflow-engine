@@ -7,7 +7,7 @@ cancellation_v1:
   features:
     version: v1
     path: data/features/cancellation/v1/
-    schema: data/features/cancellation/v1//schema.csv
+    schema: data/features/cancellation/v1/schema.csv
   artifacts:
     model: ml/models/trained/cancellation_v1.joblib
     metadata: ml/models/metadata/cancellation_v1.json
