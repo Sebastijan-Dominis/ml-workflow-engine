@@ -53,6 +53,7 @@ def save_pipeline_and_metadata(pipeline: Pipeline, cfg: dict):
     # Step 2.2 - Write the pipeline to a joblib file
     try:
         joblib.dump(pipeline, model_file)
+        logger.info(f"Model pipeline for {cfg['name']}_{cfg['version']} successfully saved to {model_file}.")
     except Exception:
         logger.exception(f"Error saving model pipeline to {model_file}")
         raise
@@ -79,11 +80,7 @@ def save_pipeline_and_metadata(pipeline: Pipeline, cfg: dict):
     try:
         with open(metadata_file, "w") as f:
             json.dump(metadata, f, indent=2)
+        logger.info(f"Metadata for model {cfg['name']}_{cfg['version']} successfully saved to {metadata_file}.")
     except Exception:
         logger.exception(f"Error saving metadata to {metadata_file}")
         raise
-
-    # Step 4 - Log success message
-    logger.info(
-        f"Pipeline and metadata saved successfully for model {cfg['name']}_{cfg['version']}."
-    )
