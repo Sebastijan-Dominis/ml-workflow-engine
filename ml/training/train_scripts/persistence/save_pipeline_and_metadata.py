@@ -43,6 +43,14 @@ def save_pipeline_and_metadata(pipeline: Pipeline, cfg: dict):
     # Step 2 - Save the trained model pipeline
     model_file = Path(model_dir)/f"{cfg['name']}_{cfg['version']}.joblib"
 
+    # Step 2.1 - Warn if target model file already exists
+    if model_file.exists():
+        logger.warning(
+            f"Model file for {cfg['name']}_{cfg['version']} already exists "
+            "and will be overwritten."
+        )
+    
+    # Step 2.2 - Write the pipeline to a joblib file
     try:
         joblib.dump(pipeline, model_file)
     except Exception:
@@ -59,7 +67,15 @@ def save_pipeline_and_metadata(pipeline: Pipeline, cfg: dict):
         "features_version": cfg["data"]["features_version"],
     }
 
+    # Step 3.1 - Warn if target metadata file already exists
     metadata_file = Path(metadata_dir)/f"{cfg['name']}_{cfg['version']}.json"
+    if metadata_file.exists():
+        logger.warning(
+            f"Metadata file for model {cfg['name']}_{cfg['version']} "
+            "already exists and will be overwritten."
+        )
+
+    # Step 3.2 - Write metadata to JSON file
     try:
         with open(metadata_file, "w") as f:
             json.dump(metadata, f, indent=2)
