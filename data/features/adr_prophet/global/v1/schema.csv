@@ -1,0 +1,3 @@
+feature,dtype
+ds,datetime64[ns]
+y,float32

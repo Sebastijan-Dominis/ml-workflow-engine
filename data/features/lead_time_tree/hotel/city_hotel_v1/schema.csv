@@ -1,0 +1,16 @@
+feature,dtype
+stays_in_weekend_nights,int8
+stays_in_week_nights,int8
+adults,int16
+children,int8
+babies,int8
+meal,category
+country,category
+market_segment,category
+distribution_channel,category
+previous_cancellations,int8
+previous_bookings_not_canceled,int8
+reserved_room_type,category
+deposit_type,category
+agent,string
+customer_type,category

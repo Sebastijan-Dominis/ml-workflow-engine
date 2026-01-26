@@ -6,11 +6,11 @@ implementation for the model's algorithm. Currently the module supports
 CatBoost explainability via the `explain_catboost` function.
 
 Typical usage:
-    python -m ml.training.explain_scripts.explain --name_and_version cancellation_v1
+    python -m ml.training.explain_scripts.explain --name_version cancellation_v1
 
 The public functions in this module are:
     - parse_args(): parse CLI arguments
-    - get_model_configs(name_and_version): load model configuration
+    - get_model_configs(name_version): load model configuration
     - main(): orchestrate the explainability run
 """
 
@@ -32,13 +32,13 @@ def parse_args() -> argparse.Namespace:
 
     Returns:
         argparse.Namespace: Parsed arguments with attribute
-            `name_and_version` (str) in the form "<name>_<version>".
+            `name_version` (str) in the form "<name>_<version>".
     """
 
     parser = argparse.ArgumentParser(description="Explain a model.")
 
     parser.add_argument(
-        "--name_and_version",
+        "--name_version",
         type=str,
         required=True,
         help="Model name and version in the format 'name_version', e.g., 'cancellation_v1'",
@@ -46,18 +46,18 @@ def parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-def get_model_configs(name_and_version: str) -> dict:
+def get_model_configs(name_version: str) -> dict:
     """Load model configuration for a named model/version.
 
     Args:
-        name_and_version (str): Model identifier in the form "<name>_<version>".
+        name_version (str): Model identifier in the form "<name>_<version>".
 
     Returns:
         dict: Configuration dictionary for the requested model as defined in
             `configs/models.yaml`.
 
     Raises:
-        KeyError: If `name_and_version` is not present in the YAML file.
+        KeyError: If `name_version` is not present in the YAML file.
         FileNotFoundError: If `configs/models.yaml` cannot be opened.
     """
 
@@ -65,9 +65,9 @@ def get_model_configs(name_and_version: str) -> dict:
         configs = yaml.safe_load(f)
 
     try:
-        return configs[name_and_version]
+        return configs[name_version]
     except KeyError:
-        logger.exception(f"Model config '{name_and_version}' not found in models.yaml")
+        logger.exception(f"Model config '{name_version}' not found in models.yaml")
         raise
 
 def main() -> None:
@@ -75,7 +75,7 @@ def main() -> None:
 
     The function performs the following high-level steps:
         1. Set up logging using `setup_logging()`.
-        2. Parse CLI arguments to obtain `name_and_version`.
+        2. Parse CLI arguments to obtain `name_version`.
         3. Load model configuration from `configs/models.yaml`.
         4. Select and invoke the appropriate explainer based on the
            configuration's `algorithm` field.
@@ -93,7 +93,7 @@ def main() -> None:
     args = parse_args()
 
     # Step 3 - Load model configurations
-    model_configs = get_model_configs(args.name_and_version)
+    model_configs = get_model_configs(args.name_version)
 
     # Step 4 - Extract algorithm
     algorithm = model_configs["algorithm"]

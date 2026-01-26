@@ -1,0 +1,10 @@
+feature,dtype
+lead_time,int16
+stays_in_weekend_nights,int8
+stays_in_week_nights,int8
+country,category
+market_segment,category
+distribution_channel,category
+customer_type,category
+adr,float32
+total_of_special_requests,int8

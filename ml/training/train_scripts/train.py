@@ -8,9 +8,9 @@ implementation. After training, the resulting pipeline and metadata are
 persisted and the global models registry is updated.
 
 Typical usage:
-    python -m ml.training.train_scripts.train --name_and_version cancellation_v1
+    python -m ml.training.train_scripts.train --name_version cancellation_global_v1
 
-The script expects a YAML config at ``ml/training/train_configs/{name_and_version}.yaml``.
+The script expects a YAML config at ``ml/training/train_configs/{name_version}.yaml``.
 """
 
 # General imports
@@ -45,27 +45,27 @@ def parse_args() -> argparse.Namespace:
     """Parse command-line arguments.
 
     Returns:
-        argparse.Namespace: Parsed arguments with attribute ``name_and_version``
+        argparse.Namespace: Parsed arguments with attribute ``name_version``
             containing the model name and version in the form ``name_version``
-            (for example, ``cancellation_v1``).
+            (for example, ``cancellation_global_v1``).
     """
 
     parser = argparse.ArgumentParser(description="Train a model.")
 
     parser.add_argument(
-        "--name_and_version",
+        "--name_version",
         type=str,
         required=True,
-        help="Model name and version in the format 'name_version', e.g., 'cancellation_v1'"
+        help="Model name and version in the format 'name_version', e.g., 'cancellation_global_v1'"
     )
 
     return parser.parse_args()
 
-def load_config(name_and_version: str) -> dict:   
+def load_config(name_version: str) -> dict:   
     """Load a YAML training configuration file.
 
     Args:
-        name_and_version (str): Model identifier with version (``name_version``).
+        name_version (str): Model identifier with version (``name_version``).
 
     Returns:
         dict: Raw configuration loaded from the YAML file.
@@ -75,7 +75,7 @@ def load_config(name_and_version: str) -> dict:
         yaml.YAMLError: If the YAML content cannot be parsed.
     """
 
-    with open(f"ml/training/train_configs/{name_and_version}.yaml") as f:
+    with open(f"ml/training/train_configs/{name_version}.yaml") as f:
         cfg = yaml.safe_load(f)
 
     return cfg
@@ -123,7 +123,7 @@ def main() -> None:
 
     args = parse_args() # Parse command-line arguments
 
-    cfg_raw = load_config(args.name_and_version) # Load raw YAML config
+    cfg_raw = load_config(args.name_version) # Load raw YAML config
 
     cfg = validate_config_schema(cfg_raw) # Validate config schema
 
@@ -139,7 +139,7 @@ def main() -> None:
     trainer = TRAINERS.get(key)
 
     if trainer:
-        pipeline = trainer(args.name_and_version, cfg)
+        pipeline = trainer(args.name_version, cfg)
     else:
         raise ValueError(f"Unsupported task and algorithm: {task}_{algorithm}")
     

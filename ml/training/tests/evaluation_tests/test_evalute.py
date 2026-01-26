@@ -24,11 +24,11 @@ from ml.training.evaluation_scripts.evaluate import (
 )
 
 def test_parse_args(monkeypatch: pytest.MonkeyPatch) -> None:
-    """CLI argument parsing should populate `name_and_version` correctly."""
+    """CLI argument parsing should populate `name_version` correctly."""
 
-    monkeypatch.setattr(sys, "argv", ["evaluate.py", "--name_and_version", "m_v1"]) 
+    monkeypatch.setattr(sys, "argv", ["evaluate.py", "--name_version", "m_v1"]) 
     args = parse_args()
-    assert args.name_and_version == "m_v1"
+    assert args.name_version == "m_v1"
 
 def test_get_model_configs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, dummy_models_config) -> None:
     """Model config loader reads `configs/models.yaml` and returns mapping."""
@@ -65,7 +65,7 @@ def test_unsupported_task(monkeypatch: pytest.MonkeyPatch, dummy_models_config) 
     monkeypatch.setattr(
         evaluate,
         "parse_args",
-        lambda: type("A", (), {"name_and_version": "dummy_model_v1"})()
+        lambda: type("A", (), {"name_version": "dummy_model_v1"})()
     )
     dummy_models_config["dummy_model_v1"]["task"] = "unsupported_task"
     monkeypatch.setattr(
@@ -136,7 +136,7 @@ def test_evaluate_main_runs(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, dum
         json.dump(metadata, f)
 
     # Run main with monkeypatched argv
-    monkeypatch.setattr(sys, "argv", ["evaluate.py", "--name_and_version", "dummy_model_v1"])
+    monkeypatch.setattr(sys, "argv", ["evaluate.py", "--name_version", "dummy_model_v1"])
     monkeypatch.chdir(tmp_path)
     # create configs/models.yaml, model file, metadata file
     main()

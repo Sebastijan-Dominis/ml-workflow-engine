@@ -6,7 +6,7 @@ dispatches to task-specific evaluators and persists evaluation results via
 updater functions.
 
 Typical usage example:
-    python -m ml.training.evaluation_scripts.evaluate --name_and_version cancellation_v1
+    python -m ml.training.evaluation_scripts.evaluate --name_version cancellation_global_v1
 
 The module exposes helper functions used by the CLI and a `main()` function
 which orchestrates the complete evaluation flow.
@@ -41,13 +41,13 @@ def parse_args() -> argparse.Namespace:
 
     Returns:
         argparse.Namespace: Parsed CLI arguments with attribute
-            `name_and_version` containing a string like "name_version".
+            `name_version` containing a string like "name_version".
     """
 
     parser = argparse.ArgumentParser(description="Evaluate a model.")
 
     parser.add_argument(
-        "--name_and_version",
+        "--name_version",
         type=str,
         required=True,
         help="Model name and version in the format 'name_version', e.g., 'cancellation_v1'"
@@ -55,11 +55,11 @@ def parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-def get_model_configs(name_and_version: str) -> dict:
+def get_model_configs(name_version: str) -> dict:
     """Load and return model configuration for a given model identifier.
 
     Args:
-        name_and_version (str): Model key in `configs/models.yaml` (e.g.
+        name_version (str): Model key in `configs/models.yaml` (e.g.
             "cancellation_v1").
 
     Returns:
@@ -73,9 +73,9 @@ def get_model_configs(name_and_version: str) -> dict:
         configs = yaml.safe_load(f)
 
     try:
-        return configs[name_and_version]
+        return configs[name_version]
     except KeyError:
-        raise KeyError(f"Model config '{name_and_version}' not found in models.yaml")
+        raise KeyError(f"Model config '{name_version}' not found in models.yaml")
 
 def validate_threshold(threshold: float) -> None:
     """Validate a probability threshold is within [0.0, 1.0].
@@ -110,7 +110,7 @@ def main() -> None:
     args = parse_args()
 
     # Step 3 - Load model configurations
-    model_configs = get_model_configs(args.name_and_version)
+    model_configs = get_model_configs(args.name_version)
 
     # Step 4 - Validate essential keys in model configurations
     assert_keys(model_configs, ["task", "name", "version", "features", "artifacts", "threshold"])

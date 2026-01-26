@@ -21,9 +21,9 @@ from ml.training.explain_scripts.explain import (
 def test_parse_args(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure CLI argument parsing for the explain entry point works."""
 
-    monkeypatch.setattr("sys.argv", ["explain.py", "--name_and_version", "dummy_model_v1"])
+    monkeypatch.setattr("sys.argv", ["explain.py", "--name_version", "dummy_model_v1"])
     args = parse_args()
-    assert args.name_and_version == "dummy_model_v1"
+    assert args.name_version == "dummy_model_v1"
 
 def test_get_model_configs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, dummy_models_config) -> None:
     """Verify model configuration lookup reads `configs/models.yaml` correctly."""
@@ -45,7 +45,7 @@ def test_main_dispatches_catboost(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         explain,
         "parse_args",
-        lambda: type("A", (), {"name_and_version": "dummy_model_v1"})()
+        lambda: type("A", (), {"name_version": "dummy_model_v1"})()
     )
 
     monkeypatch.setattr(
@@ -72,7 +72,7 @@ def test_main_unsupported_algorithm(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         explain,
         "parse_args",
-        lambda: type("A", (), {"name_and_version": "dummy_model_v1"})()
+        lambda: type("A", (), {"name_version": "dummy_model_v1"})()
     )
     monkeypatch.setattr(
         explain,

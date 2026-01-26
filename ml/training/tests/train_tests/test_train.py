@@ -22,12 +22,12 @@ def test_parse_args(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure CLI argument parsing returns the expected namespace.
 
     This test simulates a minimal invocation by patching `sys.argv` and
-    asserts the parsed `name_and_version` value is returned.
+    asserts the parsed `name_version` value is returned.
     """
 
-    monkeypatch.setattr(sys, "argv", ["train.py", "--name_and_version", "m_v1"]) 
+    monkeypatch.setattr(sys, "argv", ["train.py", "--name_version", "m_v1"]) 
     args = parse_args()
-    assert args.name_and_version == "m_v1"
+    assert args.name_version == "m_v1"
 
 
 def test_load_config_reads_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -58,11 +58,11 @@ def test_validate_config_schema_exits_on_invalid() -> None:
 
 def test_unsupported_task_and_algorithm(monkeypatch: pytest.MonkeyPatch) -> None:
     """Assert `main()` raises SystemExit for unsupported tasks and algorithms."""
-    # Mock parse_args to return a dummy name_and_version
+    # Mock parse_args to return a dummy name_version
     monkeypatch.setattr(
         train_module,
         "parse_args",
-        lambda: type("A", (), {"name_and_version": "dummy_model_v1"})()
+        lambda: type("A", (), {"name_version": "dummy_model_v1"})()
     )
 
     # Mock load_config to return unsupported task

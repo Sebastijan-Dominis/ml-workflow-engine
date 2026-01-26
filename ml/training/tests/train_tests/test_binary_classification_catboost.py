@@ -56,10 +56,10 @@ def test_catboost_trainer_smoke() -> None:
     a fitted sklearn Pipeline with an expected `model` step.
     """
 
-    cfg = cancellation_test_cfg(features_path="data/features/cancellation/v1")
+    cfg = cancellation_test_cfg(features_path="data/features/cancellation/global/v1")
 
     pipeline = train_binary_classification_with_catboost(
-        name_and_version="cancellation_v1",  # must exist in ml.components
+        name_version="cancellation_city_hotel_online_ta_v1",  # must exist in ml.components
         cfg=cfg,
     )
 
@@ -76,6 +76,6 @@ def test_training_fails_on_missing_feature_file() -> None:
     cfg = cancellation_test_cfg(features_path="does/not/exist")
     with pytest.raises(Exception):
         train_binary_classification_with_catboost(
-            name_and_version="cancellation_v1",
+            name_version="cancellation_city_hotel_online_ta_v1",
             cfg=cfg,
         )

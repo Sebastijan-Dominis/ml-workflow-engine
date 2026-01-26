@@ -2,8 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score
 
-def optimal_f1_search(y_true, y_probs):
+def optimal_f1_search(pipeline, X, y_true):
     
+    y_probs = pipeline.predict_proba(X)[:, 1]
+
     thresholds = np.linspace(0,1,101)
     f1_scores = []
 
@@ -20,3 +22,5 @@ def optimal_f1_search(y_true, y_probs):
     plt.ylabel("F1 Score")
     plt.title("F1 Score vs Decision Threshold")
     plt.show()
+
+    return thresholds[best_idx]

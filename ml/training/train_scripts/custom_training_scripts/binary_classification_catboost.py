@@ -52,7 +52,7 @@ def load_data(cfg: dict) -> tuple:
         logger.exception("Error loading data")
         raise
 
-def import_components(name_and_version: str) -> tuple:
+def import_components(name_version: str) -> tuple:
     """Dynamically import component definitions for a specific model.
 
     The project defines per-model pipeline components under ``ml.components``
@@ -61,7 +61,7 @@ def import_components(name_and_version: str) -> tuple:
     expected attributes used to construct the preprocessing pipeline.
 
     Args:
-        name_and_version (str): Module name under ``ml.components``.
+        name_version (str): Module name under ``ml.components``.
 
     Returns:
         tuple: A tuple with the following items in order:
@@ -79,9 +79,9 @@ def import_components(name_and_version: str) -> tuple:
     """
 
     try:
-        module = importlib.import_module(f"ml.components.{name_and_version}")
+        module = importlib.import_module(f"ml.components.{name_version}")
     except ImportError:
-        logger.exception(f"Error importing module ml.components.{name_and_version}")
+        logger.exception(f"Error importing module ml.components.{name_version}")
         raise
 
     required_attributes = [
@@ -98,7 +98,7 @@ def import_components(name_and_version: str) -> tuple:
 
     if missing:
         raise AttributeError(
-            f"Missing attributes in module ml.components.{name_and_version}: {missing}"
+            f"Missing attributes in module ml.components.{name_version}: {missing}"
         )
 
     return (
@@ -223,7 +223,7 @@ def train_model(
 
     return pipeline
 
-def train_binary_classification_with_catboost(name_and_version: str, cfg: dict) -> Pipeline:
+def train_binary_classification_with_catboost(name_version: str, cfg: dict) -> Pipeline:
     """Train a binary classification model using CatBoost and project components.
 
     This is the high-level routine used by the training CLI to execute a
@@ -232,7 +232,7 @@ def train_binary_classification_with_catboost(name_and_version: str, cfg: dict) 
     assembly, training, and returns a fitted pipeline object.
 
     Args:
-        name_and_version (str): Component module name under ``ml.components``.
+        name_version (str): Component module name under ``ml.components``.
         cfg (dict): Validated configuration dictionary.
 
     Returns:
@@ -255,7 +255,7 @@ def train_binary_classification_with_catboost(name_and_version: str, cfg: dict) 
             FillCategoricalMissing,
             FeatureEngineer,
             FeatureSelector,
-        ) = import_components(name_and_version) # Import components
+        ) = import_components(name_version) # Import components
 
         model_class = define_model(cfg, cat_features) # Define model
 
