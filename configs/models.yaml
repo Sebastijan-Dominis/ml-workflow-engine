@@ -17,22 +17,3 @@ cancellation_v1:
     feature_importance_method: PredictionValuesChange
     shap_method: tree_explainer_mean_abs
   threshold: 0.48
-cancellation_city_hotel_online_ta_v1:
-  name: cancellation_city_hotel_online_ta
-  version: v1
-  task: binary_classification
-  target: is_canceled
-  algorithm: catboost
-  features:
-    version: v1
-    path: data/features/cancellation/hotel_market_segment/city_hotel_online_ta_v1
-    schema: data/features/cancellation/hotel_market_segment/city_hotel_online_ta_v1schema.csv
-  artifacts:
-    model: ml/models/trained/cancellation_city_hotel_online_ta_v1.joblib
-    metadata: ml/models/metadata/cancellation_city_hotel_online_ta_v1.json
-    feature_importances: ml/models/explainability/cancellation_city_hotel_online_ta_v1/feature_importances.csv
-    shap_importances: ml/models/explainability/cancellation_city_hotel_online_ta_v1/shap_importances.csv
-  explainability:
-    feature_importance_method: PredictionValuesChange
-    shap_method: tree_explainer_mean_abs
-  threshold: 0.48

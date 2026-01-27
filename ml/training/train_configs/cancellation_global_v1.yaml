@@ -1,0 +1,45 @@
+name: cancellation_global
+task: binary_classification
+version: v1
+data:
+  components_path: ml.components.catboost_classification_v1
+  engineered_features:
+  - total_stay
+  - adr_per_person
+  - arrival_season
+  engineered_categorical_features:
+  - arrival_season
+  schema_path: data/features/cancellation/global/v1/schema.csv
+  features_path: data/features/cancellation/global/v1/
+  features_version: v1
+  target: is_canceled
+  train_file: X_train.parquet
+  val_file: X_val.parquet
+  test_file: X_test.parquet
+  y_train: y_train.parquet
+  y_val: y_val.parquet
+  y_test: y_test.parquet
+model:
+  algorithm: catboost
+  params:
+    model__random_strength: 5
+    model__min_data_in_leaf: 13
+    model__learning_rate: 0.2
+    model__l2_leaf_reg: 7
+    model__depth: 10
+    model__colsample_bylevel: 1.0
+    model__border_count: 32
+    model__bagging_temperature: 1.6
+    iterations: 2500
+    task_type: CPU
+    random_state: 42
+    verbose: 100
+  class_weights: null
+pipeline:
+  validate_schema: true
+  fill_categorical_missing: true
+  feature_engineering: true
+  feature_selection: true
+explainability:
+  feature_importance_method: PredictionValuesChange
+  shap_method: tree_explainer_mean_abs

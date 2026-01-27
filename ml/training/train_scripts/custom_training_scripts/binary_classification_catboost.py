@@ -17,6 +17,7 @@ import logging
 logger = logging.getLogger(__name__)
 import pandas as pd
 import importlib
+from typing import Optional, List
 
 from pathlib import Path
 from sklearn.pipeline import Pipeline
@@ -85,9 +86,6 @@ def import_components(name_version: str) -> tuple:
         raise
 
     required_attributes = [
-        "categorical_features",
-        "required_features",
-        "cat_features",
         "SchemaValidator",
         "FillCategoricalMissing",
         "FeatureEngineer",
@@ -102,14 +100,24 @@ def import_components(name_version: str) -> tuple:
         )
 
     return (
-        module.categorical_features,
-        module.required_features,
-        module.cat_features,
         module.SchemaValidator,
         module.FillCategoricalMissing,
         module.FeatureEngineer,
         module.FeatureSelector,
     )
+
+def get_features_from_schema(cfg, schema_path):
+    schema = pd.read_csv(Path(schema_path))
+
+    categorical_features = schema.loc[schema["dtype"].isin(['object', 'category', 'string']), "feature"].tolist()
+
+    numerical_features = schema.loc[schema["dtype"].isin(['int64', 'float64', 'int32', 'float32', 'int16', 'int8']), "feature"].tolist()
+
+    required_features = categorical_features + numerical_features
+
+    cat_features = categorical_features + cfg["created_cat_features"]
+
+    return categorical_features, required_features, cat_features
 
 def define_model(cfg: dict, cat_features: list) -> CatBoostClassifier:
     """Construct a CatBoostClassifier from configuration.
@@ -148,6 +156,7 @@ def build_pipeline_steps(
     model_class: CatBoostClassifier,
     required_features: list,
     categorical_features: list,
+    created_columns: Optional[List[str]] = None,
 ) -> list:
     """Assemble a list of (name, transformer) steps for a sklearn Pipeline.
 
@@ -163,7 +172,7 @@ def build_pipeline_steps(
         model_class (CatBoostClassifier): The model instance to attach.
         required_features (list): Columns required for schema validation.
         categorical_features (list): Columns treated as categorical.
-
+        created_columns (list, optional): Columns created by feature engineering.
     Returns:
         list: Pipeline steps as expected by ``sklearn.pipeline.Pipeline``.
     """
@@ -174,10 +183,10 @@ def build_pipeline_steps(
     if cfg["pipeline"]["fill_categorical_missing"]:
         steps.append(("fill_categorical_missing", FillCategoricalMissing(categorical_columns=categorical_features)))
     if cfg["pipeline"]["feature_engineering"]:
-        steps.append(("feature_engineering", FeatureEngineer()))
+        steps.append(("feature_engineering", FeatureEngineer(created_columns=created_columns)))
     if cfg["pipeline"]["feature_selection"]:
         # Make sure FeatureEngineer contains created_columns attribute
-        steps.append(("feature_selector", FeatureSelector(selected_columns=required_features + FeatureEngineer.created_columns)))
+        steps.append(("feature_selector", FeatureSelector(selected_columns=required_features + (created_columns or []))))
 
     steps.append(("model", model_class))
 
@@ -248,15 +257,14 @@ def train_binary_classification_with_catboost(name_version: str, cfg: dict) -> P
         X_train, y_train, X_val, y_val = load_data(cfg) # Load data
 
         (
-            categorical_features,
-            required_features,
-            cat_features,
             SchemaValidator,
             FillCategoricalMissing,
             FeatureEngineer,
             FeatureSelector,
         ) = import_components(name_version) # Import components
 
+        categorical_features, required_features, cat_features = get_features_from_schema(cfg, cfg["data"]["schema_path"])
+        
         model_class = define_model(cfg, cat_features) # Define model
 
         steps = build_pipeline_steps(
@@ -268,6 +276,7 @@ def train_binary_classification_with_catboost(name_version: str, cfg: dict) -> P
             model_class,
             required_features,
             categorical_features,
+            cfg.get("created_columns", None)
         )
 
         pipeline = train_model(steps, X_train, y_train, X_val, y_val) # Train model

@@ -20,6 +20,7 @@ import sys
 import yaml
 import argparse
 
+from pathlib import Path
 from pydantic_core import ValidationError
 
 # Specific training script imports
@@ -75,8 +76,13 @@ def load_config(name_version: str) -> dict:
         yaml.YAMLError: If the YAML content cannot be parsed.
     """
 
-    with open(f"ml/training/train_configs/{name_version}.yaml") as f:
-        cfg = yaml.safe_load(f)
+    config_path = Path(f"ml/training/train_configs/{name_version}.yaml")
+    try:
+        with open(config_path) as f:
+            cfg = yaml.safe_load(f)
+    except Exception:
+        logger.exception(f"Failed to load configuration from {config_path}.")
+        raise
 
     return cfg
 
@@ -141,6 +147,7 @@ def main() -> None:
     if trainer:
         pipeline = trainer(args.name_version, cfg)
     else:
+        logger.error(f"No trainer found for task '{task}' and algorithm '{algorithm}'.")
         raise ValueError(f"Unsupported task and algorithm: {task}_{algorithm}")
     
     save_pipeline_and_metadata(pipeline, cfg) # Persist pipeline and metadata
