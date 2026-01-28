@@ -28,7 +28,8 @@ from ml.training.train_scripts.custom_training_scripts.binary_classification_cat
     train_binary_classification_with_catboost
 )
 
-from ml.training.train_scripts.schemas.binary_classification_catboost_schemas import ConfigSchema
+# Schema imports
+from ml.training.train_scripts.schemas.binary_classification_catboost_schemas import ConfigSchema as BinaryClassificationCatBoostConfigSchema
 
 # Persistence imports
 from ml.training.train_scripts.persistence.save_pipeline_and_metadata import (
@@ -100,8 +101,15 @@ def validate_config_schema(cfg_raw: dict) -> dict:
         the provided configuration is invalid.
     """
 
+    # Registry of available config validators
+    VALIDATORS = {
+        "binary_classification_catboost": BinaryClassificationCatBoostConfigSchema
+    }
+
+    key = f"{cfg_raw['task']}_{cfg_raw['model']['algorithm']}"
+
     try:
-        cfg = ConfigSchema(**cfg_raw).model_dump()
+        cfg = VALIDATORS[key](**cfg_raw).model_dump()
         return cfg
     except ValidationError as e:
         logger.error("Config validation failed:")

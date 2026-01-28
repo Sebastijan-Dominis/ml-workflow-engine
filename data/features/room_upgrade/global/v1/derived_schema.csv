@@ -1,0 +1,4 @@
+feature,dtype,role,source_operator
+total_stay,int8,derived,TotalStay
+adr_per_person,float32,derived,AdrPerPerson
+arrival_season,object,derived,ArrivalSeason

@@ -1,0 +1,22 @@
+name: cancellation_global
+task: binary_classification
+version: v1
+target: is_canceled
+algorithm: catboost
+class: CatBoostClassifier
+
+pipeline: tabular_catboost_v1
+
+features:
+  features_path: data/features/cancellation/global/v1/
+  raw_schema: schema.csv
+  derived_schema: derived_schema.csv
+
+feature_engineering:
+  enabled: true
+  operators:
+    - TotalStay
+    - AdrPerPerson
+    - ArrivalSeason
+
+search_version: v1

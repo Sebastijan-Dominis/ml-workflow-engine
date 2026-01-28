@@ -57,7 +57,8 @@ df_test.to_parquet(feature_path / "df_test.parquet", index=False)
 # Save schema
 schema = pd.DataFrame({
     "feature": df_train.columns,
-    "dtype": df_train.dtypes.astype(str)
+    "dtype": df_train.dtypes.astype(str),
+    "role": ["input" if not col == "y" else "target" for col in df_train.columns],
 })
 schema.to_csv(feature_path / "schema.csv", index=False)
 

@@ -1,8 +1,8 @@
 name: cancellation_global
 task: binary_classification
 version: v1
-data:
-  components_path: ml.components.catboost_classification_v1
+target: is_canceled
+features:
   engineered_features:
   - total_stay
   - adr_per_person
@@ -12,13 +12,14 @@ data:
   schema_path: data/features/cancellation/global/v1/schema.csv
   features_path: data/features/cancellation/global/v1/
   features_version: v1
-  target: is_canceled
   train_file: X_train.parquet
   val_file: X_val.parquet
   test_file: X_test.parquet
   y_train: y_train.parquet
   y_val: y_val.parquet
   y_test: y_test.parquet
+artifacts:
+  components_path: ml.components.catboost_classification_v1
 model:
   algorithm: catboost
   params:
@@ -30,7 +31,7 @@ model:
     model__colsample_bylevel: 1.0
     model__border_count: 32
     model__bagging_temperature: 1.6
-    iterations: 2500
+    iterations: 1
     task_type: CPU
     random_state: 42
     verbose: 100

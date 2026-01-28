@@ -9,10 +9,13 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class DataConfig(BaseModel):
+class FeaturesConfig(BaseModel):
     """Data-related configuration values.
 
     Attributes:
+        engineered_features: List of engineered feature column names.
+        engineered_categorical_features: List of engineered categorical feature column names.
+        schema_path: Path to data schema file.
         features_path: Path to directory containing feature parquet files.
         features_version: Semantic version or identifier for feature set.
         target: Name of the target column.
@@ -20,15 +23,26 @@ class DataConfig(BaseModel):
         y_train, y_val, y_test: Filenames for label tables.
     """
 
+    engineered_features: list[str]
+    engineered_categorical_features: list[str]
+    schema_path: str
     features_path: str
     features_version: str
-    target: str
     train_file: str
     val_file: str
     test_file: str
     y_train: str
     y_val: str
     y_test: str
+
+
+class ArtifactsConfig(BaseModel):
+    """Paths for saving model artifacts.
+    
+    Attributes:
+        components_path: Path to save model components.
+    """
+    components_path: str
 
 
 class ModelParams(BaseModel):
@@ -52,7 +66,7 @@ class ModelParams(BaseModel):
     iterations: Optional[int] = 2500
     task_type: Optional[str] = "CPU"
     random_state: Optional[int] = 42
-    verbose: Optional[int] = 200
+    verbose: Optional[int] = 100
 
 
 class ModelConfig(BaseModel):
@@ -61,12 +75,12 @@ class ModelConfig(BaseModel):
     Attributes:
         algorithm: String identifier for the training algorithm.
         params: ``ModelParams`` instance.
-        threshold: Prediction threshold used by downstream scoring.
+        class_weights: Optional[list[float]] = None
     """
 
     algorithm: str
     params: ModelParams
-    threshold: float
+    class_weights: Optional[list[float]] = None
 
 
 class PipelineConfig(BaseModel):
@@ -91,7 +105,9 @@ class ConfigSchema(BaseModel):
     name: str
     task: str
     version: str
-    data: DataConfig
+    target: str
+    features: FeaturesConfig
+    artifacts: ArtifactsConfig
     model: ModelConfig
     pipeline: PipelineConfig
     explainability: ExplainabilityConfig

@@ -1,0 +1,13 @@
+name: tabular_catboost_v1
+
+steps:
+  - SchemaValidator
+  - FillCategoricalMissing
+  - FeatureEngineer
+  - FeatureSelector
+  - Model
+
+assumptions:
+  handles_categoricals: true
+  supports_regression: true
+  supports_classification: true

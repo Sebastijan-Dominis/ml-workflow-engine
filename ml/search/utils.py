@@ -5,10 +5,8 @@ import numpy as np
 from pathlib import Path
 from sklearn.model_selection import RandomizedSearchCV
 
-def get_data(cfg):
+def get_data(features_path: Path) -> tuple:
     try:
-        features_path = cfg["features"]["features_path"]
-
         X_train = pd.read_parquet(Path(features_path) / "X_train.parquet")
 
         y_train = pd.read_parquet(Path(features_path) / "y_train.parquet")
@@ -19,12 +17,11 @@ def get_data(cfg):
         logger.exception("Failed to load features data.")
         raise
 
-def search_best_params(pipeline, X_train, y_train, param_distributions, cfg, search_type, error_score=np.nan):
-    n_iter = cfg["search"][search_type]["n_iter"]
-    cv = cfg["search"]["cv"]
-    scoring = cfg["search"]["scoring"]
-    random_state = cfg["search"]["random_state"]
-
+def search_best_params(pipeline, X_train, y_train, param_distributions, cfg_search, search_type, error_score=np.nan):
+    n_iter = cfg_search[search_type]["n_iter"]
+    cv = cfg_search["cv"]
+    scoring = cfg_search["scoring"]
+    random_state = cfg_search["random_state"]
     try:
         search = RandomizedSearchCV(
             estimator=pipeline,
@@ -48,3 +45,28 @@ def search_best_params(pipeline, X_train, y_train, param_distributions, cfg, sea
         raise
 
     return search
+
+def load_schemas(features_path: Path) -> tuple:
+    raw_schema_path = features_path / "schema.csv"
+    derived_schema_path = features_path / "derived_schema.csv"
+    try:
+        raw_schema = pd.read_csv(raw_schema_path)
+        derived_schema = pd.read_csv(derived_schema_path)
+        return raw_schema, derived_schema
+    except Exception:
+        logger.exception(f"Failed to load schemas from {features_path}.")
+        raise
+
+
+def get_cat_features(raw_schema: pd.DataFrame, derived_schema: pd.DataFrame) -> list:
+    raw_categoricals = raw_schema.loc[
+        raw_schema["dtype"].isin(["object", "string", "category"]),
+        "feature",
+    ].tolist()
+
+    derived_categoricals = derived_schema.loc[
+        derived_schema["dtype"].isin(["object", "string", "category"]),
+        "feature",
+    ].tolist()
+
+    return raw_categoricals + derived_categoricals

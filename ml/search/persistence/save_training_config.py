@@ -24,21 +24,24 @@ def prepare_config(cfg, best_params):
         'name': cfg['name'],
         'task': task,
         'version': cfg['version'],
+        "target": cfg["target"],
 
-        'data': {
-            "components_path": cfg["artifacts"]["components_path"],
+        'features': {
             "engineered_features": cfg["features"].get("engineered_features", []),
             "engineered_categorical_features": cfg["features"].get("engineered_categorical_features", []),
             "schema_path": cfg["features"]["schema_path"],
             "features_path": cfg["features"]["features_path"],
             "features_version": cfg["features"]["features_version"],
-            "target": cfg["target"],
             "train_file": "X_train.parquet",
             "val_file": "X_val.parquet",
             "test_file": "X_test.parquet",
             "y_train": "y_train.parquet",
             "y_val": "y_val.parquet",
             "y_test": "y_test.parquet"
+        },
+
+        'artifacts': {
+            "components_path": cfg["artifacts"]["components_path"],
         },
 
         'model': {

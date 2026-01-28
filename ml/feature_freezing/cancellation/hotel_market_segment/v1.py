@@ -3,6 +3,10 @@ import pandas as pd
 from pathlib import Path
 from sklearn.model_selection import train_test_split
 
+from ml.components.feature_engineering.TotalStay import TotalStay
+from ml.components.feature_engineering.AdrPerPerson import AdrPerPerson
+from ml.components.feature_engineering.ArrivalSeason import ArrivalSeason
+
 # Define function to save segment-specific features
 def save_segment(segment):
     # Configuration
@@ -71,12 +75,32 @@ def save_segment(segment):
     y_val.to_frame().to_parquet(feature_path / "y_val.parquet", index=False)
     y_test.to_frame().to_parquet(feature_path / "y_test.parquet", index=False)
     
-    # Save schema
-    schema = pd.DataFrame({
+    # Save raw schema
+    raw_schema = pd.DataFrame({
         "feature": X_train.columns,
-        "dtype": X_train.dtypes.astype(str)
+        "dtype": X_train.dtypes.astype(str),
+        "role": ["input" if not col == TARGET else "target" for col in X_train.columns],
     })
-    schema.to_csv(feature_path / "schema.csv", index=False)
+    raw_schema.to_csv(feature_path / "schema.csv", index=False)
+
+    # Save derived schema
+    X_sample = X_train.head(100)  # small sample to detect dtypes
+    operators = [TotalStay(), AdrPerPerson(), ArrivalSeason()]
+
+    derived_features = []
+
+    for op in operators:
+        X_sample = op.transform(X_sample)
+        for f in op.output_features:
+            derived_features.append({
+                "feature": f,
+                "dtype": str(X_sample[f].dtype),
+                "role": "derived",
+                "source_operator": op.__class__.__name__
+            })
+
+    derived_schema = pd.DataFrame(derived_features)
+    derived_schema.to_csv(feature_path / "derived_schema.csv", index=False)
 
     print(f"{SEGMENT_VALUE_1} - {SEGMENT_VALUE_2} cancellation features saved to {feature_path}")
 
