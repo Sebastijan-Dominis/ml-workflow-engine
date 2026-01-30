@@ -5,6 +5,9 @@ class ArrivalSeason(FeatureOperator, SklearnFeatureMixin):
     output_features = ["arrival_season"]
 
     def transform(self, X):
+        if not hasattr(self, "n_features_in_"):
+            self.fit(X)
+
         def week_to_season(w):
             if 10 <= w <= 21:
                 return "Spring"

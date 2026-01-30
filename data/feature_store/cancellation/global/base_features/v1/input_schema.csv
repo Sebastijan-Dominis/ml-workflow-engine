@@ -24,3 +24,4 @@ customer_type,category,input
 adr,float32,input
 required_car_parking_spaces,int8,input
 total_of_special_requests,int8,input
+arrival_datetime,datetime64[ns],input

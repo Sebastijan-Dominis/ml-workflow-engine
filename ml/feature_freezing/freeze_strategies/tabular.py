@@ -1,3 +1,4 @@
+import subprocess
 import yaml
 import pandas as pd
 import numpy as np
@@ -5,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 import hashlib
 import pyarrow as pa
-
+import pyarrow.parquet as pq
 from datetime import datetime
 from pathlib import Path
 from sklearn.model_selection import train_test_split
@@ -16,11 +17,84 @@ from ml.registry import FEATURE_OPERATORS
 from ml.logging_config import setup_logging
 
 class FreezeTabular:
-    def load_and_hash_data(self, path: Path) -> tuple[pd.DataFrame, str]:
-        with open(path, "rb") as f:
-            data_hash = hashlib.md5(f.read()).hexdigest()
+    def _safe(self, val) -> str:
+        return "None" if val is None else str(val)
 
-        data = pd.read_parquet(path)
+    def hash_parquet_metadata(self, path: Path) -> str:
+        pf = pq.ParquetFile(path)
+        meta = pf.metadata
+
+        h = hashlib.sha256()
+
+        for i in range(meta.num_columns):
+            col = meta.schema.column(i)
+            h.update(col.name.encode())
+            h.update(self._safe(col.physical_type).encode())
+            h.update(self._safe(col.logical_type).encode())
+
+        h.update(self._safe(meta.num_rows).encode())
+        h.update(self._safe(meta.created_by).encode())
+
+        for i in range(meta.num_row_groups):
+            rg = meta.row_group(i)
+            for j in range(rg.num_columns):
+                col = rg.column(j)
+                stats = col.statistics
+                if stats:
+                    h.update(self._safe(stats.min).encode())
+                    h.update(self._safe(stats.max).encode())
+                    h.update(self._safe(stats.null_count).encode())
+                    h.update(self._safe(stats.distinct_count).encode())
+
+        return h.hexdigest()
+
+    def hash_arrow_metadata(self, path: Path) -> str:
+        with pa.memory_map(path, 'r') as source:
+            reader = pa.ipc.open_file(source)
+            schema = reader.schema
+
+            h = hashlib.sha256()
+            for field in schema:
+                h.update(field.name.encode())
+                h.update(self._safe(field.type).encode())
+                h.update(self._safe(field.nullable).encode())
+
+            h.update(self._safe(reader.num_record_batches).encode())
+            return h.hexdigest()
+
+    def hash_streaming(self, path: Path, chunk_size=1024 * 1024) -> str:
+        h = hashlib.sha256()
+        with open(path, "rb") as f:
+            for chunk in iter(lambda: f.read(chunk_size), b""):
+                h.update(chunk)
+        return h.hexdigest()
+    
+    def load_and_hash_data(self, path: Path, format: str) -> tuple[pd.DataFrame, str]:
+        HASH_REGISTRY = {
+            "parquet": self.hash_parquet_metadata,
+            "arrow": self.hash_arrow_metadata,
+            "csv": self.hash_streaming,
+            "json": self.hash_streaming,
+        }
+
+        if format not in HASH_REGISTRY:
+            msg = f"Unsupported data format for loading and hashing: {format}"
+            logger.error(msg)
+            raise ValueError(msg)
+
+        data_hash = HASH_REGISTRY[format](path)
+
+        FORMAT_REGISTRY = {
+            "parquet": pd.read_parquet,
+            "csv": pd.read_csv,
+        }
+
+        if format not in FORMAT_REGISTRY:
+            msg = f"Unsupported data format for loading: {format}"
+            logger.error(msg)
+            raise ValueError(msg)
+        
+        data = FORMAT_REGISTRY[format](path)
         return data, data_hash
     
     def validate_operators(self, operators: list, operator_hash: str):
@@ -127,6 +201,20 @@ class FreezeTabular:
 
         return X, y
 
+    def add_arrival_datetime(self, df: pd.DataFrame) -> pd.DataFrame:
+        df['arrival_datetime'] = pd.to_datetime(
+            df['arrival_date_year'].astype(str) + '-' +
+            df['arrival_date_month'].astype(str) + '-' +
+            df['arrival_date_day_of_month'].astype(str)
+        )
+        return df
+
+    def apply_operators(self, X: pd.DataFrame, operator_names: list[str]) -> pd.DataFrame:
+        operators = [FEATURE_OPERATORS[name]() for name in operator_names]
+        for op in operators:
+            X = op.transform(X)
+        return X
+
     def validate_data_types(self, X: pd.DataFrame, y: pd.Series, config: dict):
         categorical_features = config["feature_roles"].get("categorical", [])
         numerical_features = config["feature_roles"].get("numerical", [])
@@ -219,7 +307,7 @@ class FreezeTabular:
         schema.to_csv(schema_path, index=False)
         logger.info(f"Input schema saved to {schema_path}")
     
-    def save_derived_schema(self, path: Path, X_train: pd.DataFrame, operator_names: list[str]):
+    def save_derived_schema(self, path: Path, X_train: pd.DataFrame, operator_names: list[str], mode: str):
         # Stop if derived schema already exists
         schema_path = path / "derived_schema.csv"
         if schema_path.exists():
@@ -238,7 +326,7 @@ class FreezeTabular:
                     "dtype": str(X_sample[f].dtype),
                     "role": "derived",
                     "source_operator": op.__class__.__name__,
-                    "materialized": f in X_train.columns,
+                    "materialized": mode == "materialized",
                 })
 
         derived_schema = pd.DataFrame(derived_features)
@@ -249,11 +337,20 @@ class FreezeTabular:
         config_str = yaml.dump(config, sort_keys=True)
         return hashlib.md5(config_str.encode('utf-8')).hexdigest()
     
-    def hash_schema(self, X: pd.DataFrame) -> str:
+    def hash_data_schema(self, X: pd.DataFrame) -> str:
         arr = pd.util.hash_pandas_object(X, index=True).to_numpy()
         return hashlib.md5(arr.tobytes()).hexdigest()
+    
+    def get_git_commit(self) -> str | None:
+        try:
+            return subprocess.check_output(
+                ["git", "rev-parse", "HEAD"],
+                stderr=subprocess.DEVNULL
+            ).decode("utf-8").strip()
+        except Exception:
+            return None
 
-    def create_metadata(self, snapshot_path: Path, schema_path: Path, data_hash: str, schema_hash: str, operators_hash: str, config_hash: str, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame) -> dict:
+    def create_metadata(self, snapshot_path: Path, schema_path: Path, data_hash: str, data_schema_hash: str, operators_hash: str, config_hash: str, git_commit: str | None, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame) -> dict:
         return {
             "created_by": "freeze.py",
             "created_at": datetime.now().isoformat(),
@@ -263,8 +360,10 @@ class FreezeTabular:
             "schema_path": str(schema_path),
 
             "data_hash": data_hash,
+            "data_schema_hash": data_schema_hash,
             "operators_hash": operators_hash,
             "config_hash": config_hash,
+            "git_commit": git_commit,
 
             "row_counts": {
                 "train": len(X_train),
@@ -277,15 +376,19 @@ class FreezeTabular:
     def freeze(self, context, config):
         setup_logging()
         
-        data, data_hash = self.load_and_hash_data(Path(config["data_path"]))
+        data, data_hash = self.load_and_hash_data(Path(config["data"]["path"]), config["data"]["format"])
         
-        self.validate_operators(config["operators"], config["operator_hash"])
+        self.validate_operators(config["operators"]["list"], config["operators"]["hash"])
         self.validate_include_exclude_columns(config)
 
         X, y = self.prepare_features(data, config)
+        X = self.add_arrival_datetime(X)
         self.validate_data_types(X, y, config)
         self.validate_target(y, config)
         self.validate_constraints(X, config)
+
+        if config["operators"]["mode"] == "materialized":
+            X = self.apply_operators(X, config["operators"]["list"])
 
         X_train_val, X_test, y_train_val, y_test = self.split_data(X, y, config, test_size=config["split"]["test_size"])
 
@@ -301,11 +404,12 @@ class FreezeTabular:
 
         self.save_input_schema(schema_path, X_train, config)
 
-        self.save_derived_schema(schema_path, X_train, config["operators"])
+        self.save_derived_schema(schema_path, X_train, config["operators"]["list"], config["operators"]["mode"])
 
         config_hash = self.hash_config(config)
-        schema_hash = self.hash_schema(X_train)
+        data_schema_hash = self.hash_data_schema(X_train)
+        git_commit = self.get_git_commit()
 
-        metadata = self.create_metadata(snapshot_path, schema_path, data_hash, schema_hash, config["operator_hash"], config_hash, X_train, X_val, X_test)
+        metadata = self.create_metadata(snapshot_path, schema_path, data_hash, data_schema_hash, config["operators"]["hash"], config_hash, git_commit, X_train, X_val, X_test)
 
         return snapshot_path, metadata

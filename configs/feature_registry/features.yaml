@@ -51,7 +51,9 @@ cancellation:
         type: tabular
         description: >
           Base tabular features for cancellation prediction, global segment.
-        data_path: data/hotel_booking_optimized.parquet
+        data:
+          path: data/hotel_booking_optimized.parquet
+          format: parquet
         target:
           name: is_canceled
           allowed_dtypes:
@@ -127,10 +129,12 @@ cancellation:
             - total_of_special_requests
           datetime: []
         operators:
-          - TotalStay
-          - AdrPerPerson
-          - ArrivalSeason
-        operator_hash: 128adb326301100b72edd51b97bca760
+          mode: logical
+          list:
+            - TotalStay
+            - AdrPerPerson
+            - ArrivalSeason
+          hash: d6cd1f81e8da613322ca8e58aa1fafbf
         split:
           strategy: random
           stratify_by: is_canceled

@@ -12,8 +12,8 @@ from ml.feature_freezing.context.context import FreezeContext
 from ml.feature_freezing.persistence.save_metadata import save_metadata
 
 STRATEGIES = {
-    "tabular": FreezeTabular(),
-    "prophet": FreezeTimeSeries(),
+    "tabular": FreezeTabular,
+    "time_series": FreezeTimeSeries,
 }
 
 def parse_args():
@@ -38,7 +38,7 @@ def freeze():
         msg = f"Unknown feature type: {config['type']}"
         logger.error(msg)
         raise ValueError(msg)
-    strategy = STRATEGIES[config["type"]]
+    strategy = STRATEGIES[config["type"]]()
 
     context = FreezeContext(
         problem=args.problem,
