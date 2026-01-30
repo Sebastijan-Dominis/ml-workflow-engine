@@ -1,0 +1,9 @@
+train_params:
+  random_strength: 5
+  min_data_in_leaf: 13
+  learning_rate: 0.2
+  l2_leaf_reg: 7
+  depth: 10
+  colsample_bylevel: 1.0
+  border_count: 32
+  bagging_temperature: 1.6

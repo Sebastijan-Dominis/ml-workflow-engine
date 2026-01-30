@@ -1,0 +1,6 @@
+{
+  "model_name": "cancellation_global_v1",
+  "task": "binary_classification",
+  "pipeline": "tabular_catboost_v1",
+  "trained_on": "2026-01-29"
+}

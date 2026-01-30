@@ -11,7 +11,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
 from pathlib import Path
 
-from ml.training.train_scripts.persistence import save_pipeline_and_metadata
+from ml.training.train_scripts.persistence import save_model_pipeline_and_metadata
 from ml.training.train_scripts.persistence.update_general_config import (
     update_general_config
 )
@@ -26,15 +26,15 @@ def test_save_pipeline_and_metadata_writes_files(tmp_path: Path, minimal_trainin
 
     # Arrange - redirect save paths to tmp
     monkeypatch.setattr(
-        save_pipeline_and_metadata, "model_dir", tmp_path / "models"
+        save_model_pipeline_and_metadata, "model_dir", tmp_path / "models"
     )
     monkeypatch.setattr(
-        save_pipeline_and_metadata, "metadata_dir", tmp_path / "metadata"
+        save_model_pipeline_and_metadata, "metadata_dir", tmp_path / "metadata"
     )
 
     pipeline = Pipeline([("model", DummyClassifier())])
 
-    save_pipeline_and_metadata.save_pipeline_and_metadata(
+    save_model_pipeline_and_metadata.save_pipeline_and_metadata(
         pipeline, minimal_training_cfg
     )
 

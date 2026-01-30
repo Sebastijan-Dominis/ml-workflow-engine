@@ -1,0 +1,166 @@
+adr_prophet:
+  # TODO: to be implemented
+  customer_type:
+  global:
+  hotel:
+  market_segment:
+adr_tree:
+  global:
+   base_features:
+     v1:
+      type: tabular
+      description: >
+        Base tabular features for ADR prediction, global segment, using decision tree models.
+      target:
+        name: adr
+        dtype: float
+        positive_class: null
+      columns:
+        include:
+        exclude:
+          leaky:
+          useless:
+      feature_roles:
+        categorical:
+        numerical:
+        datetime:
+      operators:
+      operator_hash:
+      split:
+        strategy:
+        stratify_by:
+        test_size:
+        val_size:
+        random_state:
+      constraints:
+        allow_nulls: true
+        max_cardinality:
+      storage:
+        format: parquet
+        compression: snappy
+      lineage:
+        source_dataset: hotel_bookings_optimized.parquet
+        feature_set_version: v1
+        created_by: Sebastijan
+        created_at: 2026-01-30
+  hotel_market_segment:
+cancellation:
+  global:
+    base_features:
+      v1:
+        type: tabular
+        description: >
+          Base tabular features for cancellation prediction, global segment.
+        data_path: data/hotel_booking_optimized.parquet
+        target:
+          name: is_canceled
+          allowed_dtypes:
+            - int64
+          positive_class: 1
+        columns:
+          include:
+            - hotel
+            - lead_time
+            - arrival_date_year
+            - arrival_date_month
+            - arrival_date_week_number
+            - arrival_date_day_of_month
+            - stays_in_weekend_nights
+            - stays_in_week_nights
+            - adults
+            - children
+            - babies
+            - meal
+            - country
+            - market_segment
+            - distribution_channel
+            - is_repeated_guest
+            - previous_cancellations
+            - previous_bookings_not_canceled
+            - deposit_type
+            - agent
+            - days_in_waiting_list
+            - customer_type
+            - adr
+            - required_car_parking_spaces
+            - total_of_special_requests
+          exclude:
+            leaky:
+              - reservation_status
+              - reservation_status_date
+              - assigned_room_type
+              - booking_changes
+              - name
+              - email
+              - phone-number
+              - credit_card
+              - company
+            useless:
+              - reserved_room_type
+        feature_roles:
+          categorical:
+            - hotel
+            - arrival_date_month
+            - meal
+            - country
+            - market_segment
+            - distribution_channel
+            - deposit_type
+            - agent
+            - customer_type
+          numerical:
+            - lead_time
+            - arrival_date_year
+            - arrival_date_week_number
+            - arrival_date_day_of_month
+            - stays_in_weekend_nights
+            - stays_in_week_nights
+            - adults
+            - children
+            - babies
+            - is_repeated_guest
+            - previous_cancellations
+            - previous_bookings_not_canceled
+            - days_in_waiting_list
+            - adr
+            - required_car_parking_spaces
+            - total_of_special_requests
+          datetime: []
+        operators:
+          - TotalStay
+          - AdrPerPerson
+          - ArrivalSeason
+        operator_hash: 128adb326301100b72edd51b97bca760
+        split:
+          strategy: random
+          stratify_by: is_canceled
+          test_size: 0.2
+          val_size: 0.12
+          random_state: 42
+        constraints:
+          forbid_nulls: []
+          max_cardinality: {}
+        storage:
+          format: parquet
+          compression: snappy
+        lineage:
+          source_dataset: hotel_bookings_optimized.parquet
+          feature_set_version: v1
+          created_by: Sebastijan
+          created_at: 2026-01-30
+  hotel_market_segment:
+lead_time_tree:
+  global:
+  hotel:
+no_show:
+  global:
+  hotel:
+repeated_guest:
+  global:
+  hotel:
+room_upgrade:
+  global:
+  hotel_customer_type:
+special_requests_tree:
+  global:
+  hotel_customer_type:

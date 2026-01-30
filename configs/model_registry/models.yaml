@@ -1,19 +1,15 @@
-cancellation_v1:
-  name: cancellation
-  version: v1
-  task: binary_classification
-  target: is_canceled
-  algorithm: catboost
-  features:
-    version: v1
-    path: data/features/cancellation/hotel_market_segment/city_hotel_online_ta_v1
-    schema: data/features/cancellation/hotel_market_segment/city_hotel_online_ta_v1schema.csv
-  artifacts:
-    model: ml/models/trained/cancellation_v1.joblib
-    metadata: ml/models/metadata/cancellation_v1.json
-    feature_importances: ml/models/explainability/cancellation_v1/feature_importances.csv
-    shap_importances: ml/models/explainability/cancellation_v1/shap_importances.csv
-  explainability:
-    feature_importance_method: PredictionValuesChange
-    shap_method: tree_explainer_mean_abs
-  threshold: 0.48
+cancellation_global_v1:
+  model_specs: configs/model_specs/cancellation/global/v1.yaml
+  runs:
+    cancellation_global_v1_run_20260129_163249:
+      run_id: cancellation_global_v1_run_20260129_163249
+      trained_on: '2026-01-29'
+      threshold: 0.51
+      artifacts:
+        model: ml\artifacts\cancellation\global\v1\cancellation_global_v1_run_20260129_163249\model.joblib
+        pipeline: ml\artifacts\cancellation\global\v1\cancellation_global_v1_run_20260129_163249\pipeline.joblib
+        metadata: ml\artifacts\cancellation\global\v1\cancellation_global_v1_run_20260129_163249\metadata.json
+        metrics: null
+        explainability: null
+  latest: cancellation_global_v1_run_20260129_163249
+  production: null

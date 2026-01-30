@@ -1,92 +1,90 @@
 """Utilities to update the project's global models registry.
 
 The training pipeline writes per-model metadata and artifacts. This
-module exposes ``update_general_config`` which merges the newly-trained
-model information into the central ``configs/models.yaml`` registry used
-by downstream consumers.
+module exposes ``update_general_config`` which appends a new immutable
+training run to the central ``configs/models.yaml`` registry and updates
+the `latest` pointer for downstream consumers.
 """
 
-# General imports
 import logging
-logger = logging.getLogger(__name__)
+from datetime import datetime
+from pathlib import Path
 import yaml
 
-from pathlib import Path
-
-# File-system constants
-from ml.training.train_scripts.persistence.constants import (
-    model_dir,
-    metadata_dir,
-    explainability_dir,
-)
+logger = logging.getLogger(__name__)
 
 
-def update_general_config(cfg: dict) -> None:
-    """Merge a trained model entry into ``configs/models.yaml``.
+def update_general_config(cfg: dict, best_threshold: float | None = None) -> str:
+    """Append a new training run to ``configs/model_registry/models.yaml``.
 
-    The function constructs a standardized entry for the newly-trained
-    model (paths to artifacts, explainability files, and feature metadata),
-    ensures required directories exist, and writes or updates the YAML
-    registry. Existing entries for the same model key are updated with a
-    warning logged.
+    Each training invocation creates a new immutable run entry. Historical
+    runs are never overwritten. A `latest` pointer is updated to reference
+    the newest run.
 
     Args:
         cfg (dict): Validated configuration dictionary describing the model.
+        best_threshold (float | None): The best threshold value for the model, if applicable.
+    Returns:
+        str: The generated run_id for downstream use (evaluation, explainability).
     """
 
-    model_key = f"{cfg['name']}_{cfg['version']}"
+    model_key = f"{cfg['problem']}_{cfg['segment']['name']}_{cfg['version']}"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    run_id = f"{model_key}_run_{timestamp}"
 
-    # Step 1 - Prepare general config structure
-    general_config = {
-        model_key: {
-            "name": cfg["name"],
-            "version": cfg["version"],
-            "task": cfg["task"],
-            "target": cfg["data"]["target"],
-            "algorithm": cfg["model"]["algorithm"],
-            "features": {
-                "version": cfg["data"]["features_version"],
-                "path": cfg["data"]["features_path"],
-                "schema": cfg["data"]["features_path"] + "schema.csv",
-            },
-            "artifacts": {
-                "model": f"{model_dir}/{cfg['name']}_{cfg['version']}.joblib",
-                "metadata": f"{metadata_dir}/{cfg['name']}_{cfg['version']}.json",
-                "feature_importances": f"{explainability_dir}/{cfg['name']}_{cfg['version']}/feature_importances.csv",
-                "shap_importances": f"{explainability_dir}/{cfg['name']}_{cfg['version']}/shap_importances.csv",
-            },
-            "explainability": {
-                "feature_importance_method": cfg["explainability"]["feature_importance_method"],
-                "shap_method": cfg["explainability"]["shap_method"],
-            },
-            "threshold": cfg["model"].get("threshold", 0.5),
-        }
+    artifact_path = Path(
+        f"ml/artifacts/{cfg['problem']}/{cfg['segment']['name']}/{cfg['version']}/{run_id}"
+    )
+    artifact_path.mkdir(parents=True, exist_ok=True)
+
+    trained_on = datetime.now().strftime("%Y-%m-%d")
+
+    # Immutable per-run entry
+    run_entry = {
+        "run_id": run_id,
+        "trained_on": trained_on,
+        "threshold": best_threshold,
+        "artifacts": {
+            "model": str(artifact_path / "model.joblib"),
+            "pipeline": str(artifact_path / "pipeline.joblib"),
+            "metadata": str(artifact_path / "metadata.json"),
+            # These are expected to be populated later
+            "metrics": None,
+            "explainability": None,
+        },
     }
 
-    # Step 2 - Ensure directories exist
-    Path(model_dir).mkdir(parents=True, exist_ok=True)
-    Path(f"{explainability_dir}/{cfg['name']}_{cfg['version']}").mkdir(parents=True, exist_ok=True)
-    Path(metadata_dir).mkdir(parents=True, exist_ok=True)
+    registry_path = Path("configs/model_registry/models.yaml")
+    registry_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Step 3 - Load existing general config
-    general_config_path = Path("configs/models.yaml")
-    general_config_path.parent.mkdir(parents=True, exist_ok=True)
-
-    if general_config_path.exists():
-        with open(general_config_path) as f:
-            existing = yaml.safe_load(f) or {}
+    if registry_path.exists():
+        with open(registry_path) as f:
+            registry = yaml.safe_load(f) or {}
     else:
-        existing = {}
+        registry = {}
 
-    # Step 4 - Warn if overwriting existing config
-    if model_key in existing:
-        logger.warning(f"Overwriting existing config for {model_key}")
+    # Initialize model entry if it doesn't exist
+    registry.setdefault(
+        model_key,
+        {
+            "model_specs": f"configs/model_specs/{cfg['problem']}/{cfg['segment']['name']}/{cfg['version']}.yaml",
+            "runs": {},
+            "latest": None,
+            "production": None,
+        },
+    )
 
-    # Step 5 - Update existing config with new model info
-    existing.setdefault(model_key, {}).update(general_config[model_key])
+    # Append new immutable run
+    registry[model_key]["runs"][run_id] = run_entry
+    registry[model_key]["latest"] = run_id
 
-    with open(general_config_path, "w") as f:
-        yaml.safe_dump(existing, f, sort_keys=False)
+    with open(registry_path, "w") as f:
+        yaml.safe_dump(registry, f, sort_keys=False)
 
-    # Step 6 - Log success message
-    logger.info(f"General config successfully updated with model {model_key}.")
+    logger.info(
+        "Registered new training run %s for model %s (set as latest)",
+        run_id,
+        model_key,
+    )
+
+    return run_id

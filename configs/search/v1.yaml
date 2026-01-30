@@ -7,4 +7,3 @@ narrow:
 cv: 3
 scoring: roc_auc
 random_state: 42
-search_script: catboost

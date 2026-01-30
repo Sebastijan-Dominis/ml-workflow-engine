@@ -1,6 +1,0 @@
-{
-  "model_name": "cancellation_v1",
-  "task": "binary_classification",
-  "trained_on": "2026-01-20",
-  "features_version": "v1"
-}

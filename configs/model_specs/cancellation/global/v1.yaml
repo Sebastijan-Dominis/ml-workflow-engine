@@ -1,16 +1,28 @@
-name: cancellation_global
-task: binary_classification
+problem: cancellation
+segment:
+  name: global
+  description: All bookings
 version: v1
+task: binary_classification
 target: is_canceled
 algorithm: catboost
-class: CatBoostClassifier
+model_class: CatBoostClassifier
 
 pipeline: tabular_catboost_v1
 
+seed: 42
+
 features:
-  features_path: data/features/cancellation/global/v1/
+  version: v1
+  path: data/features/cancellation/global/v1/
   raw_schema: schema.csv
   derived_schema: derived_schema.csv
+  X_train: X_train.parquet
+  X_val: X_val.parquet
+  X_test: X_test.parquet
+  y_train: y_train.parquet
+  y_val: y_val.parquet
+  y_test: y_test.parquet
 
 feature_engineering:
   enabled: true

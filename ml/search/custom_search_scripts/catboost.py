@@ -1,9 +1,11 @@
 import logging
 logger = logging.getLogger(__name__)
+from catboost import CatBoostClassifier, CatBoostRegressor
 import yaml
 from pathlib import Path
 
-from ml.search.utils import get_data, load_schemas, get_cat_features, search_best_params
+from ml.search.utils import load_train_data, search_best_params
+from ml.utils import get_cat_features, load_schemas
 from ml.pipelines.builders import build_pipeline
 from ml.registry import MODEL_REGISTRY
 
@@ -20,13 +22,13 @@ param_distributions_1 = {
 }
 
 def prepare_model(cfg_model_specs, cfg_search, search_phase, cat_features):
-    model = MODEL_REGISTRY[cfg_model_specs["class"]](
+    model = MODEL_REGISTRY[cfg_model_specs["model_class"]](
         # Basic hyperparameters
         iterations=cfg_search[search_phase]["iterations"],
         task_type='GPU',             # enable GPU
         devices='0',                 # GPU device
         verbose=100,                
-        random_state=42,
+        random_state=cfg_model_specs['seed'],
         cat_features=cat_features,
         class_weights=cfg_model_specs.get("class_weights", None)
     )
@@ -121,10 +123,12 @@ def prepare_narrow_search_params(best_params):
     return narrow_params
 
 def search_catboost(cfg_model_specs: dict, cfg_search: dict) -> dict:
-    features_path = Path(cfg_model_specs["features"]["features_path"])
+    features_path = Path(cfg_model_specs["features"]["path"])
+    X_train_file_name = cfg_model_specs["features"]["X_train"]
+    y_train_file_name = cfg_model_specs["features"]["y_train"]
 
-    raw_schema, derived_schema = load_schemas(features_path)
-    X_train, y_train = get_data(features_path)
+    raw_schema, derived_schema = load_schemas(features_path, logger)
+    X_train, y_train = load_train_data(features_path, X_train_file_name, y_train_file_name)
 
     pipeline_1 = build_pipeline(
         pipeline_cfg=yaml.safe_load(
@@ -137,6 +141,10 @@ def search_catboost(cfg_model_specs: dict, cfg_search: dict) -> dict:
     cat_features = get_cat_features(raw_schema, derived_schema)
 
     model_1 = prepare_model(cfg_model_specs, cfg_search, "broad", cat_features)
+
+    if not isinstance(model_1, CatBoostClassifier or CatBoostRegressor):
+        logger.error("Defined model is not a CatBoostClassifier or CatBoostRegressor instance.")
+        raise TypeError("Defined model is not a CatBoostClassifier or CatBoostRegressor instance.")
 
     pipeline_1.steps.append(("Model", model_1))
 

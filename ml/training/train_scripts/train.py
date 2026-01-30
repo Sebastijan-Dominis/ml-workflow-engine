@@ -16,106 +16,69 @@ The script expects a YAML config at ``ml/training/train_configs/{name_version}.y
 # General imports
 import logging
 logger = logging.getLogger(__name__)
-import sys
-import yaml
 import argparse
-
+import yaml
 from pathlib import Path
-from pydantic_core import ValidationError
+
+from ml.utils import load_model_specs, validate_model_specs
 
 # Specific training script imports
-from ml.training.train_scripts.custom_training_scripts.binary_classification_catboost import (
-    train_binary_classification_with_catboost
-)
-
-# Schema imports
-from ml.training.train_scripts.schemas.binary_classification_catboost_schemas import ConfigSchema as BinaryClassificationCatBoostConfigSchema
+from ml.training.train_scripts.custom_training_scripts.train_catboost import train_catboost
+from ml.training.train_scripts.utils import load_train_and_val_data
 
 # Persistence imports
-from ml.training.train_scripts.persistence.save_pipeline_and_metadata import (
-    save_pipeline_and_metadata
-)
+from ml.training.train_scripts.persistence.save_model import save_model
+from ml.training.train_scripts.persistence.save_pipeline import save_pipeline
+from ml.training.train_scripts.persistence.save_metadata import save_metadata
+from ml.training.train_scripts.persistence.update_general_config import update_general_config
 
-from ml.training.train_scripts.persistence.update_general_config import (
-    update_general_config
-)
+# from ml.training.train_scripts.persistence.update_general_config import (
+#     update_general_config
+# )
 
 # Logger import
 from ml.logging_config import setup_logging
 
 def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed arguments with attribute ``name_version``
-            containing the model name and version in the form ``name_version``
-            (for example, ``cancellation_global_v1``).
-    """
-
-    parser = argparse.ArgumentParser(description="Train a model.")
-
-    parser.add_argument(
-        "--name_version",
-        type=str,
-        required=True,
-        help="Model name and version in the format 'name_version', e.g., 'cancellation_global_v1'"
-    )
-
-    return parser.parse_args()
-
-def load_config(name_version: str) -> dict:   
-    """Load a YAML training configuration file.
-
-    Args:
-        name_version (str): Model identifier with version (``name_version``).
-
-    Returns:
-        dict: Raw configuration loaded from the YAML file.
-
-    Raises:
-        FileNotFoundError: If the expected config file does not exist.
-        yaml.YAMLError: If the YAML content cannot be parsed.
-    """
-
-    config_path = Path(f"ml/training/train_configs/{name_version}.yaml")
     try:
-        with open(config_path) as f:
-            cfg = yaml.safe_load(f)
+        parser = argparse.ArgumentParser(description="Train a model.")
+
+        parser.add_argument(
+            "--problem",
+            type=str,
+            required=True,
+            help="Model problem, e.g., 'no_show'"
+        )
+
+        parser.add_argument(
+            "--segment",
+            type=str,
+            required=True,
+            help="Model segment name, e.g., 'city_hotel_online_ta'"
+        )
+
+        parser.add_argument(
+            "--version",
+            type=str,
+            required=True,
+            help="Model version, e.g., 'v1'"
+        )
+
+        return parser.parse_args()
+        
     except Exception:
-        logger.exception(f"Failed to load configuration from {config_path}.")
+        logger.exception("Failed to parse arguments.")
         raise
 
-    return cfg
-
-def validate_config_schema(cfg_raw: dict) -> dict:
-    """Validate a raw configuration dict against the Pydantic schema.
-
-    Args:
-        cfg_raw (dict): The unvalidated configuration dictionary.
-
-    Returns:
-        dict: The validated configuration as a standard dictionary.
-
-    Side effects:
-        Logs validation errors and exits the process with status code 1 if
-        the provided configuration is invalid.
-    """
-
-    # Registry of available config validators
-    VALIDATORS = {
-        "binary_classification_catboost": BinaryClassificationCatBoostConfigSchema
-    }
-
-    key = f"{cfg_raw['task']}_{cfg_raw['model']['algorithm']}"
-
+def load_train_configs(problem, segment, version) -> dict:
+    config_path = Path(f"configs/train/{problem}/{segment}/{version}.yaml")
     try:
-        cfg = VALIDATORS[key](**cfg_raw).model_dump()
-        return cfg
-    except ValidationError as e:
-        logger.error("Config validation failed:")
-        for err in e.errors():
-            logger.error("Field %s: %s", ".".join(map(str, err['loc'])), err['msg'])
-        sys.exit(1)  # Stop execution if config is invalid
+        with open(config_path, 'r') as file:
+            config = yaml.safe_load(file)
+        return config
+    except Exception:
+        logger.exception(f"Failed to load training configuration from {config_path}.")
+        raise
 
 def main() -> None:
     """Entrypoint to run model training according to a YAML configuration.
@@ -125,7 +88,7 @@ def main() -> None:
     2. Parse CLI arguments to obtain the config file name.
     3. Load and validate the YAML configuration.
     4. Select the appropriate trainer implementation based on the
-       ``task`` and ``model.algorithm`` specified in the config.
+       ``task`` and ``model.model_class`` specified in the config.
     5. Execute training, persist the resulting pipeline and metadata,
        and update the global models registry.
 
@@ -137,30 +100,40 @@ def main() -> None:
 
     args = parse_args() # Parse command-line arguments
 
-    cfg_raw = load_config(args.name_version) # Load raw YAML config
+    cfg_model_specs_raw = load_model_specs(args.problem, args.segment, args.version, logger) # Load raw YAML config
 
-    cfg = validate_config_schema(cfg_raw) # Validate config schema
+    cfg_model_specs = validate_model_specs(cfg_model_specs_raw, logger) # Validate config schema
 
-    task = cfg["task"]
-    algorithm = cfg["model"]["algorithm"]
+    cfg_train = load_train_configs(args.problem, args.segment, args.version) # Load training-specific config
+    algorithm = cfg_model_specs["algorithm"]
 
     # Trainer registry: extend this dict when adding new tasks/algorithms
     TRAINERS = {
-        "binary_classification_catboost": train_binary_classification_with_catboost
+        "catboost": train_catboost
     }
 
-    key = f"{task}_{algorithm}"
+    key = algorithm.lower()
     trainer = TRAINERS.get(key)
 
     if trainer:
-        pipeline = trainer(args.name_version, cfg)
+        model, pipeline = trainer(cfg_model_specs, cfg_train) # Execute training
     else:
-        logger.error(f"No trainer found for task '{task}' and algorithm '{algorithm}'.")
-        raise ValueError(f"Unsupported task and algorithm: {task}_{algorithm}")
+        logger.error(f"No trainer found for algorithm '{algorithm}'.")
+        raise ValueError(f"Unsupported algorithm: {algorithm}")
     
-    save_pipeline_and_metadata(pipeline, cfg) # Persist pipeline and metadata
+    save_model(model, cfg_model_specs) # Persist model
+    save_pipeline(pipeline, cfg_model_specs) # Persist pipeline
+    save_metadata(cfg_model_specs) # Persist metadata
 
-    update_general_config(cfg) # Update global models registry
+    ALGORITHMS_SUPPORTING_THRESHOLDS = ["catboost"]
+    if algorithm.lower() in ALGORITHMS_SUPPORTING_THRESHOLDS:
+        from ml.training.train_scripts.utils import get_best_f1_thresh
+        X_train, y_train, X_val, y_val = load_train_and_val_data(cfg_model_specs)
+
+        best_threshold = get_best_f1_thresh(pipeline, X_val, y_val)
+        update_general_config(cfg_model_specs, best_threshold) # Update global models registry
+    else:
+        update_general_config(cfg_model_specs) # Update global models registry
 
 if __name__ == "__main__":
     main()

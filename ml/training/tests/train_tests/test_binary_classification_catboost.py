@@ -7,8 +7,8 @@ files are missing.
 
 import pytest
 
-from ml.training.train_scripts.custom_training_scripts.binary_classification_catboost import (
-    train_binary_classification_with_catboost
+from ml.training.train_scripts.custom_training_scripts.train_catboost import (
+    train_catboost
 )
 
 def cancellation_test_cfg(features_path: str) -> dict:

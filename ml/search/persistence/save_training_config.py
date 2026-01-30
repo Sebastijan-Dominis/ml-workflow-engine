@@ -3,72 +3,25 @@ logger = logging.getLogger(__name__)
 import yaml
 from pathlib import Path
 
-def prepare_config(cfg, best_params):
-    pipeline_steps = cfg['pipeline_steps']
-    validate_schema = pipeline_steps['validate_schema']
-    fill_categorical_missing = pipeline_steps['fill_categorical_missing']
-    feature_engineering = pipeline_steps['feature_engineering']
-    feature_selection = pipeline_steps['feature_selection']
-
-    task = cfg['task']
-
-    if task in ['binary_classification', 'regression']:
-        explainability = {
-            'feature_importance_method': 'PredictionValuesChange',
-            'shap_method': 'tree_explainer_mean_abs'
-        }
-    else:
-        explainability = {}
+def prepare_config(best_params):
+    # Strip leading "Model__" from keys if present
+    train_params = {
+        (k[len("Model__"): ] if k.startswith("Model__") else k): v
+        for k, v in best_params.items()
+    }
 
     training_config = {
-        'name': cfg['name'],
-        'task': task,
-        'version': cfg['version'],
-        "target": cfg["target"],
-
-        'features': {
-            "engineered_features": cfg["features"].get("engineered_features", []),
-            "engineered_categorical_features": cfg["features"].get("engineered_categorical_features", []),
-            "schema_path": cfg["features"]["schema_path"],
-            "features_path": cfg["features"]["features_path"],
-            "features_version": cfg["features"]["features_version"],
-            "train_file": "X_train.parquet",
-            "val_file": "X_val.parquet",
-            "test_file": "X_test.parquet",
-            "y_train": "y_train.parquet",
-            "y_val": "y_val.parquet",
-            "y_test": "y_test.parquet"
-        },
-
-        'artifacts': {
-            "components_path": cfg["artifacts"]["components_path"],
-        },
-
-        'model': {
-            'algorithm': cfg['algorithm'],
-            'params': {
-                **best_params,
-                **cfg["training_params"]
-            },
-            'class_weights': cfg.get("class_weights", None),
-        },
-
-        'pipeline': {
-            'validate_schema': validate_schema,
-            'fill_categorical_missing': fill_categorical_missing,
-            'feature_engineering': feature_engineering,
-            'feature_selection': feature_selection
-        },
-
-        'explainability': explainability
+        "train_params": {
+            **train_params
+        }
     }
 
     return training_config
 
-def save_training_config(cfg, best_params):
-    training_config = prepare_config(cfg, best_params)
+def save_training_config(cfg_model_specs, best_params):
+    training_config = prepare_config(best_params)
 
-    config_path = Path(f"ml/training/train_configs/{training_config['name']}_{training_config['version']}.yaml")
+    config_path = Path(f"configs/train/{cfg_model_specs['problem']}/{cfg_model_specs['segment']['name']}/{cfg_model_specs['version']}.yaml")
     config_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Warn if overwriting existing config
