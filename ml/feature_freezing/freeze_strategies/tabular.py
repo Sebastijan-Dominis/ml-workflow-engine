@@ -87,6 +87,8 @@ class FreezeTabular:
         FORMAT_REGISTRY = {
             "parquet": pd.read_parquet,
             "csv": pd.read_csv,
+            "json": pd.read_json,
+            "arrow": lambda p: pd.read_feather(p),
         }
 
         if format not in FORMAT_REGISTRY:
