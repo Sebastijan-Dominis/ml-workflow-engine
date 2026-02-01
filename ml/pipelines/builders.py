@@ -7,18 +7,18 @@ from ml.registry import PIPELINE_COMPONENTS, FEATURE_OPERATORS
 
 def build_pipeline(
     pipeline_cfg: dict,
-    raw_schema: pd.DataFrame,
+    input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame,
 ):
     steps = []
 
     # ---- schema-derived feature lists ----
-    raw_features = raw_schema["feature"].tolist()
+    raw_features = input_schema["feature"].tolist()
     derived_features = derived_schema["feature"].tolist()
     all_features = raw_features + derived_features
 
-    categorical_features = raw_schema.loc[
-        raw_schema["dtype"].isin(["object", "string", "category"]),
+    categorical_features = input_schema.loc[
+        input_schema["dtype"].isin(["object", "string", "category"]),
         "feature",
     ].tolist()
 

@@ -1,9 +1,0 @@
-broad:
-  iterations: 1
-  n_iter: 1
-narrow:
-  iterations: 1
-  n_iter: 1
-cv: 3
-scoring: roc_auc
-random_state: 42

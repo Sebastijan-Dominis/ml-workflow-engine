@@ -20,5 +20,6 @@ def setup_logging():
 
     logging.basicConfig(
         level=logging.INFO,
+        filename="logs/ml/feature_freezing/feature_freezing.log",
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )

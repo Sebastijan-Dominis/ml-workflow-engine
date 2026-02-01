@@ -19,5 +19,6 @@ def setup_logging():
 
     logging.basicConfig(
         level=logging.INFO,
+        filename="logs/ml/search/search.log",
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )

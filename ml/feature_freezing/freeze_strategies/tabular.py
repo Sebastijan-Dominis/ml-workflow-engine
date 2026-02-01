@@ -1,4 +1,3 @@
-import subprocess
 import yaml
 import pandas as pd
 import numpy as np
@@ -12,9 +11,8 @@ from pathlib import Path
 from sklearn.model_selection import train_test_split
 
 from ml.feature_freezing.utils import generate_operator_hash
+from ml.utils import get_git_commit
 from ml.registry import FEATURE_OPERATORS
-
-from ml.logging_config import setup_logging
 
 class FreezeTabular:
     def _safe(self, val) -> str:
@@ -99,6 +97,82 @@ class FreezeTabular:
         data = FORMAT_REGISTRY[format](path)
         return data, data_hash
     
+    def apply_segmentation(self, data: pd.DataFrame, config: dict) -> pd.DataFrame:
+        seg_cfg = config.get("segmentation", {})
+        
+        if not seg_cfg.get("enabled", False):
+            return data
+
+        df = data.copy()
+
+        OP_MAP = {
+            "eq": lambda s, v: s == v,
+            "neq": lambda s, v: s != v,
+            "in": lambda s, v: s.isin(v),
+            "not_in": lambda s, v: ~s.isin(v),
+            "gt": lambda s, v: s > v,
+            "gte": lambda s, v: s >= v,
+            "lt": lambda s, v: s < v,
+            "lte": lambda s, v: s <= v,
+        }
+
+        for f in seg_cfg.get("filters", []):
+            col = f["column"]
+            op = f["op"]
+            val = f["value"]
+
+            if op not in OP_MAP:
+                msg = f"Unsupported segmentation op: {op}"
+                logger.error(msg)
+                raise ValueError(msg)
+
+            if col not in df.columns:
+                msg = f"Segmentation column {col} not found in data."
+                logger.error(msg)
+                raise ValueError(msg)
+
+            values = val if isinstance(val, (list, tuple, set)) else [val]
+            for v in values:
+                if v not in df[col].unique():
+                    msg = f"Segmentation value {v} for column {col} not found in data."
+                    logger.error(msg)
+                    raise ValueError(msg)
+
+            df = df[OP_MAP[op](df[col], val)]
+
+        return df
+    
+    def validate_min_rows(self, data: pd.DataFrame, min_rows: int):
+        if not min_rows:
+            logger.warning("Minimum rows constraint not set.")
+        
+        logger.info(f"Validating minimum rows: data has {len(data)} rows, minimum required is {min_rows}.")
+        
+        if len(data) < min_rows:
+            msg = f"Data has {len(data)} rows, which is less than the minimum required {min_rows} rows."
+            logger.error(msg)
+            raise ValueError(msg)
+    
+    def validate_min_class_count(self, y: pd.Series, min_class_count: int):
+        if y.nunique() < 2:
+            msg = "Target variable must have at least two classes for classification."
+            logger.error(msg)
+            raise ValueError(msg)
+        
+        if not min_class_count:
+            logger.warning("Minimum class count constraint not set.")
+        
+        logger.info(f"Validating minimum class count: minimum required is {min_class_count}.")
+        
+        class_counts = y.value_counts()
+        for cls, count in class_counts.items():
+            if count < min_class_count:
+                msg = f"Class {cls} has {count} instances, which is less than the minimum required {min_class_count}."
+                logger.error(msg)
+                raise ValueError(msg)
+            else:
+                logger.info(f"Class {cls} has {count} instances, which meets the minimum required {min_class_count}.")
+
     def validate_operators(self, operators: list, operator_hash: str):
         for name in operators:
             if name not in FEATURE_OPERATORS:
@@ -165,6 +239,21 @@ class FreezeTabular:
             msg = f"Positive class {positive_class} not found in target variable."
             logger.error(msg)
             raise ValueError(msg)
+        
+        if config["task"] == "classification":
+            return  # No further checks for classification
+
+        target_constraints = config.get("target", {}).get("constraints", {})
+        min_val = target_constraints.get("min_value", None)
+        max_val = target_constraints.get("max_value", None)
+        if min_val is not None and y.min() < min_val:
+            msg = f"Target min {y.min()} < allowed min {min_val}"
+            logger.error(msg)
+            raise ValueError(msg)
+        if max_val is not None and y.max() > max_val:
+            msg = f"Target max {y.max()} > allowed max {max_val}"
+            logger.error(msg)
+            raise ValueError(msg)
             
     def validate_input_no_nulls(self, X: pd.DataFrame, config: dict):
         forbidden_nulls = config["constraints"].get("forbid_nulls", [])
@@ -204,6 +293,10 @@ class FreezeTabular:
         return X, y
 
     def add_arrival_datetime(self, df: pd.DataFrame) -> pd.DataFrame:
+        if not all(col in df.columns for col in ['arrival_date_year', 'arrival_date_month', 'arrival_date_day_of_month']):
+            logger.warning("Arrival date columns not found, skipping arrival_datetime creation.")
+            return df
+        
         df['arrival_datetime'] = pd.to_datetime(
             df['arrival_date_year'].astype(str) + '-' +
             df['arrival_date_month'].astype(str) + '-' +
@@ -293,11 +386,11 @@ class FreezeTabular:
 
         return path
 
-    def save_input_schema(self, path: Path, X_train: pd.DataFrame, config: dict):
+    def save_input_schema(self, path: Path, X_train: pd.DataFrame):
         # Stop if raw schema already exists
         schema_path = path / "input_schema.csv"
         if schema_path.exists():
-            logger.info(f"Input schema already exists at {schema_path}, skipping.")
+            logger.info(f"Input schema already exists at {schema_path}, skipping save.")
             return
 
         schema = pd.DataFrame({
@@ -342,18 +435,9 @@ class FreezeTabular:
     def hash_data_schema(self, X: pd.DataFrame) -> str:
         arr = pd.util.hash_pandas_object(X, index=True).to_numpy()
         return hashlib.md5(arr.tobytes()).hexdigest()
-    
-    def get_git_commit(self) -> str | None:
-        try:
-            return subprocess.check_output(
-                ["git", "rev-parse", "HEAD"],
-                stderr=subprocess.DEVNULL
-            ).decode("utf-8").strip()
-        except Exception:
-            return None
 
-    def create_metadata(self, snapshot_path: Path, schema_path: Path, data_hash: str, data_schema_hash: str, operators_hash: str, config_hash: str, git_commit: str | None, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame) -> dict:
-        return {
+    def create_metadata(self, snapshot_path: Path, schema_path: Path, data_hash: str, train_schema_hash: str, val_schema_hash: str, test_schema_hash: str, operators_hash: str, config_hash: str, git_commit: str | None, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.Series, y_val: pd.Series, y_test: pd.Series, task: str) -> dict:
+        metadata = {
             "created_by": "freeze.py",
             "created_at": datetime.now().isoformat(),
             "feature_type": "tabular",
@@ -362,7 +446,11 @@ class FreezeTabular:
             "schema_path": str(schema_path),
 
             "data_hash": data_hash,
-            "data_schema_hash": data_schema_hash,
+            "schema_hashes": {
+                "train": train_schema_hash,
+                "val": val_schema_hash,
+                "test": test_schema_hash,
+            },
             "operators_hash": operators_hash,
             "config_hash": config_hash,
             "git_commit": git_commit,
@@ -375,11 +463,23 @@ class FreezeTabular:
             "column_count": X_train.shape[1],
         }
 
+        if task == "classification":
+            metadata["class_counts"] = {
+                "train": y_train.value_counts().to_dict(),
+                "val": y_val.value_counts().to_dict(),
+                "test": y_test.value_counts().to_dict(),
+            }
+
+        return metadata
+
     def freeze(self, context, config):
-        setup_logging()
-        
         data, data_hash = self.load_and_hash_data(Path(config["data"]["path"]), config["data"]["format"])
         
+        data = self.apply_segmentation(data, config)
+        self.validate_min_rows(data, config.get("min_rows", 0))
+        if config.get("task", "classification") == "classification":
+            self.validate_min_class_count(data[config["target"]["name"]], config.get("min_class_count", 0))
+
         self.validate_operators(config["operators"]["list"], config["operators"]["hash"])
         self.validate_include_exclude_columns(config)
 
@@ -404,14 +504,16 @@ class FreezeTabular:
 
         schema_path = Path(f"data/feature_store/{context.problem}/{context.segment}/{context.feature_set}/{context.version}")
 
-        self.save_input_schema(schema_path, X_train, config)
+        self.save_input_schema(schema_path, X_train)
 
         self.save_derived_schema(schema_path, X_train, config["operators"]["list"], config["operators"]["mode"])
 
         config_hash = self.hash_config(config)
-        data_schema_hash = self.hash_data_schema(X_train)
-        git_commit = self.get_git_commit()
+        train_schema_hash = self.hash_data_schema(X_train)
+        val_schema_hash = self.hash_data_schema(X_val)
+        test_schema_hash = self.hash_data_schema(X_test)
+        git_commit = get_git_commit(Path("."))
 
-        metadata = self.create_metadata(snapshot_path, schema_path, data_hash, data_schema_hash, config["operators"]["hash"], config_hash, git_commit, X_train, X_val, X_test)
+        metadata = self.create_metadata(snapshot_path, schema_path, data_hash, train_schema_hash, val_schema_hash, test_schema_hash, config["operators"]["hash"], config_hash, git_commit, X_train, X_val, X_test, y_train, y_val, y_test, config["task"])
 
         return snapshot_path, metadata

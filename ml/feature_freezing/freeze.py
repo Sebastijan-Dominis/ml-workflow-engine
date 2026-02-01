@@ -9,6 +9,7 @@ from ml.feature_freezing.freeze_strategies.tabular import FreezeTabular
 from ml.feature_freezing.freeze_strategies.time_series import FreezeTimeSeries
 from ml.feature_freezing.context.context import FreezeContext
 
+from ml.feature_freezing.logging_config import setup_logging
 from ml.feature_freezing.persistence.save_metadata import save_metadata
 
 STRATEGIES = {
@@ -32,6 +33,7 @@ def load_feature_registry(problem, segment, feature_set, version) -> dict:
     return registry[problem][segment][feature_set][version]
 
 def freeze():
+    setup_logging()
     args = parse_args()
     config = load_feature_registry(args.problem, args.segment, args.feature_set, args.version)
     if config["type"] not in STRATEGIES:

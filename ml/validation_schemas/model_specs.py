@@ -14,24 +14,14 @@ class SegmentConfig(BaseModel):
     description: Optional[str] = None
 
 
-class FeaturesConfig(BaseModel):
-    """Data-related configuration values.
-
-    Attributes:
-        engineered_features: List of engineered feature column names.
-        engineered_categorical_features: List of engineered categorical feature column names.
-        raw_schema: Path to data schema file.
-        features_path: Path to directory containing feature parquet files.
-        features_version: Semantic version or identifier for feature set.
-        target: Name of the target column.
-        X_train, X_val, X_test: Filenames for feature tables.
-        y_train, y_val, y_test: Filenames for label tables.
-    """
-
+class FeatureSetConfig(BaseModel):
+    ref: str
+    name: str
     version: str
-    path: str
-    raw_schema: str
+    schema_format: str
+    input_schema: str
     derived_schema: str
+    data_format: str
     X_train: str
     X_val: str
     X_test: str
@@ -40,9 +30,9 @@ class FeaturesConfig(BaseModel):
     y_test: str
 
 
-class FeatureEngineeringConfig(BaseModel):
-    enabled: bool
-    operators: Optional[list[str]] = None
+class FeatureStoreConfig(BaseModel):
+    path: str
+    feature_sets: list[FeatureSetConfig]
 
 
 class ModelSpecsSchema(BaseModel):
@@ -56,7 +46,5 @@ class ModelSpecsSchema(BaseModel):
     algorithm: str
     model_class: str
     pipeline: str
-    seed: int
-    features: FeaturesConfig
-    feature_engineering: FeatureEngineeringConfig
-    search_version: str
+    feature_store: FeatureStoreConfig
+    data_type: Optional[str] = None
