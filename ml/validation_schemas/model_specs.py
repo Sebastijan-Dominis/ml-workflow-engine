@@ -1,18 +1,31 @@
-"""Pydantic schemas for binary classification CatBoost training configs.
-
-This module defines typed configuration models used to validate YAML
-training configuration files. Using Pydantic ensures the training code
-receives a well-structured dictionary with expected keys and types.
-"""
-
-from pydantic import BaseModel
-from typing import Optional
+import logging
+logger = logging.getLogger(__name__)
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, Dict, Any
+from pyparsing import Enum
 
 
 class SegmentConfig(BaseModel):
     name: str
     description: Optional[str] = None
 
+
+class TaskType(str, Enum):
+    classification = "classification"
+    regression = "regression"
+    ranking = "ranking"
+    time_series = "time_series"
+
+
+class TaskConfig(BaseModel):
+    type: TaskType
+    subtype: Optional[str] = None
+
+    @field_validator("type", mode="before")
+    def normalize_task_type(cls, v):
+        if isinstance(v, str):
+            return v.lower()
+        return v
 
 class FeatureSetConfig(BaseModel):
     ref: str
@@ -30,21 +43,57 @@ class FeatureSetConfig(BaseModel):
     y_test: str
 
 
+class AlgorithmConfig(str, Enum):
+    catboost = "catboost"
+    xgboost = "xgboost"
+    lightgbm = "lightgbm"
+    random_forest = "random_forest"
+    logistic_regression = "logistic_regression"
+    neural_network = "neural_network"
+    prophet = "prophet"
+
+
 class FeatureStoreConfig(BaseModel):
     path: str
     feature_sets: list[FeatureSetConfig]
 
 
-class ModelSpecsSchema(BaseModel):
-    """Root schema that represents the full training configuration."""
+class PipelineConfig(BaseModel):
+    version: str
+    path: str
 
+
+class ExplainabilityMethodConfig(BaseModel):
+    enabled: bool = True
+    params: Dict[str, Any] = Field(default_factory=dict)  # e.g., {"type": "PredictionValuesChange"}
+
+class ExplainabilityConfig(BaseModel):
+    enabled: bool = True
+    top_k: int = 20
+    methods: Dict[str, ExplainabilityMethodConfig] = Field(default_factory=lambda: {
+        "feature_importances": ExplainabilityMethodConfig(enabled=True, params={"type": "PredictionValuesChange"}),
+        "shap": ExplainabilityMethodConfig(enabled=True, params={"approximate": "tree"})
+    })
+
+    @field_validator("methods", mode="before")
+    def validate_methods(cls, v):
+        allowed = {"feature_importances", "shap"}
+        invalid = set(v.keys()) - allowed
+        if invalid:
+            msg = f"Unsupported explainability method(s): {', '.join(invalid)}"
+            logger.error(msg)
+            raise ValueError(msg)
+        return v
+
+class ModelSpecs(BaseModel):
     problem: str
     segment: SegmentConfig
     version: str
-    task: str
+    task: TaskConfig
     target: str
-    algorithm: str
+    algorithm: AlgorithmConfig
     model_class: str
-    pipeline: str
+    pipeline: PipelineConfig
     feature_store: FeatureStoreConfig
+    explainability: ExplainabilityConfig = Field(default_factory=ExplainabilityConfig)
     data_type: Optional[str] = None

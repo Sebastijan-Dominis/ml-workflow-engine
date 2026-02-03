@@ -48,7 +48,6 @@ cancellation:
     base_features:
       v1:
         type: tabular
-        task: classification
         description: >
           Base tabular features for cancellation prediction, global segment.
         data:
@@ -63,7 +62,10 @@ cancellation:
           name: is_canceled
           allowed_dtypes:
             - int64
-          positive_class: 1
+          problem_type: classification
+          classes:
+            count: 2
+            positive_class: 1
         columns:
           include:
             - hotel
@@ -153,7 +155,8 @@ cancellation:
           format: parquet
           compression: snappy
         lineage:
-          source_dataset: hotel_bookings_optimized.parquet
+          source_datasets: 
+            - hotel_bookings_optimized.parquet
           feature_set_version: v1
           created_by: Sebastijan
           created_at: 2026-01-31

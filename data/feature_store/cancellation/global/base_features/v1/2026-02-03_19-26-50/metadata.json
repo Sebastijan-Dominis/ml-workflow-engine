@@ -1,8 +1,8 @@
 {
     "created_by": "freeze.py",
-    "created_at": "2026-02-01T19:18:52.442309",
+    "created_at": "2026-02-03T19:26:50.290160",
     "feature_type": "tabular",
-    "snapshot_path": "data\\feature_store\\cancellation\\global\\base_features\\v1\\2026-02-01_19-18-52",
+    "snapshot_path": "data\\feature_store\\cancellation\\global\\base_features\\v1\\2026-02-03_19-26-50",
     "schema_path": "data\\feature_store\\cancellation\\global\\base_features\\v1",
     "data_hash": "c4fe37749637d0efd3cf69b171ca8fbcc8ace4917b003580caddaf2987637b20",
     "schema_hashes": {
@@ -11,8 +11,9 @@
         "test": "308d2c962c49a30ce205995166ab74c2"
     },
     "operators_hash": "d6cd1f81e8da613322ca8e58aa1fafbf",
-    "config_hash": "b13496a7ce4eb560534621e1da7b4b5b",
-    "git_commit": "6f95ebe05b95857dcb09a539e37650284d968f23",
+    "config_hash": "0ffb6af2f7b7b84db0719ea00acbd0a1",
+    "feature_set_hash": "ff094e480f88b98750ee5cd5aa6a5757c91dc81405360718df4fa0b0b9372943",
+    "git_commit": "334126adc3faed41e7f6512a7fd683729177eb3f",
     "row_counts": {
         "train": 81184,
         "val": 14327,

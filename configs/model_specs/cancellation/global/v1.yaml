@@ -3,12 +3,16 @@ segment:
   name: global
   description: All bookings
 version: v1
-task: binary_classification
+task: 
+  type: classification
+  subtype: binary
 target: is_canceled
 algorithm: catboost
 model_class: CatBoostClassifier
 
-pipeline: tabular_catboost_v1
+pipeline:
+  version: v1
+  path: configs/pipelines/tabular/catboost/v1.yaml
 
 feature_store:
   path: data/feature_store/
@@ -26,5 +30,18 @@ feature_store:
       y_train: y_train.parquet
       y_val: y_val.parquet
       y_test: y_test.parquet
+
+explainability:
+  enabled: true
+  top_k: 20
+  methods:
+    feature_importances:
+      enabled: true
+      params:
+        type: PredictionValuesChange
+    shap:
+      enabled: true
+      params:
+        approximate: tree
 
 data_type: tabular

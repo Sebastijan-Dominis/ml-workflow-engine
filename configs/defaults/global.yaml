@@ -1,14 +1,6 @@
+cv: 5
 seed: 42
+verbose: 100
 
 training:
   early_stopping_rounds: 100
-  verbose: 100
-
-cv:
-  folds: 5
-  shuffle: true
-
-logging:
-  level: INFO
-  log_to_file: true
-  log_file_path: logs/training.log

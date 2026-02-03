@@ -5,7 +5,7 @@ import pandas as pd
 import sklearn
 import json
 
-from ml.registry import FEATURE_OPERATORS
+from ml.registry.feature_operators import FEATURE_OPERATORS
 
 def generate_operator_hash(operator_names):
     operator_names = sorted(operator_names)

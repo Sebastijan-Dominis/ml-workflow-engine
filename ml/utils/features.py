@@ -90,9 +90,9 @@ def load_feature_set_schemas(features_path: Path) -> tuple[pd.DataFrame, pd.Data
         logger.exception(f"Failed to load schemas from {features_path}.")
         raise
 
-def load_schemas(model_specs: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
-    feature_store_path = Path(model_specs["feature_store"]["path"])
-    feature_sets = model_specs["feature_store"]["feature_sets"]
+def load_schemas(model_cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
+    feature_store_path = Path(model_cfg["feature_store"]["path"])
+    feature_sets = model_cfg["feature_store"]["feature_sets"]
 
     if not feature_sets:
         msg = "No feature sets defined in model specifications."
@@ -146,9 +146,9 @@ def load_feature_set_data(snapshot_path: Path, fs: dict, keys: list) -> tuple[pd
 
     return tuple(data)
 
-def load_X_and_y(model_specs: dict, keys: list[str]) -> tuple[pd.DataFrame, pd.Series]:
-    feature_store_path = Path(model_specs["feature_store"]["path"])
-    feature_sets = model_specs["feature_store"]["feature_sets"]
+def load_X_and_y(model_cfg: dict, keys: list[str]) -> tuple[pd.DataFrame, pd.Series]:
+    feature_store_path = Path(model_cfg["feature_store"]["path"])
+    feature_sets = model_cfg["feature_store"]["feature_sets"]
 
     if not feature_sets:
         msg = "No feature sets defined in model specifications."
@@ -191,3 +191,26 @@ def load_X_and_y(model_specs: dict, keys: list[str]) -> tuple[pd.DataFrame, pd.S
     X = combined_df.loc[:, ~combined_df.columns.duplicated()]
 
     return X, y
+
+def validate_model_feature_pipeline_contract(model_cfg: dict, pipeline_cfg: dict, cat_features: list | None = None) -> None:
+    pipeline_supported_tasks = []
+    if pipeline_cfg.get("assumptions", {}).get("supports_classification"):
+        pipeline_supported_tasks.append("classification")
+    if pipeline_cfg.get("assumptions", {}).get("supports_regression"):
+        pipeline_supported_tasks.append("regression")
+
+    if model_cfg["task"]["type"] not in pipeline_supported_tasks:
+        msg = f"Pipeline does not support the task type: {model_cfg['task']['type']}"
+        logger.error(msg)
+        raise ValueError(msg)
+    
+    if model_cfg["algorithm"] == "catboost":
+        if cat_features is None:
+            msg = "Categorical features must be provided for CatBoost models."
+            logger.error(msg)
+            raise ValueError(msg)
+        
+        if not pipeline_cfg.get("assumptions", {}).get("handles_categoricals", False):
+            msg = "Pipeline does not support categorical features required by CatBoost."
+            logger.error(msg)
+            raise ValueError(msg)

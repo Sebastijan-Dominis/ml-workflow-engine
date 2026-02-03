@@ -1,0 +1,17 @@
+name: tabular_catboost_v1
+version: v1
+description: >
+  A CatBoost pipeline for tabular data including schema validation, missing value
+  imputation for categorical features, feature engineering, feature selection, and an empty model step.
+
+steps:
+  - SchemaValidator
+  - FillCategoricalMissing
+  - FeatureEngineer
+  - FeatureSelector
+  - Model
+
+assumptions:
+  handles_categoricals: true
+  supports_regression: true
+  supports_classification: true

@@ -1,69 +1,67 @@
-# ml/pipelines/builders.py
+from typing import Dict
+import logging
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from ml.registry import PIPELINE_COMPONENTS, FEATURE_OPERATORS
+from ml.registry.pipeline_components import PIPELINE_COMPONENTS
+from ml.pipelines import schema_utils, operator_factory
 
+logger = logging.getLogger(__name__)
+__version__ = "1.0.0"
 
 def build_pipeline(
-    pipeline_cfg: dict,
+    pipeline_cfg: Dict,
     input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame,
-):
+) -> Pipeline:
+    """
+    Build an sklearn Pipeline from a config dictionary.
+
+    Args:
+        pipeline_cfg: dict with keys 'steps' and optional 'assumptions'.
+        input_schema: DataFrame with columns 'feature' and 'dtype' for raw inputs.
+        derived_schema: DataFrame with columns 'feature' and 'source_operator' for engineered features.
+
+    Returns:
+        sklearn.pipeline.Pipeline instance with configured steps.
+    """
     steps = []
 
     # ---- schema-derived feature lists ----
-    raw_features = input_schema["feature"].tolist()
-    derived_features = derived_schema["feature"].tolist()
-    all_features = raw_features + derived_features
+    raw_features, _, all_features = schema_utils.get_raw_and_derived_features(
+        input_schema, derived_schema
+    )
 
-    categorical_features = input_schema.loc[
-        input_schema["dtype"].isin(["object", "string", "category"]),
-        "feature",
-    ].tolist()
+    categorical_features = schema_utils.get_categorical_features(input_schema)
 
-    # derived categoricals
-    derived_categoricals = derived_schema.loc[
-        derived_schema["dtype"].isin(["object", "string", "category"]),
-        "feature",
-    ].tolist()
+    # ---- feature operators ----
+    operators = operator_factory.build_operators(derived_schema)
 
-    # ---- build steps ----
-    for step_name in pipeline_cfg["steps"]:
+    # ---- step handler mapping ----
+    STEP_HANDLERS = {
+        "SchemaValidator": lambda Component: Component(required_features=raw_features),
+        "FillCategoricalMissing": lambda Component: Component(categorical_features),
+        "FeatureEngineer": lambda Component: Component(
+            derived_schema=derived_schema,
+            operators=operators,
+        ),
+        "FeatureSelector": lambda Component: Component(selected_features=all_features),
+    }
+
+    # ---- build steps from config ----
+    for step_name in pipeline_cfg.get("steps", []):
+        if step_name == "Model":
+            logger.info("Skipping Model step; model should be injected later")
+            continue
+
+        if step_name not in PIPELINE_COMPONENTS:
+            msg = f"Unknown pipeline step: {step_name}"
+            logger.error(msg)
+            raise ValueError(msg)
+
         Component = PIPELINE_COMPONENTS[step_name]
-
-        if step_name == "SchemaValidator":
-            steps.append(
-                ("schema_validation", Component(required_features=raw_features))
-            )
-
-        elif step_name == "FillCategoricalMissing":
-            steps.append(
-                ("fill_categorical_missing", Component(categorical_features))
-            )
-
-        elif step_name == "FeatureEngineer":
-            operators = {
-                name: FEATURE_OPERATORS[name]()
-                for name in derived_schema["source_operator"].unique()
-            }
-            steps.append(
-                (
-                    "feature_engineering",
-                    Component(
-                        derived_schema=derived_schema,
-                        operators=operators,
-                    ),
-                )
-            )
-
-        elif step_name == "FeatureSelector":
-            steps.append(
-                ("feature_selection", Component(selected_features=all_features))
-            )
-
-        elif step_name == "Model":
-            # model is injected later
-            pass
+        step_instance = STEP_HANDLERS[step_name](Component)
+        steps.append((step_name.lower(), step_instance))
+        logger.debug(f"Added pipeline step: {step_name}")
 
     return Pipeline(steps)

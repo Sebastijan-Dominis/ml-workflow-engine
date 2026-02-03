@@ -24,12 +24,12 @@ from catboost import CatBoostClassifier, CatBoostRegressor
 
 # Project imports
 from ml.training.train_scripts.utils import load_train_and_val_data
-from ml.utils import load_schemas, get_cat_features
+from ml.utils.features import load_schemas, get_cat_features
 from ml.pipelines.builders import build_pipeline
-from ml.registry import MODEL_REGISTRY
+from ml.registry.model_classes import MODEL_CLASS_REGISTRY
 
 def prepare_model(cfg_model_specs, cfg_train, cat_features):
-    model = MODEL_REGISTRY[cfg_model_specs["model_class"]](
+    model = MODEL_CLASS_REGISTRY[cfg_model_specs["model_class"]](
         # Basic hyperparameters
         **cfg_train["train_params"],
         iterations=cfg_train["train_params"].get("iterations", 1), # Higher default for final training

@@ -1,7 +1,6 @@
-model_class: CatBoostClassifier
+cv: 3
 
-params:
-  loss_function: Logloss
+training:
   iterations: 1000
   learning_rate: 0.03
   depth: 6
@@ -10,5 +9,11 @@ params:
   bagging_temperature: 1.0
   border_count: 128
 
-hardware:
-  task_type: CPU
+  hardware:
+    task_type: CPU
+
+search:
+  hardware:
+    task_type: GPU
+    devices: [0]
+  n_jobs: -1

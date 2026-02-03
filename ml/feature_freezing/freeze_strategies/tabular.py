@@ -1,3 +1,4 @@
+# TODO: Modularize this file to separate concerns and make it more readable and maintainable.
 import yaml
 import pandas as pd
 import numpy as np
@@ -10,11 +11,12 @@ from datetime import datetime
 from pathlib import Path
 from sklearn.model_selection import train_test_split
 
+from ml.feature_freezing.freeze_strategies.base import FreezeStrategy
 from ml.feature_freezing.utils import generate_operator_hash
-from ml.utils import get_git_commit
-from ml.registry import FEATURE_OPERATORS
+from ml.utils.utils import get_git_commit
+from ml.registry.feature_operators import FEATURE_OPERATORS
 
-class FreezeTabular:
+class FreezeTabular(FreezeStrategy):
     def _safe(self, val) -> str:
         return "None" if val is None else str(val)
 
@@ -234,13 +236,13 @@ class FreezeTabular:
             logger.error(msg)
             raise ValueError(msg)
         
-        positive_class = config["target"].get("positive_class", None)
+        positive_class = config["target"].get("classes", {}).get("positive_class", None)
         if positive_class is not None and positive_class not in y.unique():
             msg = f"Positive class {positive_class} not found in target variable."
             logger.error(msg)
             raise ValueError(msg)
         
-        if config["task"] == "classification":
+        if config["target"]["problem_type"] == "classification":
             return  # No further checks for classification
 
         target_constraints = config.get("target", {}).get("constraints", {})
@@ -436,7 +438,21 @@ class FreezeTabular:
         arr = pd.util.hash_pandas_object(X, index=True).to_numpy()
         return hashlib.md5(arr.tobytes()).hexdigest()
 
-    def create_metadata(self, snapshot_path: Path, schema_path: Path, data_hash: str, train_schema_hash: str, val_schema_hash: str, test_schema_hash: str, operators_hash: str, config_hash: str, git_commit: str | None, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.Series, y_val: pd.Series, y_test: pd.Series, task: str) -> dict:
+    def hash_feature_set(self, X: pd.DataFrame) -> str:
+        h = hashlib.sha256()
+        for col in X.columns:
+            h.update(col.encode())
+            h.update(str(X[col].dtype).encode())
+        return h.hexdigest()
+    
+    def validate_feature_set_hashes_match(self, X: pd.DataFrame, expected_hash: str):
+        actual_hash = self.hash_feature_set(X)
+        if actual_hash != expected_hash:
+            msg = f"Feature set hash mismatch: expected {expected_hash}, got {actual_hash}"
+            logger.error(msg)
+            raise ValueError(msg)
+
+    def create_metadata(self, snapshot_path: Path, schema_path: Path, data_hash: str, train_schema_hash: str, val_schema_hash: str, test_schema_hash: str, operators_hash: str, config_hash: str, feature_set_hash: str, git_commit: str | None, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.Series, y_val: pd.Series, y_test: pd.Series, task: str) -> dict:
         metadata = {
             "created_by": "freeze.py",
             "created_at": datetime.now().isoformat(),
@@ -453,6 +469,7 @@ class FreezeTabular:
             },
             "operators_hash": operators_hash,
             "config_hash": config_hash,
+            "feature_set_hash": feature_set_hash,
             "git_commit": git_commit,
 
             "row_counts": {
@@ -512,8 +529,13 @@ class FreezeTabular:
         train_schema_hash = self.hash_data_schema(X_train)
         val_schema_hash = self.hash_data_schema(X_val)
         test_schema_hash = self.hash_data_schema(X_test)
+
+        feature_set_hash = self.hash_feature_set(X_train)
+        self.validate_feature_set_hashes_match(X_val, feature_set_hash)
+        self.validate_feature_set_hashes_match(X_test, feature_set_hash)
+        
         git_commit = get_git_commit(Path("."))
 
-        metadata = self.create_metadata(snapshot_path, schema_path, data_hash, train_schema_hash, val_schema_hash, test_schema_hash, config["operators"]["hash"], config_hash, git_commit, X_train, X_val, X_test, y_train, y_val, y_test, config["task"])
+        metadata = self.create_metadata(snapshot_path, schema_path, data_hash, train_schema_hash, val_schema_hash, test_schema_hash, config["operators"]["hash"], config_hash, feature_set_hash, git_commit, X_train, X_val, X_test, y_train, y_val, y_test, config["target"]["problem_type"])
 
         return snapshot_path, metadata

@@ -1,21 +1,26 @@
 import logging
-
 logger = logging.getLogger(__name__)
 import sys
-import yaml
 import argparse
-from pydantic_core import ValidationError
 from pathlib import Path
+from typing import Any, Protocol
+from pydantic import ValidationError
 
 from ml.search.logging_config import setup_logging
-from ml.utils import load_model_specs, validate_model_specs
-from ml.validation_schemas.search import SearchConfig
+from ml.utils.utils import load_and_validate_config
 from ml.search.persistence.save_experiment import save_experiment
-from ml.search.searchers.catboost import SearchCatboost
+from ml.registry.search_registry import SEARCH_REGISTRY
 
-SEARCH_REGISTRY = {
-    "catboost": SearchCatboost,
-}
+class Searcher(Protocol):
+    """
+    Searcher interface.
+
+    Returns:
+        dict with keys:
+        - best_params
+        - phases
+    """
+    def search(self, model_cfg: dict[str, Any]) -> dict[str, Any]: ...
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Search for best hyperparameters and save training configuration.")
@@ -41,50 +46,29 @@ def parse_args() -> argparse.Namespace:
         help="Model version, e.g., 'v1'"
     )
 
+    parser.add_argument(
+        "--env",
+        type=str,
+        default="default",
+        help="Environment to run the script in (dev/test/prod) (default: default) ~ none"
+    )
+
+    parser.add_argument(
+        "--owner",
+        type=str,
+        default="Sebastijan",
+        help="Owner of the experiment (default: Sebastijan)"
+    )
+
     return parser.parse_args()
 
-def load_search_configs(problem, segment, version) -> dict:
-    config_path = Path(f"configs/search/{problem}/{segment}/{version}.yaml")
-    try:
-        with open(config_path, 'r') as file:
-            config = yaml.safe_load(file)
-        return config
-    except Exception:
-        logger.exception(f"Failed to load search configuration from {config_path}.")
-        raise
-
-def validate_search_config(cfg_raw: dict) -> dict:
-    try:
-        cfg = SearchConfig(**cfg_raw).model_dump()
-        return cfg
-    except ValidationError as e:
-        logger.error("Config validation failed:")
-        for err in e.errors():
-            logger.error("Field %s: %s", ".".join(map(str, err['loc'])), err['msg'])
-        raise
-
-def main() -> int:
-    """Main function to perform hyperparameter search and save training configuration."""
-    
-    setup_logging()
-
-    try:
-        args = parse_args()
-
-        model_specs_raw = load_model_specs(args.problem, args.segment, args.version)
-
-        model_specs = validate_model_specs(model_specs_raw)
-
-        search_configs_raw = load_search_configs(args.problem, args.segment, args.version)
-
-        search_configs = validate_search_config(search_configs_raw)
-
-        key = model_specs["algorithm"].lower()
+def get_searcher(model_cfg: dict[str, Any]) -> Searcher:
+        key = model_cfg["algorithm"].value.lower()
 
         searcher_cls = SEARCH_REGISTRY.get(key)
 
         if not searcher_cls:
-            msg = f"No searcher registered for algorithm {model_specs['algorithm']}."
+            msg = f"No searcher registered for algorithm {model_cfg['algorithm']}."
             logger.error(msg)
             raise ValueError(msg)
 
@@ -93,13 +77,32 @@ def main() -> int:
         logger.info(
             "Using searcher %s for algorithm=%s",
             searcher_cls.__name__,
-            model_specs["algorithm"],
+            model_cfg["algorithm"].value,
         )
 
+        return searcher
 
-        search_results = searcher.search(model_specs, search_configs)
+def main() -> int:
+    """Main function to perform hyperparameter search and save training configuration."""
+    args: argparse.Namespace
+    model_cfg: dict[str, Any]
+    searcher: Searcher
+    search_results: dict[str, Any]
+    
+    setup_logging()
 
-        save_experiment(model_specs, search_configs, search_results)
+    try:
+        args = parse_args()
+
+        model_cfg = load_and_validate_config(Path(f"configs/search/{args.problem}/{args.segment}/{args.version}.yaml"), cfg_type="search", env=args.env)
+
+        logger.info("Using config: %s, environment: %s", model_cfg["_meta"].get("sources", {}).get("main"), model_cfg["_meta"].get("env"))
+
+        searcher = get_searcher(model_cfg)
+
+        search_results = searcher.search(model_cfg)
+
+        save_experiment(model_cfg, search_results, args.owner)
 
         logger.info(
             "Search completed | problem=%s segment=%s version=%s",
@@ -110,6 +113,11 @@ def main() -> int:
 
         return 0
     
+    except (ValidationError, FileNotFoundError) as e:
+        logger.error("Configuration error: %s", e)
+        logger.error("Fix the configuration and try again.")
+        return 2
+
     except Exception as e:
         logger.exception("An error occurred during hyperparameter search or configuration saving.")
         return 1
