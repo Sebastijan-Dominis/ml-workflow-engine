@@ -1,11 +1,12 @@
 import logging
 logger = logging.getLogger(__name__)
+from ml.exceptions import ConfigError
 
 def refine_int(center, offsets, low, high):
     if not isinstance(center, int):
         msg = f"Expected integer center value, got {center} of type {type(center)}"
         logger.error(msg)
-        raise TypeError(msg)
+        raise ConfigError(msg)
 
     values = {center}
     for o in offsets:
@@ -17,7 +18,7 @@ def refine_float_mult(center, factors, low, high, decimals=5):
     if not isinstance(center, (float, int)):
         msg = f"Expected numeric center value, got {center} of type {type(center)}"
         logger.error(msg)
-        raise TypeError(msg)
+        raise ConfigError(msg)
     
     values = set()
     for f in factors:
@@ -41,4 +42,4 @@ def refine_border_count(center):
     else:
         msg = f"border_count value {center} is not in allowed options {options}"
         logger.error(msg)
-        raise ValueError(msg)
+        raise ConfigError(msg)

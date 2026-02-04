@@ -7,8 +7,8 @@ feature freezing runs and utilities.
 """
 
 import logging
-
-
+from pathlib import Path
+# TODO: consider dynamically assigning the log file name and level
 def setup_logging():
     """Configure the Python logging subsystem with a standard format.
 
@@ -17,7 +17,9 @@ def setup_logging():
     and log level. It is intentionally minimal to avoid interfering with
     downstream applications that may reconfigure logging.
     """
-
+    
+    Path("logs/ml/feature_freezing").mkdir(parents=True, exist_ok=True)
+    
     logging.basicConfig(
         level=logging.INFO,
         filename="logs/ml/feature_freezing/feature_freezing.log",

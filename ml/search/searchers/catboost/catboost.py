@@ -15,6 +15,10 @@ from ml.search.searchers.catboost.model import (
 from ml.search.params.common import flatten_search_params
 from ml.search.params.catboost.refinement import prepare_narrow_params
 from ml.search.params.catboost.validation import validate_param_value
+from ml.exceptions import (
+    ConfigError,
+    SearchError,
+)
 
 class SearchCatboost(BaseSearcher):
     def search(self, model_cfg: dict[str, Any]) -> dict[str, Any]:
@@ -47,7 +51,7 @@ class SearchCatboost(BaseSearcher):
         if not broad_param_distributions_raw:
             msg = f"No broad search param_distributions defined in the model config for problem={model_cfg['problem']} segment={model_cfg['segment']['name']} version={model_cfg['version']}."
             logger.error(msg)
-            raise ValueError(msg)
+            raise ConfigError(msg)
 
         broad_param_distributions = flatten_search_params(broad_param_distributions_raw)
 
@@ -56,14 +60,19 @@ class SearchCatboost(BaseSearcher):
 
         logger.debug("Broad search param combinations: %d", np.prod([len(v) for v in broad_param_distributions.values()]))
 
-        broad_result = perform_randomized_search(
-            pipeline_1,
-            X_train,
-            y_train,
-            broad_param_distributions,
-            model_cfg,
-            search_type="broad"
-        )
+        try:
+            broad_result = perform_randomized_search(
+                pipeline_1,
+                X_train,
+                y_train,
+                broad_param_distributions,
+                model_cfg,
+                search_type="broad"
+            )
+        except Exception as e:
+            msg = f"Broad hyperparameter search failed for problem={model_cfg['problem']} segment={model_cfg['segment']['name']} version={model_cfg['version']}: {e}"
+            logger.error(msg)
+            raise SearchError(msg) from e
 
         best_params_1 = broad_result["best_params"]
 
@@ -80,7 +89,7 @@ class SearchCatboost(BaseSearcher):
         if not narrow_param_cfg:
             msg = f"No narrow search param_configurations defined in the model config for problem={model_cfg['problem']} segment={model_cfg['segment']['name']} version={model_cfg['version']}."
             logger.error(msg)
-            raise ValueError(msg)
+            raise ConfigError(msg)
 
         narrow_param_distributions = prepare_narrow_params(best_params_1, narrow_param_cfg, model_cfg["search"]["hardware"]["task_type"].value)
 
@@ -103,14 +112,19 @@ class SearchCatboost(BaseSearcher):
 
         logger.debug("Narrow search param combinations: %d", np.prod([len(v) for v in narrow_param_distributions.values()]))
 
-        narrow_result = perform_randomized_search(
-            pipeline_2,
-            X_train,
-            y_train,
-            narrow_param_distributions,
-            model_cfg,
-            search_type="narrow"
-        )
+        try:
+            narrow_result = perform_randomized_search(
+                pipeline_2,
+                X_train,
+                y_train,
+                narrow_param_distributions,
+                model_cfg,
+                search_type="narrow"
+            )
+        except Exception as e:
+            msg = f"Narrow hyperparameter search failed for problem={model_cfg['problem']} segment={model_cfg['segment']['name']} version={model_cfg['version']}: {e}"
+            logger.error(msg)
+            raise SearchError(msg) from e
 
         best_params = narrow_result["best_params"]
         

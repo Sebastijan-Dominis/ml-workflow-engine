@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline
 
 from ml.pipelines.builders import build_pipeline
 from ml.registry.model_classes import MODEL_CLASS_REGISTRY
+from ml.exceptions import PipelineContractError
 
 def prepare_model(model_cfg, search_phase, cat_features):
     model = MODEL_CLASS_REGISTRY[model_cfg["model_class"]](
@@ -32,7 +33,7 @@ def build_pipeline_with_model(pipeline_cfg, input_schema, derived_schema, model)
     if not isinstance(model, (CatBoostClassifier, CatBoostRegressor)):
         msg = "Defined model is not a CatBoostClassifier or CatBoostRegressor instance."
         logger.error(msg)
-        raise TypeError(msg)
+        raise PipelineContractError(msg)
 
     pipeline = add_model_to_pipeline(pipeline, model)
     logger.debug("Model added to pipeline successfully.")

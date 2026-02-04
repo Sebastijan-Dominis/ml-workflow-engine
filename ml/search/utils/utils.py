@@ -15,27 +15,19 @@ def perform_randomized_search(pipeline, X_train, y_train, param_distributions, m
     logger.info("Using CV type: %s", cv if isinstance(cv, int) else cv.__class__.__name__)
     logger.info("n_jobs set to: %d", n_jobs)
 
-    try:
-        search = RandomizedSearchCV(
-            estimator=pipeline,
-            param_distributions=param_distributions,
-            n_iter=n_iter,
-            cv=cv,
-            scoring=scoring,
-            verbose=verbose,
-            n_jobs=n_jobs,
-            random_state=random_state,
-            error_score=error_score
-        )
-    except Exception:
-        logger.exception("Failed to initialize RandomizedSearchCV.")
-        raise
+    search = RandomizedSearchCV(
+        estimator=pipeline,
+        param_distributions=param_distributions,
+        n_iter=n_iter,
+        cv=cv,
+        scoring=scoring,
+        verbose=verbose,
+        n_jobs=n_jobs,
+        random_state=random_state,
+        error_score=error_score
+    )
 
-    try:
-        search.fit(X_train, y_train)
-    except Exception:
-        logger.exception("Failed to fit RandomizedSearchCV.")
-        raise
+    search.fit(X_train, y_train)
 
     return {
         "best_params": search.best_params_,

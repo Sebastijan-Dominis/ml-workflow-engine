@@ -4,12 +4,13 @@ import sys
 import argparse
 from pathlib import Path
 from typing import Any, Protocol
-from pydantic import ValidationError
 
 from ml.search.logging_config import setup_logging
-from ml.utils.utils import load_and_validate_config
+from ml.config.loader import load_and_validate_config
 from ml.search.persistence.save_experiment import save_experiment
 from ml.registry.search_registry import SEARCH_REGISTRY
+from ml.cli.error_handling import resolve_exit_code
+from ml.exceptions import UserError, PipelineContractError
 
 class Searcher(Protocol):
     """
@@ -70,7 +71,7 @@ def get_searcher(model_cfg: dict[str, Any]) -> Searcher:
         if not searcher_cls:
             msg = f"No searcher registered for algorithm {model_cfg['algorithm']}."
             logger.error(msg)
-            raise ValueError(msg)
+            raise PipelineContractError(msg)
 
         searcher = searcher_cls()
 
@@ -113,14 +114,17 @@ def main() -> int:
 
         return 0
     
-    except (ValidationError, FileNotFoundError) as e:
-        logger.error("Configuration error: %s", e)
-        logger.error("Fix the configuration and try again.")
-        return 2
-
     except Exception as e:
-        logger.exception("An error occurred during hyperparameter search or configuration saving.")
-        return 1
+        exit_code = resolve_exit_code(e)
+
+        if isinstance(e, UserError):
+            logger.error("%s", e)
+        else:
+            logger.exception(
+                "An error occurred during hyperparameter search or configuration saving."
+            )
+
+        return exit_code
 
 if __name__ == "__main__":
     sys.exit(main())

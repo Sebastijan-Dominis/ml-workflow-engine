@@ -6,7 +6,8 @@ from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
-from ml.utils.utils import get_git_commit
+from ml.utils.git import get_git_commit
+from ml.exceptions import PersistenceError
 
 EXPERIMENTS_DIR = Path("experiments")
 EXPERIMENTS_DIR.mkdir(exist_ok=True)
@@ -70,6 +71,6 @@ def save_experiment(model_cfg: dict, search_results: dict, owner: str) -> Path:
         logger.info("Saved hyperparameter search experiment to %s", exp_path)
     except Exception:
         logger.exception("Failed to save experiment to %s", exp_path)
-        raise
+        raise PersistenceError(f"Failed to save experiment to {exp_path}")
 
     return exp_path

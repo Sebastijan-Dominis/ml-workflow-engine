@@ -2,16 +2,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 import pandas as pd
+import numpy as np
 import json
 import hashlib
 from datetime import datetime
 from pathlib import Path
+from ml.exceptions import DataError, PipelineContractError
 
 def validate_feature_set(snapshot_path: Path, metadata: dict) -> None:
     if not metadata["data_hash"]:
         msg = f"Invalid or missing data hash in metadata at {snapshot_path}"
         logger.error(msg)
-        raise ValueError(msg)
+        raise DataError(msg)
 
 def validate_set(hash_type: str, hashes: set, feature_sets: list) -> None:
     if len(hashes) != 1:
@@ -19,10 +21,46 @@ def validate_set(hash_type: str, hashes: set, feature_sets: list) -> None:
             [f"{feature_sets[i]['name']} (version: {feature_sets[i]['version']})" for i in range(len(feature_sets))]
         )
         logger.error(msg)
-        raise ValueError(msg)
+        raise DataError(msg)
 
 def hash_y(y) -> str:
-    return hashlib.sha256(y.to_numpy().tobytes()).hexdigest()
+    if isinstance(y, pd.DataFrame):
+        if y.shape[1] != 1:
+            msg = f"hash_y only supports Series or single-column DataFrame, got {y.shape[1]} columns"
+            logger.error(msg)
+            raise DataError(msg)
+        y = y.iloc[:, 0]
+
+    if not isinstance(y, pd.Series):
+        msg = f"hash_y expects a pandas Series or single-column DataFrame, got {type(y)}"
+        logger.error(msg)
+        raise DataError(msg)
+
+    h = hashlib.sha256()
+
+    # Numeric types
+    if pd.api.types.is_numeric_dtype(y):
+        # Use numpy array of floats to handle nullable dtypes safely
+        arr = y.to_numpy(dtype="float64", copy=False)
+        h.update(arr.tobytes())
+
+    # Categorical types
+    elif isinstance(y.dtype, pd.CategoricalDtype):
+        h.update(y.cat.codes.to_numpy(dtype="int32", copy=False).tobytes())
+        cat_bytes = b''.join(c.encode('utf-8') for c in y.cat.categories.astype(str))
+        h.update(cat_bytes)
+
+    # String/Object types
+    elif pd.api.types.is_string_dtype(y) or pd.api.types.is_object_dtype(y):
+        for val in y:
+            h.update(str(val).encode('utf-8'))
+
+    else:
+        msg = f"Unsupported dtype for hashing: {y.dtype}"
+        logger.error(msg)
+        raise DataError(msg)
+
+    return h.hexdigest()
 
 def aggregate_schema_dfs(schemas: list[pd.DataFrame]) -> pd.DataFrame:
     if not schemas:
@@ -35,7 +73,7 @@ def aggregate_schema_dfs(schemas: list[pd.DataFrame]) -> pd.DataFrame:
         if "feature" not in schema_df.columns:
             msg = "Schema must contain a 'feature' column"
             logger.error(msg)
-            raise ValueError(msg)
+            raise DataError(msg)
 
         for _, row in schema_df.iterrows():
             feature = row["feature"]
@@ -97,7 +135,7 @@ def load_schemas(model_cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
     if not feature_sets:
         msg = "No feature sets defined in model specifications."
         logger.error(msg)
-        raise ValueError(msg)
+        raise DataError(msg)
 
     input_schemas = []
     derived_schemas = []
@@ -133,7 +171,7 @@ def load_feature_set_data(snapshot_path: Path, fs: dict, keys: list) -> tuple[pd
     if not reader:
         msg = f"Unsupported feature set format: {fs['data_format']}"
         logger.error(msg)
-        raise ValueError(msg)
+        raise DataError(msg)
     
     data = []
 
@@ -141,7 +179,7 @@ def load_feature_set_data(snapshot_path: Path, fs: dict, keys: list) -> tuple[pd
         if key not in fs:
             msg = f"Missing {key} in feature set specification."
             logger.error(msg)
-            raise KeyError(msg)
+            raise DataError(msg)
         data.append(reader(Path(snapshot_path / fs[key])))
 
     return tuple(data)
@@ -153,7 +191,7 @@ def load_X_and_y(model_cfg: dict, keys: list[str]) -> tuple[pd.DataFrame, pd.Ser
     if not feature_sets:
         msg = "No feature sets defined in model specifications."
         logger.error(msg)
-        raise ValueError(msg)
+        raise DataError(msg)
 
     dfs = []
     data_hashes = set()
@@ -180,7 +218,7 @@ def load_X_and_y(model_cfg: dict, keys: list[str]) -> tuple[pd.DataFrame, pd.Ser
         if not df.index.equals(dfs[0].index):
             msg = "Indices of feature sets do not match."
             logger.error(msg)
-            raise ValueError(msg)
+            raise DataError(msg)
 
     combined_df = pd.concat(dfs, axis=1)
 
@@ -202,15 +240,15 @@ def validate_model_feature_pipeline_contract(model_cfg: dict, pipeline_cfg: dict
     if model_cfg["task"]["type"] not in pipeline_supported_tasks:
         msg = f"Pipeline does not support the task type: {model_cfg['task']['type']}"
         logger.error(msg)
-        raise ValueError(msg)
+        raise PipelineContractError(msg)
     
     if model_cfg["algorithm"] == "catboost":
         if cat_features is None:
             msg = "Categorical features must be provided for CatBoost models."
             logger.error(msg)
-            raise ValueError(msg)
+            raise PipelineContractError(msg)
         
         if not pipeline_cfg.get("assumptions", {}).get("handles_categoricals", False):
             msg = "Pipeline does not support categorical features required by CatBoost."
             logger.error(msg)
-            raise ValueError(msg)
+            raise PipelineContractError(msg)

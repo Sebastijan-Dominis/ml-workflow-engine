@@ -1,5 +1,6 @@
 import logging
 logger = logging.getLogger(__name__)
+from ml.exceptions import ConfigError
 
 def get_default_int_params(param_cfg, default_offsets, default_low, default_high):
     offsets_cfg = param_cfg.get("offsets", default_offsets)
@@ -29,5 +30,5 @@ def get_default_float_params(param_cfg, default_factors, default_low, default_hi
     elif decimals_cfg <= 0:
         msg = "Decimal places for float refinement must be a positive integer."
         logger.error(msg)
-        raise ValueError(msg)
+        raise ConfigError(msg)
     return factors_cfg, low_cfg, high_cfg, decimals_cfg
