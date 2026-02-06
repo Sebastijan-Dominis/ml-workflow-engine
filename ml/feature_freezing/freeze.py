@@ -50,7 +50,7 @@ def main() -> int:
 
         # Now that the config (and its feature_store_path) is available
         # set up logging inside the snapshot directory.
-        log_path = Path(config.feature_store_path) / snapshot_id / ".freeze.log"
+        log_path = Path(config.feature_store_path) / snapshot_id / "freeze.log"
         setup_logging(log_path, level=log_level)
 
         if config.type != args.data_type:

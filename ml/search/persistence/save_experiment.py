@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 from ml.utils.git import get_git_commit
 from ml.exceptions import PersistenceError
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.utils.runtime_info import get_runtime_info
 
 EXPERIMENTS_DIR = Path("experiments")
 EXPERIMENTS_DIR.mkdir(exist_ok=True)
@@ -48,6 +49,7 @@ def save_experiment(model_cfg: SearchModelConfig, search_results: dict, owner: s
     exp_path = run_dir / "experiment.json"
 
     git_commit = get_git_commit(Path("."))
+    runtime_info = get_runtime_info()
     config_hash = meta.config_hash if meta.config_hash else "none"
     validation_status = meta.validation_status if meta.validation_status else "unknown"
 
@@ -69,6 +71,7 @@ def save_experiment(model_cfg: SearchModelConfig, search_results: dict, owner: s
             "seed": model_cfg.seed if model_cfg.seed is not None else "none",
             "hardware": model_cfg.search.hardware.model_dump() if model_cfg.search and model_cfg.search.hardware else {},
             "git_commit": git_commit,
+            "runtime_info": runtime_info,
             "config_hash": config_hash,
             "validation_status": validation_status,
         },

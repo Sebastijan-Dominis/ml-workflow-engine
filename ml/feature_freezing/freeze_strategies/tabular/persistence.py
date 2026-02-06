@@ -6,6 +6,7 @@ import pandas as pd
 
 from ml.registry.feature_operators import FEATURE_OPERATORS
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.utils.runtime_info import get_runtime_info
 
 def freeze_parquet(path: Path, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, compression=None):
     X_train.to_parquet(path / "X_train.parquet", index=False, compression=compression)
@@ -75,6 +76,7 @@ def save_derived_schema(path: Path, X_train: pd.DataFrame, operator_names: list[
     logger.info(f"Derived schema saved to {schema_path}")
 
 def create_metadata(snapshot_path: Path, schema_path: Path, data_hash: str, train_schema_hash: str, val_schema_hash: str, test_schema_hash: str, operators_hash: str, config_hash: str, feature_set_hash: str, git_commit: str | None, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, task: str) -> dict:
+    runtime_info = get_runtime_info()
     metadata = {
         "created_by": "freeze.py",
         "created_at": datetime.now().isoformat(),
@@ -93,7 +95,8 @@ def create_metadata(snapshot_path: Path, schema_path: Path, data_hash: str, trai
         "config_hash": config_hash,
         "feature_set_hash": feature_set_hash,
         "git_commit": git_commit,
-
+        "runtime_info": runtime_info,
+    
         "row_counts": {
             "train": len(X_train),
             "val": len(X_val),
