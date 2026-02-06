@@ -7,7 +7,9 @@ import json
 import hashlib
 from datetime import datetime
 from pathlib import Path
+
 from ml.exceptions import DataError, PipelineContractError
+from ml.config.validation_schemas.model_cfg import SearchModelConfig
 
 def validate_feature_set(snapshot_path: Path, metadata: dict) -> None:
     if not metadata["data_hash"]:
@@ -128,7 +130,7 @@ def load_feature_set_schemas(features_path: Path) -> tuple[pd.DataFrame, pd.Data
         logger.exception(f"Failed to load schemas from {features_path}.")
         raise
 
-def load_schemas(model_cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_schemas(model_cfg: SearchModelConfig) -> tuple[pd.DataFrame, pd.DataFrame]:
     feature_store_path = Path(model_cfg.feature_store.path)
     feature_sets = model_cfg.feature_store.feature_sets
 
@@ -184,7 +186,7 @@ def load_feature_set_data(snapshot_path: Path, fs, keys: list) -> tuple[pd.DataF
 
     return tuple(data)
 
-def load_X_and_y(model_cfg, keys: list[str]) -> tuple[pd.DataFrame, pd.Series]:
+def load_X_and_y(model_cfg: SearchModelConfig, keys: list[str]) -> tuple[pd.DataFrame, pd.DataFrame]:
     feature_store_path = Path(model_cfg.feature_store.path)
     feature_sets = model_cfg.feature_store.feature_sets
 
@@ -230,7 +232,7 @@ def load_X_and_y(model_cfg, keys: list[str]) -> tuple[pd.DataFrame, pd.Series]:
 
     return X, y
 
-def validate_model_feature_pipeline_contract(model_cfg, pipeline_cfg: dict, cat_features: list | None = None) -> None:
+def validate_model_feature_pipeline_contract(model_cfg: SearchModelConfig, pipeline_cfg: dict, cat_features: list | None = None) -> None:
     pipeline_supported_tasks = []
     if pipeline_cfg.get("assumptions", {}).get("supports_classification"):
         pipeline_supported_tasks.append("classification")

@@ -3,7 +3,7 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
-from ml.feature_freezing.freeze_strategies.pipeline_core.step import PipelineStep
+from ml.utils.pipeline_core.step import PipelineStep
 from ml.feature_freezing.freeze_strategies.tabular.persistence import create_metadata
 from ml.feature_freezing.freeze_strategies.tabular.io import hash_feature_set, validate_feature_set_hashes_match
 from ml.utils.git import get_git_commit

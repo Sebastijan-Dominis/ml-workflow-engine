@@ -4,7 +4,7 @@ from pathlib import Path
 
 from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import validate_feature_registry
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
-from ml.feature_freezing.freeze_strategies.pipeline_core.runner import PipelineRunner
+from ml.utils.pipeline_core.runner import PipelineRunner
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion import IngestionStep
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing import PreprocessingStep
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.splitting import SplittingStep

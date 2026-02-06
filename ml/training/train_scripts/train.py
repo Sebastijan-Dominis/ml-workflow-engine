@@ -23,22 +23,30 @@ import argparse
 import sys
 import yaml
 from pathlib import Path
+from typing import Any, Protocol
 
 from ml.utils import load_model_specs, validate_model_specs
 
-# Specific training script imports
-from ml.training.train_scripts.custom_training_scripts.train_catboost import train_catboost
+from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.registry.train_registry import TRAIN_REGISTRY
 from ml.training.train_scripts.utils import load_train_and_val_data
-
-# Persistence imports
 from ml.training.train_scripts.persistence.save_model import save_model
 from ml.training.train_scripts.persistence.save_pipeline import save_pipeline
 from ml.training.train_scripts.persistence.save_metadata import save_metadata
 from ml.training.train_scripts.persistence.update_general_config import update_general_config
-
-# Logger import
 from ml.logging_config import setup_logging
 from ml.cli.error_handling import resolve_exit_code
+
+class Trainer(Protocol):
+    """
+    Trainer interface.
+
+    Returns:
+        dict with keys:
+        - best_params
+        - phases
+    """
+    def train(self, model_cfg: TrainModelConfig) -> dict[str, Any]: ...
 
 def parse_args() -> argparse.Namespace:
     try:
@@ -110,6 +118,8 @@ def main() -> int:
     Returns:
         0 on success, non-zero exit code on failure.
     """
+    args: argparse.Namespace
+    model_cfg: TrainModelConfig
 
     args = parse_args()
 
@@ -125,13 +135,8 @@ def main() -> int:
         cfg_train = load_train_configs(args.problem, args.segment, args.version)
         algorithm = cfg_model_specs["algorithm"]
 
-        # Trainer registry: extend this dict when adding new tasks/algorithms
-        TRAINERS = {
-            "catboost": train_catboost
-        }
-
         key = algorithm.lower()
-        trainer = TRAINERS.get(key)
+        trainer = TRAIN_REGISTRY.get(key)
 
         if trainer:
             model, pipeline = trainer(cfg_model_specs, cfg_train)

@@ -1,6 +1,6 @@
 import logging
 logger = logging.getLogger(__name__)
-from ml.feature_freezing.freeze_strategies.pipeline_core.step import PipelineStep
+from ml.utils.pipeline_core.step import PipelineStep
 from typing import TypeVar, Generic
 
 

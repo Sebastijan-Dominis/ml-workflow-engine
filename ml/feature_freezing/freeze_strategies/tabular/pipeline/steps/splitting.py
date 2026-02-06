@@ -3,7 +3,7 @@ logger = logging.getLogger(__name__)
 
 from ml.feature_freezing.freeze_strategies.tabular.splitting import split_data
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
-from ml.feature_freezing.freeze_strategies.pipeline_core.step import PipelineStep
+from ml.utils.pipeline_core.step import PipelineStep
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.artifacts import TabularSplits
 
 class SplittingStep(PipelineStep[FreezeContext]):

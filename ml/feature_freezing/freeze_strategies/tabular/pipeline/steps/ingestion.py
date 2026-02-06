@@ -3,7 +3,7 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
-from ml.feature_freezing.freeze_strategies.pipeline_core.step import PipelineStep
+from ml.utils.pipeline_core.step import PipelineStep
 from ml.feature_freezing.freeze_strategies.tabular.io import load_and_hash_data
 from ml.feature_freezing.freeze_strategies.tabular.segmentation import apply_segmentation
 from ml.feature_freezing.freeze_strategies.tabular.validation import validate_min_rows, validate_min_class_count, validate_include_exclude_columns

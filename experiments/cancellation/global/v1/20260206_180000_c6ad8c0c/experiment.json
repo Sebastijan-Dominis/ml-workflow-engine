@@ -260,10 +260,10 @@
         "algorithm": "catboost",
         "best_params_path": "none",
         "config_hash": "a5fe0baf0afca04f2405caf5cebffd8b44b0a76803e93754b22b1068fd77e7be",
-        "created_at": "20260206_162906",
+        "created_at": "20260206_180007",
         "created_by": "search.py",
         "env": "default",
-        "experiment_id": "20260206_162859_804ade8d",
+        "experiment_id": "20260206_180000_c6ad8c0c",
         "feature_store": {
             "feature_sets": [
                 {
@@ -284,7 +284,7 @@
             ],
             "path": "data/feature_store/"
         },
-        "git_commit": "f9597e35662c883590ddc9a94783432187fa97f1",
+        "git_commit": "273cc3a023982da82ddad25c504f81d02fdb63b5",
         "hardware": {
             "allow_growth": false,
             "devices": [
