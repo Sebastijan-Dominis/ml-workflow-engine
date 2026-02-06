@@ -3,10 +3,11 @@ logger = logging.getLogger(__name__)
 from typing import Dict, Literal, Any
 from pydantic_core import ValidationError
 
-from ml.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.config.validation_schemas.model_specs import MetaConfig
 from ml.exceptions import ConfigError
 
-def validate_model_config(cfg_raw: Dict[str, Any], cfg_type: Literal["search", "train"]) -> Dict[str, Any]:
+def validate_model_config(cfg_raw: Dict[str, Any], cfg_type: Literal["search", "train"]) -> SearchModelConfig | TrainModelConfig:
     """
     Validate a raw model config dict using the appropriate Pydantic schema.
 
@@ -15,7 +16,7 @@ def validate_model_config(cfg_raw: Dict[str, Any], cfg_type: Literal["search", "
         cfg_type (Literal["search", "train"]): Type of config to validate.
 
     Returns:
-        Dict[str, Any]: Validated config as a dictionary.
+        SearchModelConfig | TrainModelConfig: Validated config as a Pydantic model instance.
 
     Raises:
         ConfigError: If cfg_type is unknown or validation fails.
@@ -32,9 +33,9 @@ def validate_model_config(cfg_raw: Dict[str, Any], cfg_type: Literal["search", "
             logger.error(msg)
             raise ConfigError(msg)
 
-        cfg_raw["_meta"]["validation_status"] = "ok"
-        cfg_raw["_meta"].pop("validation_errors", None)  # Clear previous errors if any
-        return validated_cfg.model_dump()
+        validated_cfg.meta.validation_status = "ok"
+        validated_cfg.meta.validation_errors = None
+        return validated_cfg
 
     except ValidationError as e:
         cfg_raw["_meta"]["validation_status"] = "failed"

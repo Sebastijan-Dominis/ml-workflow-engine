@@ -1,7 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from ml.validation_schemas.hardware_cfg import HardwareConfig
+from ml.config.validation_schemas.hardware_cfg import HardwareConfig
 
 # === Broad search model/ensemble params ===
 class BroadModelParams(BaseModel):
@@ -92,4 +92,4 @@ class SearchConfig(BaseModel):
         iterations=0,
         n_iter=0,
     ))
-    hardware: Optional[HardwareConfig] = None
+    hardware: HardwareConfig = Field(default_factory=HardwareConfig)

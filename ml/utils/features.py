@@ -18,7 +18,7 @@ def validate_feature_set(snapshot_path: Path, metadata: dict) -> None:
 def validate_set(hash_type: str, hashes: set, feature_sets: list) -> None:
     if len(hashes) != 1:
         msg = f"{hash_type} hashes do not match across feature sets. Feature sets involved: " + ", ".join(
-            [f"{feature_sets[i]['name']} (version: {feature_sets[i]['version']})" for i in range(len(feature_sets))]
+            [f"{feature_sets[i].name} (version: {feature_sets[i].version})" for i in range(len(feature_sets))]
         )
         logger.error(msg)
         raise DataError(msg)
@@ -128,9 +128,9 @@ def load_feature_set_schemas(features_path: Path) -> tuple[pd.DataFrame, pd.Data
         logger.exception(f"Failed to load schemas from {features_path}.")
         raise
 
-def load_schemas(model_cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
-    feature_store_path = Path(model_cfg["feature_store"]["path"])
-    feature_sets = model_cfg["feature_store"]["feature_sets"]
+def load_schemas(model_cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
+    feature_store_path = Path(model_cfg.feature_store.path)
+    feature_sets = model_cfg.feature_store.feature_sets
 
     if not feature_sets:
         msg = "No feature sets defined in model specifications."
@@ -143,7 +143,7 @@ def load_schemas(model_cfg: dict) -> tuple[pd.DataFrame, pd.DataFrame]:
     data_hashes = set()
 
     for fs in feature_sets:
-        version_path = feature_store_path / fs["ref"].replace(".", "/") / fs["name"] / fs["version"]
+        version_path = feature_store_path / fs.ref.replace(".", "/") / fs.name / fs.version
         latest_snapshot = get_latest_snapshot(version_path)
         metadata = get_metadata(latest_snapshot)
 
@@ -166,27 +166,27 @@ FORMAT_REGISTRY = {
     "csv": pd.read_csv,
 }
 
-def load_feature_set_data(snapshot_path: Path, fs: dict, keys: list) -> tuple[pd.DataFrame, ...]:
-    reader = FORMAT_REGISTRY.get(fs["data_format"])
+def load_feature_set_data(snapshot_path: Path, fs, keys: list) -> tuple[pd.DataFrame, ...]:
+    reader = FORMAT_REGISTRY.get(fs.data_format)
     if not reader:
-        msg = f"Unsupported feature set format: {fs['data_format']}"
+        msg = f"Unsupported feature set format: {fs.data_format}"
         logger.error(msg)
         raise DataError(msg)
     
     data = []
 
     for key in keys:
-        if key not in fs:
+        if not hasattr(fs, key):
             msg = f"Missing {key} in feature set specification."
             logger.error(msg)
             raise DataError(msg)
-        data.append(reader(Path(snapshot_path / fs[key])))
+        data.append(reader(Path(snapshot_path / getattr(fs, key))))
 
     return tuple(data)
 
-def load_X_and_y(model_cfg: dict, keys: list[str]) -> tuple[pd.DataFrame, pd.Series]:
-    feature_store_path = Path(model_cfg["feature_store"]["path"])
-    feature_sets = model_cfg["feature_store"]["feature_sets"]
+def load_X_and_y(model_cfg, keys: list[str]) -> tuple[pd.DataFrame, pd.Series]:
+    feature_store_path = Path(model_cfg.feature_store.path)
+    feature_sets = model_cfg.feature_store.feature_sets
 
     if not feature_sets:
         msg = "No feature sets defined in model specifications."
@@ -198,7 +198,7 @@ def load_X_and_y(model_cfg: dict, keys: list[str]) -> tuple[pd.DataFrame, pd.Ser
     y_hashes = set()
 
     for fs in feature_sets:
-        version_path = feature_store_path / fs["ref"].replace(".", "/") / fs["name"] / fs["version"]
+        version_path = feature_store_path / fs.ref.replace(".", "/") / fs.name / fs.version
         latest_snapshot = get_latest_snapshot(version_path)
         metadata = get_metadata(latest_snapshot)
         
@@ -230,19 +230,19 @@ def load_X_and_y(model_cfg: dict, keys: list[str]) -> tuple[pd.DataFrame, pd.Ser
 
     return X, y
 
-def validate_model_feature_pipeline_contract(model_cfg: dict, pipeline_cfg: dict, cat_features: list | None = None) -> None:
+def validate_model_feature_pipeline_contract(model_cfg, pipeline_cfg: dict, cat_features: list | None = None) -> None:
     pipeline_supported_tasks = []
     if pipeline_cfg.get("assumptions", {}).get("supports_classification"):
         pipeline_supported_tasks.append("classification")
     if pipeline_cfg.get("assumptions", {}).get("supports_regression"):
         pipeline_supported_tasks.append("regression")
 
-    if model_cfg["task"]["type"] not in pipeline_supported_tasks:
-        msg = f"Pipeline does not support the task type: {model_cfg['task']['type']}"
+    if model_cfg.task.type not in pipeline_supported_tasks:
+        msg = f"Pipeline does not support the task type: {model_cfg.task.type}"
         logger.error(msg)
         raise PipelineContractError(msg)
     
-    if model_cfg["algorithm"] == "catboost":
+    if model_cfg.algorithm == "catboost":
         if cat_features is None:
             msg = "Categorical features must be provided for CatBoost models."
             logger.error(msg)

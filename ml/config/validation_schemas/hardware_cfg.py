@@ -9,8 +9,8 @@ class HardwareTaskType(str, Enum):
 
 # Normalize task_type to uppercase
 class HardwareConfig(BaseModel):
-    task_type: HardwareTaskType
-    devices: List[int] = [0]
+    task_type: HardwareTaskType = HardwareTaskType.GPU if "SearchConfig" in __name__ else HardwareTaskType.CPU
+    devices: List[int] = [0] if "SearchConfig" in __name__ else []
     memory_limit_gb: Optional[float] = None
     allow_growth: Optional[bool] = False
 

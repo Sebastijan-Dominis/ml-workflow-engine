@@ -1,8 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, Field
 
-from ml.validation_schemas.hardware_cfg import HardwareConfig
-from ml.validation_schemas.base_model_params import BaseModelParams, BaseEnsembleParams
+from ml.config.validation_schemas.hardware_cfg import HardwareConfig
+from ml.config.validation_schemas.base_model_params import BaseModelParams, BaseEnsembleParams
 
 class TrainConfig(BaseModel):
     iterations: int

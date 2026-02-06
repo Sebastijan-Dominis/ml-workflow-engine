@@ -2,7 +2,7 @@
     "config": {
         "_meta": {
             "best_params_path": "none",
-            "config_hash": "1cc453ed6dd1208e119d89d2477695492d52b92e243affda8d16c4bb2c7a50ce",
+            "config_hash": "a5fe0baf0afca04f2405caf5cebffd8b44b0a76803e93754b22b1068fd77e7be",
             "env": "default",
             "sources": {
                 "extends": [
@@ -12,6 +12,7 @@
                 ],
                 "main": "configs\\search\\cancellation\\global\\v1.yaml"
             },
+            "validation_errors": null,
             "validation_status": "ok"
         },
         "algorithm": "catboost",
@@ -239,17 +240,30 @@
             "subtype": "binary",
             "type": "classification"
         },
+        "training": {
+            "bagging_temperature": 1.0,
+            "border_count": 128,
+            "depth": 6,
+            "early_stopping_rounds": 100,
+            "hardware": {
+                "task_type": "CPU"
+            },
+            "iterations": 1000,
+            "l2_leaf_reg": 3,
+            "learning_rate": 0.03,
+            "random_strength": 1
+        },
         "verbose": 100,
         "version": "v1"
     },
     "metadata": {
         "algorithm": "catboost",
         "best_params_path": "none",
-        "config_hash": "1cc453ed6dd1208e119d89d2477695492d52b92e243affda8d16c4bb2c7a50ce",
-        "created_at": "20260204_223824",
+        "config_hash": "a5fe0baf0afca04f2405caf5cebffd8b44b0a76803e93754b22b1068fd77e7be",
+        "created_at": "20260206_162906",
         "created_by": "search.py",
         "env": "default",
-        "experiment_id": "20260204_223824_72713b9c",
+        "experiment_id": "20260206_162859_804ade8d",
         "feature_store": {
             "feature_sets": [
                 {
@@ -270,8 +284,15 @@
             ],
             "path": "data/feature_store/"
         },
-        "git_commit": "3adb42f92b023e6e1b8a4669629004a3564cc609",
-        "hardware": {},
+        "git_commit": "f9597e35662c883590ddc9a94783432187fa97f1",
+        "hardware": {
+            "allow_growth": false,
+            "devices": [
+                0
+            ],
+            "memory_limit_gb": null,
+            "task_type": "GPU"
+        },
         "owner": "Sebastijan",
         "pipeline_version": "v1",
         "problem": "cancellation",

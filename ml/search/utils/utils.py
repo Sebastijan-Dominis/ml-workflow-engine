@@ -4,13 +4,15 @@ import numpy as np
 from sklearn.model_selection import RandomizedSearchCV
 
 def perform_randomized_search(pipeline, X_train, y_train, param_distributions, model_cfg, search_type):
-    n_iter = model_cfg["search"][search_type]["n_iter"]
-    cv = model_cfg["cv"]
-    scoring = model_cfg["search"]["scoring"]
-    verbose = model_cfg.get("verbose", 100)
-    n_jobs = 1 if model_cfg.get("search", {}).get("hardware", {}).get("task_type", "CPU") == "GPU" else -1
-    random_state = model_cfg["search"]["random_state"]
-    error_score = model_cfg["search"].get("error_score", np.nan)
+    search_phase_cfg = getattr(model_cfg.search, search_type)
+    n_iter = search_phase_cfg.n_iter
+    cv = model_cfg.cv
+    scoring = model_cfg.search.scoring
+    verbose = model_cfg.verbose if model_cfg.verbose is not None else 100
+    hardware = model_cfg.search.hardware
+    n_jobs = 1 if hardware and hardware.task_type.value == "GPU" else -1
+    random_state = model_cfg.search.random_state
+    error_score = getattr(model_cfg.search, "error_score", np.nan)
 
     logger.info("Using CV type: %s", cv if isinstance(cv, int) else cv.__class__.__name__)
     logger.info("n_jobs set to: %d", n_jobs)

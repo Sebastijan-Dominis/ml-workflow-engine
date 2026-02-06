@@ -1,38 +1,29 @@
 import logging
 logger = logging.getLogger(__name__)
-from datetime import datetime
 from pathlib import Path
 
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.ingestion import ingest_data
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.preprocessing import prepare_dataset
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.splitting import split_dataset
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.persistence import persist_all
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.metadata import build_metadata
+from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import validate_feature_registry
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
+from ml.feature_freezing.freeze_strategies.pipeline_core.runner import PipelineRunner
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion import IngestionStep
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing import PreprocessingStep
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.splitting import SplittingStep
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence import PersistenceStep
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata import MetadataStep
 from ml.feature_freezing.freeze_strategies.base import FreezeStrategy
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 
-# TODO: consider a runner with steps, instead of function-based pipeline
 class FreezeTabular(FreezeStrategy):
-    def freeze(self, config: TabularFeaturesConfig) -> tuple[Path, dict]:
-        data, data_hash = ingest_data(config)
-
-        X, y = prepare_dataset(data, config)
-
-        splits = split_dataset(X, y, config)
-        
-        now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-        snapshot_path, schema_path = persist_all(config, splits, now)
-
-        config_hash = self.hash_config(config)
-
-        metadata = build_metadata(
-            config,
-            snapshot_path,
-            schema_path,
-            splits,
-            data_hash,
-            config_hash
-        )
-
-        return snapshot_path, metadata
+    def freeze(self, config: TabularFeaturesConfig, *, snapshot_id: str | None = None) -> tuple[Path, dict]:
+        if not isinstance(config, TabularFeaturesConfig):
+            config = validate_feature_registry(config.dict(), "tabular")
+        ctx = FreezeContext(config=config, snapshot_id=snapshot_id)
+        runner = PipelineRunner[FreezeContext](steps=[
+            IngestionStep(),
+            PreprocessingStep(),
+            SplittingStep(),
+            PersistenceStep(),
+            MetadataStep(hash_config=self.hash_config)
+        ])
+        ctx = runner.run(ctx)
+        return ctx.require_snapshot_path, ctx.require_metadata

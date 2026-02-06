@@ -8,15 +8,19 @@ implementation. After training, the resulting pipeline and metadata are
 persisted and the global models registry is updated.
 
 Typical usage:
-    python -m ml.training.train_scripts.train --name_version cancellation_global_v1
+    python -m ml.training.train_scripts.train \\
+        --problem cancellation --segment global --version v1 \\
+        --experiment-id 20260206_154343_2f5c2000
 
-The script expects a YAML config at ``ml/training/train_configs/{name_version}.yaml``.
+The ``--experiment-id`` flag must point to an existing experiment
+directory created by a prior search run.
 """
 
 # General imports
 import logging
 logger = logging.getLogger(__name__)
 import argparse
+import sys
 import yaml
 from pathlib import Path
 
@@ -32,12 +36,9 @@ from ml.training.train_scripts.persistence.save_pipeline import save_pipeline
 from ml.training.train_scripts.persistence.save_metadata import save_metadata
 from ml.training.train_scripts.persistence.update_general_config import update_general_config
 
-# from ml.training.train_scripts.persistence.update_general_config import (
-#     update_general_config
-# )
-
 # Logger import
 from ml.logging_config import setup_logging
+from ml.cli.error_handling import resolve_exit_code
 
 def parse_args() -> argparse.Namespace:
     try:
@@ -64,6 +65,20 @@ def parse_args() -> argparse.Namespace:
             help="Model version, e.g., 'v1'"
         )
 
+        parser.add_argument(
+            "--experiment-id",
+            type=str,
+            required=True,
+            help="Experiment id (directory name under experiments/{problem}/{segment}/{version})"
+        )
+
+        parser.add_argument(
+            "--logging-level",
+            type=str,
+            default="INFO",
+            help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
+        )
+
         return parser.parse_args()
         
     except Exception:
@@ -80,11 +95,11 @@ def load_train_configs(problem, segment, version) -> dict:
         logger.exception(f"Failed to load training configuration from {config_path}.")
         raise
 
-def main() -> None:
+def main() -> int:
     """Entrypoint to run model training according to a YAML configuration.
 
     The function performs the following high-level steps:
-    1. Set up logging.
+    1. Set up logging inside the experiment directory.
     2. Parse CLI arguments to obtain the config file name.
     3. Load and validate the YAML configuration.
     4. Select the appropriate trainer implementation based on the
@@ -92,48 +107,65 @@ def main() -> None:
     5. Execute training, persist the resulting pipeline and metadata,
        and update the global models registry.
 
-    Raises:
-        ValueError: If no trainer is registered for the requested task/algorithm.
+    Returns:
+        0 on success, non-zero exit code on failure.
     """
 
-    setup_logging() # Set up logging configuration
+    args = parse_args()
 
-    args = parse_args() # Parse command-line arguments
+    experiment_dir = Path("experiments") / args.problem / args.segment / args.version / args.experiment_id
+    log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
+    setup_logging(experiment_dir / "train.log", level=log_level)
 
-    cfg_model_specs_raw = load_model_specs(args.problem, args.segment, args.version, logger) # Load raw YAML config
+    try:
+        cfg_model_specs_raw = load_model_specs(args.problem, args.segment, args.version, logger)
 
-    cfg_model_specs = validate_model_specs(cfg_model_specs_raw, logger) # Validate config schema
+        cfg_model_specs = validate_model_specs(cfg_model_specs_raw, logger)
 
-    cfg_train = load_train_configs(args.problem, args.segment, args.version) # Load training-specific config
-    algorithm = cfg_model_specs["algorithm"]
+        cfg_train = load_train_configs(args.problem, args.segment, args.version)
+        algorithm = cfg_model_specs["algorithm"]
 
-    # Trainer registry: extend this dict when adding new tasks/algorithms
-    TRAINERS = {
-        "catboost": train_catboost
-    }
+        # Trainer registry: extend this dict when adding new tasks/algorithms
+        TRAINERS = {
+            "catboost": train_catboost
+        }
 
-    key = algorithm.lower()
-    trainer = TRAINERS.get(key)
+        key = algorithm.lower()
+        trainer = TRAINERS.get(key)
 
-    if trainer:
-        model, pipeline = trainer(cfg_model_specs, cfg_train) # Execute training
-    else:
-        logger.error(f"No trainer found for algorithm '{algorithm}'.")
-        raise ValueError(f"Unsupported algorithm: {algorithm}")
-    
-    save_model(model, cfg_model_specs) # Persist model
-    save_pipeline(pipeline, cfg_model_specs) # Persist pipeline
-    save_metadata(cfg_model_specs) # Persist metadata
+        if trainer:
+            model, pipeline = trainer(cfg_model_specs, cfg_train)
+        else:
+            logger.error(f"No trainer found for algorithm '{algorithm}'.")
+            raise ValueError(f"Unsupported algorithm: {algorithm}")
+        
+        save_model(model, cfg_model_specs)
+        save_pipeline(pipeline, cfg_model_specs)
+        save_metadata(cfg_model_specs)
 
-    ALGORITHMS_SUPPORTING_THRESHOLDS = ["catboost"]
-    if algorithm.lower() in ALGORITHMS_SUPPORTING_THRESHOLDS:
-        from ml.training.train_scripts.utils import get_best_f1_thresh
-        X_train, y_train, X_val, y_val = load_train_and_val_data(cfg_model_specs)
+        ALGORITHMS_SUPPORTING_THRESHOLDS = ["catboost"]
+        if algorithm.lower() in ALGORITHMS_SUPPORTING_THRESHOLDS:
+            from ml.training.train_scripts.utils import get_best_f1_thresh
+            X_train, y_train, X_val, y_val = load_train_and_val_data(cfg_model_specs)
 
-        best_threshold = get_best_f1_thresh(pipeline, X_val, y_val)
-        update_general_config(cfg_model_specs, best_threshold) # Update global models registry
-    else:
-        update_general_config(cfg_model_specs) # Update global models registry
+            best_threshold = get_best_f1_thresh(pipeline, X_val, y_val)
+            update_general_config(cfg_model_specs, best_threshold)
+        else:
+            update_general_config(cfg_model_specs)
+
+        logger.info(
+            "Training completed | problem=%s segment=%s version=%s experiment_id=%s",
+            args.problem,
+            args.segment,
+            args.version,
+            args.experiment_id,
+        )
+
+        return 0
+
+    except Exception as e:
+        logger.exception("An error occurred during training.")
+        return resolve_exit_code(e)
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

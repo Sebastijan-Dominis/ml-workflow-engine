@@ -5,11 +5,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 from pathlib import Path
+from datetime import datetime
 
+from ml.logging_config import setup_logging, add_file_handler
 from ml.feature_freezing.freeze_strategies.tabular.strategy import FreezeTabular
 from ml.feature_freezing.freeze_strategies.time_series import FreezeTimeSeries
-from ml.feature_freezing.logging_config import setup_logging
-from ml.feature_freezing.freeze_strategies.tabular.config.validate_feature_registry import validate_feature_registry
+from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import validate_feature_registry
 from ml.feature_freezing.persistence.save_metadata import save_metadata
 from ml.cli.error_handling import resolve_exit_code
 from ml.exceptions import UserError
@@ -25,6 +26,8 @@ def parse_args():
     parser.add_argument("--segment", type=str, required=True, help="Segment name")
     parser.add_argument("--feature_set", type=str, required=True, help="Feature set name")
     parser.add_argument("--version", type=str, required=True, help="Feature set version")
+    parser.add_argument("--data_type", type=str, required=True, help="Data type (e.g. tabular, time_series)")
+    parser.add_argument("--logging-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)")
     return parser.parse_args()
 
 def load_feature_registry(problem, segment, feature_set, version) -> dict:
@@ -34,11 +37,26 @@ def load_feature_registry(problem, segment, feature_set, version) -> dict:
     return registry[problem][segment][feature_set][version]
 
 def main() -> int:
-    setup_logging()
+    args = parse_args()
+    log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
+
+    # Generate the snapshot id once so it can be reused for both the
+    # log destination and the data persistence step.
+    snapshot_id = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
     try:
-        args = parse_args()
         config_raw = load_feature_registry(args.problem, args.segment, args.feature_set, args.version)
-        config = validate_feature_registry(config_raw)
+        config = validate_feature_registry(config_raw, args.data_type)
+
+        # Now that the config (and its feature_store_path) is available
+        # set up logging inside the snapshot directory.
+        log_path = Path(config.feature_store_path) / snapshot_id / ".freeze.log"
+        setup_logging(log_path, level=log_level)
+
+        if config.type != args.data_type:
+            msg = f"Data type mismatch: expected {args.data_type}, got {config.type}"
+            logger.error(msg)
+            raise UserError(msg)
 
         if config.type not in STRATEGIES:
             msg = f"Unknown feature type: {config.type}"
@@ -47,7 +65,7 @@ def main() -> int:
 
         strategy = STRATEGIES[config.type]()
 
-        snapshot_path, metadata = strategy.freeze(config)
+        snapshot_path, metadata = strategy.freeze(config, snapshot_id=snapshot_id)
         save_metadata(snapshot_path, metadata)
 
         return 0

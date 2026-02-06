@@ -2,7 +2,7 @@ import logging
 logger = logging.getLogger(__name__)
 import yaml
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, overload
 
 from ml.utils.loader import load_yaml
 from ml.config.best_params import MergeTarget, apply_best_params
@@ -10,6 +10,7 @@ from ml.config.merge import resolve_extends, apply_env_overlay
 from ml.config.hashing import compute_config_hash
 from ml.config.validation import validate_model_config
 from ml.exceptions import ConfigError
+from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
 
 def load_config(
     path: Path,
@@ -19,7 +20,7 @@ def load_config(
     merge_target: MergeTarget = "training",
     skip_missing_extends: bool = False,
     skip_missing_env: bool = True,
-) -> dict:
+) -> dict[str, Any]:
     cfg = load_yaml(path)
 
     try:
@@ -41,6 +42,7 @@ def load_config(
         "main": str(path),
         "extends": cfg.get("extends", []),
     }
+    cfg.pop("extends", None)  # merge directive, not model content
     try:
         cfg = apply_env_overlay(cfg, env, base_path=path.parent, skip_missing=skip_missing_env)
     except FileNotFoundError as e:
@@ -68,15 +70,27 @@ def load_config(
     
     return cfg
 
-# TODO: check if there's a better way to implement this function without code duplication
+@overload
 def load_and_validate_config(
-        path: Path,
-        *,
-        cfg_type: Literal["search", "train"],
-        env: str = "default",
-    ) -> dict:
+    path: Path,
+    *,
+    cfg_type: Literal["search"],
+    env: str = "default",
+) -> SearchModelConfig: ...
+@overload
+def load_and_validate_config(
+    path: Path,
+    *,
+    cfg_type: Literal["train"],
+    env: str = "default",
+) -> TrainModelConfig: ...
 
+def load_and_validate_config(
+    path: Path,
+    *,
+    cfg_type: Literal["search", "train"],
+    env: str = "default",
+) -> SearchModelConfig | TrainModelConfig:
     cfg_raw = load_config(path, env=env)
     cfg = validate_model_config(cfg_raw, cfg_type=cfg_type)
-    cfg["_meta"] = {**cfg.get("_meta", {}), **cfg_raw.get("_meta", {})}
     return cfg

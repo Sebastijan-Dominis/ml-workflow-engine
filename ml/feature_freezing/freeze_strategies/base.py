@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Optional, Tuple
 import yaml
 import hashlib
 
@@ -7,7 +7,7 @@ from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularF
 
 class FreezeStrategy(ABC):
     @abstractmethod
-    def freeze(self, config: TabularFeaturesConfig) -> Tuple:
+    def freeze(self, config: TabularFeaturesConfig, *, snapshot_id: Optional[str] = None) -> Tuple:
         pass
 
     @staticmethod

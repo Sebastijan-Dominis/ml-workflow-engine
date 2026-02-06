@@ -9,12 +9,12 @@ from ml.search.params.refiners import (
     refine_border_count,
 )
 
-def prepare_narrow_params(best_params: dict, narrow_params_cfg: dict, task_type: str) -> dict:
+def prepare_narrow_params(best_params: dict, narrow_params_cfg, task_type: str) -> dict:
     narrow_params = {}
 
     # Tree depth
-    depth_cfg = narrow_params_cfg.get("model", {}).get("depth")
-    if "Model__depth" in best_params and depth_cfg and depth_cfg.get("include", False):
+    depth_cfg = narrow_params_cfg.model.depth if narrow_params_cfg.model else None
+    if "Model__depth" in best_params and depth_cfg and depth_cfg.include:
         offsets, low, high = get_default_int_params(
             depth_cfg,
             default_offsets=[1, 2],
@@ -29,8 +29,8 @@ def prepare_narrow_params(best_params: dict, narrow_params_cfg: dict, task_type:
         )
 
     # Learning rate
-    learning_rate_cfg = narrow_params_cfg.get("model", {}).get("learning_rate")
-    if "Model__learning_rate" in best_params and learning_rate_cfg and learning_rate_cfg.get("include", False):
+    learning_rate_cfg = narrow_params_cfg.model.learning_rate if narrow_params_cfg.model else None
+    if "Model__learning_rate" in best_params and learning_rate_cfg and learning_rate_cfg.include:
         factors, low, high, decimals = get_default_float_params(
             learning_rate_cfg,
             default_factors=[0.7, 0.85, 1.0, 1.15, 1.3],
@@ -47,8 +47,8 @@ def prepare_narrow_params(best_params: dict, narrow_params_cfg: dict, task_type:
         )
     
     # L2 regularization
-    l2_leaf_reg_cfg = narrow_params_cfg.get("model", {}).get("l2_leaf_reg")
-    if "Model__l2_leaf_reg" in best_params and l2_leaf_reg_cfg and l2_leaf_reg_cfg.get("include", False):
+    l2_leaf_reg_cfg = narrow_params_cfg.model.l2_leaf_reg if narrow_params_cfg.model else None
+    if "Model__l2_leaf_reg" in best_params and l2_leaf_reg_cfg and l2_leaf_reg_cfg.include:
         factors, low, high, decimals = get_default_float_params(
             l2_leaf_reg_cfg,
             default_factors=[0.7, 0.85, 1.0, 1.15, 1.3],
@@ -65,8 +65,8 @@ def prepare_narrow_params(best_params: dict, narrow_params_cfg: dict, task_type:
         )
 
     # Bagging temperature
-    bagging_temperature_cfg = narrow_params_cfg.get("ensemble", {}).get("bagging_temperature")
-    if "Model__bagging_temperature" in best_params and bagging_temperature_cfg and bagging_temperature_cfg.get("include", False):
+    bagging_temperature_cfg = narrow_params_cfg.ensemble.bagging_temperature if narrow_params_cfg.ensemble else None
+    if "Model__bagging_temperature" in best_params and bagging_temperature_cfg and bagging_temperature_cfg.include:
         factors, low, high, decimals = get_default_float_params(
             bagging_temperature_cfg,
             default_factors=[0.6, 0.8, 1.0, 1.2, 1.5],
@@ -83,8 +83,8 @@ def prepare_narrow_params(best_params: dict, narrow_params_cfg: dict, task_type:
         )
 
     # Min data in leaf
-    min_data_in_leaf_cfg = narrow_params_cfg.get("model", {}).get("min_data_in_leaf")
-    if "Model__min_data_in_leaf" in best_params and min_data_in_leaf_cfg and min_data_in_leaf_cfg.get("include", False):
+    min_data_in_leaf_cfg = narrow_params_cfg.model.min_data_in_leaf if narrow_params_cfg.model else None
+    if "Model__min_data_in_leaf" in best_params and min_data_in_leaf_cfg and min_data_in_leaf_cfg.include:
         offsets, low, high = get_default_int_params(
             min_data_in_leaf_cfg,
             default_offsets=[2, 5, 10],
@@ -99,8 +99,8 @@ def prepare_narrow_params(best_params: dict, narrow_params_cfg: dict, task_type:
         )
 
     # Random strength
-    random_strength_cfg = narrow_params_cfg.get("model", {}).get("random_strength")
-    if "Model__random_strength" in best_params and random_strength_cfg and random_strength_cfg.get("include", False):
+    random_strength_cfg = narrow_params_cfg.model.random_strength if narrow_params_cfg.model else None
+    if "Model__random_strength" in best_params and random_strength_cfg and random_strength_cfg.include:
         factors, low, high, decimals = get_default_float_params(
             random_strength_cfg,
             default_factors=[0.7, 0.85, 1.0, 1.15, 1.3],
@@ -117,14 +117,14 @@ def prepare_narrow_params(best_params: dict, narrow_params_cfg: dict, task_type:
         )
 
     # Freeze GPU-sensitive / discretization params
-    border_count_cfg = narrow_params_cfg.get("model", {}).get("border_count")
-    if "Model__border_count" in best_params and border_count_cfg and border_count_cfg.get("include", False):
+    border_count_cfg = narrow_params_cfg.model.border_count if narrow_params_cfg.model else None
+    if "Model__border_count" in best_params and border_count_cfg and border_count_cfg.include:
         narrow_params["Model__border_count"] = refine_border_count(
             best_params["Model__border_count"]
         )
 
-    colsample_bylevel_cfg = narrow_params_cfg.get("model", {}).get("colsample_bylevel")
-    if "Model__colsample_bylevel" in best_params and colsample_bylevel_cfg and colsample_bylevel_cfg.get("include", False):
+    colsample_bylevel_cfg = narrow_params_cfg.model.colsample_bylevel if narrow_params_cfg.model else None
+    if "Model__colsample_bylevel" in best_params and colsample_bylevel_cfg and colsample_bylevel_cfg.include:
         factors, low, high, decimals = get_default_float_params(
             colsample_bylevel_cfg,
             default_factors=[0.9, 1.0, 1.1],

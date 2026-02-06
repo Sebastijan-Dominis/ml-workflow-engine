@@ -1,8 +1,19 @@
 import logging
 logger = logging.getLogger(__name__)
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Dict, Any
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from typing import Optional, Dict, Any, List
 from pyparsing import Enum
+
+
+class MetaConfig(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    sources: Optional[Dict[str, Any]] = None
+    env: Optional[str] = None
+    best_params_path: Optional[str] = None
+    validation_status: Optional[str] = None
+    validation_errors: Optional[List[Any]] = None
+    config_hash: Optional[str] = None
 
 
 class SegmentConfig(BaseModel):
@@ -97,3 +108,6 @@ class ModelSpecs(BaseModel):
     feature_store: FeatureStoreConfig
     explainability: ExplainabilityConfig = Field(default_factory=ExplainabilityConfig)
     data_type: Optional[str] = None
+    meta: MetaConfig = Field(default_factory=MetaConfig, alias="_meta")
+
+    model_config = ConfigDict(extra="forbid", populate_by_name=True)

@@ -21,9 +21,16 @@ from ml.training.explain_scripts.explain import (
 def test_parse_args(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure CLI argument parsing for the explain entry point works."""
 
-    monkeypatch.setattr("sys.argv", ["explain.py", "--name_version", "dummy_model_v1"])
+    monkeypatch.setattr(
+        "sys.argv",
+        ["explain.py", "--problem", "cancellation", "--segment", "global",
+         "--version", "v1", "--experiment-id", "20260101_000000_abc12345"],
+    )
     args = parse_args()
-    assert args.name_version == "dummy_model_v1"
+    assert args.problem == "cancellation"
+    assert args.segment == "global"
+    assert args.version == "v1"
+    assert args.experiment_id == "20260101_000000_abc12345"
 
 def test_get_model_configs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, dummy_models_config) -> None:
     """Verify model configuration lookup reads `configs/models.yaml` correctly."""
@@ -45,7 +52,13 @@ def test_main_dispatches_catboost(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         explain,
         "parse_args",
-        lambda: type("A", (), {"name_version": "dummy_model_v1"})()
+        lambda: type("A", (), {
+            "problem": "cancellation",
+            "segment": "global",
+            "version": "v1",
+            "experiment_id": "20260101_000000_abc12345",
+            "logging_level": "INFO",
+        })()
     )
 
     monkeypatch.setattr(
@@ -61,25 +74,31 @@ def test_main_dispatches_catboost(monkeypatch: pytest.MonkeyPatch) -> None:
         lambda cfg: called.setdefault("ok", True)
     )
 
-    monkeypatch.setattr(explain, "setup_logging", lambda: None)
+    monkeypatch.setattr(explain, "setup_logging", lambda *a, **kw: None)
 
     explain.main()
     assert called["ok"] is True
 
 def test_main_unsupported_algorithm(monkeypatch: pytest.MonkeyPatch) -> None:
-    """When the algorithm is unsupported, `main()` should raise ValueError."""
+    """When the algorithm is unsupported, `main()` should return non-zero."""
 
     monkeypatch.setattr(
         explain,
         "parse_args",
-        lambda: type("A", (), {"name_version": "dummy_model_v1"})()
+        lambda: type("A", (), {
+            "problem": "cancellation",
+            "segment": "global",
+            "version": "v1",
+            "experiment_id": "20260101_000000_abc12345",
+            "logging_level": "INFO",
+        })()
     )
     monkeypatch.setattr(
         explain,
         "get_model_configs",
         lambda _: {"algorithm": "fake_algorithm"}
     )
-    monkeypatch.setattr(explain, "setup_logging", lambda: None)
+    monkeypatch.setattr(explain, "setup_logging", lambda *a, **kw: None)
 
-    with pytest.raises(ValueError, match="Unsupported algorithm"):
-        explain.main()
+    result = explain.main()
+    assert result != 0

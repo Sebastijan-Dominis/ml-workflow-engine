@@ -6,13 +6,13 @@ from pathlib import Path
 from typing import Any
 
 from ml.search.searchers.base import BaseSearcher
+from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.search.utils.utils import perform_randomized_search
 from ml.utils.features import get_cat_features, load_X_and_y, load_schemas, validate_model_feature_pipeline_contract
 from ml.search.searchers.catboost.model import (
     prepare_model,
     build_pipeline_with_model,
 )
-from ml.search.params.common import flatten_search_params
 from ml.search.params.catboost.refinement import prepare_narrow_params
 from ml.search.params.catboost.validation import validate_param_value
 from ml.exceptions import (
@@ -21,11 +21,11 @@ from ml.exceptions import (
 )
 
 class SearchCatboost(BaseSearcher):
-    def search(self, model_cfg: dict[str, Any]) -> dict[str, Any]:
+    def search(self, model_cfg: SearchModelConfig) -> dict[str, Any]:
         X_train, y_train = load_X_and_y(model_cfg, keys=["X_train", "y_train"])
         input_schema, derived_schema = load_schemas(model_cfg)
 
-        pipeline_path = Path(f"{model_cfg['pipeline']['path']}").resolve()
+        pipeline_path = Path(f"{model_cfg.pipeline.path}").resolve()
         with pipeline_path.open("r") as f:
             pipeline_cfg = yaml.safe_load(f)
 
@@ -46,17 +46,17 @@ class SearchCatboost(BaseSearcher):
             model=model_1
         )
 
-        broad_param_distributions_raw = model_cfg.get("search", {}).get("broad", {}).get("param_distributions", {})
+        broad_param_distributions_obj = model_cfg.search.broad.param_distributions
 
-        if not broad_param_distributions_raw:
-            msg = f"No broad search param_distributions defined in the model config for problem={model_cfg['problem']} segment={model_cfg['segment']['name']} version={model_cfg['version']}."
+        if not broad_param_distributions_obj or not broad_param_distributions_obj.model_dump(exclude_none=True):
+            msg = f"No broad search param_distributions defined in the model config for problem={model_cfg.problem} segment={model_cfg.segment.name} version={model_cfg.version}."
             logger.error(msg)
             raise ConfigError(msg)
 
-        broad_param_distributions = flatten_search_params(broad_param_distributions_raw)
+        broad_param_distributions = broad_param_distributions_obj.to_flat_dict()
 
         logger.info("Starting broad hyperparameter search | problem=%s segment=%s version=%s",
-            model_cfg['problem'], model_cfg['segment']['name'], model_cfg['version'])
+            model_cfg.problem, model_cfg.segment.name, model_cfg.version)
 
         logger.debug("Broad search param combinations: %d", np.prod([len(v) for v in broad_param_distributions.values()]))
 
@@ -70,13 +70,13 @@ class SearchCatboost(BaseSearcher):
                 search_type="broad"
             )
         except Exception as e:
-            msg = f"Broad hyperparameter search failed for problem={model_cfg['problem']} segment={model_cfg['segment']['name']} version={model_cfg['version']}: {e}"
+            msg = f"Broad hyperparameter search failed for problem={model_cfg.problem} segment={model_cfg.segment.name} version={model_cfg.version}: {e}"
             logger.error(msg)
             raise SearchError(msg) from e
 
         best_params_1 = broad_result["best_params"]
 
-        if model_cfg.get("search", {}).get("narrow", {}).get("enabled", False) is not True:
+        if not model_cfg.search.narrow.enabled:
             return {
                 "best_params": best_params_1,
                 "phases": {
@@ -84,19 +84,19 @@ class SearchCatboost(BaseSearcher):
                 }
             }
 
-        narrow_param_cfg = model_cfg.get("search", {}).get("narrow", {}).get("param_configurations", {})
+        narrow_param_cfg = model_cfg.search.narrow.param_configurations
 
-        if not narrow_param_cfg:
-            msg = f"No narrow search param_configurations defined in the model config for problem={model_cfg['problem']} segment={model_cfg['segment']['name']} version={model_cfg['version']}."
+        if not narrow_param_cfg or not narrow_param_cfg.model_dump(exclude_none=True):
+            msg = f"No narrow search param_configurations defined in the model config for problem={model_cfg.problem} segment={model_cfg.segment.name} version={model_cfg.version}."
             logger.error(msg)
             raise ConfigError(msg)
 
-        narrow_param_distributions = prepare_narrow_params(best_params_1, narrow_param_cfg, model_cfg["search"]["hardware"]["task_type"].value)
+        narrow_param_distributions = prepare_narrow_params(best_params_1, narrow_param_cfg, model_cfg.search.hardware.task_type.value)
 
         for param, values in narrow_param_distributions.items():
             base_param_name = param.replace("Model__", "")
             for v in values:
-                validate_param_value(base_param_name, v, str(model_cfg["search"]["hardware"]["task_type"].value).upper())
+                validate_param_value(base_param_name, v, str(model_cfg.search.hardware.task_type.value).upper())
 
         model_2 = prepare_model(model_cfg, "narrow", cat_features)
 
@@ -108,7 +108,7 @@ class SearchCatboost(BaseSearcher):
         )
 
         logger.info("Starting narrow hyperparameter search | problem=%s segment=%s version=%s",
-            model_cfg['problem'], model_cfg['segment']['name'], model_cfg['version'])
+            model_cfg.problem, model_cfg.segment.name, model_cfg.version)
 
         logger.debug("Narrow search param combinations: %d", np.prod([len(v) for v in narrow_param_distributions.values()]))
 
@@ -122,7 +122,7 @@ class SearchCatboost(BaseSearcher):
                 search_type="narrow"
             )
         except Exception as e:
-            msg = f"Narrow hyperparameter search failed for problem={model_cfg['problem']} segment={model_cfg['segment']['name']} version={model_cfg['version']}: {e}"
+            msg = f"Narrow hyperparameter search failed for problem={model_cfg.problem} segment={model_cfg.segment.name} version={model_cfg.version}: {e}"
             logger.error(msg)
             raise SearchError(msg) from e
 
