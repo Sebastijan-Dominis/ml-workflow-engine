@@ -1,7 +1,6 @@
 import logging
 import json
 from pathlib import Path
-from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
@@ -15,9 +14,6 @@ def save_metadata(model_cfg: SearchModelConfig, search_results: dict, owner: str
     problem = model_cfg.problem
     segment = model_cfg.segment.name
     version = model_cfg.version
-
-    if experiment_id is None:
-        experiment_id = f"{timestamp}_{uuid4().hex[:8]}"
 
     run_dir = EXPERIMENTS_DIR / problem / segment / version / experiment_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -64,8 +60,9 @@ def save_metadata(model_cfg: SearchModelConfig, search_results: dict, owner: str
         with exp_path.open("w") as f:
             json.dump(record, f, indent=4, sort_keys=True, default=str)
         logger.info("Saved hyperparameter search experiment to %s", exp_path)
-    except Exception:
-        logger.exception("Failed to save experiment to %s", exp_path)
-        raise PersistenceError(f"Failed to save experiment to {exp_path}")
+    except Exception as e:
+        msg = f"Failed to save experiment metadata to {exp_path}"
+        logger.exception(msg)
+        raise PersistenceError(msg) from e
 
     return exp_path

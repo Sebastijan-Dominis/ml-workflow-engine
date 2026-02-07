@@ -9,7 +9,7 @@ def save_metadata(path: Path, metadata: dict):
     metadata_path = path / "metadata.json"
     try:
         with open(metadata_path, "w") as f:
-            json.dump(metadata, f, indent=4)
+            json.dump(metadata, f, indent=4, sort_keys=True, default=str)
         logger.info(f"Saved metadata to {metadata_path}")
     except Exception as e:
         logger.exception("Failed to save metadata")

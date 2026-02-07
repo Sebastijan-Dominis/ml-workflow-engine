@@ -1,10 +1,9 @@
 import logging
+logger = logging.getLogger(__name__)
 from pathlib import Path
 from datetime import datetime
 from uuid import uuid4
 from typing import Optional
-
-logger = logging.getLogger(__name__)
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.search.persistence.save_metadata import save_metadata
