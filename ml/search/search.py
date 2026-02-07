@@ -102,8 +102,6 @@ def main() -> int:
     
     args = parse_args()
 
-    # Generate experiment id up-front so the log file can be placed
-    # inside the experiment directory before any work starts.
     timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
     experiment_id = f"{timestamp}_{uuid4().hex[:8]}"
     experiment_dir = Path("experiments") / args.problem / args.segment / args.version / experiment_id

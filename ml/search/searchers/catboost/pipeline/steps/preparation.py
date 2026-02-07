@@ -5,7 +5,10 @@ import yaml
 
 from ml.search.searchers.catboost.pipeline.context import SearchContext
 from ml.utils.pipeline_core.step import PipelineStep
-from ml.utils.features import get_cat_features, load_X_and_y, load_schemas, validate_model_feature_pipeline_contract
+from ml.utils.features.cat_features import get_cat_features
+from ml.utils.features.loading.X_and_y import load_X_and_y
+from ml.utils.features.loading.schemas import load_schemas
+from ml.utils.features.validation import validate_model_feature_pipeline_contract
 
 
 class PreparationStep(PipelineStep[SearchContext]):
