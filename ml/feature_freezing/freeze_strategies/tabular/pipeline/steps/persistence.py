@@ -28,8 +28,6 @@ class PersistenceStep(PipelineStep[FreezeContext]):
         y_val = splits.y_val
         y_test = splits.y_test
 
-        now = ctx.snapshot_id or datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
         snapshot_path = persist_feature_snapshot(
             config,
             X_train,
@@ -38,7 +36,7 @@ class PersistenceStep(PipelineStep[FreezeContext]):
             y_train,
             y_val,
             y_test,
-            now,
+            ctx.require_snapshot_id,
         )
 
         schema_path = config.feature_store_path

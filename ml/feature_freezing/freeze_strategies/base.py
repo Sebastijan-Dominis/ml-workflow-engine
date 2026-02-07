@@ -7,7 +7,7 @@ from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularF
 
 class FreezeStrategy(ABC):
     @abstractmethod
-    def freeze(self, config: TabularFeaturesConfig, *, snapshot_id: Optional[str] = None) -> Tuple:
+    def freeze(self, config: TabularFeaturesConfig, *, timestamp: str, snapshot_id: str) -> Tuple:
         pass
 
     @staticmethod

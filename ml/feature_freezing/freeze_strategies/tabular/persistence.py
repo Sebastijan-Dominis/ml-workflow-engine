@@ -20,8 +20,8 @@ def freeze_parquet(path: Path, X_train: pd.DataFrame, X_val: pd.DataFrame, X_tes
     
     logger.info(f"Tabular features saved to {path}")
 
-def persist_feature_snapshot(config: TabularFeaturesConfig, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, now: str):
-    path = Path(f"{config.feature_store_path}/{now}")
+def persist_feature_snapshot(config: TabularFeaturesConfig, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, snapshot_id: str):
+    path = Path(f"{config.feature_store_path}/{snapshot_id}")
     path.mkdir(parents=True, exist_ok=True)
 
     # Expandable for future storage formats
@@ -76,11 +76,11 @@ def save_derived_schema(path: Path, X_train: pd.DataFrame, operator_names: list[
     derived_schema.to_csv(schema_path, index=False)
     logger.info(f"Derived schema saved to {schema_path}")
 
-def create_metadata(snapshot_path: Path, schema_path: Path, data_hash: str, train_schema_hash: str, val_schema_hash: str, test_schema_hash: str, operators_hash: str, config_hash: str, feature_set_hash: str, runtime: dict, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, task: str) -> dict:
+def create_metadata(timestamp: str, snapshot_path: Path, schema_path: Path, data_hash: str, train_schema_hash: str, val_schema_hash: str, test_schema_hash: str, operators_hash: str, config_hash: str, feature_set_hash: str, runtime: dict, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, task: str) -> dict:
 
     metadata = {
         "created_by": "freeze.py",
-        "created_at": datetime.now().isoformat(),
+        "created_at": timestamp,
         "feature_type": "tabular",
 
         "snapshot_path": str(snapshot_path),

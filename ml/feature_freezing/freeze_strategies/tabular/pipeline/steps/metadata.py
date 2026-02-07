@@ -61,6 +61,7 @@ class MetadataStep(PipelineStep[FreezeContext]):
         )
 
         metadata = create_metadata(
+            ctx.require_timestamp,
             ctx.require_snapshot_path,
             ctx.require_schema_path,
             ctx.require_data_hash,

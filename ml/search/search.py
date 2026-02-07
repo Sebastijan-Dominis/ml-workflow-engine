@@ -104,7 +104,7 @@ def main() -> int:
 
     # Generate experiment id up-front so the log file can be placed
     # inside the experiment directory before any work starts.
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
     experiment_id = f"{timestamp}_{uuid4().hex[:8]}"
     experiment_dir = Path("experiments") / args.problem / args.segment / args.version / experiment_id
 
@@ -120,7 +120,7 @@ def main() -> int:
 
         search_results = searcher.search(model_cfg)
 
-        save_experiment(model_cfg, search_results, args.owner, experiment_id=experiment_id)
+        save_experiment(model_cfg, search_results, args.owner, experiment_id=experiment_id, timestamp=timestamp)
 
         logger.info(
             "Search completed | problem=%s segment=%s version=%s experiment_id=%s",

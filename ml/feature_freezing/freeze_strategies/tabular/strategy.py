@@ -14,10 +14,10 @@ from ml.feature_freezing.freeze_strategies.base import FreezeStrategy
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 
 class FreezeTabular(FreezeStrategy):
-    def freeze(self, config: TabularFeaturesConfig, *, snapshot_id: str | None = None) -> tuple[Path, dict]:
+    def freeze(self, config: TabularFeaturesConfig, *, timestamp: str, snapshot_id: str) -> tuple[Path, dict]:
         if not isinstance(config, TabularFeaturesConfig):
             config = validate_feature_registry(config.dict(), "tabular")
-        ctx = FreezeContext(config=config, snapshot_id=snapshot_id)
+        ctx = FreezeContext(config=config, timestamp=timestamp, snapshot_id=snapshot_id)
         runner = PipelineRunner[FreezeContext](steps=[
             IngestionStep(),
             PreprocessingStep(),

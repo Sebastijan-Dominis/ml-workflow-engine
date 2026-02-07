@@ -1,5 +1,6 @@
 import sys
 import argparse
+from uuid import uuid4
 import yaml
 import logging
 logger = logging.getLogger(__name__)
@@ -42,7 +43,8 @@ def main() -> int:
 
     # Generate the snapshot id once so it can be reused for both the
     # log destination and the data persistence step.
-    snapshot_id = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    snapshot_id = f"{timestamp}_{uuid4().hex[:8]}"
 
     try:
         config_raw = load_feature_registry(args.problem, args.segment, args.feature_set, args.version)
@@ -65,7 +67,7 @@ def main() -> int:
 
         strategy = STRATEGIES[config.type]()
 
-        snapshot_path, metadata = strategy.freeze(config, snapshot_id=snapshot_id)
+        snapshot_path, metadata = strategy.freeze(config, snapshot_id=snapshot_id, timestamp=timestamp)
         save_metadata(snapshot_path, metadata)
 
         return 0

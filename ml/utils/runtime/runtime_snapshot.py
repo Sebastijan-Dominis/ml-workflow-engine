@@ -6,6 +6,8 @@ import sys
 import shutil
 from pathlib import Path
 import os
+from datetime import datetime
+import platform
 
 from ml.exceptions import RuntimeMLException
 from ml.utils.runtime.runtime_info import get_runtime_info
@@ -20,11 +22,12 @@ def find_conda_executable():
     conda_prefix = os.environ.get("CONDA_PREFIX")
     if conda_prefix:
         base = Path(conda_prefix).parent.parent
-        candidate = base / "Scripts" / "conda.exe"
+        bin_dir = "bin" if platform.system() != "Windows" else "Scripts"
+        candidate = base / bin_dir / "conda"
         if candidate.exists():
             return str(candidate)
 
-    raise RuntimeMLException("Could not locate conda executable")
+    raise RuntimeMLException("Could not locate conda executable.")
 
 def _run_command(cmd: list[str]) -> str:
     try:
@@ -36,7 +39,7 @@ def _run_command(cmd: list[str]) -> str:
         )
         return result.stdout
     except Exception as e:
-        msg = f"Command failed: {' '.join(cmd)} | {e}"
+        msg = f"Command failed: {' '.join(cmd)} | {e}\nstdout: {getattr(e, 'stdout', '')}\nstderr: {getattr(e, 'stderr', '')}"
         logger.error(msg)
         raise RuntimeMLException(msg)
 
@@ -59,12 +62,12 @@ def hash_environment(env_export: str) -> str:
     return hashlib.sha256(env_export.encode()).hexdigest()
 
 
-def build_runtime_snapshot(timestamp) -> dict:
+def build_runtime_snapshot(timestamp: str) -> dict:
     try:
         runtime = {
-            "excecution": {
+            "execution": {
                 "created_at": timestamp,
-                "git_commit": get_git_commit(),
+                "git_commit": get_git_commit(Path(".")),
                 "python_executable": sys.executable
             },
             "runtime": get_runtime_info(),

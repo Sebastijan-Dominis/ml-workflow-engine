@@ -13,6 +13,7 @@ from ml.exceptions import RuntimeMLException
 class FreezeContext:
     config: TabularFeaturesConfig
 
+    timestamp: Optional[str] = None
     snapshot_id: Optional[str] = None
 
     data: Optional[pd.DataFrame] = None
@@ -28,6 +29,22 @@ class FreezeContext:
 
     metadata: Optional[dict] = None
     config_hash: Optional[str] = None
+
+    @property
+    def require_timestamp(self) -> str:
+        if self.timestamp is None:
+            msg = "Timestamp not set. Ensure that the timestamp is provided when calling freeze()."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.timestamp
+
+    @property
+    def require_snapshot_id(self) -> str:
+        if self.snapshot_id is None:
+            msg = "Snapshot ID not set. Ensure that the snapshot_id is provided when calling freeze()."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.snapshot_id
 
     @property
     def require_data(self) -> pd.DataFrame:
