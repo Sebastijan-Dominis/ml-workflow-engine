@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 from datetime import datetime
 
-from ml.logging_config import setup_logging, add_file_handler
+from ml.logging_config import setup_logging
 from ml.feature_freezing.freeze_strategies.tabular.strategy import FreezeTabular
 from ml.feature_freezing.freeze_strategies.time_series import FreezeTimeSeries
 from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import validate_feature_registry

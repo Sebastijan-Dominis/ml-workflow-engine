@@ -1,5 +1,4 @@
 import logging
-import json
 from pathlib import Path
 from datetime import datetime
 from uuid import uuid4
@@ -7,84 +6,20 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 
-from ml.utils.git import get_git_commit
-from ml.exceptions import PersistenceError
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
-from ml.utils.runtime_info import get_runtime_info
+from ml.search.persistence.save_metadata import save_metadata
+from ml.search.persistence.save_runtime import save_runtime_snapshot
 
 EXPERIMENTS_DIR = Path("experiments")
 EXPERIMENTS_DIR.mkdir(exist_ok=True)
 
-def save_experiment(model_cfg: SearchModelConfig, search_results: dict, owner: str, *, experiment_id: Optional[str] = None) -> Path:
-    """
-    Persist hyperparameter search results in a unique run directory based on timestamp.
-
-    Parameters
-    ----------
-    experiment_id:
-        Pre-generated experiment identifier.  When ``None`` a new id is
-        created (backward-compatible behaviour).
-
-    Returns:
-        Path to the saved experiment JSON file.
-    """
-    problem = model_cfg.problem
-    segment = model_cfg.segment.name
-    version = model_cfg.version
-
+def save_experiment(model_cfg: SearchModelConfig, search_results: dict, owner: str, *, experiment_id: Optional[str] = None) -> None:
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     if experiment_id is None:
         experiment_id = f"{timestamp}_{uuid4().hex[:8]}"
 
-    run_dir = EXPERIMENTS_DIR / problem / segment / version / experiment_id
+    run_dir = EXPERIMENTS_DIR / model_cfg.problem / model_cfg.segment.name / model_cfg.version / experiment_id
     run_dir.mkdir(parents=True, exist_ok=True)
 
-    meta = model_cfg.meta
-    sources = meta.sources if meta.sources else {}
-    env = meta.env if meta.env else "default"
-    best_params_path = meta.best_params_path if meta.best_params_path else "none"
-
-    pipeline_version = model_cfg.pipeline.version if model_cfg.pipeline else "none"
-
-    exp_path = run_dir / "experiment.json"
-
-    git_commit = get_git_commit(Path("."))
-    runtime_info = get_runtime_info()
-    config_hash = meta.config_hash if meta.config_hash else "none"
-    validation_status = meta.validation_status if meta.validation_status else "unknown"
-
-    record = {
-        "metadata": {
-            "problem": problem,
-            "segment": segment,
-            "version": version,
-            "experiment_id": experiment_id,
-            "sources": sources,
-            "env": env,
-            "best_params_path": best_params_path,
-            "algorithm": model_cfg.algorithm.value if model_cfg.algorithm else None,
-            "pipeline_version": pipeline_version,
-            "created_by": "search.py",
-            "created_at": timestamp,
-            "owner": owner,
-            "feature_store": model_cfg.feature_store.model_dump() if model_cfg.feature_store else {},
-            "seed": model_cfg.seed if model_cfg.seed is not None else "none",
-            "hardware": model_cfg.search.hardware.model_dump() if model_cfg.search and model_cfg.search.hardware else {},
-            "git_commit": git_commit,
-            "runtime_info": runtime_info,
-            "config_hash": config_hash,
-            "validation_status": validation_status,
-        },
-        "config": model_cfg.model_dump(by_alias=True),
-        "search_results": search_results
-    }
-
-    try:
-        with exp_path.open("w") as f:
-            json.dump(record, f, indent=4, sort_keys=True, default=str)
-        logger.info("Saved hyperparameter search experiment to %s", exp_path)
-    except Exception:
-        logger.exception("Failed to save experiment to %s", exp_path)
-        raise PersistenceError(f"Failed to save experiment to {exp_path}")
-
-    return exp_path
+    save_metadata(model_cfg, search_results, owner, experiment_id=experiment_id, timestamp=timestamp)
+    save_runtime_snapshot(run_dir, timestamp)

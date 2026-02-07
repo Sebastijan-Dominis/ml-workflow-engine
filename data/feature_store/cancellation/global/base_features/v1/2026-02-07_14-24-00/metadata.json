@@ -1,0 +1,62 @@
+{
+    "created_by": "freeze.py",
+    "created_at": "2026-02-07T14:24:00.943091",
+    "feature_type": "tabular",
+    "snapshot_path": "data\\feature_store\\cancellation\\global\\base_features\\v1\\2026-02-07_14-24-00",
+    "schema_path": "data\\feature_store\\cancellation\\global\\base_features\\v1",
+    "data_hash": "c4fe37749637d0efd3cf69b171ca8fbcc8ace4917b003580caddaf2987637b20",
+    "schema_hashes": {
+        "train": "14b1be14602e147a2679a316ef9bfad3",
+        "val": "e9582a0bdd98c3c81d07c92f6c2ef6f5",
+        "test": "82d23e3a98ef88f2d0fafaaac60f3dbb"
+    },
+    "operators_hash": "d6cd1f81e8da613322ca8e58aa1fafbf",
+    "config_hash": "3a1ba96cb9de0f8eaf0616d7c03bb87d",
+    "feature_set_hash": "ff094e480f88b98750ee5cd5aa6a5757c91dc81405360718df4fa0b0b9372943",
+    "runtime": {
+        "git_commit": "0254312d19e1f067bdc467710b675174fa47288a",
+        "runtime_info": {
+            "python_version": "3.11.14",
+            "python_impl": "CPython",
+            "os": "Windows",
+            "os_release": "10",
+            "architecture": "AMD64",
+            "platform_string": "Windows-10-10.0.26200-SP0",
+            "id": "DESKTOP-U1KTCME",
+            "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+            "python_build": [
+                "main",
+                "Oct 21 2025 18:30:03"
+            ]
+        },
+        "deps": {
+            "numpy": "1.26.4",
+            "pandas": "2.3.3",
+            "scikit-learn": "1.7.2",
+            "pyarrow": "22.0.0",
+            "pydantic": "2.12.5",
+            "PyYAML": "6.0.3"
+        },
+        "python_executable": "C:\\Users\\Sebastijan\\anaconda3\\envs\\hotel_management\\python.exe"
+    },
+    "row_counts": {
+        "train": 81184,
+        "val": 14327,
+        "test": 23878
+    },
+    "column_count": 26,
+    "class_counts": {
+        "train": {
+            "0": 51203,
+            "1": 29981
+        },
+        "val": {
+            "0": 9035,
+            "1": 5292
+        },
+        "test": {
+            "0": 14927,
+            "1": 8951
+        }
+    }
+}

@@ -1,4 +1,0 @@
-feature,dtype,role,source_operator,materialized
-total_stay,int8,derived,TotalStay,False
-adr_per_person,float32,derived,AdrPerPerson,False
-arrival_season,object,derived,ArrivalSeason,False

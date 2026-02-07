@@ -12,6 +12,9 @@ def get_runtime_info() -> dict:
             "os_release": platform.release(),
             "architecture": platform.machine(),
             "platform_string": platform.platform(),
+            "id": platform.node(),
+            "processor": platform.processor(),
+            "python_build": platform.python_build(),
         }
     except Exception as e:
         msg = f"Failed to get runtime info: {e}"

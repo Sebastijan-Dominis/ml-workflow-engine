@@ -1,12 +1,15 @@
 import logging
 logger = logging.getLogger(__name__)
 from pathlib import Path
+import sys
 
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.utils.pipeline_core.step import PipelineStep
 from ml.feature_freezing.freeze_strategies.tabular.persistence import create_metadata
 from ml.feature_freezing.freeze_strategies.tabular.io import hash_feature_set, validate_feature_set_hashes_match
 from ml.utils.git import get_git_commit
+from ml.utils.runtime.runtime_info import get_runtime_info
+from ml.feature_freezing.persistence.get_deps import get_deps
 from ml.feature_freezing.utils.schema import hash_data_schema
 
 class MetadataStep(PipelineStep[FreezeContext]):
@@ -42,6 +45,15 @@ class MetadataStep(PipelineStep[FreezeContext]):
         validate_feature_set_hashes_match(X_test, feature_set_hash)
 
         git_commit = get_git_commit(Path("."))
+        runtime_info = get_runtime_info()
+        deps = get_deps()
+
+        runtime = {
+            "git_commit": git_commit,
+            "runtime_info": runtime_info,
+            "deps": deps,
+            "python_executable": sys.executable
+        }
 
         operators_hash = (
             ctx.config.operators.hash
@@ -58,7 +70,7 @@ class MetadataStep(PipelineStep[FreezeContext]):
             operators_hash,
             ctx.require_config_hash,
             feature_set_hash,
-            git_commit,
+            runtime,
             X_train,
             X_val,
             X_test,
