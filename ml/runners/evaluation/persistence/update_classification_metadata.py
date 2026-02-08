@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 
 # Utility imports
-from ml.training.evaluation_scripts.utils import assert_keys
+from ml.runners.evaluation.utils import assert_keys
 
 def get_file(model_configs: dict) -> Path:
     """Return the `Path` to the metadata file declared in the config.

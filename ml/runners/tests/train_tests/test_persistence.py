@@ -11,8 +11,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
 from pathlib import Path
 
-from ml.training.train_scripts.persistence import save_model_pipeline_and_metadata
-from ml.training.train_scripts.persistence.update_general_config import (
+from ml.runners.training.persistence import save_model_pipeline_and_metadata
+from ml.runners.training.persistence.update_general_config import (
     update_general_config
 )
 

@@ -7,7 +7,7 @@ files are missing.
 
 import pytest
 
-from ml.training.train_scripts.custom_training_scripts.train_catboost import (
+from ml.runners.training.custom_training_scripts.train_catboost import (
     train_catboost
 )
 

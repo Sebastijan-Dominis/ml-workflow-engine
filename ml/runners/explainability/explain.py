@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 from pathlib import Path
 
 # Explainability scripts imports
-from ml.training.explain_scripts.custom_explainability_scripts.explain_catboost import explain_catboost
+from ml.runners.explainability.custom_explainability_scripts.explain_catboost import explain_catboost
 
 # Logger import
 from ml.logging_config import setup_logging

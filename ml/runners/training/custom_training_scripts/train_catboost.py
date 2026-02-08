@@ -23,7 +23,7 @@ from sklearn.pipeline import Pipeline
 from catboost import CatBoostClassifier, CatBoostRegressor
 
 # Project imports
-from ml.training.train_scripts.utils import load_train_and_val_data
+from ml.runners.training.utils import load_train_and_val_data
 from ml.utils.features import load_schemas, get_cat_features
 from ml.pipelines.builders import build_pipeline
 from ml.registry.model_classes import MODEL_CLASS_REGISTRY

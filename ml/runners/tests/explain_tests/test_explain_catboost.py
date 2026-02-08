@@ -16,7 +16,7 @@ from sklearn.preprocessing import FunctionTransformer
 from catboost import CatBoost
 
 # Commented out imports are for potential future tests
-from ml.training.explain_scripts.custom_explainability_scripts.explain_catboost import (
+from ml.runners.explainability.custom_explainability_scripts.explain_catboost import (
     # import_components,
     check_key_presence,
     # get_pipeline_and_model,

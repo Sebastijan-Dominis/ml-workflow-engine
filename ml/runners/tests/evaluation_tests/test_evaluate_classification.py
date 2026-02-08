@@ -13,7 +13,7 @@ from pathlib import Path
 from sklearn.dummy import DummyClassifier
 from sklearn.pipeline import Pipeline
 
-from ml.training.evaluation_scripts.custom_evaluation_scripts.evaluate_classification import (
+from ml.runners.evaluation.custom_evaluation_scripts.evaluate_classification import (
     get_file_paths,
     load_model,
     get_data_splits,

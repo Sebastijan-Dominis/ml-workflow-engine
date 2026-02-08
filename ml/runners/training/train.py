@@ -8,7 +8,7 @@ implementation. After training, the resulting pipeline and metadata are
 persisted and the global models registry is updated.
 
 Typical usage:
-    python -m ml.training.train_scripts.train \\
+    python -m ml.training.training.train \\
         --problem cancellation --segment global --version v1 \\
         --experiment-id 20260206_154343_2f5c2000
 
@@ -29,11 +29,11 @@ from ml.utils import load_model_specs, validate_model_specs
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.registry.train_registry import TRAIN_REGISTRY
-from ml.training.train_scripts.utils import load_train_and_val_data
-from ml.training.train_scripts.persistence.save_model import save_model
-from ml.training.train_scripts.persistence.save_pipeline import save_pipeline
-from ml.training.train_scripts.persistence.save_metadata import save_metadata
-from ml.training.train_scripts.persistence.update_general_config import update_general_config
+from ml.runners.training.utils import load_train_and_val_data
+from ml.runners.training.persistence.save_model import save_model
+from ml.runners.training.persistence.save_pipeline import save_pipeline
+from ml.runners.training.persistence.save_metadata import save_metadata
+from ml.runners.training.persistence.update_general_config import update_general_config
 from ml.logging_config import setup_logging
 from ml.cli.error_handling import resolve_exit_code
 
@@ -150,7 +150,7 @@ def main() -> int:
 
         ALGORITHMS_SUPPORTING_THRESHOLDS = ["catboost"]
         if algorithm.lower() in ALGORITHMS_SUPPORTING_THRESHOLDS:
-            from ml.training.train_scripts.utils import get_best_f1_thresh
+            from ml.runners.training.utils import get_best_f1_thresh
             X_train, y_train, X_val, y_val = load_train_and_val_data(cfg_model_specs)
 
             best_threshold = get_best_f1_thresh(pipeline, X_val, y_val)

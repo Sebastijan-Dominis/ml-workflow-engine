@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Optional, Protocol
 
 # Utility imports
-from ml.training.evaluation_scripts.utils import assert_keys
+from ml.runners.evaluation.utils import assert_keys
 
 # Define a Protocol for classifiers with predict_proba method
 class ProbabilisticClassifier(Protocol):

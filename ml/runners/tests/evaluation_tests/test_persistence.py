@@ -9,7 +9,7 @@ import pytest
 
 from pathlib import Path
 
-from ml.training.evaluation_scripts.persistence.update_classification_metadata import (
+from ml.runners.evaluation.persistence.update_classification_metadata import (
     get_file,
     load_metadata,
     update_content,

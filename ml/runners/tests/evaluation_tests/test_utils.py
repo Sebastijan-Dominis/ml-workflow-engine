@@ -6,7 +6,7 @@ are missing from dictionaries.
 
 import pytest
 
-from ml.training.evaluation_scripts.utils import assert_keys
+from ml.runners.evaluation.utils import assert_keys
 
 
 def test_assert_keys_raises() -> None:

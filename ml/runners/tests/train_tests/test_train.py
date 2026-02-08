@@ -1,4 +1,4 @@
-"""Tests for the training CLI and helper functions in ml.training.train_scripts.
+"""Tests for the training CLI and helper functions in ml.training.train.
 
 These tests exercise argument parsing, configuration loading, and the
 main dispatch behavior for unsupported algorithms.
@@ -9,8 +9,8 @@ import yaml
 import pytest
 
 from pathlib import Path
-from ml.training.train_scripts import train as train_module
-from ml.training.train_scripts.train import (
+from ml.runners.training import train as train_module
+from ml.runners.training.train import (
     parse_args,
     load_train_configs,
     main,

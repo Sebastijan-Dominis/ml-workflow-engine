@@ -15,8 +15,8 @@ from sklearn.dummy import DummyClassifier
 from sklearn.pipeline import Pipeline
 from pathlib import Path
 
-from ml.training.evaluation_scripts import evaluate
-from ml.training.evaluation_scripts.evaluate import (
+from ml.runners.evaluation import evaluate
+from ml.runners.evaluation.evaluate import (
     parse_args,
     get_model_configs,
     validate_threshold,

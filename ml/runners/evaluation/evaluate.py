@@ -26,17 +26,17 @@ from ml.logging_config import setup_logging
 from ml.cli.error_handling import resolve_exit_code
 
 # Evaluation scripts imports
-from ml.training.evaluation_scripts.custom_evaluation_scripts.evaluate_classification import (
+from ml.runners.evaluation.custom_evaluation_scripts.evaluate_classification import (
     evaluate_classification
 )
 
 # Persistence scripts imports
-from ml.training.evaluation_scripts.persistence.update_classification_metadata import (
+from ml.runners.evaluation.persistence.update_classification_metadata import (
     update_classification_metadata
 )
 
 # Utility imports
-from ml.training.evaluation_scripts.utils import (
+from ml.runners.evaluation.utils import (
     assert_keys
 )
 

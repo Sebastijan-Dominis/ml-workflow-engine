@@ -5,7 +5,7 @@ missing required fields raise appropriate errors.
 """
 
 import pytest
-from ml.training.train_scripts.schemas.train_config_schema import (
+from ml.runners.training.schemas.train_config_schema import (
     ConfigSchema,
 )
 
