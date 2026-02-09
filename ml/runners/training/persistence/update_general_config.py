@@ -9,6 +9,7 @@ the `latest` pointer for downstream consumers.
 import logging
 from datetime import datetime
 from pathlib import Path
+
 import yaml
 
 logger = logging.getLogger(__name__)

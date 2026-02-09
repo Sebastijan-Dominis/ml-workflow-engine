@@ -1,6 +1,9 @@
 from typing import Dict
-from ml.registry.feature_operators import FEATURE_OPERATORS
+
 import pandas as pd
+
+from ml.registry.feature_operators import FEATURE_OPERATORS
+
 
 def build_operators(derived_schema: pd.DataFrame) -> Dict[str, object]:
     """

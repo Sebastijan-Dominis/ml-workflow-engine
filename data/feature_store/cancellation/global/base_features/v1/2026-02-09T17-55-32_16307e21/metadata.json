@@ -15,9 +15,10 @@
     },
     "column_count": 26,
     "config_hash": "3a1ba96cb9de0f8eaf0616d7c03bb87d",
-    "created_at": "2026-02-07T17-40-25",
+    "created_at": "2026-02-09T17-55-32",
     "created_by": "freeze.py",
     "data_hash": "c4fe37749637d0efd3cf69b171ca8fbcc8ace4917b003580caddaf2987637b20",
+    "duration_seconds": 0.375,
     "feature_set_hash": "ff094e480f88b98750ee5cd5aa6a5757c91dc81405360718df4fa0b0b9372943",
     "feature_type": "tabular",
     "operators_hash": "d6cd1f81e8da613322ca8e58aa1fafbf",
@@ -35,11 +36,11 @@
             "pydantic": "2.12.5",
             "scikit-learn": "1.7.2"
         },
-        "git_commit": "3b80293f00ce7f489449c0a0eae26342fdd16c0a",
+        "git_commit": "02446df48988837a5ba0e14646436b3e6e302421",
         "python_executable": "C:\\Users\\Sebastijan\\anaconda3\\envs\\hotel_management\\python.exe",
         "runtime_info": {
             "architecture": "AMD64",
-            "id": "DESKTOP-U1KTCME",
+            "hostname": "DESKTOP-U1KTCME",
             "os": "Windows",
             "os_release": "10",
             "platform_string": "Windows-10-10.0.26200-SP0",
@@ -49,7 +50,8 @@
                 "Oct 21 2025 18:30:03"
             ],
             "python_impl": "CPython",
-            "python_version": "3.11.14"
+            "python_version": "3.11.14",
+            "ram_total_gb": 34.19
         }
     },
     "schema_hashes": {
@@ -58,5 +60,5 @@
         "val": "e9582a0bdd98c3c81d07c92f6c2ef6f5"
     },
     "schema_path": "data\\feature_store\\cancellation\\global\\base_features\\v1",
-    "snapshot_path": "data\\feature_store\\cancellation\\global\\base_features\\v1\\2026-02-07T17-40-25_2071f37c"
+    "snapshot_path": "data\\feature_store\\cancellation\\global\\base_features\\v1\\2026-02-09T17-55-32_16307e21"
 }

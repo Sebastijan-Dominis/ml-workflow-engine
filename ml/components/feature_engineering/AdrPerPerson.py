@@ -1,5 +1,6 @@
-from .base import FeatureOperator
 from ..base import SklearnFeatureMixin
+from .base import FeatureOperator
+
 
 class AdrPerPerson(FeatureOperator, SklearnFeatureMixin):
     output_features = ["adr_per_person"]

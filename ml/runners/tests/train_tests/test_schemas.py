@@ -5,9 +5,11 @@ missing required fields raise appropriate errors.
 """
 
 import pytest
+
 from ml.runners.training.schemas.train_config_schema import (
     ConfigSchema,
 )
+
 
 def test_config_schema_valid(minimal_training_cfg: dict) -> None:
     """Validate that a minimal configuration passes schema validation."""

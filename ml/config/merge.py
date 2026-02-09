@@ -1,15 +1,17 @@
 import logging
-logger = logging.getLogger(__name__)
-from typing import Any
-from pathlib import Path
 from copy import deepcopy
+from pathlib import Path
+from typing import Any
 
-from ml.utils.loader import load_yaml
+from ml.utils.loaders import load_yaml
+
+logger = logging.getLogger(__name__)
 
 def deep_merge(dicts: list[dict[str, Any]]) -> dict[str, Any]:
     """
-    Iteratively merge a list of dictionaries. Later dicts override earlier ones.
-    Only copies nested dicts, not primitives, for efficiency.
+    Uses manual recursive merging to merge a list of dicts into one. 
+    Later dicts take precedence over earlier ones.
+    Primitives and lists are replaced.
     """
     result: dict[str, Any] = {}
 

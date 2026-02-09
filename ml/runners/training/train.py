@@ -16,147 +16,137 @@ The ``--experiment-id`` flag must point to an existing experiment
 directory created by a prior search run.
 """
 
-# General imports
-import logging
-logger = logging.getLogger(__name__)
 import argparse
+import logging
 import sys
-import yaml
+import time
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Protocol
+from uuid import uuid4
 
-from ml.utils import load_model_specs, validate_model_specs
-
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.registry.train_registry import TRAIN_REGISTRY
-from ml.runners.training.utils import load_train_and_val_data
-from ml.runners.training.persistence.save_model import save_model
-from ml.runners.training.persistence.save_pipeline import save_pipeline
-from ml.runners.training.persistence.save_metadata import save_metadata
-from ml.runners.training.persistence.update_general_config import update_general_config
-from ml.logging_config import setup_logging
 from ml.cli.error_handling import resolve_exit_code
+from ml.config.hashing import add_config_hash
+from ml.config.loader import load_and_validate_config
+from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.exceptions import ConfigError
+from ml.logging_config import add_file_handler, bootstrap_logging
+from ml.registry.train_registry import TRAIN_REGISTRY
+from ml.runners.training.persistence.artifacts.save_model import save_model
+from ml.runners.training.persistence.artifacts.save_pipeline import save_pipeline
+from ml.runners.training.persistence.run_info.save_experiment import save_experiment
+from ml.runners.training.utils.best_params_path import get_best_params_path
+from ml.runners.training.utils.hashing.main import hash_artifact
+from ml.runners.training.utils.logical_config_checks.validate_logical_config import validate_logical_config
+from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import validate_lineage_integrity
+from ml.utils.experiments.logical_config.validate_pipeline_cfg import validate_pipeline_cfg
+from ml.utils.experiments.reproducibility.validate_reproducibility import validate_reproducibility
 
-class Trainer(Protocol):
-    """
-    Trainer interface.
-
-    Returns:
-        dict with keys:
-        - best_params
-        - phases
-    """
-    def train(self, model_cfg: TrainModelConfig) -> dict[str, Any]: ...
+logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
-    try:
-        parser = argparse.ArgumentParser(description="Train a model.")
+    parser = argparse.ArgumentParser(description="Train a model.")
 
-        parser.add_argument(
-            "--problem",
-            type=str,
-            required=True,
-            help="Model problem, e.g., 'no_show'"
-        )
+    parser.add_argument(
+        "--problem",
+        type=str,
+        required=True,
+        help="Model problem, e.g., 'no_show'"
+    )
 
-        parser.add_argument(
-            "--segment",
-            type=str,
-            required=True,
-            help="Model segment name, e.g., 'city_hotel_online_ta'"
-        )
+    parser.add_argument(
+        "--segment",
+        type=str,
+        required=True,
+        help="Model segment name, e.g., 'city_hotel_online_ta'"
+    )
 
-        parser.add_argument(
-            "--version",
-            type=str,
-            required=True,
-            help="Model version, e.g., 'v1'"
-        )
+    parser.add_argument(
+        "--version",
+        type=str,
+        required=True,
+        help="Model version, e.g., 'v1'"
+    )
 
-        parser.add_argument(
-            "--experiment-id",
-            type=str,
-            required=True,
-            help="Experiment id (directory name under experiments/{problem}/{segment}/{version})"
-        )
+    parser.add_argument(
+        "--env",
+        type=str,
+        default="default",
+        help="Environment to run the script in (dev/test/prod) (default: default) ~ none"
+    )
 
-        parser.add_argument(
-            "--logging-level",
-            type=str,
-            default="INFO",
-            help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
-        )
+    parser.add_argument(
+        "--experiment-id",
+        type=str,
+        default="latest",
+        help="Experiment id (directory name under experiments/{problem}/{segment}/{version}); if not provided, defaults to 'latest' which picks the most recent experiment directory"
+    )
 
-        return parser.parse_args()
-        
-    except Exception:
-        logger.exception("Failed to parse arguments.")
-        raise
+    parser.add_argument(
+        "--logging-level",
+        type=str,
+        default="INFO",
+        help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
+    )
 
-def load_train_configs(problem, segment, version) -> dict:
-    config_path = Path(f"configs/train/{problem}/{segment}/{version}.yaml")
-    try:
-        with open(config_path, 'r') as file:
-            config = yaml.safe_load(file)
-        return config
-    except Exception:
-        logger.exception(f"Failed to load training configuration from {config_path}.")
-        raise
+    return parser.parse_args()
 
 def main() -> int:
-    """Entrypoint to run model training according to a YAML configuration.
-
-    The function performs the following high-level steps:
-    1. Set up logging inside the experiment directory.
-    2. Parse CLI arguments to obtain the config file name.
-    3. Load and validate the YAML configuration.
-    4. Select the appropriate trainer implementation based on the
-       ``task`` and ``model.model_class`` specified in the config.
-    5. Execute training, persist the resulting pipeline and metadata,
-       and update the global models registry.
-
-    Returns:
-        0 on success, non-zero exit code on failure.
-    """
     args: argparse.Namespace
     model_cfg: TrainModelConfig
 
     args = parse_args()
 
-    experiment_dir = Path("experiments") / args.problem / args.segment / args.version / args.experiment_id
+    start_time = time.perf_counter()
+    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
-    setup_logging(experiment_dir / "train.log", level=log_level)
+
+    bootstrap_logging(level=log_level)
+
+    experiment_parent_dir = Path("experiments") / args.problem / args.segment / args.version
+    experiment_dir = get_best_params_path(args.experiment_id, experiment_parent_dir)
+
+    train_run_id = f"{timestamp}_{uuid4().hex[:8]}"
+    train_run_path = experiment_dir / "training" / train_run_id
+    train_run_path.mkdir(parents=True, exist_ok=False)
+
+    add_file_handler(train_run_path / f"train.log", level=log_level)
 
     try:
-        cfg_model_specs_raw = load_model_specs(args.problem, args.segment, args.version, logger)
+        model_cfg = load_and_validate_config(
+            Path(f"configs/train/{args.problem}/{args.segment}/{args.version}.yaml"),
+            cfg_type="train",
+            env=args.env,
+            experiment_dir=experiment_dir,
+        )
 
-        cfg_model_specs = validate_model_specs(cfg_model_specs_raw, logger)
+        model_cfg = add_config_hash(model_cfg)
 
-        cfg_train = load_train_configs(args.problem, args.segment, args.version)
-        algorithm = cfg_model_specs["algorithm"]
+        validate_lineage_integrity(experiment_dir)
+        validate_reproducibility(experiment_dir / "runtime.json")
+        validate_logical_config(model_cfg, experiment_dir)
+        validate_pipeline_cfg(experiment_dir / "experiment.json", model_cfg)
 
-        key = algorithm.lower()
+        algorithm = model_cfg.algorithm
+
+        key = algorithm.value.lower()
         trainer = TRAIN_REGISTRY.get(key)
 
         if trainer:
-            model, pipeline = trainer(cfg_model_specs, cfg_train)
+            logger.info(f"Starting training for problem={args.problem} segment={args.segment} version={args.version} using algorithm={algorithm.value}.")
+            model, pipeline, feature_lineage, metrics, pipeline_cfg_hash = trainer(model_cfg)
         else:
-            logger.error(f"No trainer found for algorithm '{algorithm}'.")
-            raise ValueError(f"Unsupported algorithm: {algorithm}")
+            msg = f"No trainer found for algorithm '{algorithm.value}'."
+            logger.error(msg)
+            raise ConfigError(msg)
         
-        save_model(model, cfg_model_specs)
-        save_pipeline(pipeline, cfg_model_specs)
-        save_metadata(cfg_model_specs)
+        model_hash = hash_artifact(model)
+        pipeline_hash = hash_artifact(pipeline)
 
-        ALGORITHMS_SUPPORTING_THRESHOLDS = ["catboost"]
-        if algorithm.lower() in ALGORITHMS_SUPPORTING_THRESHOLDS:
-            from ml.runners.training.utils import get_best_f1_thresh
-            X_train, y_train, X_val, y_val = load_train_and_val_data(cfg_model_specs)
+        model_path = save_model(model, train_run_path)
+        pipeline_path = save_pipeline(pipeline, train_run_path)
+        save_experiment(model_cfg, feature_lineage=feature_lineage, start_time=start_time, train_run_id=train_run_id, experiment_dir=experiment_dir, metrics=metrics, model_hash=model_hash, pipeline_hash=pipeline_hash, model_path=model_path, pipeline_path=pipeline_path, pipeline_cfg_hash=pipeline_cfg_hash, timestamp=timestamp)
 
-            best_threshold = get_best_f1_thresh(pipeline, X_val, y_val)
-            update_general_config(cfg_model_specs, best_threshold)
-        else:
-            update_general_config(cfg_model_specs)
 
         logger.info(
             "Training completed | problem=%s segment=%s version=%s experiment_id=%s",

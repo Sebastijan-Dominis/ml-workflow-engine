@@ -1,18 +1,17 @@
 import logging
 
-from ml.search.params.catboost.refinement import prepare_narrow_params
-from ml.search.params.catboost.validation import validate_param_value
-logger = logging.getLogger(__name__)
 import numpy as np
 
-from ml.search.searchers.catboost.pipeline.context import SearchContext
-from ml.utils.pipeline_core.step import PipelineStep
 from ml.exceptions import ConfigError, SearchError
-from ml.search.searchers.catboost.model import (
-    prepare_model,
-    build_pipeline_with_model,
-)
-from ml.search.utils.utils import perform_randomized_search
+from ml.search.params.catboost.refinement import prepare_narrow_params
+from ml.search.params.catboost.validation import validate_param_value
+from ml.search.searchers.catboost.model import prepare_model
+from ml.search.searchers.catboost.pipeline.context import SearchContext
+from ml.search.utils.randomized_search import perform_randomized_search
+from ml.utils.catboost.build_pipeline_with_model import build_pipeline_with_model
+from ml.utils.pipeline_core.step import PipelineStep
+
+logger = logging.getLogger(__name__)
 
 class NarrowSearchStep(PipelineStep[SearchContext]):
     name = "narrow_search"

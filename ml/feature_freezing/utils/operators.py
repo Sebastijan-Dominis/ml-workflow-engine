@@ -1,14 +1,16 @@
-import logging
-logger = logging.getLogger(__name__)
 import hashlib
 import inspect
+import json
+import logging
 import sys
+
 import pandas as pd
 import sklearn
-import json
 
+from ml.exceptions import DataError, UserError
 from ml.registry.feature_operators import FEATURE_OPERATORS
-from ml.exceptions import UserError, DataError
+
+logger = logging.getLogger(__name__)
 
 def generate_operator_hash(operator_names):
     operator_names = sorted(operator_names)

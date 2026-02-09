@@ -1,22 +1,23 @@
 import logging
-logger = logging.getLogger(__name__)
-import yaml
 from pathlib import Path
 from typing import Any, Literal, overload
 
-from ml.utils.loader import load_yaml
 from ml.config.best_params import MergeTarget, apply_best_params
-from ml.config.merge import resolve_extends, apply_env_overlay
 from ml.config.hashing import compute_config_hash
+from ml.config.merge import apply_env_overlay, resolve_extends
 from ml.config.validation import validate_model_config
-from ml.exceptions import ConfigError
 from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.exceptions import ConfigError, UserError
+from ml.utils.loaders import load_yaml
+
+logger = logging.getLogger(__name__)
 
 def load_config(
     path: Path,
     *,
     env: str = "default",
-    best_params_path: Path | None = None,
+    cfg_type: Literal["search", "train"],
+    experiment_dir: Path | None = None,
     merge_target: MergeTarget = "training",
     skip_missing_extends: bool = False,
     skip_missing_env: bool = True,
@@ -56,15 +57,21 @@ def load_config(
 
     cfg["_meta"]["env"] = env
 
-    cfg = apply_best_params(cfg, best_params_path, merge_target=merge_target, strict=True)
+    if cfg_type == "train":
+        if experiment_dir is None:
+            msg = "experiment_dir must be provided for training configs"
+            logger.error(msg)
+            raise UserError(msg)
+        
+        best_params_path = experiment_dir / "experiment.json"
+        
+        cfg = apply_best_params(cfg, best_params_path, merge_target=merge_target, strict=True)
 
-    cfg["_meta"]["best_params_path"] = (
-        str(best_params_path) if best_params_path else "none"
-    )
+        cfg["_meta"]["best_params_path"] = (
+            str(best_params_path)
+        )
 
     cfg["_meta"]["validation_status"] = "missing"
-
-    cfg["_meta"]["config_hash"] = compute_config_hash(cfg)
 
     logger.debug("Final merged config: %s", cfg)
     
@@ -73,13 +80,16 @@ def load_config(
 @overload
 def load_and_validate_config(
     path: Path,
+    experiment_dir: None = None,
     *,
     cfg_type: Literal["search"],
     env: str = "default",
 ) -> SearchModelConfig: ...
+
 @overload
 def load_and_validate_config(
     path: Path,
+    experiment_dir: Path,
     *,
     cfg_type: Literal["train"],
     env: str = "default",
@@ -87,10 +97,11 @@ def load_and_validate_config(
 
 def load_and_validate_config(
     path: Path,
+    experiment_dir: Path | None = None,
     *,
     cfg_type: Literal["search", "train"],
     env: str = "default",
 ) -> SearchModelConfig | TrainModelConfig:
-    cfg_raw = load_config(path, env=env)
+    cfg_raw = load_config(path, env=env, experiment_dir=experiment_dir, cfg_type=cfg_type)
     cfg = validate_model_config(cfg_raw, cfg_type=cfg_type)
     return cfg

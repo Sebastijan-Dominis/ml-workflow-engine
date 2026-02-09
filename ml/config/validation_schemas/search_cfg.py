@@ -1,7 +1,9 @@
 from typing import List, Optional
+
 from pydantic import BaseModel, Field
 
 from ml.config.validation_schemas.hardware_cfg import HardwareConfig
+
 
 # === Broad search model/ensemble params ===
 class BroadModelParams(BaseModel):

@@ -1,21 +1,24 @@
 import logging
-logger = logging.getLogger(__name__)
-import pandas as pd
 from dataclasses import dataclass
 from typing import Optional
+
+import pandas as pd
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.exceptions import RuntimeMLException
 
+logger = logging.getLogger(__name__)
 @dataclass
 class SearchContext:
     model_cfg: SearchModelConfig
 
     X_train: Optional[pd.DataFrame] = None
     y_train: Optional[pd.DataFrame] = None
+    feature_lineage: Optional[list[dict]] = None
     input_schema: Optional[pd.DataFrame] = None
     derived_schema: Optional[pd.DataFrame] = None
     pipeline_cfg: Optional[dict] = None
+    pipeline_hash: Optional[str] = None
     cat_features: Optional[list[str]] = None
 
     best_params_1: Optional[dict] = None
@@ -42,6 +45,14 @@ class SearchContext:
         return self.y_train
 
     @property
+    def require_feature_lineage(self) -> list[dict]:
+        if self.feature_lineage is None:
+            msg = "Feature lineage not prepared yet. Ensure that the preparation step has been run."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.feature_lineage
+
+    @property
     def require_input_schema(self) -> pd.DataFrame:
         if self.input_schema is None:
             msg = "Input schema not prepared yet. Ensure that the preparation step has been run."
@@ -64,6 +75,14 @@ class SearchContext:
             logger.error(msg)
             raise RuntimeMLException(msg)
         return self.pipeline_cfg
+    
+    @property
+    def require_pipeline_hash(self) -> str:
+        if self.pipeline_hash is None:
+            msg = "Pipeline hash not computed yet. Ensure that the preparation step has been run."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.pipeline_hash
 
     @property
     def require_cat_features(self) -> list[str]:

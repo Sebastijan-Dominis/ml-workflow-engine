@@ -1,6 +1,7 @@
+from pathlib import Path
+
 import pytest
 
-from pathlib import Path
 
 @pytest.fixture
 def dummy_models_config(tmp_path: Path) -> dict:

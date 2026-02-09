@@ -11,20 +11,22 @@ Key functions:
 
 # General imports
 import importlib
-import pandas as pd
-import numpy as np
-import joblib
 import logging
-logger = logging.getLogger(__name__)
-
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from pathlib import Path
 from typing import Optional, Protocol
+
+import joblib
+import numpy as np
+import pandas as pd
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
 # Utility imports
 from ml.runners.evaluation.utils import assert_keys
 
 # Define a Protocol for classifiers with predict_proba method
+
+logger = logging.getLogger(__name__)
+
 class ProbabilisticClassifier(Protocol):
     def predict_proba(self, X: pd.DataFrame) -> np.ndarray: ...
 

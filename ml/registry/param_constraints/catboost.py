@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class ParamConstraints:
     min_value: float | int | None = None

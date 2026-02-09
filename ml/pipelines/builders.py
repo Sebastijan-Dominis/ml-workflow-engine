@@ -1,10 +1,11 @@
-from typing import Dict
 import logging
+from typing import Dict
+
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
+from ml.pipelines import operator_factory, schema_utils
 from ml.registry.pipeline_components import PIPELINE_COMPONENTS
-from ml.pipelines import schema_utils, operator_factory
 
 logger = logging.getLogger(__name__)
 __version__ = "1.0.0"

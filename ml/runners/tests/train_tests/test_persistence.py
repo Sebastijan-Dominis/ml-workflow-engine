@@ -5,16 +5,15 @@ and that the global `models.yaml` registry is updated correctly.
 """
 
 import json
-import pytest
-
-from sklearn.pipeline import Pipeline
-from sklearn.dummy import DummyClassifier
 from pathlib import Path
 
+import pytest
+from sklearn.dummy import DummyClassifier
+from sklearn.pipeline import Pipeline
+
 from ml.runners.training.persistence import save_model_pipeline_and_metadata
-from ml.runners.training.persistence.update_general_config import (
-    update_general_config
-)
+from ml.runners.training.persistence.update_general_config import update_general_config
+
 
 def test_save_pipeline_and_metadata_writes_files(tmp_path: Path, minimal_training_cfg: dict, monkeypatch: pytest.MonkeyPatch) -> None:
     """Save a pipeline and metadata, asserting the expected files exist.

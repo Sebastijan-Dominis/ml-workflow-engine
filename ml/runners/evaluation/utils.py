@@ -4,6 +4,7 @@ Contains simple helpers for validating configuration dictionaries.
 """
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

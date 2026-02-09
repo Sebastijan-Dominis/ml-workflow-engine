@@ -4,31 +4,27 @@ These tests exercise helpers that inspect pipelines, compute feature
 names and SHAP importances, and orchestrate the explainability flow.
 """
 
-import pytest
-import pandas as pd
-import numpy as np
-
 from pathlib import Path
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.dummy import DummyClassifier
-from sklearn.preprocessing import FunctionTransformer
+
+import numpy as np
+import pandas as pd
+import pytest
 from catboost import CatBoost
+from sklearn.dummy import DummyClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import FunctionTransformer, StandardScaler
 
 # Commented out imports are for potential future tests
-from ml.runners.explainability.custom_explainability_scripts.explain_catboost import (
-    # import_components,
+from ml.runners.explainability.custom_explainability_scripts.explain_catboost import (  # import_components,; get_pipeline_and_model,; get_feature_importances,; get_test_data,
     check_key_presence,
-    # get_pipeline_and_model,
-    inspect_pipeline,
+    explain_catboost,
     get_feature_names,
-    validate_lengths,
-    # get_feature_importances,
-    # get_test_data,
     get_shap_importances,
+    inspect_pipeline,
     save_importances,
-    explain_catboost
+    validate_lengths,
 )
+
 
 def test_check_key_presence_missing_key() -> None:
     """Expect KeyError when required explainability keys are absent."""

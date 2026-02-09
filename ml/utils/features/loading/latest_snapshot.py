@@ -1,12 +1,13 @@
 import logging
-logger = logging.getLogger(__name__)
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
-def get_latest_snapshot(version_path: Path) -> Path:
+logger = logging.getLogger(__name__)
+
+def get_latest_snapshot(path: Path) -> Path:
     snapshots = []
     
-    for p in version_path.iterdir():
+    for p in path.iterdir():
         if not p.is_dir():
             continue
         parts = p.name.split("_")
@@ -20,7 +21,7 @@ def get_latest_snapshot(version_path: Path) -> Path:
         snapshots.append(p)
     
     if not snapshots:
-        msg = f"No valid snapshots found in {version_path}"
+        msg = f"No valid snapshots found in {path}"
         logger.error(msg)
         raise FileNotFoundError(msg)
 

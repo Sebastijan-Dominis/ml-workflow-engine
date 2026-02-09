@@ -1,13 +1,15 @@
 import logging
-logger = logging.getLogger(__name__)
 from pathlib import Path
+
 import pandas as pd
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import DataError
-from ml.utils.features.validation import validate_feature_set, validate_set
 from ml.utils.features.loading.latest_snapshot import get_latest_snapshot
-from ml.utils.features.loading.metadata import get_metadata
+from ml.utils.features.validation import validate_feature_set, validate_set
+from ml.utils.loaders import load_json
+
+logger = logging.getLogger(__name__)
 
 def load_feature_set_schemas(features_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     input_schema_path = features_path / "input_schema.csv"
@@ -41,7 +43,7 @@ def aggregate_schema_dfs(schemas: list[pd.DataFrame]) -> pd.DataFrame:
 
     return pd.DataFrame(aggregated_rows).reset_index(drop=True)
 
-def load_schemas(model_cfg: SearchModelConfig) -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_schemas(model_cfg: SearchModelConfig | TrainModelConfig) -> tuple[pd.DataFrame, pd.DataFrame]:
     feature_store_path = Path(model_cfg.feature_store.path)
     feature_sets = model_cfg.feature_store.feature_sets
 
@@ -58,7 +60,7 @@ def load_schemas(model_cfg: SearchModelConfig) -> tuple[pd.DataFrame, pd.DataFra
     for fs in feature_sets:
         version_path = feature_store_path / fs.ref.replace(".", "/") / fs.name / fs.version
         latest_snapshot = get_latest_snapshot(version_path)
-        metadata = get_metadata(latest_snapshot)
+        metadata = load_json(latest_snapshot / "metadata.json")
 
         validate_feature_set(latest_snapshot, metadata)
 

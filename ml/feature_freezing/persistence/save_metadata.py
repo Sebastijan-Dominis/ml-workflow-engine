@@ -1,9 +1,10 @@
 import json
 import logging
-logger = logging.getLogger(__name__)
 from pathlib import Path
 
 from ml.exceptions import PersistenceError
+
+logger = logging.getLogger(__name__)
 
 def save_metadata(path: Path, metadata: dict):
     metadata_path = path / "metadata.json"

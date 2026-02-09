@@ -1,11 +1,13 @@
-import logging
-logger = logging.getLogger(__name__)
-import json
 import hashlib
-from typing import Any
+import json
+import logging
 from copy import deepcopy
+from typing import Any, overload
 
+from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import ConfigError
+
+logger = logging.getLogger(__name__)
 
 def compute_config_hash(cfg: dict[str, Any]) -> str:
     if not isinstance(cfg, dict):
@@ -17,3 +19,16 @@ def compute_config_hash(cfg: dict[str, Any]) -> str:
     cfg_copy.pop("_meta", None)  # remove infrastructure-only metadata
     payload = json.dumps(cfg_copy, sort_keys=True, default=str)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+@overload
+def add_config_hash(cfg: SearchModelConfig) -> SearchModelConfig: ...
+
+@overload
+def add_config_hash(cfg: TrainModelConfig) -> TrainModelConfig: ...
+
+def add_config_hash(cfg: SearchModelConfig | TrainModelConfig) -> SearchModelConfig | TrainModelConfig:
+    runtime_dict = cfg.model_dump(exclude={"_meta"}, by_alias=True)
+    config_hash = compute_config_hash(runtime_dict)
+
+    cfg.meta.config_hash = config_hash
+    return cfg

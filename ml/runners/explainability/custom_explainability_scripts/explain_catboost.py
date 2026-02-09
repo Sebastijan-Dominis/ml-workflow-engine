@@ -12,17 +12,18 @@ workflow and writes CSVs to `ml/models/explainability/<name>_<version>/`.
 
 # General imports
 import importlib
-import joblib
-import pandas as pd
-import numpy as np
-import shap
 import logging
-logger = logging.getLogger(__name__)
-
 from pathlib import Path
-from sklearn.pipeline import Pipeline
+
+import joblib
+import numpy as np
+import pandas as pd
+import shap
 from catboost import CatBoost
 from numpy.typing import NDArray
+from sklearn.pipeline import Pipeline
+
+logger = logging.getLogger(__name__)
 
 def import_components(name_and_version: str) -> None:
     """Dynamically import model-specific component modules.

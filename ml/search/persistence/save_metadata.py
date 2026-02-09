@@ -1,17 +1,16 @@
-import logging
 import json
+import logging
 from pathlib import Path
-from datetime import datetime
+
+from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.exceptions import PersistenceError
+from ml.utils.git import get_git_commit
 
 logger = logging.getLogger(__name__)
 
-from ml.utils.git import get_git_commit
-from ml.exceptions import PersistenceError
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
-
 EXPERIMENTS_DIR = Path("experiments")
 EXPERIMENTS_DIR.mkdir(exist_ok=True)
-def save_metadata(model_cfg: SearchModelConfig, search_results: dict, owner: str, *, experiment_id: str, timestamp: str) -> Path:
+def save_metadata(model_cfg: SearchModelConfig, search_results: dict, owner: str, *, experiment_id: str, timestamp: str, feature_lineage: list[dict], pipeline_hash: str) -> Path:
     problem = model_cfg.problem
     segment = model_cfg.segment.name
     version = model_cfg.version
@@ -46,15 +45,16 @@ def save_metadata(model_cfg: SearchModelConfig, search_results: dict, owner: str
             "created_by": "search.py",
             "created_at": timestamp,
             "owner": owner,
-            "feature_store": model_cfg.feature_store.model_dump() if model_cfg.feature_store else {},
+            "feature_lineage": feature_lineage,
             "seed": model_cfg.seed if model_cfg.seed is not None else "none",
             "hardware": model_cfg.search.hardware.model_dump() if model_cfg.search and model_cfg.search.hardware else {},
             "git_commit": git_commit,
             "config_hash": config_hash,
             "validation_status": validation_status,
+            "pipeline_hash": pipeline_hash
         },
         "config": model_cfg.model_dump(by_alias=True),
-        "search_results": search_results
+        "search_results": search_results,
     }
 
     try:

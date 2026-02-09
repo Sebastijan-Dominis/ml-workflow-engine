@@ -1,5 +1,6 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 
+
 class PipelineComponent(BaseEstimator, TransformerMixin):
     """Base class for all pipeline components."""
     def fit(self, X, y=None):

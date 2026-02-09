@@ -1,13 +1,14 @@
-import pandas as pd
-import numpy as np
-import yaml
-import matplotlib.pyplot as plt
-import random
 import math
-
+import random
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import yaml
+from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay, classification_report, f1_score, roc_auc_score
 from sklearn.model_selection import RandomizedSearchCV
-from sklearn.metrics import f1_score, RocCurveDisplay, roc_auc_score, ConfusionMatrixDisplay, classification_report
+
 
 def get_data(feature_path):
     X_train = pd.read_parquet(Path(feature_path) / "X_train.parquet")

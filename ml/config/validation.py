@@ -1,11 +1,12 @@
 import logging
-logger = logging.getLogger(__name__)
-from typing import Dict, Literal, Any
+from typing import Any, Dict, Literal
+
 from pydantic_core import ValidationError
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
-from ml.config.validation_schemas.model_specs import MetaConfig
 from ml.exceptions import ConfigError
+
+logger = logging.getLogger(__name__)
 
 def validate_model_config(cfg_raw: Dict[str, Any], cfg_type: Literal["search", "train"]) -> SearchModelConfig | TrainModelConfig:
     """

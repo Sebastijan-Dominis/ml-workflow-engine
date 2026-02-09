@@ -1,9 +1,9 @@
 import logging
-logger = logging.getLogger(__name__)
-
 import subprocess
 from pathlib import Path
 from typing import Literal
+
+logger = logging.getLogger(__name__)
 
 MergeTarget = Literal["training", "model", "ensemble"]
 
@@ -24,3 +24,16 @@ def get_git_commit(repo_dir: Path = Path(".")) -> str:
         return commit_hash
     except subprocess.CalledProcessError:
         return "unknown"
+
+def is_descendant_commit(commit_a: str, commit_b: str) -> bool:
+    """Return True if commit_a is a descendant of commit_b."""
+    try:
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", commit_b, commit_a],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return True
+    except subprocess.CalledProcessError:
+        return False

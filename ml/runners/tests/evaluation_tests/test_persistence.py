@@ -5,17 +5,18 @@ the evaluation step for classification models.
 """
 
 import json
-import pytest
-
 from pathlib import Path
+
+import pytest
 
 from ml.runners.evaluation.persistence.update_classification_metadata import (
     get_file,
     load_metadata,
-    update_content,
     save_metadata,
     update_classification_metadata,
+    update_content,
 )
+
 
 def test_get_file(tmp_path: Path) -> None:
     """Test that get_file correctly resolves metadata file path from config."""

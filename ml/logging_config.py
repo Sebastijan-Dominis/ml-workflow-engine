@@ -17,7 +17,7 @@ def setup_logging(path: Path, level: int = logging.INFO) -> None:
 
 def add_file_handler(
     path: Path,
-    level: int | None = None,
+    level: int = logging.INFO,
 ) -> logging.FileHandler:
     """Attach an additional file handler to the root logger.
 
@@ -42,9 +42,13 @@ def add_file_handler(
 
     handler = logging.FileHandler(str(path))
     handler.setFormatter(logging.Formatter(LOG_FORMAT))
-
-    if level is not None:
-        handler.setLevel(level)
+    handler.setLevel(level)
 
     logging.getLogger().addHandler(handler)
     return handler
+
+def bootstrap_logging(level=logging.INFO):
+    logging.basicConfig(
+        level=level,
+        format=LOG_FORMAT,
+    )

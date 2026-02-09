@@ -1,6 +1,8 @@
 import logging
-logger = logging.getLogger(__name__)
+
 from ml.exceptions import ConfigError
+
+logger = logging.getLogger(__name__)
 
 def get_default_int_params(param_cfg, default_offsets, default_low, default_high):
     offsets_cfg = param_cfg.offsets if param_cfg.offsets is not None else default_offsets

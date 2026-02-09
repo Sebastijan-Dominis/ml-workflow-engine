@@ -1,8 +1,8 @@
 {
     "config": {
         "_meta": {
-            "best_params_path": "none",
-            "config_hash": "a5fe0baf0afca04f2405caf5cebffd8b44b0a76803e93754b22b1068fd77e7be",
+            "best_params_path": null,
+            "config_hash": "ef192993e92750abc982b89dd7920abdafbb9b54d62b781c134856734d46c723",
             "env": "default",
             "sources": {
                 "extends": [
@@ -85,9 +85,7 @@
                             128,
                             254
                         ],
-                        "colsample_bylevel": [
-                            1.0
-                        ],
+                        "colsample_bylevel": null,
                         "depth": [
                             4,
                             6,
@@ -241,17 +239,21 @@
             "type": "classification"
         },
         "training": {
-            "bagging_temperature": 1.0,
-            "border_count": 128,
-            "depth": 6,
             "early_stopping_rounds": 100,
+            "ensemble": {
+                "bagging_temperature": 1.0
+            },
             "hardware": {
                 "task_type": "CPU"
             },
-            "iterations": 1000,
-            "l2_leaf_reg": 3,
-            "learning_rate": 0.03,
-            "random_strength": 1
+            "model": {
+                "border_count": 128,
+                "depth": 6,
+                "iterations": 1000,
+                "l2_leaf_reg": 3,
+                "learning_rate": 0.03,
+                "random_strength": 1
+            }
         },
         "verbose": 100,
         "version": "v1"
@@ -259,32 +261,21 @@
     "metadata": {
         "algorithm": "catboost",
         "best_params_path": "none",
-        "config_hash": "a5fe0baf0afca04f2405caf5cebffd8b44b0a76803e93754b22b1068fd77e7be",
-        "created_at": "2026-02-07T18-39-52",
+        "config_hash": "ef192993e92750abc982b89dd7920abdafbb9b54d62b781c134856734d46c723",
+        "created_at": "2026-02-09T22-45-53",
         "created_by": "search.py",
         "env": "default",
-        "experiment_id": "2026-02-07T18-39-52_7890155e",
-        "feature_store": {
-            "feature_sets": [
-                {
-                    "X_test": "X_test.parquet",
-                    "X_train": "X_train.parquet",
-                    "X_val": "X_val.parquet",
-                    "data_format": "parquet",
-                    "derived_schema": "derived_schema.csv",
-                    "input_schema": "input_schema.csv",
-                    "name": "base_features",
-                    "ref": "cancellation/global",
-                    "schema_format": "csv",
-                    "version": "v1",
-                    "y_test": "y_test.parquet",
-                    "y_train": "y_train.parquet",
-                    "y_val": "y_val.parquet"
-                }
-            ],
-            "path": "data/feature_store/"
-        },
-        "git_commit": "c8cbb11d99032d8585da56fcaa654dde60fee602",
+        "experiment_id": "2026-02-09T22-45-53_dc70dac4",
+        "feature_lineage": [
+            {
+                "name": "base_features",
+                "ref": "cancellation/global",
+                "snapshot_id": "2026-02-09T17-55-32_16307e21",
+                "snapshot_path": "data\\feature_store\\cancellation\\global\\base_features\\v1\\2026-02-09T17-55-32_16307e21",
+                "version": "v1"
+            }
+        ],
+        "git_commit": "02446df48988837a5ba0e14646436b3e6e302421",
         "hardware": {
             "allow_growth": false,
             "devices": [
@@ -294,6 +285,7 @@
             "task_type": "GPU"
         },
         "owner": "Sebastijan",
+        "pipeline_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89",
         "pipeline_version": "v1",
         "problem": "cancellation",
         "seed": 42,
@@ -310,7 +302,16 @@
         "version": "v1"
     },
     "search_results": {
-        "best_params": {
+        "best_model_params": {
+            "bagging_temperature": 1.6,
+            "border_count": 64,
+            "depth": 9,
+            "l2_leaf_reg": 6.3,
+            "learning_rate": 0.17,
+            "min_data_in_leaf": 13,
+            "random_strength": 3.5
+        },
+        "best_pipeline_params": {
             "Model__bagging_temperature": 1.6,
             "Model__border_count": 64,
             "Model__depth": 9,
@@ -325,7 +326,6 @@
                 "best_params": {
                     "Model__bagging_temperature": 2.0,
                     "Model__border_count": 32,
-                    "Model__colsample_bylevel": 1.0,
                     "Model__depth": 8,
                     "Model__l2_leaf_reg": 9.0,
                     "Model__learning_rate": 0.2,
@@ -362,9 +362,6 @@
                         64,
                         128,
                         254
-                    ],
-                    "Model__colsample_bylevel": [
-                        1.0
                     ],
                     "Model__depth": [
                         4,

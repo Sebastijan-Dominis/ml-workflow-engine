@@ -1,12 +1,14 @@
 import logging
-logger = logging.getLogger(__name__)
+from typing import Any
+
 import numpy as np
 import pandas as pd
-from typing import Any
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
+
+logger = logging.getLogger(__name__)
 
 def perform_randomized_search(pipeline: Pipeline, X_train: pd.DataFrame, y_train: pd.DataFrame, param_distributions: dict[str, Any], model_cfg: SearchModelConfig, search_type: str) -> dict[str, Any]:
     search_phase_cfg = getattr(model_cfg.search, search_type)

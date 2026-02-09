@@ -1,14 +1,16 @@
 import logging
-logger = logging.getLogger(__name__)
-import pandas as pd
 from pathlib import Path
+from typing import Optional
 
+import pandas as pd
+
+from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import DataError
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
-from ml.utils.features.loading.metadata import get_metadata
-from ml.utils.features.loading.latest_snapshot import get_latest_snapshot
-from ml.utils.features.validation import validate_feature_set, validate_set
 from ml.utils.features.hash_y import hash_y
+from ml.utils.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
+from ml.utils.features.validation import validate_feature_set, validate_set
+
+logger = logging.getLogger(__name__)
 
 FORMAT_REGISTRY = {
     "parquet": pd.read_parquet,
@@ -33,43 +35,64 @@ def load_feature_set_data(snapshot_path: Path, fs, keys: list) -> tuple[pd.DataF
 
     return tuple(data)
 
-def load_X_and_y(model_cfg: SearchModelConfig, keys: list[str]) -> tuple[pd.DataFrame, pd.DataFrame]:
+def load_X_and_y(model_cfg: SearchModelConfig | TrainModelConfig, keys: list[str], snapshot_selection: Optional[list[dict]]) -> tuple[pd.DataFrame, pd.DataFrame, list[dict]]:
+    """
+    Load and combine X and y from multiple feature sets, validating lineage and data consistency.
+
+    Args:
+        model_cfg: The validated SearchModelConfig or TrainModelConfig
+        keys: List of keys to load, e.g., ["X_train", "y_train"]
+        snapshot_selection: Optional pre-resolved snapshot info from `resolve_feature_snapshots`. 
+                            If None, the latest snapshots are automatically resolved.
+
+    Returns:
+        X: Combined feature DataFrame
+        y: Target Series/DataFrame (assumes identical across feature sets)
+        lineage: List of dicts with snapshot provenance for each feature set
+    """
     feature_store_path = Path(model_cfg.feature_store.path)
     feature_sets = model_cfg.feature_store.feature_sets
 
-    if not feature_sets:
-        msg = "No feature sets defined in model specifications."
-        logger.error(msg)
-        raise DataError(msg)
+    if not snapshot_selection:
+        snapshot_selection = resolve_feature_snapshots(feature_store_path, feature_sets)
 
-    dfs = []
-    data_hashes = set()
+    dfs_X = []
     y_hashes = set()
+    data_hashes = set()
+    lineage = []
 
-    for fs in feature_sets:
-        version_path = feature_store_path / fs.ref.replace(".", "/") / fs.name / fs.version
-        latest_snapshot = get_latest_snapshot(version_path)
-        metadata = get_metadata(latest_snapshot)
+    for sel in snapshot_selection:
+        fs = sel["fs_spec"]
+        snapshot_path = sel["snapshot_path"]
+        metadata = sel["metadata"]
+
+        validate_feature_set(snapshot_path, metadata)
         
-        validate_feature_set(latest_snapshot, metadata)
+        X, y = load_feature_set_data(snapshot_path, fs, keys)
         
-        X, y = load_feature_set_data(latest_snapshot, fs, keys)
-        
-        dfs.append(X)
+        dfs_X.append(X)
 
         data_hashes.add(metadata.get("data_hash"))
         y_hashes.add(hash_y(y))
 
+        lineage.append({
+            "ref": fs.ref,
+            "name": fs.name,
+            "version": fs.version,
+            "snapshot_id": snapshot_path.name,
+            "snapshot_path": str(snapshot_path),
+        })
+
     validate_set("Data", data_hashes, feature_sets)
     validate_set("Target (y)", y_hashes, feature_sets)
 
-    for df in dfs[1:]:
-        if not df.index.equals(dfs[0].index):
+    for df in dfs_X[1:]:
+        if not df.index.equals(dfs_X[0].index):
             msg = "Indices of feature sets do not match."
             logger.error(msg)
             raise DataError(msg)
 
-    combined_df = pd.concat(dfs, axis=1)
+    combined_df = pd.concat(dfs_X, axis=1)
 
     dupes = combined_df.columns[combined_df.columns.duplicated()]
     if len(dupes) > 0:
@@ -77,4 +100,4 @@ def load_X_and_y(model_cfg: SearchModelConfig, keys: list[str]) -> tuple[pd.Data
     
     X = combined_df.loc[:, ~combined_df.columns.duplicated()]
 
-    return X, y
+    return X, y, lineage

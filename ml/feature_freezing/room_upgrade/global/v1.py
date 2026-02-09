@@ -1,12 +1,12 @@
-import pandas as pd
-import numpy as np
-
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from ml.components.feature_engineering.TotalStay import TotalStay
 from ml.components.feature_engineering.AdrPerPerson import AdrPerPerson
 from ml.components.feature_engineering.ArrivalSeason import ArrivalSeason
+from ml.components.feature_engineering.TotalStay import TotalStay
 
 # Configuration
 TASK_NAME = "room_upgrade"

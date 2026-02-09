@@ -13,32 +13,30 @@ The module exposes helper functions used by the CLI and a `main()` function
 which orchestrates the complete evaluation flow.
 """
 
-# General imports
-import sys
-import yaml
 import argparse
 import logging
-logger = logging.getLogger(__name__)
+
+# General imports
+import sys
 from pathlib import Path
+
+import yaml
+
+from ml.cli.error_handling import resolve_exit_code
 
 # Logger import
 from ml.logging_config import setup_logging
-from ml.cli.error_handling import resolve_exit_code
 
 # Evaluation scripts imports
-from ml.runners.evaluation.custom_evaluation_scripts.evaluate_classification import (
-    evaluate_classification
-)
+from ml.runners.evaluation.custom_evaluation_scripts.evaluate_classification import evaluate_classification
 
 # Persistence scripts imports
-from ml.runners.evaluation.persistence.update_classification_metadata import (
-    update_classification_metadata
-)
+from ml.runners.evaluation.persistence.update_classification_metadata import update_classification_metadata
 
 # Utility imports
-from ml.runners.evaluation.utils import (
-    assert_keys
-)
+from ml.runners.evaluation.utils import assert_keys
+
+logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
     """Parse CLI arguments.

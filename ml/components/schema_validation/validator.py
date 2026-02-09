@@ -1,5 +1,6 @@
 from ..base import PipelineComponent
 
+
 class SchemaValidator(PipelineComponent):
     """Validate that incoming DataFrame contains required columns.
 

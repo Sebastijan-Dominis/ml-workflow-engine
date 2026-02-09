@@ -1,5 +1,6 @@
-from .base import FeatureOperator
 from ..base import SklearnFeatureMixin
+from .base import FeatureOperator
+
 
 class TotalStay(FeatureOperator, SklearnFeatureMixin):
     output_features = ["total_stay"]

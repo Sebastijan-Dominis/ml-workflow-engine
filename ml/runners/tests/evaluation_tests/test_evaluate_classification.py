@@ -4,24 +4,25 @@ These unit tests validate data loading, model deserialization, metric
 computation and the top-level `evaluate_classification` orchestration.
 """
 
-import pandas as pd
-import numpy as np
-import joblib
-import pytest
-
 from pathlib import Path
+
+import joblib
+import numpy as np
+import pandas as pd
+import pytest
 from sklearn.dummy import DummyClassifier
 from sklearn.pipeline import Pipeline
 
 from ml.runners.evaluation.custom_evaluation_scripts.evaluate_classification import (
+    compute_metrics,
+    evaluate_classification,
+    evaluate_model,
+    evaluate_split,
+    get_data_splits,
     get_file_paths,
     load_model,
-    get_data_splits,
-    compute_metrics,
-    evaluate_split,
-    evaluate_model,
-    evaluate_classification,
 )
+
 
 def test_get_file_paths(tmp_path: Path) -> None:
     """Test that get_file_paths correctly resolves paths from config."""

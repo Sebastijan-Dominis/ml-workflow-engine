@@ -1,13 +1,15 @@
-import logging
-logger = logging.getLogger(__name__)
-from pathlib import Path
 import hashlib
+import logging
+from pathlib import Path
+
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from ml.exceptions import DataError, UserError
 from ml.feature_freezing.utils.hashing import hash_streaming
-from ml.exceptions import UserError, DataError
+
+logger = logging.getLogger(__name__)
 
 def safe(val) -> str:
     return "None" if val is None else str(val)

@@ -1,5 +1,6 @@
 from ..base import PipelineComponent
 
+
 class FillCategoricalMissing(PipelineComponent):
     """Fill missing values in categorical columns with the string "missing".
 

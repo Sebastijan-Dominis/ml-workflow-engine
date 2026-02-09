@@ -1,9 +1,11 @@
-import logging
-logger = logging.getLogger(__name__)
-import pandas as pd
 import hashlib
+import logging
+
+import pandas as pd
 
 from ml.exceptions import DataError
+
+logger = logging.getLogger(__name__)
 
 def hash_y(y) -> str:
     if isinstance(y, pd.DataFrame):

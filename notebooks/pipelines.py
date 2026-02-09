@@ -2,6 +2,7 @@ from catboost import CatBoostClassifier
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 
+
 def create_classification_pipeline_1(schema, iterations, created_columns, class_weights=None):
     categorical_features = schema.loc[schema["dtype"].isin(['object', 'category', 'string']), "feature"].tolist()
 

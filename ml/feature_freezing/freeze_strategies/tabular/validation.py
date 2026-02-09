@@ -1,10 +1,12 @@
 import logging
-logger = logging.getLogger(__name__)
+
 import numpy as np
 import pandas as pd
 
 from ml.exceptions import DataError, UserError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+
+logger = logging.getLogger(__name__)
 
 def validate_min_rows(data: pd.DataFrame, min_rows: int):
     if not min_rows:

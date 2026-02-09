@@ -1,6 +1,8 @@
 from enum import Enum
-from pydantic import BaseModel, field_validator, validator
 from typing import List, Optional
+
+from pydantic import BaseModel, field_validator, validator
+
 
 # === Hardware TaskType enum ===
 class HardwareTaskType(str, Enum):

@@ -1,8 +1,8 @@
 import logging
-logger = logging.getLogger(__name__)
 
 from ml.registry.param_constraints.catboost import CATBOOST_PARAM_CONSTRAINTS
 
+logger = logging.getLogger(__name__)
 
 def validate_param_value(param_name: str, value, task_type: str):
     constraints = CATBOOST_PARAM_CONSTRAINTS.get(param_name)

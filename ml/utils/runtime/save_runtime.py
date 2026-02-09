@@ -1,14 +1,16 @@
-import logging
-logger = logging.getLogger(__name__)
 import json
-from pathlib import Path
+import logging
 from datetime import datetime
+from pathlib import Path
 
-from ml.utils.runtime.runtime_snapshot import build_runtime_snapshot
+from ml.config.validation_schemas.hardware_cfg import HardwareConfig
 from ml.exceptions import PersistenceError
+from ml.utils.runtime.runtime_snapshot import build_runtime_snapshot
 
-def save_runtime_snapshot(run_dir: Path, timestamp: str) -> None:
-    snapshot = build_runtime_snapshot(timestamp)
+logger = logging.getLogger(__name__)
+
+def save_runtime_snapshot(run_dir: Path, timestamp: str, hardware_info: HardwareConfig, start_time: float) -> None:
+    snapshot = build_runtime_snapshot(timestamp, hardware_info, start_time=start_time)
     snapshot_path = run_dir / "runtime.json"
     try:
         with open(snapshot_path, "w") as f:

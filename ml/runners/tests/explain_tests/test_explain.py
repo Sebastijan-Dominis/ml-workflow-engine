@@ -4,19 +4,19 @@ These unit tests validate argument parsing, model config lookup, and
 dispatch behavior for the explain entry point.
 """
 
-import yaml
-import pytest
-
 from pathlib import Path
+
+import pytest
+import yaml
 
 from ml.runners.explainability import explain
 
 # Commenting out imports for possible future use
-from ml.runners.explainability.explain import (
-    parse_args,
+from ml.runners.explainability.explain import (  # explain_catboost,
     get_model_configs,
-    # explain_catboost,
+    parse_args,
 )
+
 
 def test_parse_args(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure CLI argument parsing for the explain entry point works."""

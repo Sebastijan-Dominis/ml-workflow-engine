@@ -1,6 +1,8 @@
 import logging
-logger = logging.getLogger(__name__)
+
 from ml.exceptions import ConfigError
+
+logger = logging.getLogger(__name__)
 
 def refine_int(center, offsets, low, high):
     if not isinstance(center, int):

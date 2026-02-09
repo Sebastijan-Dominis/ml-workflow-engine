@@ -6,22 +6,18 @@ the top-level `main` evaluation flow for classification models.
 
 import json
 import sys
-import joblib
-import pytest
-import yaml
-import pandas as pd
-
-from sklearn.dummy import DummyClassifier
-from sklearn.pipeline import Pipeline
 from pathlib import Path
 
+import joblib
+import pandas as pd
+import pytest
+import yaml
+from sklearn.dummy import DummyClassifier
+from sklearn.pipeline import Pipeline
+
 from ml.runners.evaluation import evaluate
-from ml.runners.evaluation.evaluate import (
-    parse_args,
-    get_model_configs,
-    validate_threshold,
-    main
-)
+from ml.runners.evaluation.evaluate import get_model_configs, main, parse_args, validate_threshold
+
 
 def test_parse_args(monkeypatch: pytest.MonkeyPatch) -> None:
     """CLI argument parsing should populate args correctly."""

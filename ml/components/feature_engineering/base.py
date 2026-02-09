@@ -1,5 +1,7 @@
-from ..base import PipelineComponent, SklearnFeatureMixin
 import pandas as pd
+
+from ..base import PipelineComponent, SklearnFeatureMixin
+
 
 class FeatureOperator(PipelineComponent):
     """Produces one or more features."""

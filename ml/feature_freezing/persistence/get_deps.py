@@ -1,9 +1,9 @@
 import logging
-logger = logging.getLogger(__name__)
 from importlib.metadata import version
+
 from ml.exceptions import RuntimeMLException
 
-
+logger = logging.getLogger(__name__)
 
 def get_pkg_version(name):
     return version(name)

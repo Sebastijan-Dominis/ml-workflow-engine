@@ -1,16 +1,18 @@
 import logging
-logger = logging.getLogger(__name__)
-from pathlib import Path
 import sys
+import time
+from pathlib import Path
 
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
-from ml.utils.pipeline_core.step import PipelineStep
-from ml.feature_freezing.freeze_strategies.tabular.persistence import create_metadata
 from ml.feature_freezing.freeze_strategies.tabular.io import hash_feature_set, validate_feature_set_hashes_match
-from ml.utils.git import get_git_commit
-from ml.utils.runtime.runtime_info import get_runtime_info
+from ml.feature_freezing.freeze_strategies.tabular.persistence import create_metadata
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.feature_freezing.persistence.get_deps import get_deps
 from ml.feature_freezing.utils.schema import hash_data_schema
+from ml.utils.git import get_git_commit
+from ml.utils.pipeline_core.step import PipelineStep
+from ml.utils.runtime.runtime_info import get_runtime_info
+
+logger = logging.getLogger(__name__)
 
 class MetadataStep(PipelineStep[FreezeContext]):
     name = "metadata"
@@ -60,25 +62,28 @@ class MetadataStep(PipelineStep[FreezeContext]):
             if ctx.config.operators else "none"
         )
 
+        duration = round(time.perf_counter() - ctx.require_start_time, 3)
+
         metadata = create_metadata(
-            ctx.require_timestamp,
-            ctx.require_snapshot_path,
-            ctx.require_schema_path,
-            ctx.require_data_hash,
-            train_schema_hash,
-            val_schema_hash,
-            test_schema_hash,
-            operators_hash,
-            ctx.require_config_hash,
-            feature_set_hash,
-            runtime,
-            X_train,
-            X_val,
-            X_test,
-            y_train,
-            y_val,
-            y_test,
-            ctx.config.target.problem_type,
+            timestamp = ctx.require_timestamp,
+            snapshot_path = ctx.require_snapshot_path,
+            schema_path = ctx.require_schema_path,
+            data_hash = ctx.require_data_hash,
+            train_schema_hash = train_schema_hash,
+            val_schema_hash = val_schema_hash,
+            test_schema_hash = test_schema_hash,
+            operators_hash = operators_hash,
+            config_hash = ctx.require_config_hash,
+            feature_set_hash = feature_set_hash,
+            runtime = runtime,
+            X_train = X_train,
+            X_val = X_val,
+            X_test = X_test,
+            y_train = y_train,
+            y_val = y_val,
+            y_test = y_test,
+            task = ctx.config.target.problem_type,
+            duration = duration
         )
 
         ctx.metadata = metadata

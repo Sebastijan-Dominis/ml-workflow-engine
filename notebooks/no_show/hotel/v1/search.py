@@ -1,12 +1,20 @@
-import logging
-logger = logging.getLogger(__name__)
 import argparse
+import logging
+from pathlib import Path
+
 import pandas as pd
 
-from pathlib import Path
+from notebooks.common_functions import (
+    get_best_f1_thresh,
+    get_data,
+    prepare_narrow_search_params,
+    save_training_config,
+    search_best_params,
+)
 from notebooks.logging_config import setup_logging
 from notebooks.pipelines import create_classification_pipeline_1
-from notebooks.common_functions import get_data, search_best_params, prepare_narrow_search_params, get_best_f1_thresh, save_training_config
+
+logger = logging.getLogger(__name__)
 
 setup_logging()
 

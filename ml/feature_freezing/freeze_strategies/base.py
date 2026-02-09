@@ -1,13 +1,15 @@
+import hashlib
 from abc import ABC, abstractmethod
 from typing import Optional, Tuple
+
 import yaml
-import hashlib
 
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 
+
 class FreezeStrategy(ABC):
     @abstractmethod
-    def freeze(self, config: TabularFeaturesConfig, *, timestamp: str, snapshot_id: str) -> Tuple:
+    def freeze(self, config: TabularFeaturesConfig, *, timestamp: str, snapshot_id: str, start_time: float) -> Tuple:
         pass
 
     @staticmethod

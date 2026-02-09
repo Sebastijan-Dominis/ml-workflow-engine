@@ -1,5 +1,7 @@
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
+
 
 # Define function to save segment-specific features
 def save_segment(segment):

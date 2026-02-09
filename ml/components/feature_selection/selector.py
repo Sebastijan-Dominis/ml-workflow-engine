@@ -1,5 +1,6 @@
 from ..base import SklearnFeatureMixin
 
+
 class FeatureSelector(SklearnFeatureMixin):
     """Select a fixed set of columns for model training.
 

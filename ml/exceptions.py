@@ -16,7 +16,10 @@ class DataError(UserError):
 
 
 class PipelineContractError(UserError):
-    """Mismatch between model, features, or pipeline."""
+    """Violations of structural or logical expectations between pipeline
+    stages or experiment components, including incompatible artifacts,
+    lineage inconsistencies, incorrect stage ordering, or execution under
+    an unrelated or incompatible experiment context."""
 
 
 class SearchError(RuntimeMLException):

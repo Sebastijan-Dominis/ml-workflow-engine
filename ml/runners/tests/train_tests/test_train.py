@@ -5,16 +5,18 @@ main dispatch behavior for unsupported algorithms.
 """
 
 import sys
-import yaml
-import pytest
-
 from pathlib import Path
+
+import pytest
+import yaml
+
 from ml.runners.training import train as train_module
 from ml.runners.training.train import (
-    parse_args,
     load_train_configs,
     main,
+    parse_args,
 )
+
 
 def test_parse_args(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure CLI argument parsing returns the expected namespace."""

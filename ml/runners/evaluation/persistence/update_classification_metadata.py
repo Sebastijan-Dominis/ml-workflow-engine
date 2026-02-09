@@ -9,12 +9,12 @@ the selected decision threshold.
 # General imports
 import json
 import logging
-logger = logging.getLogger(__name__)
-
 from pathlib import Path
 
 # Utility imports
 from ml.runners.evaluation.utils import assert_keys
+
+logger = logging.getLogger(__name__)
 
 def get_file(model_configs: dict) -> Path:
     """Return the `Path` to the metadata file declared in the config.

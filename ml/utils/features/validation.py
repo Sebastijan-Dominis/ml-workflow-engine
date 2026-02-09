@@ -1,9 +1,10 @@
 import logging
-logger = logging.getLogger(__name__)
 from pathlib import Path
 
+from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import DataError, PipelineContractError
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
+
+logger = logging.getLogger(__name__)
 
 def validate_feature_set(snapshot_path: Path, metadata: dict) -> None:
     if not metadata["data_hash"]:
@@ -19,7 +20,7 @@ def validate_set(hash_type: str, hashes: set, feature_sets: list) -> None:
         logger.error(msg)
         raise DataError(msg)
     
-def validate_model_feature_pipeline_contract(model_cfg: SearchModelConfig, pipeline_cfg: dict, cat_features: list | None = None) -> None:
+def validate_model_feature_pipeline_contract(model_cfg: SearchModelConfig | TrainModelConfig, pipeline_cfg: dict, cat_features: list | None = None) -> None:
     pipeline_supported_tasks = []
     if pipeline_cfg.get("assumptions", {}).get("supports_classification"):
         pipeline_supported_tasks.append("classification")

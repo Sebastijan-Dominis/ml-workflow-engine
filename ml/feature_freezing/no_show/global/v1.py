@@ -1,11 +1,11 @@
-import pandas as pd
-
-from sklearn.model_selection import train_test_split
 from pathlib import Path
 
-from ml.components.feature_engineering.TotalStay import TotalStay
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
 from ml.components.feature_engineering.AdrPerPerson import AdrPerPerson
 from ml.components.feature_engineering.ArrivalSeason import ArrivalSeason
+from ml.components.feature_engineering.TotalStay import TotalStay
 
 # Configuration
 TASK_NAME = "no_show"

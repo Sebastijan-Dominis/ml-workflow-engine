@@ -1,9 +1,11 @@
 import logging
-logger = logging.getLogger(__name__)
+
 import pandas as pd
 
-from ml.exceptions import UserError, DataError
+from ml.exceptions import DataError, UserError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+
+logger = logging.getLogger(__name__)
 
 def apply_segmentation(data: pd.DataFrame, config: TabularFeaturesConfig) -> pd.DataFrame:
     seg_cfg = config.segmentation

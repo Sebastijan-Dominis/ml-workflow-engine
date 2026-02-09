@@ -1,5 +1,7 @@
-import pandas as pd
 from typing import List, Tuple
+
+import pandas as pd
+
 
 def get_raw_and_derived_features(input_schema: pd.DataFrame, derived_schema: pd.DataFrame) -> Tuple[List[str], List[str], List[str]]:
     """

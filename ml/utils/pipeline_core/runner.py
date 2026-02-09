@@ -1,8 +1,9 @@
 import logging
-logger = logging.getLogger(__name__)
-from ml.utils.pipeline_core.step import PipelineStep
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
+from ml.utils.pipeline_core.step import PipelineStep
+
+logger = logging.getLogger(__name__)
 
 C = TypeVar("C")
 

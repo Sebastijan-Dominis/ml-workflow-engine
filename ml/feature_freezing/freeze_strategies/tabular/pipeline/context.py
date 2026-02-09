@@ -1,20 +1,22 @@
 import logging
-logger = logging.getLogger(__name__)
 from dataclasses import dataclass
 from pathlib import Path
-import pandas as pd
 from typing import Optional
 
+import pandas as pd
+
+from ml.exceptions import RuntimeMLException
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.artifacts import TabularSplits
-from ml.exceptions import RuntimeMLException
 
+logger = logging.getLogger(__name__)
 @dataclass
 class FreezeContext:
     config: TabularFeaturesConfig
 
     timestamp: Optional[str] = None
     snapshot_id: Optional[str] = None
+    start_time: Optional[float] = None
 
     data: Optional[pd.DataFrame] = None
     data_hash: Optional[str] = None
@@ -45,6 +47,14 @@ class FreezeContext:
             logger.error(msg)
             raise RuntimeMLException(msg)
         return self.snapshot_id
+
+    @property
+    def require_start_time(self) -> float:
+        if self.start_time is None:
+            msg = "Start time not set. Ensure that the start_time is provided when calling freeze()."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.start_time
 
     @property
     def require_data(self) -> pd.DataFrame:

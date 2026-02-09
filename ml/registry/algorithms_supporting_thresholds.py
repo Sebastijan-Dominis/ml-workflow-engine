@@ -1,0 +1,1 @@
+ALGORITHMS_SUPPORTING_THRESHOLDS = set(["catboost"])

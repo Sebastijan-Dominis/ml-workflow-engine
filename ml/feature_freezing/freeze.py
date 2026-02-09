@@ -1,20 +1,22 @@
-import sys
 import argparse
-from uuid import uuid4
-import yaml
 import logging
-logger = logging.getLogger(__name__)
-
-from pathlib import Path
+import sys
+import time
 from datetime import datetime
+from pathlib import Path
+from uuid import uuid4
 
-from ml.logging_config import setup_logging
-from ml.feature_freezing.freeze_strategies.tabular.strategy import FreezeTabular
-from ml.feature_freezing.freeze_strategies.time_series import FreezeTimeSeries
-from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import validate_feature_registry
-from ml.feature_freezing.persistence.save_metadata import save_metadata
+import yaml
+
 from ml.cli.error_handling import resolve_exit_code
 from ml.exceptions import UserError
+from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import validate_feature_registry
+from ml.feature_freezing.freeze_strategies.tabular.strategy import FreezeTabular
+from ml.feature_freezing.freeze_strategies.time_series import FreezeTimeSeries
+from ml.feature_freezing.persistence.save_metadata import save_metadata
+from ml.logging_config import setup_logging
+
+logger = logging.getLogger(__name__)
 
 STRATEGIES = {
     "tabular": FreezeTabular,
@@ -39,6 +41,9 @@ def load_feature_registry(problem, segment, feature_set, version) -> dict:
 
 def main() -> int:
     args = parse_args()
+
+    start_time = time.perf_counter()
+
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
 
     # Generate the snapshot id once so it can be reused for both the
@@ -67,7 +72,7 @@ def main() -> int:
 
         strategy = STRATEGIES[config.type]()
 
-        snapshot_path, metadata = strategy.freeze(config, snapshot_id=snapshot_id, timestamp=timestamp)
+        snapshot_path, metadata = strategy.freeze(config, snapshot_id=snapshot_id, timestamp=timestamp, start_time=start_time)
         save_metadata(snapshot_path, metadata)
 
         return 0

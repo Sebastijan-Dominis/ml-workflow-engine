@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+
 
 def random_split(X: pd.DataFrame, y: pd.DataFrame, test_size: float, random_state: int, stratify: pd.Series | None) -> list[pd.DataFrame]:
     return train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=stratify)
