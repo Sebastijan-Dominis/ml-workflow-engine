@@ -1,6 +1,5 @@
 import json
 import logging
-from datetime import datetime
 from pathlib import Path
 
 from ml.config.validation_schemas.hardware_cfg import HardwareConfig
@@ -9,9 +8,9 @@ from ml.utils.runtime.runtime_snapshot import build_runtime_snapshot
 
 logger = logging.getLogger(__name__)
 
-def save_runtime_snapshot(run_dir: Path, timestamp: str, hardware_info: HardwareConfig, start_time: float) -> None:
+def save_runtime_snapshot(*, target_dir: Path, timestamp: str, hardware_info: HardwareConfig, start_time: float) -> None:
     snapshot = build_runtime_snapshot(timestamp, hardware_info, start_time=start_time)
-    snapshot_path = run_dir / "runtime.json"
+    snapshot_path = target_dir / "runtime.json"
     try:
         with open(snapshot_path, "w") as f:
             json.dump(snapshot, f, indent=4, sort_keys=True, default=str)

@@ -1,0 +1,46 @@
+{
+  "run_identity": {
+    "stage": "training",
+    "train_run_id": "2026-02-10T19-42-13_35ed3997",
+    "snapshot_id": "2026-02-10T19-42-00_637e9827",
+    "status": "success"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "ref": "cancellation/global",
+        "name": "base_features",
+        "version": "v1",
+        "snapshot_id": "2026-02-10T19-41-56_5c38f60f",
+        "snapshot_path": "data\\feature_store\\cancellation\\global\\base_features\\v1\\2026-02-10T19-41-56_5c38f60f",
+        "loader_validation_hash": "c4fe37749637d0efd3cf69b171ca8fbcc8ace4917b003580caddaf2987637b20",
+        "file_hashes": {
+          "X_test": "9090d72a84169d59a9b401d3067ac713f3f6204c912650bda9d9e3f80509fb13",
+          "X_train": "65bdbcce4efbfe5a6e338fc256ecddc7eb42744d40e131e6b7bcd7863fe62b61",
+          "X_val": "4f8fc8c71cfe53ae1c0e1143716a082951af2d0653d1b2df5458074cf105e44b",
+          "y_test": "2892d57538d33a6fa09d2eeee08ec1b4a2eba8ccda25d157eb2a08e51798ea1d",
+          "y_train": "b2fddf7bd467b18e22042e7a7a924c75323d8f295e22378e5d3f169c52c469ab",
+          "y_val": "c800337688eb253f62bd071084ff0b3ccf9c76be5294d2e1a65100ff2ebd5d6f"
+        },
+        "snapshot_identity_hash": "e654200e8dc9420abb2bd0203beb00d7a2cb78a30662249f8df6f371284e8a67",
+        "feature_schema_hash": "ff094e480f88b98750ee5cd5aa6a5757c91dc81405360718df4fa0b0b9372943",
+        "operators_hash": "d6cd1f81e8da613322ca8e58aa1fafbf",
+        "feature_type": "tabular"
+      }
+    ],
+    "target_column": "is_canceled",
+    "problem": "cancellation",
+    "segment": "global",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "c3c05339e8a4f362892065279ccc506d51d0be317f09e4c3de696b2a275567f5",
+    "pipeline_cfg_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89"
+  },
+  "artifacts": {
+    "model_hash": "0034a199630f1e56227691753eeac1faf4ec49f19a9ab33e2f25af940d747916",
+    "model_path": "experiments\\cancellation\\global\\v1\\2026-02-10T19-42-00_637e9827\\training\\2026-02-10T19-42-13_35ed3997\\model.joblib",
+    "pipeline_path": "experiments\\cancellation\\global\\v1\\2026-02-10T19-42-00_637e9827\\training\\2026-02-10T19-42-13_35ed3997\\pipeline.joblib",
+    "pipeline_hash": "3a0e87285a7596c518d47b16c12da326ee54a19225d8b2e079796efb0e18b9da"
+  }
+}

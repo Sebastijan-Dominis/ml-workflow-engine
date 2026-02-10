@@ -4,9 +4,9 @@
         "conda_env_hash": "a9b145827ace1d06885ec820671a53980fc726cc3fa027ae6429c66f328ab199"
     },
     "execution": {
-        "created_at": "2026-02-09T22-45-53",
-        "duration_seconds": 9.678,
-        "git_commit": "02446df48988837a5ba0e14646436b3e6e302421",
+        "created_at": "2026-02-10T19-42-13",
+        "duration_seconds": 6.631,
+        "git_commit": "65c51a40cdbf81d136134118a0abb2e9478c21a0",
         "python_executable": "C:\\Users\\Sebastijan\\anaconda3\\envs\\hotel_management\\python.exe"
     },
     "gpu_info": {
@@ -15,9 +15,7 @@
         "gpu_devices_available": [
             0
         ],
-        "gpu_devices_used": [
-            0
-        ],
+        "gpu_devices_used": [],
         "gpu_driver_version": "591.44",
         "gpu_memories_gb": [
             17.09
@@ -25,7 +23,7 @@
         "gpu_names": [
             "NVIDIA GeForce RTX 5070 Ti"
         ],
-        "task_type": "GPU"
+        "task_type": "CPU"
     },
     "runtime": {
         "architecture": "AMD64",

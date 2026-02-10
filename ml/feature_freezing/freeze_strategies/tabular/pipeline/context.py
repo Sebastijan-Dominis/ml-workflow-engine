@@ -19,7 +19,7 @@ class FreezeContext:
     start_time: Optional[float] = None
 
     data: Optional[pd.DataFrame] = None
-    data_hash: Optional[str] = None
+    loader_validation_hash: Optional[str] = None
 
     X: Optional[pd.DataFrame] = None
     y: Optional[pd.DataFrame] = None
@@ -28,6 +28,7 @@ class FreezeContext:
 
     snapshot_path: Optional[Path] = None
     schema_path: Optional[Path] = None
+    data_paths: Optional[dict] = None
 
     metadata: Optional[dict] = None
     config_hash: Optional[str] = None
@@ -65,12 +66,12 @@ class FreezeContext:
         return self.data
 
     @property
-    def require_data_hash(self) -> str:
-        if self.data_hash is None:
+    def require_loader_validation_hash(self) -> str:
+        if self.loader_validation_hash is None:
             msg = "Data hash not computed yet. Ensure that the ingestion step has been run."
             logger.error(msg)
             raise RuntimeMLException(msg)
-        return self.data_hash
+        return self.loader_validation_hash
 
     @property
     def require_X(self) -> pd.DataFrame:
@@ -111,6 +112,14 @@ class FreezeContext:
             logger.error(msg)
             raise RuntimeMLException(msg)
         return self.schema_path
+    
+    @property
+    def require_data_paths(self) -> dict:
+        if self.data_paths is None:
+            msg = "Data paths not set. Ensure that the persistence step has been run and data paths are set in the context."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.data_paths
     
     @property
     def require_config_hash(self) -> str:

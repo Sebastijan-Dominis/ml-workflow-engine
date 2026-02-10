@@ -7,8 +7,19 @@ from ml.exceptions import DataError, PipelineContractError
 logger = logging.getLogger(__name__)
 
 def validate_feature_set(snapshot_path: Path, metadata: dict) -> None:
-    if not metadata["data_hash"]:
-        msg = f"Invalid or missing data hash in metadata at {snapshot_path}"
+    required_fields = [
+        "snapshot_identity_hash",
+        "feature_schema_hash",
+        "operators_hash",
+        "file_hashes",
+        "snapshot_id",
+        "feature_type",
+    ]
+
+    missing_fields = [field for field in required_fields if field not in metadata]
+
+    if missing_fields:
+        msg = f"Metadata for snapshot {snapshot_path} is missing required fields: {', '.join(missing_fields)}"
         logger.error(msg)
         raise DataError(msg)
 

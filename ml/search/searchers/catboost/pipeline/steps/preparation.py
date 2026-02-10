@@ -22,7 +22,7 @@ class PreparationStep(PipelineStep[SearchContext]):
         logger.debug("Completed preparation step.")
     
     def run(self, ctx: SearchContext) -> SearchContext:
-        X_train, y_train, lineage_train = load_X_and_y(ctx.model_cfg, keys=["X_train", "y_train"], snapshot_selection=None)
+        X_train, y_train, lineage_train = load_X_and_y(ctx.model_cfg, keys=["X_train", "y_train"], snapshot_selection=None, strict=ctx.strict)
         input_schema, derived_schema = load_schemas(ctx.model_cfg)
 
         pipeline_path = Path(f"{ctx.model_cfg.pipeline.path}").resolve()

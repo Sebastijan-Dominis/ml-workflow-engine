@@ -1,0 +1,1 @@
+TASKS_SUPPORTING_THRESHOLDS = set([("classification", "binary")])

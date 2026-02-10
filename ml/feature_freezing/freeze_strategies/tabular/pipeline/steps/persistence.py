@@ -32,7 +32,7 @@ class PersistenceStep(PipelineStep[FreezeContext]):
         y_val = splits.y_val
         y_test = splits.y_test
 
-        snapshot_path = persist_feature_snapshot(
+        snapshot_path, data_paths = persist_feature_snapshot(
             config,
             X_train,
             X_val,
@@ -69,5 +69,6 @@ class PersistenceStep(PipelineStep[FreezeContext]):
 
         ctx.snapshot_path = snapshot_path
         ctx.schema_path = schema_path
+        ctx.data_paths = data_paths
 
         return ctx

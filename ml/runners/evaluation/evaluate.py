@@ -15,50 +15,41 @@ which orchestrates the complete evaluation flow.
 
 import argparse
 import logging
-
-# General imports
 import sys
 from pathlib import Path
-
-import yaml
+import time
+from datetime import datetime
+from uuid import uuid4
 
 from ml.cli.error_handling import resolve_exit_code
-
-# Logger import
-from ml.logging_config import setup_logging
-
-# Evaluation scripts imports
-from ml.runners.evaluation.custom_evaluation_scripts.evaluate_classification import evaluate_classification
-
-# Persistence scripts imports
-from ml.runners.evaluation.persistence.update_classification_metadata import update_classification_metadata
-
-# Utility imports
-from ml.runners.evaluation.utils import assert_keys
+from ml.config.hashing import add_config_hash
+from ml.config.loader import load_and_validate_config
+from ml.logging_config import bootstrap_logging, add_file_handler
+from ml.utils.experiments.snapshot_path import get_snapshot_path
+from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import validate_lineage_integrity
+from ml.utils.experiments.reproducibility.validate_reproducibility import validate_reproducibility
+from ml.utils.experiments.logical_config.validate_pipeline_cfg import validate_pipeline_cfg
+from ml.utils.experiments.logical_config.validate_threshold import validate_threshold
+from ml.runners.evaluation.utils.get_searcher import get_evaluator
+from ml.config.validation_schemas.model_cfg import TrainModelConfig
 
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
-    """Parse CLI arguments.
-
-    Returns:
-        argparse.Namespace: Parsed CLI arguments.
-    """
-
     parser = argparse.ArgumentParser(description="Evaluate a model.")
 
     parser.add_argument(
         "--problem",
         type=str,
         required=True,
-        help="Model problem, e.g., 'cancellation'"
+        help="Model problem, e.g., 'no_show'"
     )
 
     parser.add_argument(
         "--segment",
         type=str,
         required=True,
-        help="Model segment name, e.g., 'global'"
+        help="Model segment name, e.g., 'city_hotel_online_ta'"
     )
 
     parser.add_argument(
@@ -69,10 +60,31 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--env",
+        type=str,
+        default="default",
+        help="Environment to run the script in (dev/test/prod) (default: default) ~ none"
+    )
+
+    parser.add_argument(
+        "--strict",
+        type=bool,
+        default=True,
+        help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
+    )
+
+    parser.add_argument(
         "--experiment-id",
         type=str,
-        required=True,
-        help="Experiment id (directory name under experiments/{problem}/{segment}/{version})"
+        default="latest",
+        help="Experiment id (directory name under experiments/{problem}/{segment}/{version}); if not provided, defaults to 'latest' which picks the most recent experiment directory"
+    )
+
+    parser.add_argument(
+        "--train-id",
+        type=str,
+        default="latest",
+        help="Train id (directory name under experiments/{problem}/{segment}/{version}/{snapshot_id}/training); if not provided, defaults to 'latest' which picks the most recent training directory"
     )
 
     parser.add_argument(
@@ -84,116 +96,68 @@ def parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-def get_model_configs(name_version: str) -> dict:
-    """Load and return model configuration for a given model identifier.
-
-    Args:
-        name_version (str): Model key in `configs/models.yaml` (e.g.
-            "cancellation_v1").
-
-    Returns:
-        dict: The configuration dictionary for the requested model.
-
-    Raises:
-        KeyError: If the provided key is not present in the YAML file.
-    """
-
-    with open("configs/models.yaml") as f:
-        configs = yaml.safe_load(f)
-
-    try:
-        return configs[name_version]
-    except KeyError:
-        raise KeyError(f"Model config '{name_version}' not found in models.yaml")
-
-def validate_threshold(threshold: float) -> None:
-    """Validate a probability threshold is within [0.0, 1.0].
-
-    Args:
-        threshold (float): Probability threshold to validate.
-
-    Raises:
-        ValueError: If `threshold` is outside the inclusive range [0.0, 1.0].
-    """
-
-    if threshold > 1.0 or threshold < 0.0:
-        logger.error(f"Invalid threshold value: {threshold}. It must be between 0 and 1.")
-        raise ValueError(f"Invalid threshold value: {threshold}. It must be between 0 and 1.")
-
 def main() -> int:
-    """Orchestrate evaluation: parse args, run evaluator, persist results.
+    args: argparse.Namespace
+    model_cfg: TrainModelConfig
 
-    The function executes the following high-level steps:
-    1. Initialize logging inside the experiment directory.
-    2. Parse CLI arguments to obtain the model identifier.
-    3. Load and validate the model configuration.
-    4. Run the task-specific evaluator and updater.
-
-    Returns:
-        0 on success, non-zero exit code on failure.
-    """
-
-    # Step 1 - Parse arguments
     args = parse_args()
 
-    # Step 2 - Setup logging inside the experiment directory
-    experiment_dir = Path("experiments") / args.problem / args.segment / args.version / args.experiment_id
+    start_time = time.perf_counter()
+    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
-    setup_logging(experiment_dir / "evaluate.log", level=log_level)
+
+    bootstrap_logging(level=log_level)
+
+    experiment_parent_dir = Path("experiments") / args.problem / args.segment / args.version
+    experiment_dir = get_snapshot_path(args.experiment_id, experiment_parent_dir)
+    search_dir = experiment_dir / "search"
+
+    train_parent_dir = experiment_dir / "training"
+    train_dir = get_snapshot_path(args.train_id, train_parent_dir)
+
+    eval_run_id = f"{timestamp}_{uuid4().hex[:8]}"
+    eval_run_path = experiment_dir / "evaluation" / eval_run_id
+    eval_run_path.mkdir(parents=True, exist_ok=False)
+
+    add_file_handler(eval_run_path / "evaluation.log", level=log_level)
 
     try:
-        # Step 3 - Build name_version key for backward-compatible config lookup
-        name_version = f"{args.problem}_{args.segment}_{args.version}"
+        model_cfg = load_and_validate_config(
+            Path(f"configs/train/{args.problem}/{args.segment}/{args.version}.yaml"),
+            cfg_type="train",
+            env=args.env,
+            search_dir=search_dir,
+        )
 
-        # Step 4 - Load model configurations
-        model_configs = get_model_configs(name_version)
+        model_cfg = add_config_hash(model_cfg)
 
-        # Step 5 - Validate essential keys in model configurations
-        assert_keys(model_configs, ["task", "name", "version", "features", "artifacts", "threshold"])
+        validate_lineage_integrity(train_dir, model_cfg)
+        validate_reproducibility(train_dir / "runtime.json")
+        validate_pipeline_cfg(train_dir / "metadata.json", model_cfg)
+        best_threshold = validate_threshold(model_cfg.task, train_dir / "metrics.json")
 
-        # Step 6 - Extract task and best threshold
-        best_threshold = model_configs.get("threshold", 0.5)
-        validate_threshold(best_threshold)
-
-        task = model_configs["task"]
-
-        # Step 7 - Define evaluator based on task
-        EVALUATORS = {
-            "binary_classification": evaluate_classification
-        }
-
-        key = f"{task}"
-        evaluator = EVALUATORS.get(key)
-
-        # Step 8 - Run the evaluation script
-        if evaluator:
-            evaluation_results = evaluator(model_configs, best_threshold)
-        else:
-            raise ValueError(f"Unsupported task: {task}")
-
-        # Step 9 - Define updater based on task
-        UPDATERS = {
-            "binary_classification": update_classification_metadata
-        }
-
-        updater = UPDATERS.get(key)
-
-        # Step 10 - Update metadata with evaluation results
-        if updater:
-            updater(
-                model_configs,
-                evaluation_results,
-                best_threshold,
-            )
-        else:
-            raise ValueError(f"Unsupported task: {task}")
+        key = model_cfg.task.type.lower()
+        evaluator = get_evaluator(key)
 
         logger.info(
-            "Evaluation completed | problem=%s segment=%s version=%s experiment_id=%s",
+            "Starting evaluation | problem=%s segment=%s version=%s train_id=%s eval_id=%s",
             args.problem,
             args.segment,
             args.version,
-            args.experiment_id,
+            args.train_id,
+            eval_run_id,
+        )
+
+        evaluation_results, feature_lineage = evaluator.evaluate(model_cfg=model_cfg, strict=args.strict, best_threshold=best_threshold, train_dir=train_dir)
+
+        logger.info(
+            "Evaluation completed | problem=%s segment=%s version=%s train_id=%s eval_id=%s",
+            args.problem,
+            args.segment,
+            args.version,
+            args.train_id,
+            eval_run_id,
         )
 
         return 0

@@ -7,7 +7,7 @@ files are missing.
 
 import pytest
 
-from ml.runners.training.custom_training_scripts.catboost.train_catboost import train_catboost
+from ml.runners.training.trainers.catboost.catboost import train_catboost
 
 
 def cancellation_test_cfg(features_path: str) -> dict:

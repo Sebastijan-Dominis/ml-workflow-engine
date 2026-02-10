@@ -12,7 +12,7 @@ import logging
 from pathlib import Path
 
 # Utility imports
-from ml.runners.evaluation.utils import assert_keys
+from ml.runners.evaluation.utils.utils import assert_keys
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 
 from ml.utils.runtime.runtime_snapshot import get_conda_env_export, hash_environment
 

@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from ml.feature_freezing.freeze_strategies.tabular.io import load_and_hash_data
+from ml.feature_freezing.freeze_strategies.tabular.io import load_data_with_loader_validation_hash
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.feature_freezing.freeze_strategies.tabular.segmentation import apply_segmentation
 from ml.feature_freezing.freeze_strategies.tabular.validation import (
@@ -24,7 +24,7 @@ class IngestionStep(PipelineStep[FreezeContext]):
         logger.debug("Completed data ingestion step.")
     
     def run(self, ctx: FreezeContext) -> FreezeContext:
-        data, data_hash = load_and_hash_data(
+        data, loader_validation_hash = load_data_with_loader_validation_hash(
             Path(ctx.config.data.path),
             ctx.config.data.format
         )
@@ -48,6 +48,6 @@ class IngestionStep(PipelineStep[FreezeContext]):
         validate_include_exclude_columns(ctx.config)
 
         ctx.data = data
-        ctx.data_hash = data_hash
+        ctx.loader_validation_hash = loader_validation_hash
 
         return ctx

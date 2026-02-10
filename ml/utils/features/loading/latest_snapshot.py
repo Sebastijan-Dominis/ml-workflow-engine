@@ -4,24 +4,24 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-def get_latest_snapshot(path: Path) -> Path:
+def get_latest_snapshot(snapshot_dir: Path) -> Path:
     snapshots = []
     
-    for p in path.iterdir():
-        if not p.is_dir():
+    for s in snapshot_dir.iterdir():
+        if not s.is_dir():
             continue
-        parts = p.name.split("_")
+        parts = s.name.split("_")
         if len(parts) != 2:
-            logger.warning(f"Ignoring folder with unexpected format: {p.name}")
+            logger.warning(f"Ignoring folder with unexpected format: {s.name}")
             continue
         timestamp_str, uuid_str = parts
         if 'T' not in timestamp_str:
-            logger.warning(f"Ignoring folder with invalid timestamp: {p.name}")
+            logger.warning(f"Ignoring folder with invalid timestamp: {s.name}")
             continue
-        snapshots.append(p)
+        snapshots.append(s)
     
     if not snapshots:
-        msg = f"No valid snapshots found in {path}"
+        msg = f"No valid snapshots found in {snapshot_dir}"
         logger.error(msg)
         raise FileNotFoundError(msg)
 

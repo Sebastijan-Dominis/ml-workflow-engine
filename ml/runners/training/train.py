@@ -28,13 +28,13 @@ from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.exceptions import ConfigError
 from ml.logging_config import add_file_handler, bootstrap_logging
-from ml.registry.train_registry import TRAIN_REGISTRY
+from ml.registry.train_registry import TRAINERS
 from ml.runners.training.persistence.artifacts.save_model import save_model
 from ml.runners.training.persistence.artifacts.save_pipeline import save_pipeline
 from ml.runners.training.persistence.run_info.save_experiment import save_experiment
-from ml.runners.training.utils.best_params_path import get_best_params_path
+from ml.runners.training.utils.get_trainer import get_trainer
+from ml.utils.experiments.snapshot_path import get_snapshot_path
 from ml.runners.training.utils.hashing.main import hash_artifact
 from ml.runners.training.utils.logical_config_checks.validate_logical_config import validate_logical_config
 from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import validate_lineage_integrity
@@ -75,6 +75,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--strict",
+        type=bool,
+        default=True,
+        help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
+    )
+
+    parser.add_argument(
         "--experiment-id",
         type=str,
         default="latest",
@@ -104,7 +111,8 @@ def main() -> int:
     bootstrap_logging(level=log_level)
 
     experiment_parent_dir = Path("experiments") / args.problem / args.segment / args.version
-    experiment_dir = get_best_params_path(args.experiment_id, experiment_parent_dir)
+    experiment_dir = get_snapshot_path(args.experiment_id, experiment_parent_dir)
+    search_dir = experiment_dir / "search"
 
     train_run_id = f"{timestamp}_{uuid4().hex[:8]}"
     train_run_path = experiment_dir / "training" / train_run_id
@@ -117,36 +125,44 @@ def main() -> int:
             Path(f"configs/train/{args.problem}/{args.segment}/{args.version}.yaml"),
             cfg_type="train",
             env=args.env,
-            experiment_dir=experiment_dir,
+            search_dir=search_dir,
         )
 
         model_cfg = add_config_hash(model_cfg)
 
-        validate_lineage_integrity(experiment_dir)
-        validate_reproducibility(experiment_dir / "runtime.json")
-        validate_logical_config(model_cfg, experiment_dir)
-        validate_pipeline_cfg(experiment_dir / "experiment.json", model_cfg)
+        validate_lineage_integrity(search_dir)
+        validate_reproducibility(search_dir / "runtime.json")
+        validate_logical_config(model_cfg, search_dir)
+        validate_pipeline_cfg(search_dir / "metadata.json", model_cfg)
 
-        algorithm = model_cfg.algorithm
+        algorithm = model_cfg.algorithm.value.lower()
 
-        key = algorithm.value.lower()
-        trainer = TRAIN_REGISTRY.get(key)
+        trainer = get_trainer(algorithm)
 
-        if trainer:
-            logger.info(f"Starting training for problem={args.problem} segment={args.segment} version={args.version} using algorithm={algorithm.value}.")
-            model, pipeline, feature_lineage, metrics, pipeline_cfg_hash = trainer(model_cfg)
-        else:
-            msg = f"No trainer found for algorithm '{algorithm.value}'."
-            logger.error(msg)
-            raise ConfigError(msg)
+        logger.info(f"Starting training for problem={args.problem} segment={args.segment} version={args.version} using algorithm={algorithm}.")
+        model, pipeline, feature_lineage, metrics, pipeline_cfg_hash = trainer.train(model_cfg, args.strict)
         
         model_hash = hash_artifact(model)
         pipeline_hash = hash_artifact(pipeline)
 
         model_path = save_model(model, train_run_path)
         pipeline_path = save_pipeline(pipeline, train_run_path)
-        save_experiment(model_cfg, feature_lineage=feature_lineage, start_time=start_time, train_run_id=train_run_id, experiment_dir=experiment_dir, metrics=metrics, model_hash=model_hash, pipeline_hash=pipeline_hash, model_path=model_path, pipeline_path=pipeline_path, pipeline_cfg_hash=pipeline_cfg_hash, timestamp=timestamp)
-
+        
+        save_experiment(
+            model_cfg, 
+            feature_lineage=feature_lineage, 
+            start_time=start_time, 
+            train_run_id=train_run_id, 
+            experiment_dir=experiment_dir, 
+            train_dir=train_run_path, 
+            metrics=metrics, 
+            model_hash=model_hash, 
+            pipeline_hash=pipeline_hash, 
+            model_path=model_path, 
+            pipeline_path=pipeline_path, 
+            pipeline_cfg_hash=pipeline_cfg_hash, 
+            timestamp=timestamp
+        )
 
         logger.info(
             "Training completed | problem=%s segment=%s version=%s experiment_id=%s",

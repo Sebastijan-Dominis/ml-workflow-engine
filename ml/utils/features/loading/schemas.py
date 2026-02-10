@@ -55,7 +55,7 @@ def load_schemas(model_cfg: SearchModelConfig | TrainModelConfig) -> tuple[pd.Da
     input_schemas = []
     derived_schemas = []
 
-    data_hashes = set()
+    loader_validation_hashes = set()
 
     for fs in feature_sets:
         version_path = feature_store_path / fs.ref.replace(".", "/") / fs.name / fs.version
@@ -68,9 +68,9 @@ def load_schemas(model_cfg: SearchModelConfig | TrainModelConfig) -> tuple[pd.Da
         input_schemas.append(curr_input_schema)
         derived_schemas.append(curr_derived_schema)
 
-        data_hashes.add(metadata["data_hash"])
+        loader_validation_hashes.add(metadata["loader_validation_hash"])
 
-    validate_set("Data", data_hashes, feature_sets)
+    validate_set("Data", loader_validation_hashes, feature_sets)
     input_schema = aggregate_schema_dfs(input_schemas)
     derived_schema = aggregate_schema_dfs(derived_schemas)
 

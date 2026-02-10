@@ -3,20 +3,14 @@ import logging
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
-from ml.exceptions import PersistenceError
 from ml.utils.git import get_git_commit
 
 logger = logging.getLogger(__name__)
 
-EXPERIMENTS_DIR = Path("experiments")
-EXPERIMENTS_DIR.mkdir(exist_ok=True)
-def save_metadata(model_cfg: SearchModelConfig, search_results: dict, owner: str, *, experiment_id: str, timestamp: str, feature_lineage: list[dict], pipeline_hash: str) -> Path:
+def prepare_metadata(model_cfg: SearchModelConfig, *, search_results: dict, owner: str, experiment_id: str, search_dir: Path, timestamp: str, feature_lineage: list[dict], pipeline_hash: str) -> dict:
     problem = model_cfg.problem
     segment = model_cfg.segment.name
     version = model_cfg.version
-
-    run_dir = EXPERIMENTS_DIR / problem / segment / version / experiment_id
-    run_dir.mkdir(parents=True, exist_ok=True)
 
     meta = model_cfg.meta
     sources = meta.sources if meta.sources else {}
@@ -24,8 +18,6 @@ def save_metadata(model_cfg: SearchModelConfig, search_results: dict, owner: str
     best_params_path = meta.best_params_path if meta.best_params_path else "none"
 
     pipeline_version = model_cfg.pipeline.version if model_cfg.pipeline else "none"
-
-    exp_path = run_dir / "experiment.json"
 
     git_commit = get_git_commit(Path("."))
     config_hash = meta.config_hash if meta.config_hash else "none"
@@ -57,13 +49,4 @@ def save_metadata(model_cfg: SearchModelConfig, search_results: dict, owner: str
         "search_results": search_results,
     }
 
-    try:
-        with exp_path.open("w") as f:
-            json.dump(record, f, indent=4, sort_keys=True, default=str)
-        logger.info("Saved hyperparameter search experiment to %s", exp_path)
-    except Exception as e:
-        msg = f"Failed to save experiment metadata to {exp_path}"
-        logger.exception(msg)
-        raise PersistenceError(msg) from e
-
-    return exp_path
+    return record

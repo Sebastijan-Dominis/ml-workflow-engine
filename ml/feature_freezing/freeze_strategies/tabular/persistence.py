@@ -1,17 +1,14 @@
 import logging
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
-from ml.feature_freezing.persistence.get_deps import get_deps
 from ml.registry.feature_operators import FEATURE_OPERATORS
-from ml.utils.runtime.runtime_info import get_runtime_info
 
 logger = logging.getLogger(__name__)
 
-def freeze_parquet(path: Path, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, compression=None):
+def freeze_parquet(path: Path, *, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, compression=None) -> dict:
     X_train.to_parquet(path / "X_train.parquet", index=False, compression=compression)
     X_val.to_parquet(path / "X_val.parquet", index=False, compression=compression)
     X_test.to_parquet(path / "X_test.parquet", index=False, compression=compression)
@@ -21,6 +18,17 @@ def freeze_parquet(path: Path, X_train: pd.DataFrame, X_val: pd.DataFrame, X_tes
     y_test.to_parquet(path / "y_test.parquet", index=False, compression=compression)    
     
     logger.info(f"Tabular features saved to {path}")
+
+    data_paths = {
+        "X_train": str(path / "X_train.parquet"),
+        "X_val": str(path / "X_val.parquet"),
+        "X_test": str(path / "X_test.parquet"),
+        "y_train": str(path / "y_train.parquet"),
+        "y_val": str(path / "y_val.parquet"),
+        "y_test": str(path / "y_test.parquet"),
+    }
+
+    return data_paths
 
 def persist_feature_snapshot(config: TabularFeaturesConfig, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, snapshot_id: str):
     path = Path(f"{config.feature_store_path}/{snapshot_id}")
@@ -32,9 +40,18 @@ def persist_feature_snapshot(config: TabularFeaturesConfig, X_train: pd.DataFram
     }
 
     freeze_func = FREEZE_FORMAT_REGISTRY[config.storage.format]
-    freeze_func(path, X_train, X_val, X_test, y_train, y_val, y_test, config.storage.compression)
+    data_paths = freeze_func(
+        path, 
+        X_train=X_train, 
+        X_val=X_val, 
+        X_test=X_test, 
+        y_train=y_train, 
+        y_val=y_val, 
+        y_test=y_test, 
+        compression=config.storage.compression
+    )
 
-    return path
+    return path, data_paths
 
 def save_input_schema(path: Path, X_train: pd.DataFrame):
     # Stop if raw schema already exists
@@ -78,25 +95,22 @@ def save_derived_schema(path: Path, X_train: pd.DataFrame, operator_names: list[
     derived_schema.to_csv(schema_path, index=False)
     logger.info(f"Derived schema saved to {schema_path}")
 
-def create_metadata(*, timestamp: str, snapshot_path: Path, schema_path: Path, data_hash: str, train_schema_hash: str, val_schema_hash: str, test_schema_hash: str, operators_hash: str, config_hash: str, feature_set_hash: str, runtime: dict, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, task: str, duration: float) -> dict:
+def create_metadata(*, timestamp: str, snapshot_path: Path, schema_path: Path, loader_validation_hash: str, in_memory_hashes: dict, file_hashes: dict, snapshot_identity_hash: str, operators_hash: str, config_hash: str, feature_schema_hash: str, runtime: dict, X_train: pd.DataFrame, X_val: pd.DataFrame, X_test: pd.DataFrame, y_train: pd.DataFrame, y_val: pd.DataFrame, y_test: pd.DataFrame, task: str, duration: float) -> dict:
 
     metadata = {
         "created_by": "freeze.py",
         "created_at": timestamp,
         "feature_type": "tabular",
-
         "snapshot_path": str(snapshot_path),
+        "snapshot_id": snapshot_path.name,
         "schema_path": str(schema_path),
-
-        "data_hash": data_hash,
-        "schema_hashes": {
-            "train": train_schema_hash,
-            "val": val_schema_hash,
-            "test": test_schema_hash,
-        },
+        "loader_validation_hash": loader_validation_hash,
+        "in_memory_hashes": in_memory_hashes,
+        "file_hashes": file_hashes,
+        "snapshot_identity_hash": snapshot_identity_hash,
         "operators_hash": operators_hash,
         "config_hash": config_hash,
-        "feature_set_hash": feature_set_hash,
+        "feature_schema_hash": feature_schema_hash,
         "runtime": runtime,
         "row_counts": {
             "train": len(X_train),

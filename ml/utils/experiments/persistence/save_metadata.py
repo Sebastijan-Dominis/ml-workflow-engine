@@ -7,8 +7,8 @@ from ml.exceptions import PersistenceError
 logger = logging.getLogger(__name__)
 
 
-def save_metadata(metadata: dict, *, train_run_id: str, experiment_dir: Path) -> None:
-    metadata_file = experiment_dir / "training" / train_run_id / "metadata.json"
+def save_metadata(metadata: dict, *, target_dir: Path) -> None:
+    metadata_file = target_dir / "metadata.json"
 
     metadata_file.parent.mkdir(parents=True, exist_ok=True)
 

@@ -3,11 +3,13 @@ import sys
 import time
 from pathlib import Path
 
-from ml.feature_freezing.freeze_strategies.tabular.io import hash_feature_set, validate_feature_set_hashes_match
+from ml.feature_freezing.freeze_strategies.tabular.io import hash_feature_schema, validate_feature_schema_hashes_match
 from ml.feature_freezing.freeze_strategies.tabular.persistence import create_metadata
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.feature_freezing.persistence.get_deps import get_deps
-from ml.feature_freezing.utils.schema import hash_data_schema
+from ml.registry.hash_registry import hash_file_streaming
+from ml.feature_freezing.utils.schema import hash_dataframe_content
+from ml.utils.features.hashing.hash_snapshot_identity import hash_snapshot_identity
 from ml.utils.git import get_git_commit
 from ml.utils.pipeline_core.step import PipelineStep
 from ml.utils.runtime.runtime_info import get_runtime_info
@@ -37,14 +39,31 @@ class MetadataStep(PipelineStep[FreezeContext]):
         y_val = splits.y_val
         y_test = splits.y_test
 
-        train_schema_hash = hash_data_schema(X_train)
-        val_schema_hash = hash_data_schema(X_val)
-        test_schema_hash = hash_data_schema(X_test)
+        train_dataframe_hash = hash_dataframe_content(X_train)
+        val_dataframe_hash = hash_dataframe_content(X_val)
+        test_dataframe_hash = hash_dataframe_content(X_test)
 
-        feature_set_hash = hash_feature_set(X_train)
+        in_memory_hashes = {
+            "X_train": train_dataframe_hash,
+            "X_val": val_dataframe_hash,
+            "X_test": test_dataframe_hash,
+        }
 
-        validate_feature_set_hashes_match(X_val, feature_set_hash)
-        validate_feature_set_hashes_match(X_test, feature_set_hash)
+        feature_schema_hash = hash_feature_schema(X_train)
+
+        file_hashes = {
+            "X_train": hash_file_streaming(ctx.require_data_paths["X_train"]),
+            "X_val": hash_file_streaming(ctx.require_data_paths["X_val"]),
+            "X_test": hash_file_streaming(ctx.require_data_paths["X_test"]),
+            "y_train": hash_file_streaming(ctx.require_data_paths["y_train"]),
+            "y_val": hash_file_streaming(ctx.require_data_paths["y_val"]),
+            "y_test": hash_file_streaming(ctx.require_data_paths["y_test"]),
+        }
+
+        snapshot_identity_hash = hash_snapshot_identity(file_hashes)
+
+        validate_feature_schema_hashes_match(X_val, feature_schema_hash)
+        validate_feature_schema_hashes_match(X_test, feature_schema_hash)
 
         git_commit = get_git_commit(Path("."))
         runtime_info = get_runtime_info()
@@ -68,13 +87,13 @@ class MetadataStep(PipelineStep[FreezeContext]):
             timestamp = ctx.require_timestamp,
             snapshot_path = ctx.require_snapshot_path,
             schema_path = ctx.require_schema_path,
-            data_hash = ctx.require_data_hash,
-            train_schema_hash = train_schema_hash,
-            val_schema_hash = val_schema_hash,
-            test_schema_hash = test_schema_hash,
+            loader_validation_hash = ctx.require_loader_validation_hash,
+            in_memory_hashes = in_memory_hashes,
+            file_hashes = file_hashes,
+            snapshot_identity_hash = snapshot_identity_hash,
             operators_hash = operators_hash,
             config_hash = ctx.require_config_hash,
-            feature_set_hash = feature_set_hash,
+            feature_schema_hash = feature_schema_hash,
             runtime = runtime,
             X_train = X_train,
             X_val = X_val,

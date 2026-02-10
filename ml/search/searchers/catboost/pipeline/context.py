@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SearchContext:
     model_cfg: SearchModelConfig
+    strict: bool
 
     X_train: Optional[pd.DataFrame] = None
     y_train: Optional[pd.DataFrame] = None

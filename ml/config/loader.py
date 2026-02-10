@@ -17,7 +17,7 @@ def load_config(
     *,
     env: str = "default",
     cfg_type: Literal["search", "train"],
-    experiment_dir: Path | None = None,
+    search_dir: Path | None = None,
     merge_target: MergeTarget = "training",
     skip_missing_extends: bool = False,
     skip_missing_env: bool = True,
@@ -58,12 +58,12 @@ def load_config(
     cfg["_meta"]["env"] = env
 
     if cfg_type == "train":
-        if experiment_dir is None:
-            msg = "experiment_dir must be provided for training configs"
+        if search_dir is None:
+            msg = "search_dir must be provided for training configs"
             logger.error(msg)
             raise UserError(msg)
         
-        best_params_path = experiment_dir / "experiment.json"
+        best_params_path = search_dir / "metadata.json"
         
         cfg = apply_best_params(cfg, best_params_path, merge_target=merge_target, strict=True)
 
@@ -80,7 +80,7 @@ def load_config(
 @overload
 def load_and_validate_config(
     path: Path,
-    experiment_dir: None = None,
+    search_dir: None = None,
     *,
     cfg_type: Literal["search"],
     env: str = "default",
@@ -89,7 +89,7 @@ def load_and_validate_config(
 @overload
 def load_and_validate_config(
     path: Path,
-    experiment_dir: Path,
+    search_dir: Path,
     *,
     cfg_type: Literal["train"],
     env: str = "default",
@@ -97,11 +97,11 @@ def load_and_validate_config(
 
 def load_and_validate_config(
     path: Path,
-    experiment_dir: Path | None = None,
+    search_dir: Path | None = None,
     *,
     cfg_type: Literal["search", "train"],
     env: str = "default",
 ) -> SearchModelConfig | TrainModelConfig:
-    cfg_raw = load_config(path, env=env, experiment_dir=experiment_dir, cfg_type=cfg_type)
+    cfg_raw = load_config(path, env=env, search_dir=search_dir, cfg_type=cfg_type)
     cfg = validate_model_config(cfg_raw, cfg_type=cfg_type)
     return cfg

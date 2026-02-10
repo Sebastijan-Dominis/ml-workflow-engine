@@ -1,8 +1,6 @@
 import logging
-from pathlib import Path
 
 from ml.utils.git import get_git_commit, is_descendant_commit
-from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
 

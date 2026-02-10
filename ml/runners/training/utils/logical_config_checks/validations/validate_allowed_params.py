@@ -8,9 +8,9 @@ from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
 
-def validate_allowed_params(model_cfg: TrainModelConfig, experiment_dir: Path) -> None:
+def validate_allowed_params(model_cfg: TrainModelConfig, search_dir: Path) -> None:
     allowed_params = MODEL_PARAM_REGISTRY[model_cfg.algorithm.value.lower()]
-    metadata = load_json(experiment_dir / "experiment.json")
+    metadata = load_json(search_dir / "metadata.json")
     best_model_params = metadata.get("best_model_params", {})
     unknown = set(best_model_params.keys()) - set(allowed_params)
     if unknown:
