@@ -1,8 +1,9 @@
 {
   "run_identity": {
-    "stage": "training",
-    "train_run_id": "2026-02-18T15-06-58_70482079",
-    "snapshot_id": "2026-02-18T15-05-35_f9e78686",
+    "stage": "evaluation",
+    "eval_run_id": "2026-02-18T18-13-34_44098ec2",
+    "train_run_id": "latest",
+    "snapshot_id": "2026-02-18T18-12-53_bae954fe",
     "status": "success"
   },
   "lineage": {
@@ -38,9 +39,13 @@
     "pipeline_cfg_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89"
   },
   "artifacts": {
-    "model_hash": "9042ea35eb7a815fed34064ca372bf14f4f7ab57e65407594aea3ef4d348dbae",
-    "model_path": "experiments\\cancellation\\global\\v1\\2026-02-18T15-05-35_f9e78686\\training\\2026-02-18T15-06-58_70482079\\model.joblib",
-    "pipeline_path": "experiments\\cancellation\\global\\v1\\2026-02-18T15-05-35_f9e78686\\training\\2026-02-18T15-06-58_70482079\\pipeline.joblib",
-    "pipeline_hash": "de2a7130b7cf1d655d09e5bfbc1d27a9ad54166cf4c76cf1aac3b6d3fa531e2c"
+    "model_hash": "106a93098582d33e8b2134d42ba28a2f92ca5b84000476fa1a07ba35a1842eb9",
+    "model_path": "experiments\\cancellation\\global\\v1\\2026-02-18T18-12-53_bae954fe\\training\\2026-02-18T18-13-23_a90c1981\\model.joblib",
+    "pipeline_path": "experiments\\cancellation\\global\\v1\\2026-02-18T18-12-53_bae954fe\\training\\2026-02-18T18-13-23_a90c1981\\pipeline.joblib",
+    "pipeline_hash": "17069f021c4f62f2bc6673a88fe7c870ba7f3272c65d24dfbc41c26b69e85cb8",
+    "metrics_path": "experiments\\cancellation\\global\\v1\\2026-02-18T18-12-53_bae954fe\\evaluation\\2026-02-18T18-13-34_44098ec2\\metrics.json",
+    "predictions_train_path": "experiments\\cancellation\\global\\v1\\2026-02-18T18-12-53_bae954fe\\evaluation\\2026-02-18T18-13-34_44098ec2\\predictions_train.parquet",
+    "predictions_val_path": "experiments\\cancellation\\global\\v1\\2026-02-18T18-12-53_bae954fe\\evaluation\\2026-02-18T18-13-34_44098ec2\\predictions_val.parquet",
+    "predictions_test_path": "experiments\\cancellation\\global\\v1\\2026-02-18T18-12-53_bae954fe\\evaluation\\2026-02-18T18-13-34_44098ec2\\predictions_test.parquet"
   }
 }

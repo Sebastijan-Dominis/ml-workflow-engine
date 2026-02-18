@@ -5,7 +5,7 @@ from typing import Tuple
 import yaml
 
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
-from ml.utils.compute_config_hash import compute_config_hash
+from ml.config.compute_config_hash import compute_config_hash
 
 class FreezeStrategy(ABC):
     @abstractmethod

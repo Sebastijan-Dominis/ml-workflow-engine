@@ -9,7 +9,7 @@ import yaml
 
 from ml.data.utils.config.schemas.processed import ProcessedConfig
 from ml.registry.hash_registry import hash_dataset
-from ml.utils.compute_config_hash import compute_config_hash
+from ml.config.compute_config_hash import compute_config_hash
 
 def prepare_metadata(df: pd.DataFrame, *, config: ProcessedConfig, start_time: float, dataset_path: Path, owner: str, memory_info: dict) -> dict:
     dataset_hash = hash_dataset(dataset_path)

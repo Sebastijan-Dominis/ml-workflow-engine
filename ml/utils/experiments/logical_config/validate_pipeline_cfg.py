@@ -8,7 +8,7 @@ from ml.utils.loaders import load_json, load_yaml
 
 logger = logging.getLogger(__name__)
 
-def validate_pipeline_cfg(metadata_file: Path, model_cfg: TrainModelConfig) -> None:
+def validate_pipeline_cfg(metadata_file: Path, model_cfg: TrainModelConfig) -> str:
     metadata = load_json(metadata_file)
     expected_pipeline_hash = metadata.get("metadata", {}).get("pipeline_hash")
     if not expected_pipeline_hash:
@@ -33,3 +33,5 @@ def validate_pipeline_cfg(metadata_file: Path, model_cfg: TrainModelConfig) -> N
         raise PipelineContractError(msg)
     
     logger.debug(f"Pipeline configuration hash validated successfully. Hash: {actual_pipeline_hash}")
+
+    return actual_pipeline_hash

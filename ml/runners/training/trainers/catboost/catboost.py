@@ -65,7 +65,7 @@ class TrainCatboost(Trainer):
 
         pipeline_path = Path(f"{model_cfg.pipeline.path}").resolve()
         pipeline_cfg = load_yaml(pipeline_path)
-        pipeline_hash = compute_config_hash(pipeline_cfg)
+        pipeline_cfg_hash = compute_config_hash(pipeline_cfg)
 
         cat_features = get_cat_features(input_schema, derived_schema)
 
@@ -105,4 +105,4 @@ class TrainCatboost(Trainer):
 
 
 
-        return model_trained, pipeline_trained, lineage_train, metrics, pipeline_hash
+        return model_trained, pipeline_trained, lineage_train, metrics, pipeline_cfg_hash

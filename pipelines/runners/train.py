@@ -32,10 +32,10 @@ from ml.logging_config import add_file_handler, bootstrap_logging
 from ml.registry.train_registry import TRAINERS
 from ml.runners.training.persistence.artifacts.save_model import save_model
 from ml.runners.training.persistence.artifacts.save_pipeline import save_pipeline
-from ml.runners.training.persistence.run_info.save_experiment import save_experiment
+from ml.runners.training.persistence.run_info.persist_training_run import persist_training_run
 from ml.runners.training.utils.get_trainer import get_trainer
 from ml.utils.experiments.snapshot_path import get_snapshot_path
-from ml.runners.training.utils.hashing.main import hash_artifact
+from ml.registry.hash_registry import hash_artifact
 from ml.runners.training.utils.logical_config_checks.validate_logical_config import validate_logical_config
 from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import validate_lineage_integrity
 from ml.utils.experiments.logical_config.validate_pipeline_cfg import validate_pipeline_cfg
@@ -115,10 +115,10 @@ def main() -> int:
     search_dir = experiment_dir / "search"
 
     train_run_id = f"{timestamp}_{uuid4().hex[:8]}"
-    train_run_path = experiment_dir / "training" / train_run_id
-    train_run_path.mkdir(parents=True, exist_ok=False)
+    train_run_dir = experiment_dir / "training" / train_run_id
+    train_run_dir.mkdir(parents=True, exist_ok=False)
 
-    add_file_handler(train_run_path / f"train.log", level=log_level)
+    add_file_handler(train_run_dir / f"train.log", level=log_level)
 
     try:
         model_cfg = load_and_validate_config(
@@ -141,20 +141,20 @@ def main() -> int:
 
         logger.info(f"Starting training for problem={args.problem} segment={args.segment} version={args.version} using algorithm={algorithm}.")
         model, pipeline, feature_lineage, metrics, pipeline_cfg_hash = trainer.train(model_cfg, args.strict)
-        
-        model_hash = hash_artifact(model)
-        pipeline_hash = hash_artifact(pipeline)
 
-        model_path = save_model(model, train_run_path)
-        pipeline_path = save_pipeline(pipeline, train_run_path)
+        model_path = save_model(model, train_run_dir)
+        pipeline_path = save_pipeline(pipeline, train_run_dir)
         
-        save_experiment(
+        model_hash = hash_artifact(model_path)
+        pipeline_hash = hash_artifact(pipeline_path)
+        
+        persist_training_run(
             model_cfg, 
             feature_lineage=feature_lineage, 
             start_time=start_time, 
             train_run_id=train_run_id, 
             experiment_dir=experiment_dir, 
-            train_dir=train_run_path, 
+            train_run_dir=train_run_dir, 
             metrics=metrics, 
             model_hash=model_hash, 
             pipeline_hash=pipeline_hash, 

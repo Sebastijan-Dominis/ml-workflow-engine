@@ -3,10 +3,10 @@ from typing import Optional
 
 import pandas as pd
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
+from sklearn.pipeline import Pipeline
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PipelineContractError, UserError
-from ml.runners.evaluation.evaluators.classification.classes import ProbabilisticClassifier
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ def compute_metrics(y_true: pd.Series, y_pred: pd.Series, y_prob: Optional[pd.Se
     # Return computed metrics
     return metrics
 
-def evaluate_split(pipeline: ProbabilisticClassifier, X: pd.DataFrame, y: pd.Series, best_threshold: float | None) -> dict[str, float]: # default threshold=0.5
+def evaluate_split(pipeline: Pipeline, X: pd.DataFrame, y: pd.Series, *, split_name: str, best_threshold: float | None) -> tuple[dict[str, float], pd.DataFrame]: # default threshold=0.5
     """Evaluate a single split and return metrics.
 
     Args:
@@ -53,7 +53,7 @@ def evaluate_split(pipeline: ProbabilisticClassifier, X: pd.DataFrame, y: pd.Ser
             predicted probabilities into binary labels.
 
     Returns:
-        dict: Metrics computed for the split.
+        tuple[dict[str, float], pd.DataFrame]: Metrics computed for the split and the predictions DataFrame.
     """
 
     # Predict probabilities for the positive class
@@ -74,9 +74,19 @@ def evaluate_split(pipeline: ProbabilisticClassifier, X: pd.DataFrame, y: pd.Ser
     y_prob = pd.Series(y_prob, index=y.index, name="y_prob")
 
     # Compute and return metrics
-    return compute_metrics(y, y_pred, y_prob)
+    metrics = compute_metrics(y, y_pred, y_prob)
 
-def evaluate_model(model_cfg: TrainModelConfig, *,pipeline: ProbabilisticClassifier, data_splits: dict[str, tuple[pd.DataFrame, pd.Series]], best_threshold: float | None) -> dict[str, dict[str, float]]:
+    df_preds = pd.DataFrame({
+        "row_id": X.index,
+        "split": split_name,
+        "y_true": y,
+        "y_pred": y_pred,
+        "y_proba": y_prob,
+    })
+    
+    return metrics, df_preds
+
+def evaluate_model(model_cfg: TrainModelConfig, *, pipeline: Pipeline, data_splits: dict[str, tuple[pd.DataFrame, pd.Series]], best_threshold: float | None) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
     """Evaluate `pipeline` across all provided data splits.
 
     Args:
@@ -86,18 +96,22 @@ def evaluate_model(model_cfg: TrainModelConfig, *,pipeline: ProbabilisticClassif
             binary predictions.
 
     Returns:
-        dict: Mapping from split name to computed metrics dictionary.
+        tuple[dict, dict]: Tuple of (evaluation_metrics, prediction_dfs), where:
+            - evaluation_metrics is a mapping from split name to computed metrics dictionary.
+            - prediction_dfs is a mapping from split name to DataFrame of predictions.
     """
 
     # Create a dictionary to hold evaluation results
-    evaluation_results = {}
+    evaluation_metrics = {}
+    prediction_dfs = {}
 
     # Evaluate each data split
     for split_name, (X, y) in data_splits.items():
         if model_cfg.task.subtype and model_cfg.task.subtype.lower() == "binary":
             logger.debug(f"Evaluating split '{split_name}' with best_threshold={best_threshold} and {len(y)} samples.")
-            metrics = evaluate_split(pipeline, X, y, best_threshold=best_threshold)
-            evaluation_results[split_name] = metrics
+            metrics, df_preds = evaluate_split(pipeline, X, y, split_name=split_name, best_threshold=best_threshold)
+            evaluation_metrics[split_name] = metrics
+            prediction_dfs[split_name] = df_preds
         elif model_cfg.task.subtype and model_cfg.task.subtype.lower() == "multiclass":
             msg = f"Multiclass classification evaluation is not yet implemented for task '{model_cfg.task.type}' with subtype '{model_cfg.task.subtype}'."
             logger.error(msg)
@@ -108,4 +122,4 @@ def evaluate_model(model_cfg: TrainModelConfig, *,pipeline: ProbabilisticClassif
             raise PipelineContractError(msg)
 
     #  Return evaluation results
-    return evaluation_results
+    return evaluation_metrics, prediction_dfs

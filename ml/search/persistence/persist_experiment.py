@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 EXPERIMENTS_DIR = Path("experiments")
 EXPERIMENTS_DIR.mkdir(exist_ok=True)
 
-def save_experiment(model_cfg: SearchModelConfig, *, search_results: dict, owner: str, experiment_id: str, search_dir: Path, timestamp: str, start_time: float, feature_lineage: list[dict], pipeline_hash: str) -> None:
+def persist_experiment(model_cfg: SearchModelConfig, *, search_results: dict, owner: str, experiment_id: str, search_dir: Path, timestamp: str, start_time: float, feature_lineage: list[dict], pipeline_hash: str) -> None:
     
     metadata = prepare_metadata(
         model_cfg, 

@@ -10,7 +10,7 @@ import yaml
 
 from ml.data.utils.config.schemas.interim import InterimConfig
 from ml.registry.hash_registry import hash_dataset
-from ml.utils.compute_config_hash import compute_config_hash
+from ml.config.compute_config_hash import compute_config_hash
 
 logger = logging.getLogger(__name__)
 def prepare_metadata(df: pd.DataFrame, *, config: InterimConfig, start_time: float, dataset_path: Path, owner: str, memory_info: dict) -> dict:

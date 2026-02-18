@@ -26,10 +26,20 @@ def validate_configs_match(train_dir: Path, cfg: TrainModelConfig | SearchModelC
     runtime_dict = cfg.model_dump(exclude={"_meta"}, by_alias=True)
     config_hash = compute_config_hash(runtime_dict)
 
-    if train_metadata.get("config_hash") != config_hash:
+    expected_config_hash = train_metadata.get("config_fingerprint", {}).get("config_hash")
+
+    if not expected_config_hash:
+        msg = (
+            f"Lineage integrity validation failed: config hash not found in train metadata.\n"
+            f"Train metadata path: {train_metadata_path}"
+        )
+        logger.error(msg)
+        raise PipelineContractError(msg)
+
+    if expected_config_hash != config_hash:
         msg = (
             f"Lineage integrity validation failed: config hash mismatch.\n"
-            f"Expected hash: {train_metadata.get('config_hash')}\n"
+            f"Expected hash: {expected_config_hash}\n"
             f"Actual hash: {config_hash}\n"
             f"Train metadata path: {train_metadata_path}"
         )

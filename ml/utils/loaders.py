@@ -29,7 +29,7 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
 def load_json(path: Path) -> dict[str, Any]:
     if not path.exists():
-        msg = f"Config file not found: {path}"
+        msg = f"File not found: {path}"
         logger.error(msg)
         raise ConfigError(msg)
 
@@ -37,12 +37,12 @@ def load_json(path: Path) -> dict[str, Any]:
         try:
             cfg = json.load(f)
         except json.JSONDecodeError as e:
-            msg = f"Invalid JSON in config file {path}: {e}"
+            msg = f"Invalid JSON in file {path}: {e}"
             logger.error(msg)
             raise ConfigError(msg)
 
     if not isinstance(cfg, dict):
-        msg = f"Config at {path} must be a JSON object"
+        msg = f"Content at {path} must be a JSON object"
         logger.error(msg)
         raise ConfigError(msg)
 

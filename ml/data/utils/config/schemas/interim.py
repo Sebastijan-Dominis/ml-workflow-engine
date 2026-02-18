@@ -1,5 +1,7 @@
+# Modularize if new datasets are added in the future, or if the interim config becomes too large. This will help keep the code organized and maintainable.
+
 import logging
-from typing import Optional, Literal
+from typing import Optional
 
 from pydantic import BaseModel, Field, model_validator
 

@@ -8,12 +8,12 @@ from ml.exceptions import PersistenceError
 
 logger = logging.getLogger(__name__)
 
-def save_model(model, path: Path) -> str:
-    model_file = path/f"model.joblib"
+def save_model(model, path: Path) -> Path:
+    model_file = path / "model.joblib"
     try:
         joblib.dump(model, model_file)
         logger.info(f"Model successfully saved to {model_file}.")
-        return str(model_file)
+        return model_file
     except Exception as e:
         msg = f"Failed to save model to {model_file}."
         logger.exception(msg)

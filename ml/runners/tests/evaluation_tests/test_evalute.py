@@ -15,8 +15,8 @@ import yaml
 from sklearn.dummy import DummyClassifier
 from sklearn.pipeline import Pipeline
 
-from ml.runners.evaluation import evaluate
-from ml.runners.evaluation.evaluate import get_model_configs, main, parse_args, validate_threshold
+from pipelines.runners import evaluate
+from pipelines.runners.evaluate import get_model_configs, main, parse_args, validate_threshold
 
 
 def test_parse_args(monkeypatch: pytest.MonkeyPatch) -> None:

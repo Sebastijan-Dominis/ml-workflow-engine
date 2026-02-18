@@ -1,9 +1,10 @@
+# Modularize if new datasets are added in the future, or if the processed config becomes too large. This will help keep the code organized and maintainable.
+
 import logging
-from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
-from ml.data.utils.config.schemas.shared import Input, DatasetInfo
+from ml.data.utils.config.schemas.shared import DatasetInfo, Input
 from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)

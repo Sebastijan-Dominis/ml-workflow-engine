@@ -9,13 +9,13 @@ from ml.exceptions import PersistenceError
 
 logger = logging.getLogger(__name__)
 
-def save_pipeline(pipeline: Pipeline, path: Path) -> str:
+def save_pipeline(pipeline: Pipeline, path: Path) -> Path:
     pipeline_file = path / "pipeline.joblib"
     
     try:
         joblib.dump(pipeline, pipeline_file)
         logger.info(f"Pipeline successfully saved to {pipeline_file}.")
-        return str(pipeline_file)
+        return pipeline_file
     except Exception as e:
         msg = f"Failed to save pipeline to {pipeline_file}."
         logger.exception(msg)

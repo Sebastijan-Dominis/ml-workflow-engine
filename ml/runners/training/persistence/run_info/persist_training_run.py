@@ -1,16 +1,15 @@
 # General imports
 import logging
-import time
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.utils.persistence.save_metadata import save_metadata
-from ml.runners.training.persistence.run_info.save_metrics import save_metrics
+from ml.utils.experiments.persistence.save_metrics import save_metrics
 from ml.utils.runtime.save_runtime import save_runtime_snapshot
 
 logger = logging.getLogger(__name__)
 
-def save_experiment(model_cfg: TrainModelConfig, *, train_run_id: str, experiment_dir: Path, train_dir: Path, start_time: float, timestamp: str, feature_lineage: list[dict], metrics: dict[str, float], model_hash: str, pipeline_hash: str | None, model_path: str, pipeline_path: str | None, pipeline_cfg_hash: str | None) -> None:
+def persist_training_run(model_cfg: TrainModelConfig, *, train_run_id: str, experiment_dir: Path, train_run_dir: Path, start_time: float, timestamp: str, feature_lineage: list[dict], metrics: dict[str, float], model_hash: str, pipeline_hash: str | None, model_path: Path, pipeline_path: Path | None, pipeline_cfg_hash: str | None) -> None:
     metadata = {
         "run_identity": {
             "stage": "training",
@@ -30,23 +29,28 @@ def save_experiment(model_cfg: TrainModelConfig, *, train_run_id: str, experimen
         },
         "artifacts": {
             "model_hash": model_hash,
-            "model_path": model_path,
+            "model_path": str(model_path),
         }
     }
 
     if pipeline_cfg_hash and pipeline_path and pipeline_hash:
         metadata["config_fingerprint"]["pipeline_cfg_hash"] = pipeline_cfg_hash
-        metadata["artifacts"]["pipeline_path"] = pipeline_path
+        metadata["artifacts"]["pipeline_path"] = str(pipeline_path)
         metadata["artifacts"]["pipeline_hash"] = pipeline_hash
 
-    save_metadata(metadata, target_dir=train_dir)
+    save_metadata(metadata, target_dir=train_run_dir)
 
-    train_json = {
-        "task_type": model_cfg.task.type,
-        "algorithm": model_cfg.algorithm.value,
-        "metrics": metrics,
-    }
+    save_metrics(
+        metrics, 
+        model_cfg=model_cfg, 
+        target_run_id=train_run_id, 
+        experiment_dir=experiment_dir, 
+        stage="training"
+    )
 
-    save_metrics(train_json, train_run_id=train_run_id, experiment_dir=experiment_dir)
-
-    save_runtime_snapshot(target_dir=train_dir, timestamp=timestamp, hardware_info=model_cfg.training.hardware, start_time=start_time)
+    save_runtime_snapshot(
+        target_dir=train_run_dir, 
+        timestamp=timestamp, 
+        hardware_info=model_cfg.training.hardware, 
+        start_time=start_time
+    )

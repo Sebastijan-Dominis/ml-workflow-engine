@@ -15,7 +15,7 @@ from ml.logging_config import setup_logging
 from ml.search.utils.get_searcher import get_searcher
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.exceptions import UserError
-from ml.search.persistence.save_experiment import save_experiment
+from ml.search.persistence.persist_experiment import persist_experiment
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +110,7 @@ def main() -> int:
 
         search_results, feature_lineage, pipeline_hash = searcher.search(model_cfg, args.strict)
 
-        save_experiment(
+        persist_experiment(
             model_cfg, 
             search_results=search_results, 
             owner=args.owner, 

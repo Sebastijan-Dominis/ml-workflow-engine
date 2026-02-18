@@ -1,19 +1,23 @@
 import logging
 from pathlib import Path
 
-from ml.runners.evaluation.evaluators.base import Evaluator
+import pandas as pd
+
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.utils.loaders import load_json
-from ml.utils.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
-from ml.utils.features.loading.X_and_y import load_X_and_y
-from ml.utils.features.loading.pipeline import load_pipeline
+from ml.runners.evaluation.evaluators.base import Evaluator
+from ml.runners.evaluation.evaluators.classification.metrics import \
+    evaluate_model
+from ml.utils.experiments.loading.pipeline import load_model_or_pipeline
 from ml.utils.experiments.transform_y_to_series import transform_y_to_series
-from ml.runners.evaluation.evaluators.classification.metrics import evaluate_model
+from ml.utils.features.loading.resolve_feature_snapshots import \
+    resolve_feature_snapshots
+from ml.utils.features.loading.X_and_y import load_X_and_y
+from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
 
 class EvaluateClassification(Evaluator):
-    def evaluate(self, *, model_cfg: TrainModelConfig, strict: bool, best_threshold: float | None, train_dir: Path) -> tuple[dict[str, dict[str, float]], list[dict]]:
+    def evaluate(self, *, model_cfg: TrainModelConfig, strict: bool, best_threshold: float | None, train_dir: Path) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame], list[dict]]:
         if best_threshold is None and model_cfg.task.subtype and model_cfg.task.subtype.lower() == "binary":
             msg = f"Best threshold for classification evaluation is not defined for task '{model_cfg.task.type}' with subtype '{model_cfg.task.subtype}'. Defaulting to 0.5."
             logger.warning(msg)
@@ -23,8 +27,13 @@ class EvaluateClassification(Evaluator):
         metadata_file = train_dir / "metadata.json"
         metadata = load_json(metadata_file)
 
-        pipeline_file = metadata["artifacts"]["pipeline_path"]
-        pipeline = load_pipeline(pipeline_file)
+        pipeline_file = Path(metadata.get("artifacts", {}).get("pipeline_path"))
+        pipeline = load_model_or_pipeline(pipeline_file, "pipeline")
+
+        if not hasattr(pipeline, "predict_proba"):
+            msg = f"The loaded pipeline does not implement 'predict_proba', which is required for classification evaluation. Please ensure the pipeline is a probabilistic classifier."
+            logger.error(msg)
+            raise ValueError(msg)
 
         # Get data splits
         snapshot_selection = resolve_feature_snapshots(Path(model_cfg.feature_store.path), model_cfg.feature_store.feature_sets)
@@ -44,7 +53,7 @@ class EvaluateClassification(Evaluator):
         }
 
         # Evaluate the model
-        evaluation_results = evaluate_model(model_cfg, pipeline=pipeline, data_splits=data_splits, best_threshold=best_threshold)
+        metrics, prediction_dfs = evaluate_model(model_cfg, pipeline=pipeline, data_splits=data_splits, best_threshold=best_threshold)
 
         # Return evaluation results, along with feature lineage
-        return evaluation_results, lineage_train
+        return metrics, prediction_dfs, lineage_train
