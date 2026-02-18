@@ -3,11 +3,9 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
 
 from ml.exceptions import DataError, UserError
-from ml.registry.format_registry import FORMAT_REGISTRY
+from ml.utils.loaders import read_data
 from ml.registry.hash_registry import HASH_LOADER_REGISTRY
 
 logger = logging.getLogger(__name__)
@@ -19,13 +17,8 @@ def load_data_with_loader_validation_hash(path: Path, format: str) -> tuple[pd.D
         raise UserError(msg)
 
     loader_validation_hash = HASH_LOADER_REGISTRY[format](path)
-
-    if format not in FORMAT_REGISTRY:
-        msg = f"Unsupported data format for loading: {format}"
-        logger.error(msg)
-        raise UserError(msg)
     
-    data = FORMAT_REGISTRY[format](path)
+    data = read_data(format, path)
     return data, loader_validation_hash
 
 def hash_feature_schema(X: pd.DataFrame) -> str:

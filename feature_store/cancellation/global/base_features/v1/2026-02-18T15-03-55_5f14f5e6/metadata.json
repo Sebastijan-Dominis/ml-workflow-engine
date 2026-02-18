@@ -1,0 +1,74 @@
+{
+  "created_by": "freeze.py",
+  "created_at": "2026-02-18T15-03-55",
+  "feature_type": "tabular",
+  "snapshot_path": "feature_store\\cancellation\\global\\base_features\\v1\\2026-02-18T15-03-55_5f14f5e6",
+  "snapshot_id": "2026-02-18T15-03-55_5f14f5e6",
+  "schema_path": "feature_store\\cancellation\\global\\base_features\\v1",
+  "loader_validation_hash": "92ec13d112d466d4ee9c02359f171b7681298760dc6dda5833fd4a0ff2af65e4",
+  "in_memory_hashes": {
+    "X_train": "5008563d525c5867ca7115e8fb19052a",
+    "X_val": "6a5701891b6e0f29f0afa8d4e26d2572",
+    "X_test": "f09f866c932657810e754248a0bb5634"
+  },
+  "file_hashes": {
+    "X_train": "e2159bdd91af9aa58fa47056c650c944dfcd641c88e295ace6a3b1485c2afe00",
+    "X_val": "6ecf6f41b773b65a6b8a530247ec10f596c162625d3a375cc9aacb2f99603852",
+    "X_test": "200e0d0f69b824dedc8b1f3614d259c74341bf50ca9f8c202c68d82c4b7ddfbb",
+    "y_train": "5997d52549c6420ae0dc4eddf3b1d174da6a12af442d707b2b2dc111f4d35b61",
+    "y_val": "7b1bd589be239ea8c6ae24c5bcdf07a23a706aef324958c899a0ebe70c56c925",
+    "y_test": "987729636badf2c9a9ab75161c89a28b970deac0c805130aefb1fd5ec79893ed"
+  },
+  "snapshot_identity_hash": "244ce2fb14b953ca37f97e55434b70524eed87b21faf56bab3aef9da1864fb73",
+  "operators_hash": "d6cd1f81e8da613322ca8e58aa1fafbf",
+  "config_hash": "d69bcde9a51ecc491636b590f3eb28f8",
+  "feature_schema_hash": "0324f1aa76852844f0c2d4ed63b2209a9ec604ffa20dee5e1eadd36a1e75b6a2",
+  "runtime": {
+    "git_commit": "1557061f8dc46ca9760e2d156d2f75a98dc3932e",
+    "runtime_info": {
+      "os": "Windows",
+      "os_release": "10",
+      "architecture": "AMD64",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "ram_total_gb": 34.19,
+      "platform_string": "Windows-10-10.0.26200-SP0",
+      "hostname": "DESKTOP-U1KTCME",
+      "python_version": "3.11.14",
+      "python_impl": "CPython",
+      "python_build": [
+        "main",
+        "Oct 21 2025 18:30:03"
+      ]
+    },
+    "deps": {
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "scikit-learn": "1.7.2",
+      "pyarrow": "22.0.0",
+      "pydantic": "2.12.5",
+      "PyYAML": "6.0.3"
+    },
+    "python_executable": "C:\\Users\\Sebastijan\\anaconda3\\envs\\hotel_management\\python.exe"
+  },
+  "row_counts": {
+    "train": 81181,
+    "val": 14327,
+    "test": 23878
+  },
+  "column_count": 25,
+  "duration_seconds": 0.299,
+  "class_counts": {
+    "train": {
+      "0": 51153,
+      "1": 30028
+    },
+    "val": {
+      "0": 9040,
+      "1": 5287
+    },
+    "test": {
+      "0": 14973,
+      "1": 8905
+    }
+  }
+}

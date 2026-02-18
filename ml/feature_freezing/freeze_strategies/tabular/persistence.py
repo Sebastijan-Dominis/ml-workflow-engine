@@ -20,12 +20,12 @@ def freeze_parquet(path: Path, *, X_train: pd.DataFrame, X_val: pd.DataFrame, X_
     logger.info(f"Tabular features saved to {path}")
 
     data_paths = {
-        "X_train": str(path / "X_train.parquet"),
-        "X_val": str(path / "X_val.parquet"),
-        "X_test": str(path / "X_test.parquet"),
-        "y_train": str(path / "y_train.parquet"),
-        "y_val": str(path / "y_val.parquet"),
-        "y_test": str(path / "y_test.parquet"),
+        "X_train": path / "X_train.parquet",
+        "X_val": path / "X_val.parquet",
+        "X_test": path / "X_test.parquet",
+        "y_train": path / "y_train.parquet",
+        "y_val": path / "y_val.parquet",
+        "y_test": path / "y_test.parquet",
     }
 
     return data_paths

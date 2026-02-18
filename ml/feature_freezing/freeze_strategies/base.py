@@ -1,11 +1,11 @@
 import hashlib
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple
+from typing import Tuple
 
 import yaml
 
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
-
+from ml.utils.compute_config_hash import compute_config_hash
 
 class FreezeStrategy(ABC):
     @abstractmethod
@@ -14,5 +14,4 @@ class FreezeStrategy(ABC):
 
     @staticmethod
     def hash_config(config: TabularFeaturesConfig) -> str:
-        config_str = yaml.dump(config, sort_keys=True)
-        return hashlib.md5(config_str.encode('utf-8')).hexdigest()
+        return compute_config_hash(config)

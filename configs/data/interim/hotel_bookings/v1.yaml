@@ -1,0 +1,120 @@
+dataset:
+  name: hotel_bookings
+  version: v1
+  output:
+    path_suffix: hotel_bookings.parquet
+    format: parquet
+    compression: snappy
+
+input:
+  path: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
+  format: csv
+
+data_schema:
+  hotel: category
+  is_canceled: int8
+  lead_time: int16
+  arrival_date_year: int16
+  arrival_date_month: category
+  arrival_date_week_number: int8
+  arrival_date_day_of_month: int8
+  stays_in_weekend_nights: int8
+  stays_in_week_nights: int8
+  adults: int16
+  children: int8
+  babies: int8
+  meal: category
+  country: category
+  market_segment: category
+  distribution_channel: category
+  is_repeated_guest: int8
+  previous_cancellations: int8
+  previous_bookings_not_canceled: int8
+  reserved_room_type: category
+  assigned_room_type: category
+  booking_changes: int8
+  deposit_type: category
+  agent: string
+  company: string
+  days_in_waiting_list: int16
+  customer_type: category
+  adr: float32
+  required_car_parking_spaces: int8
+  total_of_special_requests: int8
+  reservation_status: category
+  reservation_status_date: datetime64[ns]
+  name: string
+  email: string
+  phone_number: string
+  credit_card: string
+
+cleaning:
+  lowercase_columns: true
+  strip_strings: true
+  replace_spaces_in_columns: true
+  replace_dashes_in_columns: true
+
+invariants:
+  hotel:
+    allowed_values: [Resort Hotel, City Hotel]
+  is_canceled:
+    allowed_values: [0, 1]
+  lead_time:
+    min: 0
+  arrival_date_year:
+    min: 2015
+    max: 2017
+  arrival_date_month:
+    allowed_values: [January, February, March, April, May, June, July, August, September, October, November, December]
+  arrival_date_week_number:
+    min: 1
+    max: 53
+  arrival_date_day_of_month:
+    min: 1
+    max: 31
+  stays_in_weekend_nights:
+    min: 0
+  stays_in_week_nights:
+    min: 0
+  adults:
+    min: 0
+  children:
+    min: 0
+  babies:
+    min: 0
+  meal:
+    allowed_values: [BB, HB, FB, SC, Undefined]
+  market_segment:
+    allowed_values: ["Aviation", "Direct", "Complementary", "Corporate", "Groups", "Offline TA/TO", "Online TA", "Undefined"]
+  distribution_channel:
+    allowed_values: ["Direct", "Corporate", "GDS", "TA/TO", "Undefined"]
+  is_repeated_guest:
+    allowed_values: [0, 1]
+  previous_cancellations:
+    min: 0
+  previous_bookings_not_canceled:
+    min: 0
+  booking_changes:
+    min: 0
+  deposit_type:
+    allowed_values: [No Deposit, Non Refund, Refundable]
+  days_in_waiting_list:
+    min: 0
+  adr:
+    min: 0
+  required_car_parking_spaces:
+    min: 0
+  total_of_special_requests:
+    min: 0
+  reservation_status:
+    allowed_values: [Canceled, Check-Out, No-Show]
+  reserved_room_type:
+    allowed_values: [A, B, C, D, E, F, G, H, L, P]
+  assigned_room_type:
+    allowed_values: [A, B, C, D, E, F, G, H, I, K, L, P]
+
+drop_duplicates: true
+
+drop_missing_ints: true
+
+min_rows: 100000

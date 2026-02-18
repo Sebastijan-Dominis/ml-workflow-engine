@@ -15,7 +15,7 @@ pipeline:
   path: configs/pipelines/tabular/catboost/v1.yaml
 
 feature_store:
-  path: data/feature_store/
+  path: feature_store/
   feature_sets:
     - ref: cancellation/global
       name: base_features

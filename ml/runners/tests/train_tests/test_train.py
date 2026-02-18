@@ -10,8 +10,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from ml.runners.training import train as train_module
-from ml.runners.training.train import (
+from pipelines.runners import train as train_module
+from pipelines.runners.train import (
     load_train_configs,
     main,
     parse_args,

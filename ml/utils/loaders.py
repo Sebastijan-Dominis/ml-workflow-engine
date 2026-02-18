@@ -4,8 +4,10 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+import pandas as pd
 
 from ml.exceptions import ConfigError
+from ml.registry.format_registry import FORMAT_REGISTRY_READ
 
 logger = logging.getLogger(__name__)
 
@@ -45,3 +47,19 @@ def load_json(path: Path) -> dict[str, Any]:
         raise ConfigError(msg)
 
     return cfg
+
+def read_data(format: str, path: Path) -> pd.DataFrame:
+    reader = FORMAT_REGISTRY_READ.get(format)
+    if not reader:
+        msg = f"Unsupported data format: {format}"
+        logger.error(msg)
+        raise ValueError(msg)
+    
+    try:
+        df = reader(path)
+        logger.info(f"Successfully read data in format '{format}' from {path}.")
+        return df
+    except Exception as e:
+        msg = f"Error reading data in format '{format}' from {path}. Details: {str(e)}"
+        logger.error(msg)
+        raise IOError(msg) from e

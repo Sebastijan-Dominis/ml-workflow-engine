@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 class DataConfig(BaseModel):
     path: Path
+    metadata_path: Path
     source: str
     format: Literal["csv","parquet","json", "arrow"]
 

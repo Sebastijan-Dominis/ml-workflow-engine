@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.utils.experiments.persistence.save_metadata import save_metadata
+from ml.utils.persistence.save_metadata import save_metadata
 from ml.runners.training.persistence.run_info.save_metrics import save_metrics
 from ml.utils.runtime.save_runtime import save_runtime_snapshot
 

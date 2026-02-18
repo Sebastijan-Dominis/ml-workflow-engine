@@ -3,7 +3,6 @@ import logging
 import pandas as pd
 
 from ml.feature_freezing.freeze_strategies.tabular.features import (
-    add_arrival_datetime,
     apply_operators,
     prepare_features,
 )
@@ -28,8 +27,6 @@ class PreprocessingStep(PipelineStep[FreezeContext]):
 
     def run(self, ctx: FreezeContext) -> FreezeContext:
         X, y = prepare_features(ctx.require_data, ctx.config)
-
-        X = add_arrival_datetime(X)
 
         validate_data_types(X, ctx.config)
         validate_target(y, ctx.config)

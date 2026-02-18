@@ -1,6 +1,6 @@
 import pandas as pd
 
-FORMAT_REGISTRY = {
+FORMAT_REGISTRY_READ = {
     "parquet": pd.read_parquet,
     "csv": pd.read_csv,
     "json": pd.read_json,

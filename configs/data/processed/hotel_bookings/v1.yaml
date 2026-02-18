@@ -1,0 +1,20 @@
+dataset:
+  name: hotel_bookings
+  version: v1
+  output:
+    path_suffix: hotel_bookings.parquet
+    format: parquet
+    compression: snappy
+
+input:
+  path: data/interim/hotel_bookings/v1/hotel_bookings.parquet
+  format: parquet
+
+remove_columns:
+  - name
+  - email
+  - phone_number
+  - credit_card
+
+create_columns:
+  - arrival_date

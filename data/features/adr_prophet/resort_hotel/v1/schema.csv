@@ -1,3 +1,0 @@
-feature,dtype,role
-ds,datetime64[ns],input
-y,float32,target

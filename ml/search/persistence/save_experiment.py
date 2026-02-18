@@ -3,7 +3,7 @@ from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.search.persistence.prepare_metadata import prepare_metadata
-from ml.utils.experiments.persistence.save_metadata import save_metadata
+from ml.utils.persistence.save_metadata import save_metadata
 from ml.utils.runtime.save_runtime import save_runtime_snapshot
 
 logger = logging.getLogger(__name__)

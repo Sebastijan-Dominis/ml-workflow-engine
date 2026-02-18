@@ -11,8 +11,7 @@ import json
 import logging
 from pathlib import Path
 
-# Utility imports
-from ml.runners.evaluation.utils.utils import assert_keys
+from ml.utils.persistence.save_metadata import save_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -62,17 +61,6 @@ def update_content(metadata: dict, evaluation_results: dict, best_threshold: flo
         metadata["metrics"][split_name] = metrics
     metadata["threshold"] = best_threshold
 
-def save_metadata(metadata: dict, metadata_file: Path) -> None:
-    """Persist metadata mapping to the provided file path as JSON.
-
-    Args:
-        metadata (dict): Metadata to write.
-        metadata_file (pathlib.Path): File path where JSON will be written.
-    """
-
-    with open(metadata_file, "w") as f:
-        json.dump(metadata, f, indent=2)
-
 def update_classification_metadata(model_configs: dict, evaluation_results: dict, best_threshold: float) -> None:
     """Top-level helper to update classification metadata on disk.
 
@@ -84,7 +72,7 @@ def update_classification_metadata(model_configs: dict, evaluation_results: dict
     """
 
     # Step 1 - Ensure required keys are present
-    assert_keys(model_configs["artifacts"], ["metadata"])
+    # assert_keys(model_configs["artifacts"], ["metadata"])
 
     # Step 2 - get metadata file path
     metadata_file = get_file(model_configs)
@@ -96,7 +84,7 @@ def update_classification_metadata(model_configs: dict, evaluation_results: dict
     update_content(metadata, evaluation_results, best_threshold)
 
     # Step 5 - save updated metadata
-    save_metadata(metadata, metadata_file)
+    save_metadata(metadata, target_dir=metadata_file.parent)
 
     # Step 6 - log success message
     logger.info(f"Metadata updated successfully for model '{model_configs['name']}_{model_configs['version']}'.")

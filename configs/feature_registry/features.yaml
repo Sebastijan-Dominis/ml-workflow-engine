@@ -51,14 +51,15 @@ cancellation:
         description: >
           Base tabular features for cancellation prediction, global segment.
         data:
-          path: data/raw/hotel_bookings.parquet
-          source: data/raw/hotel_bookings_kaggle.csv
+          path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
+          metadata_path: data/processed/hotel_bookings/v1/metadata.json
+          source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
           format: parquet
         segmentation:
           enabled: false
         min_rows: 5000
         min_class_count: 50
-        feature_store_path: data/feature_store/cancellation/global/base_features/v1
+        feature_store_path: feature_store/cancellation/global/base_features/v1
         target:
           name: is_canceled
           allowed_dtypes:

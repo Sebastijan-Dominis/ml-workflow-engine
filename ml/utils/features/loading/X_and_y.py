@@ -9,20 +9,13 @@ from ml.exceptions import DataError
 from ml.utils.features.hashing.hash_y import hash_y
 from ml.utils.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
 from ml.utils.features.validation import validate_feature_set, validate_set
-from ml.utils.loaders import load_json
+from ml.utils.loaders import load_json, read_data
 
 logger = logging.getLogger(__name__)
 
-from ml.registry.format_registry import FORMAT_REGISTRY
 from ml.registry.hash_registry import hash_file_streaming
 
 def load_feature_set_data(snapshot_path: Path, fs, keys: list, strict: bool = True) -> tuple[pd.DataFrame, ...]:
-    reader = FORMAT_REGISTRY.get(fs.data_format)
-    if not reader:
-        msg = f"Unsupported feature set format: {fs.data_format}"
-        logger.error(msg)
-        raise DataError(msg)
-    
     metadata_path = snapshot_path / "metadata.json"
     metadata = load_json(metadata_path)
 
@@ -34,7 +27,7 @@ def load_feature_set_data(snapshot_path: Path, fs, keys: list, strict: bool = Tr
             logger.error(msg)
             raise DataError(msg)
         file_path = snapshot_path / getattr(fs, key)
-        df = reader(file_path)
+        df = read_data(fs.data_format, file_path)
 
         if strict:
             runtime_hash = hash_file_streaming(file_path)

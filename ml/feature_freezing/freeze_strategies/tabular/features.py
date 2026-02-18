@@ -19,18 +19,6 @@ def prepare_features(data: pd.DataFrame, config: TabularFeaturesConfig) -> tuple
 
     return X, y
 
-def add_arrival_datetime(df: pd.DataFrame) -> pd.DataFrame:
-    if not all(col in df.columns for col in ['arrival_date_year', 'arrival_date_month', 'arrival_date_day_of_month']):
-        logger.warning("Arrival date columns not found, skipping arrival_datetime creation.")
-        return df
-    
-    df['arrival_datetime'] = pd.to_datetime(
-        df['arrival_date_year'].astype(str) + '-' +
-        df['arrival_date_month'].astype(str) + '-' +
-        df['arrival_date_day_of_month'].astype(str)
-    )
-    return df
-
 def apply_operators(X: pd.DataFrame, operator_names: list[str]) -> pd.DataFrame:
     operators = []
     for name in operator_names:
