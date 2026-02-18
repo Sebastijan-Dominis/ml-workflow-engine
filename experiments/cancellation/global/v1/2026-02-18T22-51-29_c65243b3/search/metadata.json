@@ -3,7 +3,7 @@
     "problem": "cancellation",
     "segment": "global",
     "version": "v1",
-    "experiment_id": "2026-02-18T18-12-53_bae954fe",
+    "experiment_id": "2026-02-18T22-51-29_c65243b3",
     "sources": {
       "main": "configs\\search\\cancellation\\global\\v1.yaml",
       "extends": [
@@ -17,7 +17,7 @@
     "algorithm": "catboost",
     "pipeline_version": "v1",
     "created_by": "search.py",
-    "created_at": "2026-02-18T18-12-53",
+    "created_at": "2026-02-18T22-51-29",
     "owner": "Sebastijan",
     "feature_lineage": [
       {
@@ -50,8 +50,8 @@
       "memory_limit_gb": null,
       "allow_growth": false
     },
-    "git_commit": "8466b951f5a7223409b4653bd2d21513c14effbc",
-    "config_hash": "fd782fc42d85f12d46240ce8521895d9f3f77884001e0e7261d34f045e237bf1",
+    "git_commit": "372538b40ddc8635286197d7a8fae23e36772baa",
+    "config_hash": "62b57e5a52554df0a0921fe5aa869a4785c3532e3a5e1c0a4d455f572cb0f483",
     "validation_status": "ok",
     "pipeline_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89"
   },
@@ -99,15 +99,11 @@
       "methods": {
         "feature_importances": {
           "enabled": true,
-          "params": {
-            "type": "PredictionValuesChange"
-          }
+          "type": "PredictionValuesChange"
         },
         "shap": {
           "enabled": true,
-          "params": {
-            "approximate": "tree"
-          }
+          "approximate": "tree"
         }
       }
     },
@@ -125,7 +121,7 @@
       "best_params_path": null,
       "validation_status": "ok",
       "validation_errors": null,
-      "config_hash": "fd782fc42d85f12d46240ce8521895d9f3f77884001e0e7261d34f045e237bf1"
+      "config_hash": "62b57e5a52554df0a0921fe5aa869a4785c3532e3a5e1c0a4d455f572cb0f483"
     },
     "search": {
       "scoring": "roc_auc",

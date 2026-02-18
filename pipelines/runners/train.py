@@ -24,22 +24,32 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
+from sklearn.pipeline import Pipeline
+
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.logging_config import add_file_handler, bootstrap_logging
+from ml.registry.allowed_models_registry import AllowedModels
+from ml.registry.hash_registry import hash_artifact
 from ml.registry.train_registry import TRAINERS
 from ml.runners.training.persistence.artifacts.save_model import save_model
-from ml.runners.training.persistence.artifacts.save_pipeline import save_pipeline
-from ml.runners.training.persistence.run_info.persist_training_run import persist_training_run
+from ml.runners.training.persistence.artifacts.save_pipeline import \
+    save_pipeline
+from ml.runners.training.persistence.run_info.persist_training_run import \
+    persist_training_run
+from ml.runners.training.trainers.base import Trainer
 from ml.runners.training.utils.get_trainer import get_trainer
+from ml.runners.training.utils.logical_config_checks.validate_logical_config import \
+    validate_logical_config
+from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import \
+    validate_lineage_integrity
+from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
+    validate_pipeline_cfg
+from ml.utils.experiments.reproducibility.validate_reproducibility import \
+    validate_reproducibility
 from ml.utils.experiments.snapshot_path import get_snapshot_path
-from ml.registry.hash_registry import hash_artifact
-from ml.runners.training.utils.logical_config_checks.validate_logical_config import validate_logical_config
-from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import validate_lineage_integrity
-from ml.utils.experiments.logical_config.validate_pipeline_cfg import validate_pipeline_cfg
-from ml.utils.experiments.reproducibility.validate_reproducibility import validate_reproducibility
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +110,14 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args: argparse.Namespace
     model_cfg: TrainModelConfig
+    trainer: Trainer
+    model: AllowedModels
+    pipeline: Pipeline
+    feature_lineage: list[dict]
+    metrics: dict[str, float]
+    pipeline_cfg_hash: str | None
+    model_path: Path
+    pipeline_path: Path
 
     args = parse_args()
 

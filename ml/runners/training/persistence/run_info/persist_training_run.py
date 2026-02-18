@@ -9,7 +9,22 @@ from ml.utils.runtime.save_runtime import save_runtime_snapshot
 
 logger = logging.getLogger(__name__)
 
-def persist_training_run(model_cfg: TrainModelConfig, *, train_run_id: str, experiment_dir: Path, train_run_dir: Path, start_time: float, timestamp: str, feature_lineage: list[dict], metrics: dict[str, float], model_hash: str, pipeline_hash: str | None, model_path: Path, pipeline_path: Path | None, pipeline_cfg_hash: str | None) -> None:
+def persist_training_run(
+    model_cfg: TrainModelConfig, 
+    *, 
+    train_run_id: str, 
+    experiment_dir: Path, 
+    train_run_dir: Path, 
+    start_time: float, 
+    timestamp: str, 
+    feature_lineage: list[dict], 
+    metrics: dict[str, float], 
+    model_hash: str, 
+    pipeline_hash: str | None, 
+    model_path: Path, 
+    pipeline_path: Path | None, 
+    pipeline_cfg_hash: str | None
+) -> None:
     metadata = {
         "run_identity": {
             "stage": "training",

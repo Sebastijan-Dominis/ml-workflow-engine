@@ -1,0 +1,55 @@
+{
+  "run_identity": {
+    "stage": "evaluation",
+    "eval_run_id": "2026-02-18T22-51-52_73207a27",
+    "train_run_id": "latest",
+    "snapshot_id": "2026-02-18T22-51-29_c65243b3",
+    "status": "success"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "ref": "cancellation/global",
+        "name": "base_features",
+        "version": "v1",
+        "snapshot_id": "2026-02-18T15-03-55_5f14f5e6",
+        "snapshot_path": "feature_store\\cancellation\\global\\base_features\\v1\\2026-02-18T15-03-55_5f14f5e6",
+        "loader_validation_hash": "92ec13d112d466d4ee9c02359f171b7681298760dc6dda5833fd4a0ff2af65e4",
+        "file_hashes": {
+          "X_train": "e2159bdd91af9aa58fa47056c650c944dfcd641c88e295ace6a3b1485c2afe00",
+          "X_val": "6ecf6f41b773b65a6b8a530247ec10f596c162625d3a375cc9aacb2f99603852",
+          "X_test": "200e0d0f69b824dedc8b1f3614d259c74341bf50ca9f8c202c68d82c4b7ddfbb",
+          "y_train": "5997d52549c6420ae0dc4eddf3b1d174da6a12af442d707b2b2dc111f4d35b61",
+          "y_val": "7b1bd589be239ea8c6ae24c5bcdf07a23a706aef324958c899a0ebe70c56c925",
+          "y_test": "987729636badf2c9a9ab75161c89a28b970deac0c805130aefb1fd5ec79893ed"
+        },
+        "snapshot_identity_hash": "244ce2fb14b953ca37f97e55434b70524eed87b21faf56bab3aef9da1864fb73",
+        "feature_schema_hash": "0324f1aa76852844f0c2d4ed63b2209a9ec604ffa20dee5e1eadd36a1e75b6a2",
+        "operators_hash": "d6cd1f81e8da613322ca8e58aa1fafbf",
+        "feature_type": "tabular"
+      }
+    ],
+    "target_column": "is_canceled",
+    "problem": "cancellation",
+    "segment": "global",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "a1202dcbcad0396555734d4fe1336f8f4d6d2d5041ae54916d75e633fa77844a",
+    "pipeline_cfg_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89"
+  },
+  "artifacts": {
+    "model_hash": "410f7b591f9ba487f020c8af50de6bfb5970d22dd2a9b873a2dd53a7d33b155d",
+    "model_path": "experiments\\cancellation\\global\\v1\\2026-02-18T22-51-29_c65243b3\\training\\2026-02-18T22-51-42_37629c0d\\model.joblib",
+    "pipeline_path": "experiments\\cancellation\\global\\v1\\2026-02-18T22-51-29_c65243b3\\training\\2026-02-18T22-51-42_37629c0d\\pipeline.joblib",
+    "pipeline_hash": "93163406e7d6dfa60287f3f4659f5565fa44fc5cb4468a2fd5342597c4625de5",
+    "metrics_path": "experiments\\cancellation\\global\\v1\\2026-02-18T22-51-29_c65243b3\\evaluation\\2026-02-18T22-51-52_73207a27\\metrics.json",
+    "metrics_hash": "84560d0f8dff9a4b2c530df6a92ddb5f9e131df01ba142c8aff85a6af4d55c18",
+    "predictions_train_path": "experiments\\cancellation\\global\\v1\\2026-02-18T22-51-29_c65243b3\\evaluation\\2026-02-18T22-51-52_73207a27\\predictions_train.parquet",
+    "predictions_train_hash": "68e34f460e7cb3b336ad2ea7c205819d8c33ca26ce703d79610678ee4833c139",
+    "predictions_val_path": "experiments\\cancellation\\global\\v1\\2026-02-18T22-51-29_c65243b3\\evaluation\\2026-02-18T22-51-52_73207a27\\predictions_val.parquet",
+    "predictions_val_hash": "095f33e9ea57e335982377307d5e12118ee07b19573318c17c14b1cc6852781e",
+    "predictions_test_path": "experiments\\cancellation\\global\\v1\\2026-02-18T22-51-29_c65243b3\\evaluation\\2026-02-18T22-51-52_73207a27\\predictions_test.parquet",
+    "predictions_test_hash": "6470acaba3a0306c3af032c7ad587f4e2c775ea513f86761d988c0daca47dc46"
+  }
+}

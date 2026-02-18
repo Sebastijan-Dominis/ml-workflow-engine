@@ -37,11 +37,9 @@ explainability:
   methods:
     feature_importances:
       enabled: true
-      params:
-        type: PredictionValuesChange
+      type: PredictionValuesChange
     shap:
       enabled: true
-      params:
-        approximate: tree
+      approximate: tree
 
 data_type: tabular

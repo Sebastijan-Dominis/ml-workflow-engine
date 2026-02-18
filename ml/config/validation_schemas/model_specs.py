@@ -1,8 +1,10 @@
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pyparsing import Enum
+
+from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 
@@ -16,18 +18,15 @@ class MetaConfig(BaseModel):
     validation_errors: Optional[List[Any]] = None
     config_hash: Optional[str] = None
 
-
 class SegmentConfig(BaseModel):
     name: str
     description: Optional[str] = None
-
 
 class TaskType(str, Enum):
     classification = "classification"
     regression = "regression"
     ranking = "ranking"
     time_series = "time_series"
-
 
 class TaskConfig(BaseModel):
     type: TaskType
@@ -54,7 +53,6 @@ class FeatureSetConfig(BaseModel):
     y_val: str
     y_test: str
 
-
 class AlgorithmConfig(str, Enum):
     catboost = "catboost"
     xgboost = "xgboost"
@@ -64,38 +62,46 @@ class AlgorithmConfig(str, Enum):
     neural_network = "neural_network"
     prophet = "prophet"
 
-
 class FeatureStoreConfig(BaseModel):
     path: str
     feature_sets: list[FeatureSetConfig]
-
 
 class PipelineConfig(BaseModel):
     version: str
     path: str
 
+class FeatureImportanceMethodConfig(BaseModel):
+    enabled: bool = False
+    type: Optional[Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"]] = None
 
-class ExplainabilityMethodConfig(BaseModel):
-    enabled: bool = True
-    params: Dict[str, Any] = Field(default_factory=dict)  # e.g., {"type": "PredictionValuesChange"}
+@field_validator("type", mode="after")
+def validate_type_if_enabled(cls, v, info):
+    if info.data.get("enabled") and v is None:
+        msg = "Type must be specified if feature importance method is enabled."
+        logger.error(msg)
+        raise ConfigError(msg)
+    return v
+
+class SHAPMethodConfig(BaseModel):
+    enabled: bool = False
+    approximate: Optional[Literal["tree", "linear", "kernel"]] = None
+
+@field_validator("approximate", mode="after")
+def validate_approximate_if_enabled(cls, v, info):
+    if info.data.get("enabled") and v is None:
+        msg = "Approximate method must be specified if SHAP method is enabled."
+        logger.error(msg)
+        raise ConfigError(msg)
+    return v
+
+class ExplainabilityMethodsConfig(BaseModel):
+    feature_importances: FeatureImportanceMethodConfig = Field(default_factory=FeatureImportanceMethodConfig)
+    shap: SHAPMethodConfig = Field(default_factory=SHAPMethodConfig)
 
 class ExplainabilityConfig(BaseModel):
     enabled: bool = True
     top_k: int = 20
-    methods: Dict[str, ExplainabilityMethodConfig] = Field(default_factory=lambda: {
-        "feature_importances": ExplainabilityMethodConfig(enabled=True, params={"type": "PredictionValuesChange"}),
-        "shap": ExplainabilityMethodConfig(enabled=True, params={"approximate": "tree"})
-    })
-
-    @field_validator("methods", mode="before")
-    def validate_methods(cls, v):
-        allowed = {"feature_importances", "shap"}
-        invalid = set(v.keys()) - allowed
-        if invalid:
-            msg = f"Unsupported explainability method(s): {', '.join(invalid)}"
-            logger.error(msg)
-            raise ValueError(msg)
-        return v
+    methods: ExplainabilityMethodsConfig = Field(default_factory=ExplainabilityMethodsConfig)
 
 class ModelSpecs(BaseModel):
     problem: str

@@ -33,7 +33,7 @@ from ml.utils.features.validation import validate_model_feature_pipeline_contrac
 
 
 class TrainCatboost(Trainer):
-    def train(self, model_cfg: TrainModelConfig, strict: bool) -> tuple[CatBoostClassifier | CatBoostRegressor, Pipeline, list[dict], dict[str, float], str | None]:
+    def train(self, model_cfg: TrainModelConfig, strict: bool) -> tuple[CatBoostClassifier | CatBoostRegressor, Pipeline, list[dict], dict[str, float], str]:
         """Train a binary classification model using CatBoost and project components.
 
         This is the high-level routine used by the training CLI to execute a
@@ -47,7 +47,7 @@ class TrainCatboost(Trainer):
             cfg (dict): Validated configuration dictionary.
 
         Returns:
-            tuple[CatBoostClassifier | CatBoostRegressor, Pipeline, list[dict], dict[str, float], str | None]: A fitted sklearn Pipeline containing preprocessing and
+            tuple[CatBoostClassifier | CatBoostRegressor, Pipeline, list[dict], dict[str, float], str]: A fitted sklearn Pipeline containing preprocessing and
             the trained CatBoost model, along with the pipeline hash.
 
         Raises:

@@ -3,13 +3,10 @@ from pathlib import Path
 from typing import Literal, overload
 
 import joblib
-from catboost import CatBoostClassifier
 from sklearn.pipeline import Pipeline
 
 from ml.exceptions import PipelineContractError
-
-# Update this type alias if additional model types are added in the future
-AllowedModels = CatBoostClassifier
+from ml.registry.allowed_models_registry import AllowedModels
 
 logger = logging.getLogger(__name__)
 

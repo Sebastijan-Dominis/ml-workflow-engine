@@ -9,10 +9,10 @@ from pathlib import Path
 import pytest
 import yaml
 
-from ml.runners.explainability import explain
+from pipelines.runners import explain
 
 # Commenting out imports for possible future use
-from ml.runners.explainability.explain import (  # explain_catboost,
+from pipelines.runners.explain import (  # explain_catboost,
     get_model_configs,
     parse_args,
 )
@@ -47,7 +47,7 @@ def test_get_model_configs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, dumm
 def test_main_dispatches_catboost(monkeypatch: pytest.MonkeyPatch) -> None:
     """Assert `main()` dispatches to CatBoost explainability helper when configured."""
 
-    from ml.runners.explainability import explain
+    from pipelines.runners import explain
 
     monkeypatch.setattr(
         explain,

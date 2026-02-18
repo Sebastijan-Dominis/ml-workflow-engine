@@ -1,0 +1,71 @@
+import logging
+from pathlib import Path
+
+from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.registry.hash_registry import hash_artifact
+from ml.runners.explainability.classes.classes import ExplainabilityMetrics
+from ml.runners.explainability.persistence.save_metrics_csv import \
+    save_metrics_csv
+from ml.utils.persistence.save_metadata import save_metadata
+from ml.utils.runtime.save_runtime import save_runtime_snapshot
+
+logger = logging.getLogger(__name__)
+
+def persist_explainability_run(
+        model_cfg: TrainModelConfig, 
+        *, 
+        explain_run_id: str, 
+        train_run_id: str, 
+        experiment_dir: Path, 
+        explain_run_dir: Path, 
+        explainability_metrics: ExplainabilityMetrics, 
+        feature_lineage: list[dict], 
+        start_time: float, 
+        timestamp: str, 
+        artifacts: dict[str, str], 
+        pipeline_cfg_hash: str
+) -> None:
+    if explainability_metrics.top_k_feature_importances is not None:
+        feature_importances_file = explain_run_dir / "top_k_feature_importances.csv"
+        save_metrics_csv(explainability_metrics.top_k_feature_importances, target_file=feature_importances_file, name="Feature importances")
+        artifacts["top_k_feature_importances_path"] = str(feature_importances_file)
+        feature_importances_hash = hash_artifact(feature_importances_file)
+        artifacts["top_k_feature_importances_hash"] = feature_importances_hash
+        
+    if explainability_metrics.top_k_shap_importances is not None:
+        shap_importances_file = explain_run_dir / "top_k_shap_importances.csv"
+        save_metrics_csv(explainability_metrics.top_k_shap_importances, target_file=shap_importances_file, name="SHAP importances")
+        artifacts["top_k_shap_importances_path"] = str(shap_importances_file)
+        shap_importances_hash = hash_artifact(shap_importances_file)
+        artifacts["top_k_shap_importances_hash"] = shap_importances_hash
+    
+    metadata = {
+        "run_identity": {
+            "stage": "explainability",
+            "explain_run_id": explain_run_id,
+            "train_run_id": train_run_id,
+            "snapshot_id": experiment_dir.name,
+            "status": "success",
+        },
+        "lineage": {
+            "feature_lineage": feature_lineage,
+            "target_column": model_cfg.target,
+            "problem": model_cfg.problem,
+            "segment": model_cfg.segment.name,
+            "model_version": model_cfg.version,
+        },
+        "config_fingerprint": {
+            "config_hash": model_cfg.meta.config_hash,
+            "pipeline_cfg_hash": pipeline_cfg_hash,
+        },
+        "artifacts": artifacts
+    }
+
+    save_metadata(metadata, target_dir=explain_run_dir)
+
+    save_runtime_snapshot(
+        target_dir=explain_run_dir, 
+        timestamp=timestamp, 
+        hardware_info=model_cfg.training.hardware, 
+        start_time=start_time
+    )

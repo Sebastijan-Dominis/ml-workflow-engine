@@ -24,10 +24,10 @@ class EvaluateClassification(Evaluator):
             best_threshold = 0.5
 
         # Load the trained pipeline from the training artifacts
-        metadata_file = train_dir / "metadata.json"
-        metadata = load_json(metadata_file)
+        train_metadata_file = train_dir / "metadata.json"
+        train_metadata = load_json(train_metadata_file)
 
-        pipeline_file = Path(metadata.get("artifacts", {}).get("pipeline_path"))
+        pipeline_file = Path(train_metadata.get("artifacts", {}).get("pipeline_path"))
         pipeline = load_model_or_pipeline(pipeline_file, "pipeline")
 
         if not hasattr(pipeline, "predict_proba"):

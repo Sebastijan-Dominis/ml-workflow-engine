@@ -1,8 +1,8 @@
 {
   "run_identity": {
     "stage": "training",
-    "train_run_id": "2026-02-18T18-13-23_a90c1981",
-    "snapshot_id": "2026-02-18T18-12-53_bae954fe",
+    "train_run_id": "2026-02-18T22-51-42_37629c0d",
+    "snapshot_id": "2026-02-18T22-51-29_c65243b3",
     "status": "success"
   },
   "lineage": {
@@ -34,13 +34,13 @@
     "model_version": "v1"
   },
   "config_fingerprint": {
-    "config_hash": "54816c5978ab848df2826cbaac9e91aae9ff743fb4591cd2170c83a6531dbb48",
+    "config_hash": "a1202dcbcad0396555734d4fe1336f8f4d6d2d5041ae54916d75e633fa77844a",
     "pipeline_cfg_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89"
   },
   "artifacts": {
-    "model_hash": "106a93098582d33e8b2134d42ba28a2f92ca5b84000476fa1a07ba35a1842eb9",
-    "model_path": "experiments\\cancellation\\global\\v1\\2026-02-18T18-12-53_bae954fe\\training\\2026-02-18T18-13-23_a90c1981\\model.joblib",
-    "pipeline_path": "experiments\\cancellation\\global\\v1\\2026-02-18T18-12-53_bae954fe\\training\\2026-02-18T18-13-23_a90c1981\\pipeline.joblib",
-    "pipeline_hash": "17069f021c4f62f2bc6673a88fe7c870ba7f3272c65d24dfbc41c26b69e85cb8"
+    "model_hash": "410f7b591f9ba487f020c8af50de6bfb5970d22dd2a9b873a2dd53a7d33b155d",
+    "model_path": "experiments\\cancellation\\global\\v1\\2026-02-18T22-51-29_c65243b3\\training\\2026-02-18T22-51-42_37629c0d\\model.joblib",
+    "pipeline_path": "experiments\\cancellation\\global\\v1\\2026-02-18T22-51-29_c65243b3\\training\\2026-02-18T22-51-42_37629c0d\\pipeline.joblib",
+    "pipeline_hash": "93163406e7d6dfa60287f3f4659f5565fa44fc5cb4468a2fd5342597c4625de5"
   }
 }
