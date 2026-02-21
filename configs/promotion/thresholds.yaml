@@ -1,0 +1,12 @@
+cancellation:
+  global:
+    promotion_metrics:
+      sets: [test]
+      metrics: [roc_auc, f1]
+      directions: 
+        roc_auc: maximize
+        f1: maximize
+    thresholds:
+      test:
+        roc_auc: 0.85
+        f1: 0.75

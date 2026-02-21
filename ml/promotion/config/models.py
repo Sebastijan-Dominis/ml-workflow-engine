@@ -1,0 +1,72 @@
+import logging
+from enum import Enum
+
+from pydantic import BaseModel, Field, model_validator, field_validator
+
+from ml.exceptions import ConfigError
+
+logger = logging.getLogger(__name__)
+
+class MetricSet(str, Enum):
+    TEST = "test"
+    VAL = "val"
+    TRAIN = "train"
+
+class MetricName(str, Enum):
+    ACCURACY = "accuracy"
+    F1 = "f1"
+    ROC_AUC = "roc_auc"
+
+class Direction(str, Enum):
+    MAXIMIZE = "maximize"
+    MINIMIZE = "minimize"
+
+class PromotionMetricsConfig(BaseModel):
+    sets: list[MetricSet] = Field(..., description="List of metric sets to consider for promotion")
+    metrics: list[MetricName] = Field(..., description="List of metrics to consider for promotion")
+    directions: dict[MetricName, Direction] = Field(..., description="Dictionary mapping each metric to its optimization direction")
+
+@field_validator("directions")
+def validate_directions(cls, v, values):
+    metrics = set(values.get("metrics", []))
+    direction_metrics = set(v.keys())
+    if metrics != direction_metrics:
+        msg = f"Directions must be specified for all metrics. Metrics: {metrics}, Directions provided for: {direction_metrics}"
+        logger.error(msg)
+        raise ConfigError(msg)
+
+class ThresholdsConfig(BaseModel):
+    test: dict[str, float] = Field(default_factory=dict, description="Dictionary of metric thresholds for the test set")
+    val: dict[str, float] = Field(default_factory=dict, description="Dictionary of metric thresholds for the validation set")
+    train: dict[str, float] = Field(default_factory=dict, description="Dictionary of metric thresholds for the training set")
+
+class PromotionThresholds(BaseModel):
+    promotion_metrics: PromotionMetricsConfig
+    thresholds: ThresholdsConfig
+
+    @model_validator(mode="after")
+    def validate_consistency(self):
+        expected_sets = set(self.promotion_metrics.sets)
+        thresholds_dump = self.thresholds.model_dump()
+
+        actual_sets = {k for k, v in thresholds_dump.items() if v}
+        if expected_sets != actual_sets:
+            msg = f"Promotion metrics sets {expected_sets} do not match threshold sets {actual_sets}"
+            logger.error(msg)
+            raise ConfigError(msg)
+
+        expected_metrics = set(self.promotion_metrics.metrics)
+
+        for set_name in expected_sets:
+            metrics_dict = thresholds_dump[set_name]
+            actual_metrics = set(metrics_dict.keys())
+
+            if expected_metrics != actual_metrics:
+                msg = (
+                    f"Promotion metrics {expected_metrics} do not match "
+                    f"threshold metrics {actual_metrics} for set {set_name}"
+                )
+                logger.error(msg)
+                raise ConfigError(msg)
+
+        return self

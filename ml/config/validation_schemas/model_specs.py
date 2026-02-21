@@ -2,7 +2,7 @@ import logging
 from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from pyparsing import Enum
+from pyparsing.helpers import Enum
 
 from ml.exceptions import ConfigError
 

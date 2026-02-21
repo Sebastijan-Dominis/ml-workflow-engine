@@ -112,6 +112,7 @@ def main() -> int:
 
     train_parent_dir = experiment_dir / "training"
     train_dir = get_snapshot_path(args.train_id, train_parent_dir)
+    train_run_id = train_dir.name
 
     explain_run_id = f"{timestamp}_{uuid4().hex[:8]}"
     explain_run_dir = experiment_dir / "explainability" / explain_run_id
@@ -147,7 +148,7 @@ def main() -> int:
             args.problem,
             args.segment,
             args.version,
-            args.train_id,
+            train_run_id,
             explain_run_id,
         )
         
@@ -158,14 +159,14 @@ def main() -> int:
             args.problem,
             args.segment,
             args.version,
-            args.train_id,
+            train_run_id,
             explain_run_id,
         )
 
         persist_explainability_run(
             model_cfg=model_cfg,
             explain_run_id=explain_run_id,
-            train_run_id=args.train_id,
+            train_run_id=train_run_id,
             experiment_dir=experiment_dir,
             explain_run_dir=explain_run_dir,
             explainability_metrics=explainability_metrics,
@@ -181,7 +182,7 @@ def main() -> int:
             args.problem,
             args.segment,
             args.version,
-            args.train_id,
+            train_run_id,
             explain_run_id,
         )
         return 0

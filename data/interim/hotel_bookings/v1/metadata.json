@@ -100,10 +100,10 @@
     }
   },
   "config_hash": "0aa8f2b4b3251339f438e8dd4b560a8f",
-  "created_at": "2026-02-18T14-27-07",
+  "created_at": "2026-02-20T19-12-30",
   "created_by": "make_interim.py",
   "owner": "Sebastijan",
-  "duration": 0.7634160000015981,
+  "duration": 0.7967744999332353,
   "runtime_info": {
     "pandas_version": "2.3.3",
     "numpy_version": "1.26.4",

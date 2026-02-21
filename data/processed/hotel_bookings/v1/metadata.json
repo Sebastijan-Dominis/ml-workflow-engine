@@ -11,13 +11,13 @@
       "format": "parquet",
       "compression": "snappy"
     },
-    "hash": "b1cc14581959fc68fa78a90cabed62ce499b4db9eb416fe32914c7cfb86a7818"
+    "hash": "19cb9648dc7c41c5c3a35ff6d528d884b865e4660191868113b40d07e362f32f"
   },
   "memory": {
     "old_memory_mb": 54.285332679748535,
-    "new_memory_mb": 22.92013645172119,
-    "change_mb": -31.365196228027344,
-    "change_percentage": -57.77839920971566
+    "new_memory_mb": 30.70766544342041,
+    "change_mb": -23.577667236328125,
+    "change_percentage": -43.432850223876244
   },
   "rows": 119386,
   "columns": {
@@ -91,15 +91,15 @@
       "total_of_special_requests": "int8",
       "reservation_status": "category",
       "reservation_status_date": "datetime64[ns]",
-      "booking_id": "int64",
+      "booking_id": "object",
       "arrival_date": "datetime64[ns]"
     }
   },
   "config_hash": "3f424b89613bd01e947e45bd66963318",
-  "created_at": "2026-02-18T14-27-25",
+  "created_at": "2026-02-20T19-12-47",
   "created_by": "make_processed.py",
   "owner": "Sebastijan",
-  "duration": 0.25724310002988204,
+  "duration": 0.3812430000398308,
   "runtime_info": {
     "pandas_version": "2.3.3",
     "numpy_version": "1.26.4",

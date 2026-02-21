@@ -133,6 +133,7 @@ def main() -> int:
 
     train_parent_dir = experiment_dir / "training"
     train_dir = get_snapshot_path(args.train_id, train_parent_dir)
+    train_run_id = train_dir.name
 
     eval_run_id = f"{timestamp}_{uuid4().hex[:8]}"
     eval_run_dir = experiment_dir / "evaluation" / eval_run_id
@@ -182,7 +183,7 @@ def main() -> int:
         persist_evaluation_run(
             model_cfg,
             eval_run_id=eval_run_id,
-            train_run_id=args.train_id,
+            train_run_id=train_run_id,
             experiment_dir=experiment_dir,
             eval_run_dir=eval_run_dir,
             metrics=metrics,
@@ -199,7 +200,7 @@ def main() -> int:
             args.problem,
             args.segment,
             args.version,
-            args.train_id,
+            train_run_id,
             eval_run_id,
         )
 
