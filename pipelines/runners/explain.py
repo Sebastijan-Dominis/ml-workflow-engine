@@ -27,7 +27,7 @@ from ml.utils.experiments.snapshot_path import get_snapshot_path
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluate a model.")
+    parser = argparse.ArgumentParser(description="Explain a model.")
 
     parser.add_argument(
         "--problem",

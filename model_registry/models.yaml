@@ -47,9 +47,9 @@ cancellation:
           accuracy: 0.8455482033671162
           f1: 0.7696439725171768
           roc_auc: 0.9260998339027844
-      git_commit: 870c985cb7e87a7a515b169bf09135da56466541
-      staging_id: 2026-02-21T16-27-51_b2c8a35e
-      staged_at: 2026-02-21T16-27-51
+      git_commit: a53d930d23f1913c23bf824fdf4910755af99c90
+      staging_id: 2026-02-21T21-59-09_511abd9f
+      staged_at: 2026-02-21T21-59-09
     production:
       experiment_id: 2026-02-21T16-15-53_d3353eae
       train_run_id: 2026-02-21T16-16-08_014de2c4

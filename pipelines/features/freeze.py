@@ -10,21 +10,59 @@ import yaml
 
 from ml.cli.error_handling import resolve_exit_code
 from ml.exceptions import UserError
-from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import validate_feature_registry
+from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import \
+    validate_feature_registry
 from ml.feature_freezing.utils.get_strategy import get_strategy
+from ml.logging_config import add_file_handler, bootstrap_logging
 from ml.utils.persistence.save_metadata import save_metadata
-from ml.logging_config import setup_logging
 
 logger = logging.getLogger(__name__)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Freeze features.")
-    parser.add_argument("--problem", type=str, required=True, help="Problem name")
-    parser.add_argument("--segment", type=str, required=True, help="Segment name")
-    parser.add_argument("--feature_set", type=str, required=True, help="Feature set name")
-    parser.add_argument("--version", type=str, required=True, help="Feature set version")
-    parser.add_argument("--data_type", type=str, required=True, help="Data type (e.g. tabular, time_series)")
-    parser.add_argument("--logging-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)")
+
+    parser.add_argument(
+        "--problem", 
+        type=str, 
+        required=True, 
+        help="Model problem, e.g., 'no_show'"
+    )
+
+    parser.add_argument(
+        "--segment", 
+        type=str, 
+        required=True, 
+        help="Model segment name, e.g., 'city_hotel_online_ta'"
+    )
+
+    parser.add_argument(
+        "--feature_set", 
+        type=str, 
+        required=True, 
+        help="Feature set name, e.g., 'base_features'"
+    )
+
+    parser.add_argument(
+        "--version", 
+        type=str, 
+        required=True, 
+        help="Feature set version, e.g., 'v1'"
+    )
+
+    parser.add_argument(
+        "--data_type", 
+        choices=["tabular", "time_series"], 
+        required=True, 
+        help="Data type (tabular or time_series)"
+    )
+
+    parser.add_argument(
+        "--logging-level", 
+        type=str, 
+        default="INFO", 
+        help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
+    )
+
     return parser.parse_args()
 
 def load_feature_registry(problem, segment, feature_set, version) -> dict:
@@ -39,9 +77,8 @@ def main() -> int:
     start_time = time.perf_counter()
 
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
+    bootstrap_logging(level=log_level)
 
-    # Generate the snapshot id once so it can be reused for both the
-    # log destination and the data persistence step.
     timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
     snapshot_id = f"{timestamp}_{uuid4().hex[:8]}"
 
@@ -49,10 +86,8 @@ def main() -> int:
         config_raw = load_feature_registry(args.problem, args.segment, args.feature_set, args.version)
         config = validate_feature_registry(config_raw, args.data_type)
 
-        # Now that the config (and its feature_store_path) is available
-        # set up logging inside the snapshot directory.
         log_path = Path(config.feature_store_path) / snapshot_id / "freeze.log"
-        setup_logging(log_path, level=log_level)
+        add_file_handler(log_path, level=log_level)
 
         if config.type != args.data_type:
             msg = f"Data type mismatch: expected {args.data_type}, got {config.type}"
@@ -72,5 +107,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
-

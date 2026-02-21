@@ -24,7 +24,7 @@ from ml.utils.persistence.save_metadata import save_metadata
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Make interim dataset by cleaning and transforming raw data according to the provided configuration.")
+    parser = argparse.ArgumentParser(description="Make processed dataset by removing columns and creating new ones.")
 
     parser.add_argument(
         "--dataset",
