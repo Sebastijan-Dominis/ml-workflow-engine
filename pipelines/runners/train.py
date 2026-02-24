@@ -30,10 +30,11 @@ from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.exceptions import PipelineContractError
 from ml.logging_config import add_file_handler, bootstrap_logging
 from ml.registry.allowed_models_registry import AllowedModels
 from ml.registry.hash_registry import hash_artifact
-from ml.registry.train_registry import TRAINERS
+from ml.runners.training.constants.output import TRAIN_OUTPUT
 from ml.runners.training.persistence.artifacts.save_model import save_model
 from ml.runners.training.persistence.artifacts.save_pipeline import \
     save_pipeline
@@ -111,13 +112,14 @@ def main() -> int:
     args: argparse.Namespace
     model_cfg: TrainModelConfig
     trainer: Trainer
+    output: TRAIN_OUTPUT
     model: AllowedModels
-    pipeline: Pipeline
+    pipeline: Pipeline | None
     feature_lineage: list[dict]
     metrics: dict[str, float]
     pipeline_cfg_hash: str | None
     model_path: Path
-    pipeline_path: Path
+    pipeline_path: Path | None
 
     args = parse_args()
 
@@ -158,14 +160,31 @@ def main() -> int:
         trainer = get_trainer(algorithm)
 
         logger.info(f"Starting training for problem={args.problem} segment={args.segment} version={args.version} using algorithm={algorithm}.")
-        model, pipeline, feature_lineage, metrics, pipeline_cfg_hash = trainer.train(model_cfg, args.strict)
+        output = trainer.train(model_cfg, args.strict)
 
+        model = output.model
         model_path = save_model(model, train_run_dir)
-        pipeline_path = save_pipeline(pipeline, train_run_dir)
-        
         model_hash = hash_artifact(model_path)
-        pipeline_hash = hash_artifact(pipeline_path)
+
+        pipeline = None
+        pipeline_path = None
+        pipeline_hash = None
+        pipeline_cfg_hash = None
+        if output.pipeline is not None:
+            if output.pipeline_cfg_hash is None:
+                msg = "Pipeline config hash is missing in the trainer output, but a pipeline object is present. This is unexpected as the pipeline config hash is needed for reproducibility tracking. Please ensure that the trainer implementation returns a pipeline config hash when a pipeline is returned."
+                logger.error(msg)
+                raise PipelineContractError(msg)
+            
+            pipeline = output.pipeline
+            pipeline_path = save_pipeline(pipeline, train_run_dir)
+            pipeline_hash = hash_artifact(pipeline_path)
+            pipeline_cfg_hash = output.pipeline_cfg_hash
         
+
+        feature_lineage = output.lineage
+        metrics = output.metrics
+
         persist_training_run(
             model_cfg, 
             feature_lineage=feature_lineage, 

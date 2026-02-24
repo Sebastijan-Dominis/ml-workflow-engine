@@ -11,6 +11,7 @@ from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
 from ml.exceptions import ConfigError
 from ml.logging_config import add_file_handler, bootstrap_logging
+from ml.runners.explainability.constants.output import ExplainabilityOutput
 from ml.runners.explainability.persistence.persist_explainability_run import \
     persist_explainability_run
 from ml.runners.explainability.utils.get_explainer import get_explainer
@@ -96,6 +97,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args: argparse.Namespace
+    output: ExplainabilityOutput
 
     args = parse_args()
 
@@ -152,7 +154,10 @@ def main() -> int:
             explain_run_id,
         )
         
-        explainability_metrics, feature_lineage = explainer.explain(model_cfg=model_cfg, train_dir=train_dir, top_k=args.top_k)
+        output = explainer.explain(model_cfg=model_cfg, train_dir=train_dir, top_k=args.top_k)
+
+        explainability_metrics = output.explainability_metrics
+        feature_lineage = output.feature_lineage
 
         logger.info(
             "Explainability completed | problem=%s segment=%s version=%s train_id=%s explain_id=%s",

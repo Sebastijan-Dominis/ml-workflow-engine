@@ -14,9 +14,9 @@ def train_catboost_model(
     *,
     steps: list,
     X_train: pd.DataFrame,
-    y_train: pd.DataFrame,
+    y_train: pd.Series,
     X_val: pd.DataFrame,
-    y_val: pd.DataFrame,
+    y_val: pd.Series,
 ) -> tuple[CatBoostClassifier | CatBoostRegressor, Pipeline]:
     """Fit preprocessing steps and the CatBoost model, returning a Pipeline.
 
@@ -40,13 +40,20 @@ def train_catboost_model(
         model = steps[-1][1]
 
         X_train_processed = preprocessing_pipeline.fit_transform(X_train, y_train)
-        X_val_processed = preprocessing_pipeline.transform(X_val)
+
+        fit_kwargs: dict = {
+            "use_best_model": True
+        }
+
+        if model_cfg.training.early_stopping_rounds:
+            X_val_processed = preprocessing_pipeline.transform(X_val)
+            fit_kwargs["eval_set"] = (X_val_processed, y_val)
+            fit_kwargs["early_stopping_rounds"] = model_cfg.training.early_stopping_rounds
 
         model.fit(
             X_train_processed,
             y_train,
-            eval_set=(X_val_processed, y_val),
-            use_best_model=True,
+            **fit_kwargs
         )
 
         pipeline = Pipeline(steps=steps[:-1] + [("model", model)])

@@ -60,10 +60,10 @@ class NarrowSearchStep(PipelineStep[SearchContext]):
         try:
             narrow_result = perform_randomized_search(
                 pipeline_2,
-                ctx.require_X_train,
-                ctx.require_y_train,
-                narrow_param_distributions,
-                ctx.model_cfg,
+                X_train=ctx.require_X_train,
+                y_train=ctx.require_y_train,
+                param_distributions=narrow_param_distributions,
+                model_cfg=ctx.model_cfg,
                 search_type="narrow"
             )
         except Exception as e:

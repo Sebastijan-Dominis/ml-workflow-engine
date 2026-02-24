@@ -10,7 +10,15 @@ from ml.config.validation_schemas.model_cfg import SearchModelConfig
 
 logger = logging.getLogger(__name__)
 
-def perform_randomized_search(pipeline: Pipeline, X_train: pd.DataFrame, y_train: pd.DataFrame, param_distributions: dict[str, Any], model_cfg: SearchModelConfig, search_type: str) -> dict[str, Any]:
+def perform_randomized_search(
+    pipeline: Pipeline, 
+    *,
+    X_train: pd.DataFrame, 
+    y_train: pd.Series, 
+    param_distributions: dict[str, Any], 
+    model_cfg: SearchModelConfig, 
+    search_type: str
+) -> dict[str, Any]:
     search_phase_cfg = getattr(model_cfg.search, search_type)
     n_iter = search_phase_cfg.n_iter
     cv = model_cfg.cv

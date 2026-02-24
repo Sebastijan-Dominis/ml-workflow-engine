@@ -4,8 +4,9 @@ from typing import Any, Protocol
 from sklearn.pipeline import Pipeline
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.runners.training.constants.output import TRAIN_OUTPUT
 
 
 class Trainer(Protocol):
     @abstractmethod
-    def train(self, model_cfg: TrainModelConfig, strict: bool) -> tuple[Any, Pipeline, list[dict], dict[str, float], str | None]: ...
+    def train(self, model_cfg: TrainModelConfig, strict: bool) -> TRAIN_OUTPUT: ...

@@ -9,10 +9,14 @@ from uuid import uuid4
 import yaml
 
 from ml.cli.error_handling import resolve_exit_code
-from ml.exceptions import UserError
+from ml.feature_freezing.constants.output import FreezeOutput
+from ml.feature_freezing.freeze_strategies.base import FreezeStrategy
 from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import \
     validate_feature_registry
+from ml.feature_freezing.freeze_strategies.tabular.config.models import \
+    TabularFeaturesConfig
 from ml.feature_freezing.utils.get_strategy import get_strategy
+from ml.feature_freezing.utils.get_strategy_type import get_strategy_type
 from ml.logging_config import add_file_handler, bootstrap_logging
 from ml.utils.persistence.save_metadata import save_metadata
 
@@ -22,21 +26,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Freeze features.")
 
     parser.add_argument(
-        "--problem", 
-        type=str, 
-        required=True, 
-        help="Model problem, e.g., 'no_show'"
-    )
-
-    parser.add_argument(
-        "--segment", 
-        type=str, 
-        required=True, 
-        help="Model segment name, e.g., 'city_hotel_online_ta'"
-    )
-
-    parser.add_argument(
-        "--feature_set", 
+        "--feature-set", 
         type=str, 
         required=True, 
         help="Feature set name, e.g., 'base_features'"
@@ -50,13 +40,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--data_type", 
-        choices=["tabular", "time_series"], 
-        required=True, 
-        help="Data type (tabular or time_series)"
-    )
-
-    parser.add_argument(
         "--logging-level", 
         type=str, 
         default="INFO", 
@@ -65,13 +48,21 @@ def parse_args():
 
     return parser.parse_args()
 
-def load_feature_registry(problem, segment, feature_set, version) -> dict:
+def load_feature_registry(feature_set: str, version: str) -> dict:
     path = Path(f"configs/feature_registry/features.yaml")
     with open(path, "r") as f:
         registry = yaml.safe_load(f)
-    return registry[problem][segment][feature_set][version]
+    return registry[feature_set][version]
 
 def main() -> int:
+    args: argparse.Namespace
+    start_time: float
+    config_raw: dict
+    strategy_type: str
+    config: TabularFeaturesConfig
+    strategy: FreezeStrategy
+    output: FreezeOutput
+
     args = parse_args()
 
     start_time = time.perf_counter()
@@ -83,20 +74,19 @@ def main() -> int:
     snapshot_id = f"{timestamp}_{uuid4().hex[:8]}"
 
     try:
-        config_raw = load_feature_registry(args.problem, args.segment, args.feature_set, args.version)
-        config = validate_feature_registry(config_raw, args.data_type)
+        config_raw = load_feature_registry(args.feature_set, args.version)
+        strategy_type = get_strategy_type(config_raw)
+        config = validate_feature_registry(config_raw, strategy_type)
 
         log_path = Path(config.feature_store_path) / snapshot_id / "freeze.log"
         add_file_handler(log_path, level=log_level)
 
-        if config.type != args.data_type:
-            msg = f"Data type mismatch: expected {args.data_type}, got {config.type}"
-            logger.error(msg)
-            raise UserError(msg)
-
         strategy = get_strategy(config.type)
 
-        snapshot_path, metadata = strategy.freeze(config, snapshot_id=snapshot_id, timestamp=timestamp, start_time=start_time)
+        output = strategy.freeze(config, snapshot_id=snapshot_id, timestamp=timestamp, start_time=start_time)
+        snapshot_path = output.snapshot_path
+        metadata = output.metadata
+
         save_metadata(metadata, target_dir=snapshot_path)
 
         return 0

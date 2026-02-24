@@ -14,7 +14,7 @@ class SearchContext:
     strict: bool
 
     X_train: Optional[pd.DataFrame] = None
-    y_train: Optional[pd.DataFrame] = None
+    y_train: Optional[pd.Series] = None
     feature_lineage: Optional[list[dict]] = None
     input_schema: Optional[pd.DataFrame] = None
     derived_schema: Optional[pd.DataFrame] = None
@@ -38,7 +38,7 @@ class SearchContext:
         return self.X_train
     
     @property
-    def require_y_train(self) -> pd.DataFrame:
+    def require_y_train(self) -> pd.Series:
         if self.y_train is None:
             msg = "y_train not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)

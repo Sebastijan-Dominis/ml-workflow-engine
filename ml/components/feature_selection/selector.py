@@ -1,4 +1,4 @@
-from ..base import SklearnFeatureMixin
+from ml.components.base import SklearnFeatureMixin
 
 
 class FeatureSelector(SklearnFeatureMixin):

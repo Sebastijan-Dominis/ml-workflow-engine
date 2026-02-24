@@ -3,11 +3,19 @@ import argparse
 from pathlib import Path
 from ml.feature_freezing.utils.operators import generate_operator_hash
 
+from ml.registry.feature_operators import FEATURE_OPERATORS
+
+ALLOWED = set(FEATURE_OPERATORS.keys())
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate operators hash for feature freezing.")
-    parser.add_argument("--operators", nargs="+", required=False,
-                        default=["TotalStay", "AdrPerPerson", "ArrivalSeason"],
-                        help="List of feature engineering operators to include.")
+    parser.add_argument(
+        "--operators", 
+        nargs="+", 
+        required=True, 
+        choices=ALLOWED,
+        help="List of feature engineering operators to include."
+    )
     return parser.parse_args()
 
 def main() -> int:

@@ -8,8 +8,7 @@ import pandas as pd
 
 from ml.cli.error_handling import resolve_exit_code
 from ml.data.processed.persistence.prepare_metadata import prepare_metadata
-from ml.data.processed.processing.process_data import (create_columns,
-                                                       remove_columns)
+from ml.data.processed.processing.process_data import add_row_id, remove_columns
 from ml.data.utils.config.schemas.processed import ProcessedConfig
 from ml.data.utils.config.validate_config import validate_config
 from ml.data.utils.memory.compute_memory_change import compute_memory_change
@@ -90,7 +89,7 @@ def main() -> int:
 
         df = remove_columns(df, config.remove_columns)
 
-        df = create_columns(df, config)
+        df = add_row_id(df)
 
         dataset_path = save_data(df, config=config, data_dir=data_dir)
 

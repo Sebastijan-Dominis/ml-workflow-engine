@@ -4,20 +4,22 @@ from pathlib import Path
 import pandas as pd
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.runners.evaluation.constants.data_splits import DataSplits
+from ml.runners.evaluation.constants.output import EVALUATE_OUTPUT
 from ml.runners.evaluation.evaluators.base import Evaluator
 from ml.runners.evaluation.evaluators.classification.metrics import \
     evaluate_model
 from ml.utils.experiments.loading.pipeline import load_model_or_pipeline
-from ml.utils.experiments.transform_y_to_series import transform_y_to_series
-from ml.utils.features.loading.resolve_feature_snapshots import \
-    resolve_feature_snapshots
 from ml.utils.features.loading.X_and_y import load_X_and_y
+from ml.utils.features.splitting.splitting import get_splits
 from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
 
 class EvaluateClassification(Evaluator):
-    def evaluate(self, *, model_cfg: TrainModelConfig, strict: bool, best_threshold: float | None, train_dir: Path) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame], list[dict]]:
+    def evaluate(self, *, model_cfg: TrainModelConfig, strict: bool, best_threshold: float | None, train_dir: Path) -> EVALUATE_OUTPUT:
+        data_splits: DataSplits
+
         if best_threshold is None and model_cfg.task.subtype and model_cfg.task.subtype.lower() == "binary":
             msg = f"Best threshold for classification evaluation is not defined for task '{model_cfg.task.type}' with subtype '{model_cfg.task.subtype}'. Defaulting to 0.5."
             logger.warning(msg)
@@ -36,24 +38,39 @@ class EvaluateClassification(Evaluator):
             raise ValueError(msg)
 
         # Get data splits
-        snapshot_selection = resolve_feature_snapshots(Path(model_cfg.feature_store.path), model_cfg.feature_store.feature_sets)
-        X_train, y_train, lineage_train = load_X_and_y(model_cfg, ["X_train", "y_train"], snapshot_selection=snapshot_selection, strict=strict)
-        X_val, y_val, _ = load_X_and_y(model_cfg, ["X_val", "y_val"], snapshot_selection=snapshot_selection, strict=strict)
-        X_test, y_test, _ = load_X_and_y(model_cfg, ["X_test", "y_test"], snapshot_selection=snapshot_selection, strict=strict)
+        X, y, lineage = load_X_and_y(
+            model_cfg, 
+            snapshot_selection=None, 
+            drop_row_id=False, 
+            strict=strict
+        )
+        splits = get_splits(
+            X=X,
+            y=y,
+            split_cfg=model_cfg.split,
+            data_type=model_cfg.data_type
+        )
+        X_train = splits.X_train
+        y_train = splits.y_train
+        X_val = splits.X_val
+        y_val = splits.y_val
+        X_test = splits.X_test
+        y_test = splits.y_test
 
-        # Transform y to Series if it's a DataFrame for metric compatibility
-        y_train = transform_y_to_series(y_train)
-        y_val = transform_y_to_series(y_val)
-        y_test = transform_y_to_series(y_test)
-
-        data_splits = {
-            "train": (X_train, y_train),
-            "val": (X_val, y_val),
-            "test": (X_test, y_test)
-        }
+        # TODO: Import row_id, validate, and merge with X for each split to ensure row_id is available for creating prediction DataFrames and consistent with original data
+        data_splits = DataSplits(
+            train=(X_train, y_train),
+            val=(X_val, y_val),
+            test=(X_test, y_test)
+        )
 
         # Evaluate the model
         metrics, prediction_dfs = evaluate_model(model_cfg, pipeline=pipeline, data_splits=data_splits, best_threshold=best_threshold)
 
-        # Return evaluation results, along with feature lineage
-        return metrics, prediction_dfs, lineage_train
+        output = EVALUATE_OUTPUT(
+            metrics=metrics,
+            prediction_dfs=prediction_dfs,
+            lineage=lineage
+        )
+
+        return output

@@ -4,64 +4,33 @@ from typing import Optional
 
 import pandas as pd
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+                                                    TrainModelConfig)
 from ml.exceptions import DataError
-from ml.utils.features.hashing.hash_y import hash_y
-from ml.utils.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
-from ml.utils.features.validation import validate_feature_set, validate_set
+from ml.utils.data.loader import load_data_with_loader_validation_hash
+from ml.utils.data.validate_dataset import validate_dataset
+from ml.utils.data.validate_row_id import validate_row_id
+from ml.utils.features.loading.get_target import get_target
+from ml.utils.features.loading.resolve_feature_snapshots import \
+    resolve_feature_snapshots
+from ml.utils.features.segmentation.segment import apply_segmentation
+from ml.utils.features.validation.validation import (
+    ensure_required_fields_present, validate_feature_set, validate_set,
+    validate_target)
 from ml.utils.loaders import load_json, read_data
 
 logger = logging.getLogger(__name__)
 
-from ml.registry.hash_registry import hash_file_streaming
+def load_X_and_y(
+    model_cfg: SearchModelConfig | TrainModelConfig, 
+    *,
+    snapshot_selection: Optional[list[dict]], 
+    drop_row_id: bool = True,
+    strict: bool = True
+) -> tuple[pd.DataFrame, pd.Series, list[dict]]:
+    segmented_df: pd.DataFrame
+    y: pd.Series
 
-def load_feature_set_data(snapshot_path: Path, fs, keys: list, strict: bool = True) -> tuple[pd.DataFrame, ...]:
-    metadata_path = snapshot_path / "metadata.json"
-    metadata = load_json(metadata_path)
-
-    data = []
-
-    for key in keys:
-        if not hasattr(fs, key):
-            msg = f"Missing {key} in feature set specification."
-            logger.error(msg)
-            raise DataError(msg)
-        file_path = snapshot_path / getattr(fs, key)
-        df = read_data(fs.data_format, file_path)
-
-        if strict:
-            runtime_hash = hash_file_streaming(file_path)
-            expected_hash = metadata.get("file_hashes", {}).get(key)
-            
-            if expected_hash is None:
-                msg = f"No expected hash for {key} in metadata at {snapshot_path}."
-                logger.error(msg)
-                raise DataError(msg)
-            
-            if runtime_hash != expected_hash:
-                msg = f"Hash mismatch for {key} in snapshot {snapshot_path}: expected {expected_hash}, got {runtime_hash}"
-                logger.error(msg)
-                raise DataError(msg)
-        
-        data.append(df)
-
-    return tuple(data)
-
-def load_X_and_y(model_cfg: SearchModelConfig | TrainModelConfig, keys: list[str], snapshot_selection: Optional[list[dict]], strict: bool = True) -> tuple[pd.DataFrame, pd.DataFrame, list[dict]]:
-    """
-    Load and combine X and y from multiple feature sets, validating lineage and data consistency.
-
-    Args:
-        model_cfg: The validated SearchModelConfig or TrainModelConfig
-        keys: List of keys to load, e.g., ["X_train", "y_train"]
-        snapshot_selection: Optional pre-resolved snapshot info from `resolve_feature_snapshots`. 
-                            If None, the latest snapshots are automatically resolved.
-
-    Returns:
-        X: Combined feature DataFrame
-        y: Target Series/DataFrame (assumes identical across feature sets)
-        lineage: List of dicts with snapshot provenance for each feature set
-    """
     feature_store_path = Path(model_cfg.feature_store.path)
     feature_sets = model_cfg.feature_store.feature_sets
 
@@ -69,10 +38,6 @@ def load_X_and_y(model_cfg: SearchModelConfig | TrainModelConfig, keys: list[str
         snapshot_selection = resolve_feature_snapshots(feature_store_path, feature_sets)
 
     dfs_X = []
-    y_hashes = set()
-    dataset_ids = set()
-    schema_hashes = set()
-    operator_hashes = set()
     feature_types = set()
     loader_validation_hashes = set()
     lineage = []
@@ -82,53 +47,62 @@ def load_X_and_y(model_cfg: SearchModelConfig | TrainModelConfig, keys: list[str
         snapshot_path = sel["snapshot_path"]
         metadata = sel["metadata"]
 
-        validate_feature_set(snapshot_path, metadata)
+        ensure_required_fields_present(snapshot_path, metadata)
         
-        X, y = load_feature_set_data(snapshot_path, fs, keys, strict=strict)
-        
-        dfs_X.append(X)
+        file_path = snapshot_path / getattr(fs, "file_name")
 
-        y_hashes.add(hash_y(y))
-
-        missing = [field for field in ["snapshot_identity_hash", "feature_schema_hash", "operators_hash", "feature_type", "loader_validation_hash", "file_hashes"] if metadata.get(field) is None]
-        if missing:
-            msg = f"Missing required metadata fields {missing} in snapshot {snapshot_path}"
-            logger.error(msg)
-            raise DataError(msg)
+        df_X = read_data(fs.data_format, file_path)
         
-        dataset_id = metadata["snapshot_identity_hash"]
+        validate_feature_set(
+            feature_set=df_X, 
+            metadata=metadata, 
+            file_path=file_path, 
+            strict=strict
+        )
+
+        dfs_X.append(df_X)
+        
         feature_schema_hash = metadata["feature_schema_hash"]
         operators_hash = metadata["operators_hash"]
         feature_type = metadata["feature_type"]
         loader_validation_hash = metadata["loader_validation_hash"]
-        file_hashes = metadata["file_hashes"]
+        file_hash = metadata["file_hash"]
+        in_memory_hash = metadata["in_memory_hash"]
 
-        dataset_ids.add(dataset_id)
-        schema_hashes.add(feature_schema_hash)
-        operator_hashes.add(operators_hash)
         feature_types.add(feature_type)
         loader_validation_hashes.add(loader_validation_hash)
 
         lineage.append({
-            "ref": fs.ref,
             "name": fs.name,
             "version": fs.version,
             "snapshot_id": snapshot_path.name,
             "snapshot_path": str(snapshot_path),
             "loader_validation_hash": loader_validation_hash,
-            "file_hashes": file_hashes,
-            "snapshot_identity_hash": dataset_id,
+            "file_hash": file_hash,
+            "in_memory_hash": in_memory_hash,
             "feature_schema_hash": feature_schema_hash,
             "operators_hash": operators_hash,
             "feature_type": feature_type,
         })
 
-    validate_set("Target (y)", y_hashes, feature_sets)
-    validate_set("Dataset identity", dataset_ids, feature_sets)
-    validate_set("Feature schema", schema_hashes, feature_sets)
-    validate_set("Feature operators", operator_hashes, feature_sets)
     validate_set("Feature type", feature_types, feature_sets)
+
+    dataset, loader_validation_hash = load_data_with_loader_validation_hash(
+        path=Path(model_cfg.data.path),
+        format=model_cfg.data.format
+    )
+    data_metadata = load_json(path=Path(model_cfg.data.metadata_path))
+    validate_dataset(data_path=Path(model_cfg.data.path), metadata=data_metadata)
+    loader_validation_hashes.add(loader_validation_hash)
     validate_set("Loader validation", loader_validation_hashes, feature_sets)
+
+    target_name = model_cfg.target.name
+    target_version = model_cfg.target.version
+    key = (target_name, target_version)
+    y = get_target(data=dataset, key=key)
+
+    for df in dfs_X:
+        validate_row_id(df)
 
     for df in dfs_X[1:]:
         if not df.index.equals(dfs_X[0].index):
@@ -136,14 +110,51 @@ def load_X_and_y(model_cfg: SearchModelConfig | TrainModelConfig, keys: list[str
             logger.error(msg)
             raise DataError(msg)
 
-    combined_df = pd.concat(dfs_X, axis=1)
+    merged_df = dfs_X[0]
+    if len(dfs_X) > 1:
+        for df in dfs_X[1:]:
+            merged_df = merged_df.merge(df, on="row_id", how="inner", suffixes=("", "_dup"))
 
-    logger.debug(f"All validations for {len(snapshot_selection)} feature sets' {', '.join(keys)} passed. Combined shape: {combined_df.shape}")
+    cols = merged_df.columns.tolist()
+    if "row_id" in cols:
+        cols.insert(0, cols.pop(cols.index("row_id")))
+    merged_df = merged_df[cols]
 
-    dupes = combined_df.columns[combined_df.columns.duplicated()]
+    if target_name in merged_df.columns:
+        try:
+            merged_df = merged_df.drop(columns=[target_name], axis=1, errors="raise")
+        except KeyError:
+            msg = f"Target column {target_name} not found in merged feature set, but was expected."
+            logger.error(msg)
+            raise DataError(msg)
+
+    logger.debug(f"All validations for {len(snapshot_selection)} feature sets' passed. Combined shape: {merged_df.shape}")
+
+    segmented_df = apply_segmentation(
+        data=merged_df,
+        seg_cfg=model_cfg.segmentation
+    )
+
+    logger.debug(f"Applied the segmentation step. Resulting shape: {segmented_df.shape}")
+
+    dupes = segmented_df.columns[segmented_df.columns.duplicated()]
     if len(dupes) > 0:
         logger.warning(f"Dropping duplicated columns: {list(dupes)}")
-    
-    X = combined_df.loc[:, ~combined_df.columns.duplicated()]
+        segmented_df = segmented_df.drop(columns=dupes, axis=1)
+    X = segmented_df.loc[:, ~segmented_df.columns.duplicated()].copy()
 
+    full_df = pd.concat([X, y], axis=1)
+    validate_target(y=y, tgt_cfg=model_cfg.target, data=full_df)
+    logger.debug("Target validation passed.")
+
+    if drop_row_id:
+        if "row_id" not in X.columns:
+            msg = "Cannot drop 'row_id' column because it is not present in the features."
+            logger.error(msg)
+            raise DataError(msg)
+        X = X.drop(columns=["row_id"])
+        logger.debug("Dropped 'row_id' column from features as requested.")
+
+    logger.info(f"Successfully loaded features and target. Final shapes - X: {X.shape}, y: {y.shape}")
+    
     return X, y, lineage

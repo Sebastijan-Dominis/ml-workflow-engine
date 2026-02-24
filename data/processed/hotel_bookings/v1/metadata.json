@@ -11,17 +11,17 @@
       "format": "parquet",
       "compression": "snappy"
     },
-    "hash": "19cb9648dc7c41c5c3a35ff6d528d884b865e4660191868113b40d07e362f32f"
+    "hash": "56b0295dbe21018aaf848bb69cf3da7c9a30b74a0e82f09d044ad7555528467d"
   },
   "memory": {
     "old_memory_mb": 54.285332679748535,
-    "new_memory_mb": 30.70766544342041,
-    "change_mb": -23.577667236328125,
-    "change_percentage": -43.432850223876244
+    "new_memory_mb": 20.715700149536133,
+    "change_mb": -33.5696325302124,
+    "change_percentage": -61.83923147022686
   },
   "rows": 119386,
   "columns": {
-    "count": 34,
+    "count": 29,
     "names": [
       "hotel",
       "is_canceled",
@@ -44,19 +44,14 @@
       "previous_bookings_not_canceled",
       "reserved_room_type",
       "assigned_room_type",
-      "booking_changes",
       "deposit_type",
       "agent",
-      "company",
       "days_in_waiting_list",
       "customer_type",
       "adr",
       "required_car_parking_spaces",
       "total_of_special_requests",
-      "reservation_status",
-      "reservation_status_date",
-      "booking_id",
-      "arrival_date"
+      "row_id"
     ],
     "dtypes": {
       "hotel": "category",
@@ -80,26 +75,21 @@
       "previous_bookings_not_canceled": "int8",
       "reserved_room_type": "category",
       "assigned_room_type": "category",
-      "booking_changes": "int8",
       "deposit_type": "category",
       "agent": "string",
-      "company": "string",
       "days_in_waiting_list": "int16",
       "customer_type": "category",
       "adr": "float32",
       "required_car_parking_spaces": "int8",
       "total_of_special_requests": "int8",
-      "reservation_status": "category",
-      "reservation_status_date": "datetime64[ns]",
-      "booking_id": "object",
-      "arrival_date": "datetime64[ns]"
+      "row_id": "object"
     }
   },
-  "config_hash": "3f424b89613bd01e947e45bd66963318",
-  "created_at": "2026-02-20T19-12-47",
+  "config_hash": "acdbef6859ba2b93d3daee9a50bdbb3b",
+  "created_at": "2026-02-24T03-00-56",
   "created_by": "make_processed.py",
   "owner": "Sebastijan",
-  "duration": 0.3812430000398308,
+  "duration": 0.9482066000346094,
   "runtime_info": {
     "pandas_version": "2.3.3",
     "numpy_version": "1.26.4",

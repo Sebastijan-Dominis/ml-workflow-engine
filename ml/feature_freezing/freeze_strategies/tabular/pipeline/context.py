@@ -7,7 +7,6 @@ import pandas as pd
 
 from ml.exceptions import RuntimeMLException
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.artifacts import TabularSplits
 
 logger = logging.getLogger(__name__)
 @dataclass
@@ -21,14 +20,11 @@ class FreezeContext:
     data: Optional[pd.DataFrame] = None
     loader_validation_hash: Optional[str] = None
 
-    X: Optional[pd.DataFrame] = None
-    y: Optional[pd.DataFrame] = None
-
-    splits: Optional[TabularSplits] = None
+    features: Optional[pd.DataFrame] = None
 
     snapshot_path: Optional[Path] = None
     schema_path: Optional[Path] = None
-    data_paths: Optional[dict] = None
+    data_path: Optional[Path] = None
 
     metadata: Optional[dict] = None
     config_hash: Optional[str] = None
@@ -74,28 +70,12 @@ class FreezeContext:
         return self.loader_validation_hash
 
     @property
-    def require_X(self) -> pd.DataFrame:
-        if self.X is None:
+    def require_features(self) -> pd.DataFrame:
+        if self.features is None:
             msg = "Features not prepared yet. Ensure that the preprocessing step has been run."
             logger.error(msg)
             raise RuntimeMLException(msg)
-        return self.X
-
-    @property
-    def require_y(self) -> pd.DataFrame:
-        if self.y is None:
-            msg = "Target not prepared yet. Ensure that the preprocessing step has been run."
-            logger.error(msg)
-            raise RuntimeMLException(msg)
-        return self.y
-    
-    @property
-    def require_splits(self) -> TabularSplits:
-        if self.splits is None:
-            msg = "Data not split yet. Ensure that the splitting step has been run."
-            logger.error(msg)
-            raise RuntimeMLException(msg)
-        return self.splits
+        return self.features
     
     @property
     def require_snapshot_path(self) -> Path:
@@ -114,12 +94,12 @@ class FreezeContext:
         return self.schema_path
     
     @property
-    def require_data_paths(self) -> dict:
-        if self.data_paths is None:
-            msg = "Data paths not set. Ensure that the persistence step has been run and data paths are set in the context."
+    def require_data_path(self) -> Path:
+        if self.data_path is None:
+            msg = "Data path not set. Ensure that the persistence step has been run and data path is set in the context."
             logger.error(msg)
             raise RuntimeMLException(msg)
-        return self.data_paths
+        return self.data_path
     
     @property
     def require_config_hash(self) -> str:

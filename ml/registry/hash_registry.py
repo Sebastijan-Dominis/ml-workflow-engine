@@ -1,10 +1,13 @@
 import hashlib
 from pathlib import Path
 
+import pandas as pd
+
 from ml.utils.features.hashing.hash_arrow_metadata import hash_arrow_metadata
 from ml.utils.features.hashing.hash_parquet_metadata import \
     hash_parquet_metadata
 from ml.utils.hashing.hash_streaming import hash_streaming
+from ml.utils.hashing.hash_dict import hash_dict
 
 HASH_LOADER_REGISTRY = {
     "parquet": hash_parquet_metadata,
@@ -13,7 +16,7 @@ HASH_LOADER_REGISTRY = {
     "json": hash_streaming,
 }
 
-def hash_file_streaming(file_path: Path) -> str:
+def hash_file(file_path: Path) -> str:
     """Compute SHA256 of file contents (streaming)."""
     return hash_streaming(file_path)
 
@@ -27,4 +30,4 @@ def hash_artifact(file_path: Path) -> str:
 
 def hash_thresholds(thresholds: dict) -> str:
     """Compute SHA256 of thresholds dictionary."""
-    return hashlib.sha256(str(thresholds).encode()).hexdigest()
+    return hash_dict(thresholds)

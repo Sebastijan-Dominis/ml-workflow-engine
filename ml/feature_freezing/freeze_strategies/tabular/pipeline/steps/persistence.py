@@ -23,30 +23,25 @@ class PersistenceStep(PipelineStep[FreezeContext]):
 
     def run(self, ctx: FreezeContext) -> FreezeContext:
         config = ctx.config
-        splits = ctx.require_splits
 
-        X_train = splits.X_train
-        X_val = splits.X_val
-        X_test = splits.X_test
-        y_train = splits.y_train
-        y_val = splits.y_val
-        y_test = splits.y_test
+        features = ctx.require_features
 
-        snapshot_path, data_paths = persist_feature_snapshot(
+        snapshot_path, data_path = persist_feature_snapshot(
             config,
-            X_train,
-            X_val,
-            X_test,
-            y_train,
-            y_val,
-            y_test,
-            ctx.require_snapshot_id,
+            features=features,
+            snapshot_id=ctx.require_snapshot_id,
         )
 
         schema_path = config.feature_store_path
 
+        if "row_id" in features.columns:
+            features_without_row_id = features.drop(columns=["row_id"])
+        else:
+            msg = "Expected 'row_id' column in features, but it was not found."
+            logger.error(msg)
+            raise PersistenceError(msg)
         try:
-            save_input_schema(schema_path, X_train)
+            save_input_schema(schema_path, features_without_row_id)
         except Exception as e:
             logger.exception("Failed to save input schema")
             raise PersistenceError(
@@ -57,9 +52,9 @@ class PersistenceStep(PipelineStep[FreezeContext]):
             if config.operators:
                 save_derived_schema(
                     schema_path,
-                    X_train,
-                    config.operators.list,
-                    config.operators.mode,
+                    features=features_without_row_id,
+                    operator_names=config.operators.names,
+                    mode=config.operators.mode,
                 )
         except Exception as e:
             logger.exception("Failed to save derived schema")
@@ -69,6 +64,6 @@ class PersistenceStep(PipelineStep[FreezeContext]):
 
         ctx.snapshot_path = snapshot_path
         ctx.schema_path = schema_path
-        ctx.data_paths = data_paths
+        ctx.data_path = data_path
 
         return ctx

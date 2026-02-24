@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -7,22 +8,12 @@ from sklearn.pipeline import Pipeline
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PipelineContractError, UserError
+from ml.runners.evaluation.constants.data_splits import DataSplits
+from ml.runners.evaluation.utils.get_row_ids import get_row_ids
 
 logger = logging.getLogger(__name__)
 
 def compute_metrics(y_true: pd.Series, y_pred: pd.Series, y_prob: Optional[pd.Series] = None) -> dict[str, float]:
-    """Compute commonly used classification metrics.
-
-    Args:
-        y_true (pd.Series): Ground-truth binary labels.
-        y_pred (pd.Series): Binary predictions.
-        y_prob (Optional[pd.Series], optional): Predicted probabilities for the positive class.
-
-    Returns:
-        dict: Metric values for `accuracy`, `f1`, and `roc_auc` (or `None`
-            when `roc_auc` is not defined for the provided inputs).
-    """
-
     # Compute basic classification metrics
     metrics = {
         "accuracy": accuracy_score(y_true, y_pred),
@@ -42,20 +33,15 @@ def compute_metrics(y_true: pd.Series, y_pred: pd.Series, y_prob: Optional[pd.Se
     # Return computed metrics
     return metrics
 
-def evaluate_split(pipeline: Pipeline, X: pd.DataFrame, y: pd.Series, *, split_name: str, best_threshold: float | None) -> tuple[dict[str, float], pd.DataFrame]: # default threshold=0.5
-    """Evaluate a single split and return metrics.
-
-    Args:
-        pipeline: Fitted classifier implementing `predict_proba`.
-        X (DataFrame): Feature matrix for the split.
-        y (Series): True labels for the split.
-        best_threshold (float | None): Probability threshold for converting
-            predicted probabilities into binary labels.
-
-    Returns:
-        tuple[dict[str, float], pd.DataFrame]: Metrics computed for the split and the predictions DataFrame.
-    """
-
+def evaluate_split(
+    pipeline: Pipeline, 
+    X: pd.DataFrame, 
+    y: pd.Series, 
+    *, 
+    split_row_ids: pd.Series,
+    split_name: str, 
+    best_threshold: float | None
+) -> tuple[dict[str, float], pd.DataFrame]: # default threshold=0.5
     # Predict probabilities for the positive class
     probs = pipeline.predict_proba(X)
     if probs.shape[1] < 2:
@@ -77,7 +63,7 @@ def evaluate_split(pipeline: Pipeline, X: pd.DataFrame, y: pd.Series, *, split_n
     metrics = compute_metrics(y, y_pred, y_prob)
 
     df_preds = pd.DataFrame({
-        "row_id": X.index,
+        "row_id": split_row_ids,
         "split": split_name,
         "y_true": y,
         "y_pred": y_pred,
@@ -86,30 +72,26 @@ def evaluate_split(pipeline: Pipeline, X: pd.DataFrame, y: pd.Series, *, split_n
     
     return metrics, df_preds
 
-def evaluate_model(model_cfg: TrainModelConfig, *, pipeline: Pipeline, data_splits: dict[str, tuple[pd.DataFrame, pd.Series]], best_threshold: float | None) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
-    """Evaluate `pipeline` across all provided data splits.
-
-    Args:
-        pipeline: Fitted classifier.
-        data_splits (dict): Mapping of split name to `(X, y)` tuple.
-        best_threshold (float | None): Threshold for converting probabilities to
-            binary predictions.
-
-    Returns:
-        tuple[dict, dict]: Tuple of (evaluation_metrics, prediction_dfs), where:
-            - evaluation_metrics is a mapping from split name to computed metrics dictionary.
-            - prediction_dfs is a mapping from split name to DataFrame of predictions.
-    """
-
+def evaluate_model(model_cfg: TrainModelConfig, *, pipeline: Pipeline, data_splits: DataSplits, best_threshold: float | None) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
     # Create a dictionary to hold evaluation results
     evaluation_metrics = {}
     prediction_dfs = {}
 
     # Evaluate each data split
-    for split_name, (X, y) in data_splits.items():
+    for split_name, (X, y) in data_splits.__dict__.items():
         if model_cfg.task.subtype and model_cfg.task.subtype.lower() == "binary":
+            split_row_ids = get_row_ids(X)
+            if "row_id" in X.columns:
+                X = X.drop(columns=["row_id"])
             logger.debug(f"Evaluating split '{split_name}' with best_threshold={best_threshold} and {len(y)} samples.")
-            metrics, df_preds = evaluate_split(pipeline, X, y, split_name=split_name, best_threshold=best_threshold)
+            metrics, df_preds = evaluate_split(
+                pipeline=pipeline, 
+                X=X, 
+                y=y, 
+                split_row_ids=split_row_ids, 
+                split_name=split_name, 
+                best_threshold=best_threshold
+            )
             evaluation_metrics[split_name] = metrics
             prediction_dfs[split_name] = df_preds
         elif model_cfg.task.subtype and model_cfg.task.subtype.lower() == "multiclass":

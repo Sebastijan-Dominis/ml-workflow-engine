@@ -34,7 +34,7 @@ def persist_training_run(
         },
         "lineage": {
             "feature_lineage": feature_lineage,
-            "target_column": model_cfg.target,
+            "target_column": model_cfg.target.name,
             "problem": model_cfg.problem,
             "segment": model_cfg.segment.name,
             "model_version": model_cfg.version,

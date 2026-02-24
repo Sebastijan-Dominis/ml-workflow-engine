@@ -3,7 +3,7 @@ from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.registry.hash_registry import hash_artifact
-from ml.runners.explainability.classes.classes import ExplainabilityMetrics
+from ml.runners.explainability.constants.explainability_metrics_class import ExplainabilityMetrics
 from ml.runners.explainability.persistence.save_metrics_csv import \
     save_metrics_csv
 from ml.utils.persistence.save_metadata import save_metadata
@@ -49,7 +49,7 @@ def persist_explainability_run(
         },
         "lineage": {
             "feature_lineage": feature_lineage,
-            "target_column": model_cfg.target,
+            "target_column": model_cfg.target.name,
             "problem": model_cfg.problem,
             "segment": model_cfg.segment.name,
             "model_version": model_cfg.version,

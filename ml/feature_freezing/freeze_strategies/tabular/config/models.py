@@ -1,46 +1,13 @@
+import logging
 from pathlib import Path
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
 
+from ml.config.validation_schemas.data import DataConfig
+from ml.exceptions import ConfigError
 
-class DataConfig(BaseModel):
-    path: Path
-    metadata_path: Path
-    source: str
-    format: Literal["csv","parquet","json", "arrow"]
-
-class SegmentationFilter(BaseModel):
-    column: str
-    op: Literal["eq","neq","in","not_in","gt","gte","lt","lte"]
-    value: int | str | list[int] | list[str]
-
-class SegmentationConfig(BaseModel):
-    enabled: bool = False
-    filters: list[SegmentationFilter] = []
-
-class ClassesConfig(BaseModel):
-    count: int
-    positive_class: int | str
-
-class TargetConstraintsConfig(BaseModel):
-    min_value: Optional[float] = None
-    max_value: Optional[float] = None
-
-class TargetConfig(BaseModel):
-    name: str
-    allowed_dtypes: list[str]
-    problem_type: Literal["classification", "regression", "clustering"]
-    classes: ClassesConfig
-    constraints: TargetConstraintsConfig = Field(default_factory=TargetConstraintsConfig)
-
-class ExcludeColumnsConfig(BaseModel):
-    leaky: Optional[list[str]] = None
-    useless: Optional[list[str]] = None
-
-class ColumnConfig(BaseModel):
-    include: list[str]
-    exclude: ExcludeColumnsConfig = Field(default_factory=ExcludeColumnsConfig)
+logger = logging.getLogger(__name__)
 
 class FeatureRolesConfig(BaseModel):
     categorical: list[str]
@@ -49,15 +16,9 @@ class FeatureRolesConfig(BaseModel):
 
 class OperatorsConfig(BaseModel):
     mode: Literal["materialized","logical"]
-    list: list[str]
+    names: list[str]
     hash: str
-
-class SplitConfig(BaseModel):
-    strategy: Literal["random"]
-    stratify_by: str
-    test_size: float = Field(gt=0.0, lt=1.0)
-    val_size: float = Field(gt=0.0, lt=1.0)
-    random_state: int
+    required_features: dict[str, list[str]]
 
 class ConstraintsConfig(BaseModel):
     forbid_nulls: list[str]
@@ -68,7 +29,6 @@ class StorageConfig(BaseModel):
     compression: Optional[str] = "snappy"
 
 class LineageConfig(BaseModel):
-    source_datasets: list[str]
     feature_set_version: str
     created_by: str
     created_at: str
@@ -77,18 +37,69 @@ class TabularFeaturesConfig(BaseModel):
     type: str = "tabular"
     description: str | None = None
     data: DataConfig
-    segmentation: SegmentationConfig = Field(default_factory=SegmentationConfig)
     min_rows: int = Field(default=1000, ge=0)
-    min_class_count: int = Field(default=10, ge=0)
     feature_store_path: Path
-    target: TargetConfig
-    columns: ColumnConfig
+    columns: list[str]
     feature_roles: FeatureRolesConfig
     operators: Optional[OperatorsConfig] = None
-    split: SplitConfig
     constraints: ConstraintsConfig
     storage: StorageConfig
     lineage: LineageConfig
     ...
     class Config:
         extra = "forbid"
+
+    @field_validator("operators", mode="before")
+    def required_features_must_equal_operator_names(cls, v):
+        if v is None:
+            return v
+        names = set(v["names"])
+        required = set(v["required_features"].keys())
+        if names != required:
+            msg = f"Operator names {names} must match required features {required}"
+            logger.error(msg)
+            raise ConfigError(msg)
+        return v
+    
+    @model_validator(mode="after")
+    def validate_feature_roles_match_columns(cls, config):
+        columns = set(config.columns)
+        roles = set(config.feature_roles.categorical + config.feature_roles.numerical + config.feature_roles.datetime)
+        if columns != roles:
+            missing_in_roles = columns - roles
+            extra_in_roles = roles - columns
+            msg = f"Feature roles do not match included columns. Missing in roles: {missing_in_roles}, extra in roles: {extra_in_roles}."
+            logger.error(msg)
+            raise ConfigError(msg)
+        return config
+    
+    @model_validator(mode="after")
+    def validate_constraints_match_columns(cls, config):
+        columns = set(config.columns)
+        forbidden_nulls = set(config.constraints.forbid_nulls)
+        max_cardinality_cols = set(config.constraints.max_cardinality.keys())
+        if not forbidden_nulls.issubset(columns):
+            missing = forbidden_nulls - columns
+            msg = f"Forbidden nulls {missing} are not in included columns {columns}"
+            logger.error(msg)
+            raise ConfigError(msg)
+        if not max_cardinality_cols.issubset(columns):
+            missing = max_cardinality_cols - columns
+            msg = f"Max cardinality columns {missing} are not in included columns {columns}"
+            logger.error(msg)
+            raise ConfigError(msg)
+        return config
+    
+    # validate that all of the required features for operators are included in columns
+    @model_validator(mode="after")
+    def validate_required_features_for_operators(cls, config):
+        if config.operators is None:
+            return config
+        columns = set(config.columns)
+        for op_name, req_feats in config.operators.required_features.items():
+            missing = set(req_feats) - columns
+            if missing:
+                msg = f"Required features {missing} for operator {op_name} are not in included columns {columns}"
+                logger.error(msg)
+                raise ConfigError(msg)
+        return config

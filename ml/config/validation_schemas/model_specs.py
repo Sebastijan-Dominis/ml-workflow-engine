@@ -4,19 +4,10 @@ from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pyparsing.helpers import Enum
 
+from ml.config.validation_schemas.data import DataConfig
 from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
-
-class MetaConfig(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    sources: Optional[Dict[str, Any]] = None
-    env: Optional[str] = None
-    best_params_path: Optional[str] = None
-    validation_status: Optional[str] = None
-    validation_errors: Optional[List[Any]] = None
-    config_hash: Optional[str] = None
 
 class SegmentConfig(BaseModel):
     name: str
@@ -38,20 +29,69 @@ class TaskConfig(BaseModel):
             return v.lower()
         return v
 
+class ClassesConfig(BaseModel):
+    count: int
+    positive_class: int | str
+    min_class_count: int
+
+class TargetConstraintsConfig(BaseModel):
+    min_value: Optional[float] = None
+    max_value: Optional[float] = None
+
+class TargetConfig(BaseModel):
+    name: str
+    allowed_dtypes: list[str]
+    problem_type: Literal["classification", "regression"]
+    classes: Optional[ClassesConfig] = None
+    constraints: TargetConstraintsConfig = Field(default_factory=TargetConstraintsConfig)
+    version: str
+
+    @field_validator("classes", mode="after")
+    @classmethod
+    def validate_classes_for_classification(cls, v, info):
+        if info.data.get("problem_type") == "classification" and v is None:
+            msg = "Classes must be provided for classification problems."
+            logger.error(msg)
+            raise ConfigError(msg)
+        if info.data.get("problem_type") == "classification" and v is not None and v.count < 2:
+            msg = f"Classes count must be at least 2 for classification problems, got {v.count}."
+            logger.error(msg)
+            raise ConfigError(msg)
+        return v
+    
+    @field_validator("version", mode="before")
+    @classmethod
+    def validate_version_format(cls, v):
+        if not isinstance(v, str) or not v.startswith("v") or not v[1:].isdigit():
+            msg = f"Version must be in format 'v{{number}}', e.g. 'v1', 'v2', etc. Got '{v}'."
+            logger.error(msg)
+            raise ConfigError(msg)
+        return v
+
+class SegmentationFilter(BaseModel):
+    column: str
+    op: Literal["eq","neq","in","not_in","gt","gte","lt","lte"]
+    value: int | str | list[int] | list[str]
+
+class SegmentationConfig(BaseModel):
+    enabled: bool = False
+    filters: list[SegmentationFilter] = []
+
 class FeatureSetConfig(BaseModel):
-    ref: str
     name: str
     version: str
     schema_format: str
     input_schema: str
     derived_schema: str
     data_format: str
-    X_train: str
-    X_val: str
-    X_test: str
-    y_train: str
-    y_val: str
-    y_test: str
+    file_name: str
+
+class SplitConfig(BaseModel):
+    strategy: Literal["random"]
+    stratify_by: str
+    test_size: float = Field(gt=0.0, lt=1.0)
+    val_size: float = Field(gt=0.0, lt=1.0)
+    random_state: int
 
 class AlgorithmConfig(str, Enum):
     catboost = "catboost"
@@ -103,18 +143,32 @@ class ExplainabilityConfig(BaseModel):
     top_k: int = 20
     methods: ExplainabilityMethodsConfig = Field(default_factory=ExplainabilityMethodsConfig)
 
+DATA_TYPE = Literal["tabular", "time-series"]
+
+class MetaConfig(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    sources: Optional[Dict[str, Any]] = None
+    env: Optional[str] = None
+    best_params_path: Optional[str] = None
+    validation_status: Optional[str] = None
+    validation_errors: Optional[List[Any]] = None
+    config_hash: Optional[str] = None
+
 class ModelSpecs(BaseModel):
     problem: str
     segment: SegmentConfig
     version: str
     task: TaskConfig
-    target: str
+    target: TargetConfig
+    data: DataConfig
+    segmentation: SegmentationConfig = Field(default_factory=SegmentationConfig)
+    split: SplitConfig
     algorithm: AlgorithmConfig
     model_class: str
     pipeline: PipelineConfig
     feature_store: FeatureStoreConfig
     explainability: ExplainabilityConfig = Field(default_factory=ExplainabilityConfig)
-    data_type: Optional[str] = None
+    data_type: DATA_TYPE
     meta: MetaConfig = Field(default_factory=MetaConfig, alias="_meta")
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)

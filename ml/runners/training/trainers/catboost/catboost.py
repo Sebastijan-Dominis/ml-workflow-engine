@@ -17,47 +17,39 @@ from pathlib import Path
 from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.pipeline import Pipeline
 
-from ml.runners.training.trainers.base import Trainer
+from ml.config.hashing import compute_config_hash
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.runners.training.trainers.catboost.train_catboost_model import train_catboost_model
+from ml.runners.training.constants.output import TRAIN_OUTPUT
+from ml.runners.training.trainers.base import Trainer
+from ml.runners.training.trainers.catboost.train_catboost_model import \
+    train_catboost_model
 from ml.runners.training.utils.metrics.compute_metrics import compute_metrics
 from ml.runners.training.utils.model_specific.catboost import prepare_model
-from ml.utils.catboost.build_pipeline_with_model import build_pipeline_with_model
+from ml.utils.catboost.build_pipeline_with_model import \
+    build_pipeline_with_model
 from ml.utils.features.cat_features import get_cat_features
-from ml.utils.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
 from ml.utils.features.loading.schemas import load_schemas
 from ml.utils.features.loading.X_and_y import load_X_and_y
+from ml.utils.features.splitting.splitting import get_splits
+from ml.utils.features.validation.validation import \
+    validate_model_feature_pipeline_contract
 from ml.utils.loaders import load_yaml
-from ml.config.hashing import compute_config_hash
-from ml.utils.features.validation import validate_model_feature_pipeline_contract
 
 
 class TrainCatboost(Trainer):
-    def train(self, model_cfg: TrainModelConfig, strict: bool) -> tuple[CatBoostClassifier | CatBoostRegressor, Pipeline, list[dict], dict[str, float], str]:
-        """Train a binary classification model using CatBoost and project components.
+    def train(self, model_cfg: TrainModelConfig, strict: bool) -> TRAIN_OUTPUT:
+        X, y, lineage = load_X_and_y(model_cfg, snapshot_selection=None, strict=strict)
+        splits = get_splits(
+            X=X,
+            y=y,
+            split_cfg=model_cfg.split,
+            data_type=model_cfg.data_type,
+        )
 
-        This is the high-level routine used by the training CLI to execute a
-        complete training run. It performs data loading, dynamic component
-        import for model-specific preprocessing, model construction, pipeline
-        assembly, training, and returns a fitted pipeline object.
-
-    logger = logging.getLogger(__name__)
-        Args:
-            name_version (str): Component module name under ``ml.components``.
-            cfg (dict): Validated configuration dictionary.
-
-        Returns:
-            tuple[CatBoostClassifier | CatBoostRegressor, Pipeline, list[dict], dict[str, float], str]: A fitted sklearn Pipeline containing preprocessing and
-            the trained CatBoost model, along with the pipeline hash.
-
-        Raises:
-            Exception: Any exception during the training process is logged and
-            re-raised to signal a fatal training error.
-        """
-
-        snapshot_selection = resolve_feature_snapshots(Path(model_cfg.feature_store.path), model_cfg.feature_store.feature_sets)
-        X_train, y_train, lineage_train = load_X_and_y(model_cfg, ["X_train", "y_train"], snapshot_selection=snapshot_selection, strict=strict)
-        X_val, y_val, _ = load_X_and_y(model_cfg, ["X_val", "y_val"], snapshot_selection=snapshot_selection, strict=strict)
+        X_train = splits.X_train
+        y_train = splits.y_train
+        X_val = splits.X_val
+        y_val = splits.y_val
 
         input_schema, derived_schema = load_schemas(model_cfg)
 
@@ -103,6 +95,12 @@ class TrainCatboost(Trainer):
             y_val=y_val
         )
 
+        output = TRAIN_OUTPUT(
+            model=model_trained,
+            pipeline=pipeline_trained,
+            lineage=lineage,
+            metrics=metrics,
+            pipeline_cfg_hash=pipeline_cfg_hash
+        )
 
-
-        return model_trained, pipeline_trained, lineage_train, metrics, pipeline_cfg_hash
+        return output

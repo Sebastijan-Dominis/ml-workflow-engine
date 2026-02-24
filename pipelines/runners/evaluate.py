@@ -28,6 +28,7 @@ from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.logging_config import add_file_handler, bootstrap_logging
+from ml.runners.evaluation.constants.output import EVALUATE_OUTPUT
 from ml.runners.evaluation.evaluators.base import Evaluator
 from ml.runners.evaluation.persistence.persist_evaluation_run import \
     persist_evaluation_run
@@ -114,6 +115,7 @@ def main() -> int:
     artifacts: dict[str, str]
     best_threshold: float | None
     evaluator: Evaluator
+    output: EVALUATE_OUTPUT
     metrics: dict[str, dict[str, float]]
     prediction_dfs: dict[str, pd.DataFrame]
     feature_lineage: list[dict]
@@ -169,7 +171,11 @@ def main() -> int:
             eval_run_id,
         )
 
-        metrics, prediction_dfs, feature_lineage = evaluator.evaluate(model_cfg=model_cfg, strict=args.strict, best_threshold=best_threshold, train_dir=train_dir)
+        output = evaluator.evaluate(model_cfg=model_cfg, strict=args.strict, best_threshold=best_threshold, train_dir=train_dir)
+
+        metrics = output.metrics
+        prediction_dfs = output.prediction_dfs
+        feature_lineage = output.lineage
 
         logger.info(
             "Evaluation completed | problem=%s segment=%s version=%s train_id=%s eval_id=%s",

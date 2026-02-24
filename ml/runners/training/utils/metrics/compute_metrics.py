@@ -9,7 +9,16 @@ from ml.registry.tasks_supporting_thresholds import TASKS_SUPPORTING_THRESHOLDS
 from ml.runners.training.utils.metrics.best_f1 import get_best_f1_thresh
 
 
-def compute_metrics(*, model: Any, pipeline: Pipeline, model_cfg: TrainModelConfig, X_train: pd.DataFrame, y_train: pd.DataFrame, X_val: pd.DataFrame, y_val: pd.DataFrame) -> dict[str, float]:
+def compute_metrics(
+    *, 
+    model: Any, 
+    pipeline: Pipeline, 
+    model_cfg: TrainModelConfig, 
+    X_train: pd.DataFrame, 
+    y_train: pd.Series, 
+    X_val: pd.DataFrame, 
+    y_val: pd.Series
+) -> dict[str, float]:
     if model_cfg.task.type == "classification":
         best_iter = model.get_best_iteration()
         train_pred = pipeline.predict_proba(X_train, ntree_end=best_iter)[:, 1]

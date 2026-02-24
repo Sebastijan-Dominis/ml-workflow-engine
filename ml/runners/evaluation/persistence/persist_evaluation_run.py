@@ -9,6 +9,7 @@ from ml.runners.evaluation.persistence.save_predictions import save_predictions
 from ml.utils.experiments.persistence.save_metrics import save_metrics
 from ml.utils.persistence.save_metadata import save_metadata
 from ml.utils.runtime.save_runtime import save_runtime_snapshot
+from ml.runners.evaluation.persistence.prepare_metadata import prepare_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -42,27 +43,15 @@ def persist_evaluation_run(
         artifacts[f"predictions_{key}_path"] = path
         artifacts[f"predictions_{key}_hash"] = hash_artifact(Path(path))
 
-    metadata = {
-        "run_identity": {
-            "stage": "evaluation",
-            "eval_run_id": eval_run_id,
-            "train_run_id": train_run_id,
-            "snapshot_id": experiment_dir.name,
-            "status": "success",
-        },
-        "lineage": {
-            "feature_lineage": feature_lineage,
-            "target_column": model_cfg.target,
-            "problem": model_cfg.problem,
-            "segment": model_cfg.segment.name,
-            "model_version": model_cfg.version,
-        },
-        "config_fingerprint": {
-            "config_hash": model_cfg.meta.config_hash,
-            "pipeline_cfg_hash": pipeline_cfg_hash,
-        },
-        "artifacts": artifacts
-    }
+    metadata = prepare_metadata(
+        model_cfg=model_cfg,
+        eval_run_id=eval_run_id,
+        train_run_id=train_run_id,
+        experiment_dir=experiment_dir,
+        feature_lineage=feature_lineage,
+        artifacts=artifacts,
+        pipeline_cfg_hash=pipeline_cfg_hash
+    )
 
     save_metadata(metadata, target_dir=eval_run_dir)
 

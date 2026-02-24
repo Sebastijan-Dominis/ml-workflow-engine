@@ -10,7 +10,6 @@ from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import Freez
 from ml.feature_freezing.freeze_strategies.tabular.validation import (
     validate_constraints,
     validate_data_types,
-    validate_target,
 )
 from ml.utils.pipeline_core.step import PipelineStep
 
@@ -26,17 +25,14 @@ class PreprocessingStep(PipelineStep[FreezeContext]):
         logger.debug("Completed data preprocessing step.")
 
     def run(self, ctx: FreezeContext) -> FreezeContext:
-        X, y = prepare_features(ctx.require_data, ctx.config)
+        features = prepare_features(ctx.require_data, ctx.config)
 
-        validate_data_types(X, ctx.config)
-        validate_target(y, ctx.config)
-        validate_constraints(X, ctx.config)
+        validate_data_types(features, ctx.config)
+        validate_constraints(features, ctx.config)
 
         if ctx.config.operators and ctx.config.operators.mode == "materialized":
-            X = apply_operators(X, ctx.config.operators.list)
-        y = y.to_frame() if isinstance(y, pd.Series) else y
+            features = apply_operators(features, ctx.config.operators.names, ctx.config.operators.required_features)
 
-        ctx.X = X
-        ctx.y = y
+        ctx.features = features
 
         return ctx

@@ -15,6 +15,7 @@ remove_columns:
   - email
   - phone_number
   - credit_card
-
-create_columns:
-  - arrival_date
+  - booking_changes
+  - company
+  - reservation_status
+  - reservation_status_date

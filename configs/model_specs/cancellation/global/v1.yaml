@@ -6,7 +6,29 @@ version: v1
 task: 
   type: classification
   subtype: binary
-target: is_canceled
+target:
+  name: is_canceled
+  allowed_dtypes:
+    - int64
+  problem_type: classification
+  classes:
+    count: 2
+    positive_class: 1
+    min_class_count: 50
+  version: v1
+data:
+  path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
+  metadata_path: data/processed/hotel_bookings/v1/metadata.json
+  source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
+  format: parquet
+segmentation:
+  enabled: false
+split:
+  strategy: random
+  stratify_by: is_canceled
+  test_size: 0.2
+  val_size: 0.12
+  random_state: 42
 algorithm: catboost
 model_class: CatBoostClassifier
 
@@ -17,20 +39,34 @@ pipeline:
 feature_store:
   path: feature_store/
   feature_sets:
-    - ref: cancellation/global
-      name: base_features
+    - name: booking_context_features
       version: v1
       schema_format: csv
       input_schema: input_schema.csv
       derived_schema: derived_schema.csv
       data_format: parquet
-      X_train: X_train.parquet
-      X_val: X_val.parquet
-      X_test: X_test.parquet
-      y_train: y_train.parquet
-      y_val: y_val.parquet
-      y_test: y_test.parquet
-
+      file_name: features.parquet
+    - name: channel_and_agent_features
+      version: v1
+      schema_format: csv
+      input_schema: input_schema.csv
+      derived_schema: derived_schema.csv
+      data_format: parquet
+      file_name: features.parquet
+    - name: customer_history_features
+      version: v1
+      schema_format: csv
+      input_schema: input_schema.csv
+      derived_schema: derived_schema.csv
+      data_format: parquet
+      file_name: features.parquet
+    - name: pricing_party_features
+      version: v1
+      schema_format: csv
+      input_schema: input_schema.csv
+      derived_schema: derived_schema.csv
+      data_format: parquet
+      file_name: features.parquet
 explainability:
   enabled: true
   top_k: 20

@@ -32,7 +32,7 @@ def resolve_feature_snapshots(
     resolved = []
 
     for i, fs in enumerate(feature_sets):
-        version_path = feature_store_path / fs.ref.replace(".", "/") / fs.name / fs.version
+        version_path = feature_store_path / fs.name / fs.version
 
         if snapshot_binding:
             # Use provided snapshot (eval/explain)
