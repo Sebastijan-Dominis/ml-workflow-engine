@@ -75,3 +75,5 @@ def validate_target(
         msg = f"Target max {y.max()} > allowed max {max_val}"
         logger.error(msg)
         raise DataError(msg)
+    logger.debug("Target validation passed.")
+    

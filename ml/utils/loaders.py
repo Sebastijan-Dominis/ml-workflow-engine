@@ -3,10 +3,10 @@ import logging
 from pathlib import Path
 from typing import Any
 
-import yaml
 import pandas as pd
+import yaml
 
-from ml.exceptions import ConfigError
+from ml.exceptions import ConfigError, DataError
 from ml.registry.format_registry import FORMAT_REGISTRY_READ
 
 logger = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ def read_data(format: str, path: Path) -> pd.DataFrame:
     if not reader:
         msg = f"Unsupported data format: {format}"
         logger.error(msg)
-        raise ValueError(msg)
+        raise ConfigError(msg)
     
     try:
         df = reader(path)
@@ -62,4 +62,4 @@ def read_data(format: str, path: Path) -> pd.DataFrame:
     except Exception as e:
         msg = f"Error reading data in format '{format}' from {path}. Details: {str(e)}"
         logger.error(msg)
-        raise IOError(msg) from e
+        raise DataError(msg) from e

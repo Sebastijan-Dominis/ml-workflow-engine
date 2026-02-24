@@ -7,7 +7,7 @@ from ml.registry.target_strategies import TARGET_STRATEGIES
 
 logger = logging.getLogger(__name__)
 
-def get_target(data: pd.DataFrame, key: tuple[str, str]) -> pd.Series:
+def get_target_with_row_id(data: pd.DataFrame, key: tuple[str, str]) -> pd.DataFrame:
     if key not in TARGET_STRATEGIES:
         msg = f"Target strategy for key {key} not found in registry."
         logger.error(msg)

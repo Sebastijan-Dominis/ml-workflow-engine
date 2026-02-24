@@ -1,0 +1,89 @@
+problem: cancellation
+segment:
+  name: global
+  description: All bookings
+version: v1
+task: 
+  type: classification
+  subtype: binary
+target:
+  name: is_canceled
+  allowed_dtypes:
+    - int64
+  problem_type: classification
+  classes:
+    count: 2
+    positive_class: 1
+    min_class_count: 50
+  version: v1
+data:
+  path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
+  metadata_path: data/processed/hotel_bookings/v1/metadata.json
+  source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
+  format: parquet
+segmentation:
+  enabled: true
+  include_in_model: false
+  filters:
+    - column: hotel
+      op: eq
+      value: City Hotel
+    - column: market_segment
+      op: eq
+      value: Online TA
+split:
+  strategy: random
+  stratify_by: is_canceled
+  test_size: 0.2
+  val_size: 0.12
+  random_state: 42
+algorithm: catboost
+model_class: CatBoostClassifier
+
+pipeline:
+  version: v1
+  path: configs/pipelines/tabular/catboost/v1.yaml
+
+feature_store:
+  path: feature_store/
+  feature_sets:
+    - name: booking_context_features
+      version: v1
+      schema_format: csv
+      input_schema: input_schema.csv
+      derived_schema: derived_schema.csv
+      data_format: parquet
+      file_name: features.parquet
+    - name: channel_and_agent_features
+      version: v1
+      schema_format: csv
+      input_schema: input_schema.csv
+      derived_schema: derived_schema.csv
+      data_format: parquet
+      file_name: features.parquet
+    - name: customer_history_features
+      version: v1
+      schema_format: csv
+      input_schema: input_schema.csv
+      derived_schema: derived_schema.csv
+      data_format: parquet
+      file_name: features.parquet
+    - name: pricing_party_features
+      version: v1
+      schema_format: csv
+      input_schema: input_schema.csv
+      derived_schema: derived_schema.csv
+      data_format: parquet
+      file_name: features.parquet
+explainability:
+  enabled: true
+  top_k: 20
+  methods:
+    feature_importances:
+      enabled: true
+      type: PredictionValuesChange
+    shap:
+      enabled: true
+      approximate: tree
+
+data_type: tabular

@@ -1,5 +1,10 @@
+import logging
+
+from ml.exceptions import DataError
+
 from ..base import PipelineComponent
 
+logger = logging.getLogger(__name__)
 
 class SchemaValidator(PipelineComponent):
     """Validate that incoming DataFrame contains required columns.
@@ -14,5 +19,7 @@ class SchemaValidator(PipelineComponent):
     def transform(self, X):
         missing = [c for c in self.required_features if c not in X.columns]
         if missing:
-            raise ValueError(f"Model input schema violation. Missing columns: {missing}")
+            msg = f"Model input schema violation. Missing columns: {missing}"
+            logger.error(msg)
+            raise DataError(msg)
         return X

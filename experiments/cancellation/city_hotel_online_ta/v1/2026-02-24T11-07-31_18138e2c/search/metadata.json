@@ -1,0 +1,595 @@
+{
+  "metadata": {
+    "problem": "cancellation",
+    "segment": "global",
+    "version": "v1",
+    "experiment_id": "2026-02-24T11-07-31_18138e2c",
+    "sources": {
+      "main": "configs\\search\\cancellation\\city_hotel_online_ta\\v1.yaml",
+      "extends": [
+        "../../../../configs/defaults/global.yaml",
+        "../../../../configs/defaults/catboost.yaml",
+        "../../../../configs/model_specs/cancellation/city_hotel_online_ta/v1.yaml"
+      ]
+    },
+    "env": "default",
+    "best_params_path": "none",
+    "algorithm": "catboost",
+    "pipeline_version": "v1",
+    "created_by": "search.py",
+    "created_at": "2026-02-24T11-07-31",
+    "owner": "Sebastijan",
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v1",
+        "snapshot_id": "2026-02-24T03-07-22_9607acf3",
+        "snapshot_path": "feature_store\\booking_context_features\\v1\\2026-02-24T03-07-22_9607acf3",
+        "loader_validation_hash": "fbc5dcafbed1c406a59bb5eec1345cc785d4e8817be0e328bbe2fff01ef6a01b",
+        "file_hash": "a55b6c80e516f806ab50c86c4dabb768b09ac41364e58c7283c4051600d11e79",
+        "in_memory_hash": "756c52478857f4479bcf56cb60a55a55",
+        "feature_schema_hash": "fd9b83dcc7039767c54a0e99b7f09f5f58dff7fbe7ca99904475a5df4260edc2",
+        "operators_hash": "7403b69c49e9e12717c0574b79d4457c",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v1",
+        "snapshot_id": "2026-02-24T03-08-29_c6257816",
+        "snapshot_path": "feature_store\\channel_and_agent_features\\v1\\2026-02-24T03-08-29_c6257816",
+        "loader_validation_hash": "fbc5dcafbed1c406a59bb5eec1345cc785d4e8817be0e328bbe2fff01ef6a01b",
+        "file_hash": "6fb929224a83206c27c4336fa3aa181b27164c7d588dd2d3ccd6146901c9f4b4",
+        "in_memory_hash": "595ea7e241b7e91d21e0871b5604ad25",
+        "feature_schema_hash": "94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v1",
+        "snapshot_id": "2026-02-24T03-08-01_d03bbe1f",
+        "snapshot_path": "feature_store\\customer_history_features\\v1\\2026-02-24T03-08-01_d03bbe1f",
+        "loader_validation_hash": "fbc5dcafbed1c406a59bb5eec1345cc785d4e8817be0e328bbe2fff01ef6a01b",
+        "file_hash": "03e6571dbe1f2b8d9f45961aba0cb1981b5acdfa6658cfa42244ea711df431a3",
+        "in_memory_hash": "1576dd17edcd0adf3c4679d77473bf6b",
+        "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v1",
+        "snapshot_id": "2026-02-24T03-08-18_0dc73d77",
+        "snapshot_path": "feature_store\\pricing_party_features\\v1\\2026-02-24T03-08-18_0dc73d77",
+        "loader_validation_hash": "fbc5dcafbed1c406a59bb5eec1345cc785d4e8817be0e328bbe2fff01ef6a01b",
+        "file_hash": "e51958d5d49d6b38b3e3c7ef391680c0e0c469d47e0ffde887861055842efa3f",
+        "in_memory_hash": "c09ff020ec54d4153d1f70c4d816ee39",
+        "feature_schema_hash": "a4bbc08d48fcf27ef4d98c05db120e208c649dd186c86a3b907671918e3772dd",
+        "operators_hash": "4c7437bfec9d8c4b4af1421186d5277f",
+        "feature_type": "tabular"
+      }
+    ],
+    "seed": 42,
+    "hardware": {
+      "task_type": "GPU",
+      "devices": [
+        0
+      ],
+      "memory_limit_gb": null,
+      "allow_growth": false
+    },
+    "git_commit": "e0aac1c40218facf77d2f9b708801571885414d5",
+    "config_hash": "76355bb7ade5a41a9b3590391380f092f8bc50a2174470c02d5dbc8b93c57156",
+    "validation_status": "ok",
+    "pipeline_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89"
+  },
+  "config": {
+    "problem": "cancellation",
+    "segment": {
+      "name": "global",
+      "description": "All bookings"
+    },
+    "version": "v1",
+    "task": {
+      "type": "classification",
+      "subtype": "binary"
+    },
+    "target": {
+      "name": "is_canceled",
+      "allowed_dtypes": [
+        "int64"
+      ],
+      "problem_type": "classification",
+      "classes": {
+        "count": 2,
+        "positive_class": 1,
+        "min_class_count": 50
+      },
+      "constraints": {
+        "min_value": null,
+        "max_value": null
+      },
+      "version": "v1"
+    },
+    "data": {
+      "path": "data/processed/hotel_bookings/v1/hotel_bookings.parquet",
+      "metadata_path": "data/processed/hotel_bookings/v1/metadata.json",
+      "source": "data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv",
+      "format": "parquet"
+    },
+    "segmentation": {
+      "enabled": true,
+      "include_in_model": false,
+      "filters": [
+        {
+          "column": "hotel",
+          "op": "eq",
+          "value": "City Hotel"
+        },
+        {
+          "column": "market_segment",
+          "op": "eq",
+          "value": "Online TA"
+        }
+      ]
+    },
+    "split": {
+      "strategy": "random",
+      "stratify_by": "is_canceled",
+      "test_size": 0.2,
+      "val_size": 0.12,
+      "random_state": 42
+    },
+    "algorithm": "catboost",
+    "model_class": "CatBoostClassifier",
+    "pipeline": {
+      "version": "v1",
+      "path": "configs/pipelines/tabular/catboost/v1.yaml"
+    },
+    "feature_store": {
+      "path": "feature_store/",
+      "feature_sets": [
+        {
+          "name": "booking_context_features",
+          "version": "v1",
+          "schema_format": "csv",
+          "input_schema": "input_schema.csv",
+          "derived_schema": "derived_schema.csv",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "channel_and_agent_features",
+          "version": "v1",
+          "schema_format": "csv",
+          "input_schema": "input_schema.csv",
+          "derived_schema": "derived_schema.csv",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "customer_history_features",
+          "version": "v1",
+          "schema_format": "csv",
+          "input_schema": "input_schema.csv",
+          "derived_schema": "derived_schema.csv",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "pricing_party_features",
+          "version": "v1",
+          "schema_format": "csv",
+          "input_schema": "input_schema.csv",
+          "derived_schema": "derived_schema.csv",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        }
+      ]
+    },
+    "explainability": {
+      "enabled": true,
+      "top_k": 20,
+      "methods": {
+        "feature_importances": {
+          "enabled": true,
+          "type": "PredictionValuesChange"
+        },
+        "shap": {
+          "enabled": true,
+          "approximate": "tree"
+        }
+      }
+    },
+    "data_type": "tabular",
+    "_meta": {
+      "sources": {
+        "main": "configs\\search\\cancellation\\city_hotel_online_ta\\v1.yaml",
+        "extends": [
+          "../../../../configs/defaults/global.yaml",
+          "../../../../configs/defaults/catboost.yaml",
+          "../../../../configs/model_specs/cancellation/city_hotel_online_ta/v1.yaml"
+        ]
+      },
+      "env": "default",
+      "best_params_path": null,
+      "validation_status": "ok",
+      "validation_errors": null,
+      "config_hash": "76355bb7ade5a41a9b3590391380f092f8bc50a2174470c02d5dbc8b93c57156"
+    },
+    "search": {
+      "scoring": "roc_auc",
+      "random_state": 42,
+      "broad": {
+        "iterations": 10,
+        "n_iter": 1,
+        "param_distributions": {
+          "model": {
+            "depth": [
+              4,
+              6,
+              8,
+              10
+            ],
+            "learning_rate": [
+              0.005,
+              0.01,
+              0.03,
+              0.05,
+              0.1,
+              0.2,
+              0.3
+            ],
+            "l2_leaf_reg": [
+              1.0,
+              3.0,
+              5.0,
+              7.0,
+              9.0
+            ],
+            "colsample_bylevel": null,
+            "random_strength": [
+              1.0,
+              2.0,
+              5.0,
+              8.0,
+              10.0,
+              12.0
+            ],
+            "min_data_in_leaf": [
+              1,
+              3,
+              5,
+              8,
+              10,
+              15,
+              20
+            ],
+            "border_count": [
+              32,
+              64,
+              128,
+              254
+            ]
+          },
+          "ensemble": {
+            "bagging_temperature": [
+              0.0,
+              0.25,
+              0.5,
+              0.75,
+              1.0,
+              2.0,
+              5.0
+            ]
+          }
+        }
+      },
+      "narrow": {
+        "enabled": true,
+        "iterations": 10,
+        "n_iter": 1,
+        "param_configurations": {
+          "model": {
+            "depth": {
+              "include": true,
+              "offsets": [
+                1,
+                2
+              ],
+              "low": 2,
+              "high": 12
+            },
+            "learning_rate": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 0.003,
+              "high": 0.5,
+              "decimals": 5
+            },
+            "l2_leaf_reg": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 1.0,
+              "high": 30.0,
+              "decimals": 2
+            },
+            "colsample_bylevel": null,
+            "random_strength": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 0.0,
+              "high": 20.0,
+              "decimals": 2
+            },
+            "min_data_in_leaf": {
+              "include": true,
+              "offsets": [
+                2,
+                5,
+                10
+              ],
+              "low": 1,
+              "high": 50
+            },
+            "border_count": {
+              "include": true,
+              "offsets": null,
+              "low": null,
+              "high": null
+            }
+          },
+          "ensemble": {
+            "bagging_temperature": {
+              "include": true,
+              "factors": [
+                0.6,
+                0.8,
+                1.0,
+                1.2,
+                1.5
+              ],
+              "low": 0.0,
+              "high": 5.0,
+              "decimals": 3
+            }
+          }
+        }
+      },
+      "hardware": {
+        "task_type": "GPU",
+        "devices": [
+          0
+        ],
+        "memory_limit_gb": null,
+        "allow_growth": false
+      }
+    },
+    "seed": 42,
+    "cv": 3,
+    "verbose": 100,
+    "training": {
+      "early_stopping_rounds": 100,
+      "model": {
+        "iterations": 1000,
+        "learning_rate": 0.03,
+        "depth": 6,
+        "l2_leaf_reg": 3,
+        "random_strength": 1,
+        "border_count": 128
+      },
+      "ensemble": {
+        "bagging_temperature": 1.0
+      },
+      "hardware": {
+        "task_type": "CPU"
+      }
+    }
+  },
+  "search_results": {
+    "best_pipeline_params": {
+      "Model__random_strength": 3.5,
+      "Model__min_data_in_leaf": 13,
+      "Model__learning_rate": 0.17,
+      "Model__l2_leaf_reg": 6.3,
+      "Model__depth": 9,
+      "Model__border_count": 64,
+      "Model__bagging_temperature": 1.6
+    },
+    "best_model_params": {
+      "random_strength": 3.5,
+      "min_data_in_leaf": 13,
+      "learning_rate": 0.17,
+      "l2_leaf_reg": 6.3,
+      "depth": 9,
+      "border_count": 64,
+      "bagging_temperature": 1.6
+    },
+    "phases": {
+      "broad": {
+        "best_params": {
+          "Model__random_strength": 5.0,
+          "Model__min_data_in_leaf": 15,
+          "Model__learning_rate": 0.2,
+          "Model__l2_leaf_reg": 9.0,
+          "Model__depth": 8,
+          "Model__border_count": 32,
+          "Model__bagging_temperature": 2.0
+        },
+        "best_score": 0.8527676787216653,
+        "best_index": 0,
+        "cv_results": {
+          "mean_test_score": [
+            0.8527676787216653
+          ],
+          "std_test_score": [
+            0.0025756182252585523
+          ],
+          "rank_test_score": [
+            1
+          ]
+        },
+        "param_distributions": {
+          "Model__depth": [
+            4,
+            6,
+            8,
+            10
+          ],
+          "Model__learning_rate": [
+            0.005,
+            0.01,
+            0.03,
+            0.05,
+            0.1,
+            0.2,
+            0.3
+          ],
+          "Model__l2_leaf_reg": [
+            1.0,
+            3.0,
+            5.0,
+            7.0,
+            9.0
+          ],
+          "Model__random_strength": [
+            1.0,
+            2.0,
+            5.0,
+            8.0,
+            10.0,
+            12.0
+          ],
+          "Model__min_data_in_leaf": [
+            1,
+            3,
+            5,
+            8,
+            10,
+            15,
+            20
+          ],
+          "Model__border_count": [
+            32,
+            64,
+            128,
+            254
+          ],
+          "Model__bagging_temperature": [
+            0.0,
+            0.25,
+            0.5,
+            0.75,
+            1.0,
+            2.0,
+            5.0
+          ]
+        },
+        "n_iter": 1,
+        "cv": 3,
+        "scoring": "roc_auc",
+        "random_state": 42,
+        "error_score": "nan",
+        "search_type": "broad"
+      },
+      "narrow": {
+        "best_params": {
+          "Model__random_strength": 3.5,
+          "Model__min_data_in_leaf": 13,
+          "Model__learning_rate": 0.17,
+          "Model__l2_leaf_reg": 6.3,
+          "Model__depth": 9,
+          "Model__border_count": 64,
+          "Model__bagging_temperature": 1.6
+        },
+        "best_score": 0.8458321664521485,
+        "best_index": 0,
+        "cv_results": {
+          "mean_test_score": [
+            0.8458321664521485
+          ],
+          "std_test_score": [
+            0.00412022193664455
+          ],
+          "rank_test_score": [
+            1
+          ]
+        },
+        "param_distributions": {
+          "Model__depth": [
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "Model__learning_rate": [
+            0.14,
+            0.17,
+            0.2,
+            0.23,
+            0.26
+          ],
+          "Model__l2_leaf_reg": [
+            6.3,
+            7.65,
+            9.0,
+            10.35,
+            11.7
+          ],
+          "Model__bagging_temperature": [
+            1.2,
+            1.6,
+            2.0,
+            2.4,
+            3.0
+          ],
+          "Model__min_data_in_leaf": [
+            5,
+            10,
+            13,
+            15,
+            17,
+            20,
+            25
+          ],
+          "Model__random_strength": [
+            3.5,
+            4.25,
+            5.0,
+            5.75,
+            6.5
+          ],
+          "Model__border_count": [
+            32,
+            64
+          ]
+        },
+        "n_iter": 1,
+        "cv": 3,
+        "scoring": "roc_auc",
+        "random_state": 42,
+        "error_score": "nan",
+        "search_type": "narrow"
+      }
+    }
+  }
+}

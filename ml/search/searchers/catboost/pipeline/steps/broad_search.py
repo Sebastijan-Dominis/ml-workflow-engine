@@ -24,6 +24,7 @@ class BroadSearchStep(PipelineStep[SearchContext]):
         model_1 = prepare_model(ctx.model_cfg, "broad", ctx.require_cat_features)
 
         pipeline_1 = build_pipeline_with_model(
+            model_cfg=ctx.model_cfg,
             pipeline_cfg=ctx.require_pipeline_cfg,
             input_schema=ctx.require_input_schema,
             derived_schema=ctx.require_derived_schema,

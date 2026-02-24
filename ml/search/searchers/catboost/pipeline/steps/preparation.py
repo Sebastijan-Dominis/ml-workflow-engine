@@ -40,7 +40,7 @@ class PreparationStep(PipelineStep[SearchContext]):
         pipeline_cfg = load_yaml(pipeline_path)
         pipeline_hash = compute_config_hash(pipeline_cfg)
 
-        cat_features = get_cat_features(input_schema, derived_schema)
+        cat_features = get_cat_features(ctx.model_cfg, input_schema, derived_schema)
 
         validate_model_feature_pipeline_contract(
             ctx.model_cfg,

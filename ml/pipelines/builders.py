@@ -4,13 +4,18 @@ from typing import Dict
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
-from ml.pipelines import operator_factory, schema_utils
+from ml.pipelines.operator_factory import build_operators
+from ml.pipelines.schema_utils import get_pipeline_features
 from ml.registry.pipeline_components import PIPELINE_COMPONENTS
+from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 __version__ = "1.0.0"
 
 def build_pipeline(
+    *,
+    model_cfg: SearchModelConfig | TrainModelConfig,
     pipeline_cfg: Dict,
     input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame,
@@ -29,24 +34,28 @@ def build_pipeline(
     steps = []
 
     # ---- schema-derived feature lists ----
-    raw_features, _, all_features = schema_utils.get_raw_and_derived_features(
-        input_schema, derived_schema
+    features = get_pipeline_features(
+        model_cfg=model_cfg,
+        input_schema=input_schema,
+        derived_schema=derived_schema
     )
 
-    categorical_features = schema_utils.get_categorical_features(input_schema)
+    input_features = features.input_features
+    selected_features = features.selected_features
+    categorical_features = features.categorical_features
 
     # ---- feature operators ----
-    operators = operator_factory.build_operators(derived_schema)
+    operators = build_operators(derived_schema)
 
     # ---- step handler mapping ----
     STEP_HANDLERS = {
-        "SchemaValidator": lambda Component: Component(required_features=raw_features),
-        "FillCategoricalMissing": lambda Component: Component(categorical_features),
+        "SchemaValidator": lambda Component: Component(required_features=input_features),
+        "FillCategoricalMissing": lambda Component: Component(categorical_features=categorical_features),
         "FeatureEngineer": lambda Component: Component(
             derived_schema=derived_schema,
             operators=operators,
         ),
-        "FeatureSelector": lambda Component: Component(selected_features=all_features),
+        "FeatureSelector": lambda Component: Component(selected_features=selected_features),
     }
 
     # ---- build steps from config ----
@@ -58,7 +67,7 @@ def build_pipeline(
         if step_name not in PIPELINE_COMPONENTS:
             msg = f"Unknown pipeline step: {step_name}"
             logger.error(msg)
-            raise ValueError(msg)
+            raise ConfigError(msg)
 
         Component = PIPELINE_COMPONENTS[step_name]
         step_instance = STEP_HANDLERS[step_name](Component)

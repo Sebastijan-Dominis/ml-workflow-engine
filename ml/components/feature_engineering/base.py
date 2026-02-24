@@ -1,7 +1,12 @@
+import logging
+
 import pandas as pd
+
+from ml.exceptions import DataError
 
 from ..base import PipelineComponent, SklearnFeatureMixin
 
+logger = logging.getLogger(__name__)
 
 class FeatureOperator(PipelineComponent):
     """Produces one or more features."""
@@ -29,5 +34,7 @@ class FeatureEngineer(SklearnFeatureMixin):
             # Validate outputs exist
             for f in operator.output_features:
                 if f not in X.columns:
-                    raise ValueError(f"{op_name} did not produce expected feature '{f}'")
+                    msg = f"Operator '{op_name}' did not produce expected feature '{f}'"
+                    logger.error(msg)
+                    raise DataError(msg)
         return X

@@ -1,5 +1,9 @@
-from ml.components.base import SklearnFeatureMixin
+import logging
 
+from ml.components.base import SklearnFeatureMixin
+from ml.exceptions import DataError
+
+logger = logging.getLogger(__name__)
 
 class FeatureSelector(SklearnFeatureMixin):
     """Select a fixed set of columns for model training.
@@ -15,5 +19,7 @@ class FeatureSelector(SklearnFeatureMixin):
         # select only required columns, ignore extras
         missing = [c for c in self.selected_features if c not in X.columns]
         if missing:
-            raise ValueError(f"Missing columns: {missing}")
+            msg = f"Missing columns: {missing}"
+            logger.error(msg)
+            raise DataError(msg)
         return X[self.selected_features]

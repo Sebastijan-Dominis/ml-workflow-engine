@@ -46,6 +46,7 @@ class NarrowSearchStep(PipelineStep[SearchContext]):
         model_2 = prepare_model(ctx.model_cfg, "narrow", ctx.require_cat_features)
 
         pipeline_2 = build_pipeline_with_model(
+            model_cfg=ctx.model_cfg,
             pipeline_cfg=ctx.require_pipeline_cfg,
             input_schema=ctx.require_input_schema,
             derived_schema=ctx.require_derived_schema,

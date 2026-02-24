@@ -3,6 +3,7 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+from ml.exceptions import ConfigError, PipelineContractError
 from ml.utils.loaders import load_yaml
 
 logger = logging.getLogger(__name__)
@@ -42,7 +43,7 @@ def resolve_extends(
         if not isinstance(parent, str):
             msg = f"Invalid extends entry: {parent}. Must be a string."
             logger.error(msg)
-            raise ValueError(msg)
+            raise ConfigError(msg)
 
         parent_path = (base_path / parent).resolve()
 
@@ -50,7 +51,7 @@ def resolve_extends(
             if skip_missing:
                 logger.warning("Skipped missing parent config: %s", parent_path)
                 continue
-            raise FileNotFoundError(f"Extended config not found: {parent_path}")
+            raise PipelineContractError(f"Extended config not found: {parent_path}")
 
         parent_cfg = load_yaml(parent_path)
         parent_cfg = resolve_extends(
@@ -70,7 +71,7 @@ def apply_env_overlay(cfg: dict[str, Any], env: str | None, base_path: Path, ski
         else:
             msg = "Environment not specified for env overlay."
             logger.error(msg)
-            raise ValueError(msg)
+            raise ConfigError(msg)
 
     env_path = (base_path / "env" / f"{env}.yaml").resolve()
 
@@ -81,7 +82,7 @@ def apply_env_overlay(cfg: dict[str, Any], env: str | None, base_path: Path, ski
         else:
             msg = f"Environment overlay not found: {env_path}"
             logger.error(msg)
-            raise FileNotFoundError(msg)
+            raise PipelineContractError(msg)
 
     env_cfg = load_yaml(env_path)
     logger.info("Applied environment overlay: %s", env)

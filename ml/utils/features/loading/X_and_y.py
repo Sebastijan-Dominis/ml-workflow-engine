@@ -10,7 +10,7 @@ from ml.exceptions import DataError
 from ml.utils.data.loader import load_data_with_loader_validation_hash
 from ml.utils.data.validate_dataset import validate_dataset
 from ml.utils.data.validate_row_id import validate_row_id
-from ml.utils.features.loading.get_target import get_target
+from ml.utils.features.loading.get_target import get_target_with_row_id
 from ml.utils.features.loading.resolve_feature_snapshots import \
     resolve_feature_snapshots
 from ml.utils.features.segmentation.segment import apply_segmentation
@@ -19,6 +19,7 @@ from ml.utils.features.validation.validate_target import validate_target
 from ml.utils.features.validation.validate_feature_set import (
     ensure_required_fields_present, validate_feature_set)
 from ml.utils.loaders import load_json, read_data
+from ml.utils.features.validation.validate_feature_target_row_id import validate_feature_target_row_id
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +31,7 @@ def load_X_and_y(
     strict: bool = True
 ) -> tuple[pd.DataFrame, pd.Series, list[dict]]:
     segmented_df: pd.DataFrame
+    y_with_row_id: pd.DataFrame
     y: pd.Series
 
     feature_store_path = Path(model_cfg.feature_store.path)
@@ -100,7 +102,7 @@ def load_X_and_y(
     target_name = model_cfg.target.name
     target_version = model_cfg.target.version
     key = (target_name, target_version)
-    y = get_target(data=dataset, key=key)
+    y_with_row_id = get_target_with_row_id(data=dataset, key=key)
 
     for df in dfs_X:
         validate_row_id(df)
@@ -136,17 +138,19 @@ def load_X_and_y(
         seg_cfg=model_cfg.segmentation
     )
 
-    logger.debug(f"Applied the segmentation step. Resulting shape: {segmented_df.shape}")
-
     dupes = segmented_df.columns[segmented_df.columns.duplicated()]
     if len(dupes) > 0:
         logger.warning(f"Dropping duplicated columns: {list(dupes)}")
         segmented_df = segmented_df.drop(columns=dupes, axis=1)
     X = segmented_df.loc[:, ~segmented_df.columns.duplicated()].copy()
 
-    full_df = pd.concat([X, y], axis=1)
+    validate_feature_target_row_id(X=X, y_with_row_id=y_with_row_id)
+
+    full_df = X.merge(y_with_row_id, on="row_id", how="inner", suffixes=("", "_target"))
+    
+    y = full_df[target_name].copy()
+
     validate_target(y=y, tgt_cfg=model_cfg.target, data=full_df)
-    logger.debug("Target validation passed.")
 
     if drop_row_id:
         if "row_id" not in X.columns:

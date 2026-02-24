@@ -53,13 +53,13 @@ class TrainCatboost(Trainer):
 
         input_schema, derived_schema = load_schemas(model_cfg)
 
-        cat_features = get_cat_features(input_schema, derived_schema)
+        cat_features = get_cat_features(model_cfg, input_schema, derived_schema)
 
         pipeline_path = Path(f"{model_cfg.pipeline.path}").resolve()
         pipeline_cfg = load_yaml(pipeline_path)
         pipeline_cfg_hash = compute_config_hash(pipeline_cfg)
 
-        cat_features = get_cat_features(input_schema, derived_schema)
+        cat_features = get_cat_features(model_cfg, input_schema, derived_schema)
 
         validate_model_feature_pipeline_contract(
             model_cfg,
@@ -70,6 +70,7 @@ class TrainCatboost(Trainer):
         model = prepare_model(model_cfg, cat_features)
 
         pipeline = build_pipeline_with_model(
+            model_cfg=model_cfg,
             pipeline_cfg=pipeline_cfg,
             input_schema=input_schema,
             derived_schema=derived_schema,

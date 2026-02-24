@@ -1,0 +1,7 @@
+extends:
+  - ../../../../configs/defaults/global.yaml
+  - ../../../../configs/defaults/catboost.yaml
+  - ../../../../configs/model_specs/cancellation/city_hotel_online_ta/v1.yaml
+
+training:
+  iterations: 10

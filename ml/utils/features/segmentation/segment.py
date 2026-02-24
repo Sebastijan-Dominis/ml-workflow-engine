@@ -47,6 +47,7 @@ def apply_segmentation(data: pd.DataFrame, seg_cfg: SegmentationConfig) -> pd.Da
                 raise DataError(msg)
 
         df = df[OP_MAP[op](df[col], val)]
+        logger.debug(f"Applied segmentation filter: {col} {op} {val}. Remaining rows: {len(df)}")
 
     # drop segmentation columns from output, as they are not expected to be used as features, and may cause data leakage if used in training
     try:
@@ -56,5 +57,7 @@ def apply_segmentation(data: pd.DataFrame, seg_cfg: SegmentationConfig) -> pd.Da
         msg = f"Segmentation column not found in data: {e}"
         logger.error(msg)
         raise DataError(msg)
+    
+    logger.debug(f"Applied the segmentation step. Resulting shape: {df.shape}")
 
     return df

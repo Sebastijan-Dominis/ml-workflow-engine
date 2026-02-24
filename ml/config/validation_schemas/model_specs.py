@@ -75,7 +75,37 @@ class SegmentationFilter(BaseModel):
 
 class SegmentationConfig(BaseModel):
     enabled: bool = False
+    include_in_model: bool = False
     filters: list[SegmentationFilter] = []
+
+    # validate that if enabled is False, filters list must be empty, and include_in_model must be False, while if enabled is True, filters list must not be empty
+    @field_validator("filters", mode="after")
+    @classmethod
+    def validate_filters_based_on_enabled(cls, v, info):
+        enabled = info.data.get("enabled", False)
+        if enabled and not v:
+            msg = "Segmentation filters must be provided if segmentation is enabled."
+            logger.error(msg)
+            raise ConfigError(msg)
+        if not enabled and v:
+            msg = "Segmentation filters should not be provided if segmentation is disabled."
+            logger.error(msg)
+            raise ConfigError(msg)
+        return v
+    
+    @field_validator("include_in_model", mode="after")
+    @classmethod
+    def validate_include_in_model_based_on_enabled(cls, v, info):
+        enabled = info.data.get("enabled", False)
+        if enabled and v is None:
+            msg = "include_in_model must be specified if segmentation is enabled."
+            logger.error(msg)
+            raise ConfigError(msg)
+        if not enabled and v:
+            msg = "include_in_model should be False if segmentation is disabled."
+            logger.error(msg)
+            raise ConfigError(msg)
+        return v
 
 class FeatureSetConfig(BaseModel):
     name: str
