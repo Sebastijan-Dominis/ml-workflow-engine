@@ -1,17 +1,22 @@
 import logging
 from pathlib import Path
 
-import pandas as pd
-
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.exceptions import DataError
 from ml.runners.evaluation.constants.data_splits import DataSplits
 from ml.runners.evaluation.constants.output import EVALUATE_OUTPUT
 from ml.runners.evaluation.evaluators.base import Evaluator
 from ml.runners.evaluation.evaluators.classification.metrics import \
     evaluate_model
+from ml.utils.experiments.loading.get_snapshot_binding_from_training_metadata import \
+    get_snapshot_binding_from_training_metadata
 from ml.utils.experiments.loading.pipeline import load_model_or_pipeline
+from ml.utils.features.loading.resolve_feature_snapshots import \
+    resolve_feature_snapshots
 from ml.utils.features.loading.X_and_y import load_X_and_y
 from ml.utils.features.splitting.splitting import get_splits
+from ml.utils.features.validation.validate_snapshot_ids import \
+    validate_snapshot_ids
 from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
@@ -38,12 +43,22 @@ class EvaluateClassification(Evaluator):
             raise ValueError(msg)
 
         # Get data splits
-        X, y, lineage = load_X_and_y(
+        snapshot_binding = get_snapshot_binding_from_training_metadata(train_metadata)
+        
+        snapshot_selection = resolve_feature_snapshots(
+            feature_store_path=Path(model_cfg.feature_store.path),
+            feature_sets=model_cfg.feature_store.feature_sets,
+            snapshot_binding=snapshot_binding
+        )
+        X, y, feature_lineage = load_X_and_y(
             model_cfg, 
-            snapshot_selection=None, 
+            snapshot_selection=snapshot_selection, 
             drop_row_id=False, 
             strict=strict
         )
+
+        validate_snapshot_ids(feature_lineage, snapshot_selection)
+
         splits = get_splits(
             X=X,
             y=y,
@@ -70,7 +85,7 @@ class EvaluateClassification(Evaluator):
         output = EVALUATE_OUTPUT(
             metrics=metrics,
             prediction_dfs=prediction_dfs,
-            lineage=lineage
+            lineage=feature_lineage
         )
 
         return output

@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.exceptions import DataError
 from ml.registry.tabular_splits import TabularSplits
 from ml.runners.explainability.constants.explainability_metrics_class import \
     ExplainabilityMetrics
@@ -16,9 +17,14 @@ from ml.runners.explainability.explainers.tree_model.utils.calculators.shap_impo
 from ml.runners.explainability.explainers.tree_model.utils.transformers.get_feature_names_and_transformed_X import \
     get_feature_names_and_transformed_X
 from ml.utils.experiments.loading.pipeline import load_model_or_pipeline
+from ml.utils.features.loading.resolve_feature_snapshots import \
+    resolve_feature_snapshots
 from ml.utils.features.loading.X_and_y import load_X_and_y
 from ml.utils.features.splitting.splitting import get_splits
+from ml.utils.features.validation.validate_snapshot_ids import \
+    validate_snapshot_ids
 from ml.utils.loaders import load_json
+from ml.utils.experiments.loading.get_snapshot_binding_from_training_metadata import get_snapshot_binding_from_training_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -32,13 +38,23 @@ class ExplainTreeModel(Explainer):
         pipeline_file = Path(train_metadata.get("artifacts", {}).get("pipeline_path"))
         pipeline = load_model_or_pipeline(pipeline_file, "pipeline")
 
-        X, y, feature_lineage = load_X_and_y(model_cfg, snapshot_selection=None, strict=True)
+        snapshot_binding = get_snapshot_binding_from_training_metadata(train_metadata)
+        
+        snapshot_selection = resolve_feature_snapshots(
+            feature_store_path=Path(model_cfg.feature_store.path),
+            feature_sets=model_cfg.feature_store.feature_sets,
+            snapshot_binding=snapshot_binding
+        )
+
+        X, y, feature_lineage = load_X_and_y(model_cfg, snapshot_selection=snapshot_selection, strict=True)
         splits = get_splits(
             X=X,
             y=y,
             split_cfg=model_cfg.split,
             data_type=model_cfg.data_type,
         )
+  
+        validate_snapshot_ids(feature_lineage, snapshot_selection)
 
         X_test = splits.X_test
 

@@ -1,7 +1,7 @@
 {
   "run_identity": {
-    "stage": "explainability",
-    "explain_run_id": "2026-02-24T03-25-35_08421753",
+    "stage": "evaluation",
+    "eval_run_id": "2026-02-24T09-09-27_60c26276",
     "train_run_id": "2026-02-24T03-09-28_4ff71645",
     "snapshot_id": "2026-02-24T03-08-51_42187a12",
     "status": "success"
@@ -71,9 +71,13 @@
     "model_path": "experiments\\cancellation\\global\\v1\\2026-02-24T03-08-51_42187a12\\training\\2026-02-24T03-09-28_4ff71645\\model.joblib",
     "pipeline_path": "experiments\\cancellation\\global\\v1\\2026-02-24T03-08-51_42187a12\\training\\2026-02-24T03-09-28_4ff71645\\pipeline.joblib",
     "pipeline_hash": "284d579637261ac4036539f4ec4c492df75a462d11d04ca24224eb2ae9b944ff",
-    "top_k_feature_importances_path": "experiments\\cancellation\\global\\v1\\2026-02-24T03-08-51_42187a12\\explainability\\2026-02-24T03-25-35_08421753\\top_k_feature_importances.csv",
-    "top_k_feature_importances_hash": "87edd9936d3905aff65ef6c30fd124a6bf318c2f0afe36586c58a5c9fc39df38",
-    "top_k_shap_importances_path": "experiments\\cancellation\\global\\v1\\2026-02-24T03-08-51_42187a12\\explainability\\2026-02-24T03-25-35_08421753\\top_k_shap_importances.csv",
-    "top_k_shap_importances_hash": "640751c7a9b42f9d5da443d15b88fc35d75b723b845eadd362f3ea645594a456"
+    "metrics_path": "experiments\\cancellation\\global\\v1\\2026-02-24T03-08-51_42187a12\\evaluation\\2026-02-24T09-09-27_60c26276\\metrics.json",
+    "metrics_hash": "f7b1746fc4f8f048e4b59a5677a570742510c025a156dc98473ab9d576553004",
+    "predictions_train_path": "experiments\\cancellation\\global\\v1\\2026-02-24T03-08-51_42187a12\\evaluation\\2026-02-24T09-09-27_60c26276\\predictions_train.parquet",
+    "predictions_train_hash": "bb7ac0031748cbd91996e9ed60796a26cd210ee243b2a4800853c1e918f520de",
+    "predictions_val_path": "experiments\\cancellation\\global\\v1\\2026-02-24T03-08-51_42187a12\\evaluation\\2026-02-24T09-09-27_60c26276\\predictions_val.parquet",
+    "predictions_val_hash": "8333df738a4f874fba293a020a76a4269a2f57f39f78522bf1508970850aeef9",
+    "predictions_test_path": "experiments\\cancellation\\global\\v1\\2026-02-24T03-08-51_42187a12\\evaluation\\2026-02-24T09-09-27_60c26276\\predictions_test.parquet",
+    "predictions_test_hash": "22bd6c82a01197874902f1c21a072c112f94427cce08abb25b8120edd8b73367"
   }
 }

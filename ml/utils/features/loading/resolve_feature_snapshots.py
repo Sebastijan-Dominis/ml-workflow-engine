@@ -1,3 +1,4 @@
+# TODO: Adjust the rest of the code to actually enable snapshot binding
 import logging
 from pathlib import Path
 from typing import Optional

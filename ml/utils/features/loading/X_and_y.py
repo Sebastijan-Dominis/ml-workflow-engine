@@ -14,9 +14,10 @@ from ml.utils.features.loading.get_target import get_target
 from ml.utils.features.loading.resolve_feature_snapshots import \
     resolve_feature_snapshots
 from ml.utils.features.segmentation.segment import apply_segmentation
-from ml.utils.features.validation.validation import (
-    ensure_required_fields_present, validate_feature_set, validate_set,
-    validate_target)
+from ml.utils.features.validation.validate_set import validate_set
+from ml.utils.features.validation.validate_target import validate_target
+from ml.utils.features.validation.validate_feature_set import (
+    ensure_required_fields_present, validate_feature_set)
 from ml.utils.loaders import load_json, read_data
 
 logger = logging.getLogger(__name__)

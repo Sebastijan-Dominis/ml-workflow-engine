@@ -31,7 +31,7 @@ from ml.utils.features.cat_features import get_cat_features
 from ml.utils.features.loading.schemas import load_schemas
 from ml.utils.features.loading.X_and_y import load_X_and_y
 from ml.utils.features.splitting.splitting import get_splits
-from ml.utils.features.validation.validation import \
+from ml.utils.features.validation.validate_contract import \
     validate_model_feature_pipeline_contract
 from ml.utils.loaders import load_yaml
 

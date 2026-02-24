@@ -4,9 +4,9 @@
         "conda_env_hash": "81cf85d39279f52230858aef70601878e4646d868974fb0c65daf19e3bdd6918"
     },
     "execution": {
-        "created_at": "2026-02-24T03-15-46",
-        "duration_seconds": 5.701,
-        "git_commit": "22e31be218bf13be0f3f75fa6917fde849119303",
+        "created_at": "2026-02-24T09-09-42",
+        "duration_seconds": 5.432,
+        "git_commit": "fc480a2eb9357a0771cdcaa012a4efe5855cf2f5",
         "python_executable": "C:\\Users\\Sebastijan\\anaconda3\\envs\\hotel_management\\python.exe"
     },
     "gpu_info": {
