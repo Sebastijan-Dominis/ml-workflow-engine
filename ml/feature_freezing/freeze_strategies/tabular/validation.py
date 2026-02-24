@@ -2,23 +2,12 @@ import logging
 
 import pandas as pd
 
-from ml.exceptions import ConfigError, DataError, UserError
+from ml.exceptions import DataError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import \
     TabularFeaturesConfig
 from ml.utils.features.validation.normalize_dtype import normalize_dtype
 
 logger = logging.getLogger(__name__)
-
-def validate_min_rows(data: pd.DataFrame, min_rows: int):
-    if not min_rows:
-        logger.warning("Minimum rows constraint not set.")
-    
-    logger.debug(f"Validating minimum rows: data has {len(data)} rows, minimum required is {min_rows}.")
-    
-    if len(data) < min_rows:
-        msg = f"Data has {len(data)} rows, which is less than the minimum required {min_rows} rows."
-        logger.error(msg)
-        raise DataError(msg)
         
 def validate_input_no_nulls(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
     forbidden_nulls = config.constraints.forbid_nulls

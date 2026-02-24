@@ -11,8 +11,6 @@ from ml.data.interim.data_preparation.prepare_data import (clean_data,
                                                            enforce_schema,
                                                            normalize_columns)
 from ml.data.interim.persistence.prepare_metadata import prepare_metadata
-from ml.data.interim.validation.validate import \
-    validate_min_rows_after_cleaning
 from ml.data.utils.config.schemas.interim import InterimConfig
 from ml.data.utils.config.validate_config import validate_config
 from ml.data.utils.memory.compute_memory_change import compute_memory_change
@@ -21,6 +19,7 @@ from ml.data.utils.persistence.save_data import save_data
 from ml.exceptions import DataError, UserError
 from ml.logging_config import setup_logging
 from ml.utils.data.validate_dataset import validate_dataset
+from ml.utils.data.validate_min_rows import validate_min_rows
 from ml.utils.loaders import load_json, load_yaml, read_data
 from ml.utils.persistence.save_metadata import save_metadata
 
@@ -94,7 +93,7 @@ def main() -> int:
         df = normalize_columns(df, config.cleaning)
         df = enforce_schema(df, schema=config.data_schema, drop_missing_ints=config.drop_missing_ints)
         df = clean_data(df, config.invariants)
-        validate_min_rows_after_cleaning(df, config.min_rows)
+        validate_min_rows(df, config.min_rows)
 
         if config.drop_duplicates:
             df = df.drop_duplicates()

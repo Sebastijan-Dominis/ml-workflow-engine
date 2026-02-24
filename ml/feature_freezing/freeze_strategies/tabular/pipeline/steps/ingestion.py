@@ -4,11 +4,10 @@ from pathlib import Path
 from ml.exceptions import DataError
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
     FreezeContext
-from ml.feature_freezing.freeze_strategies.tabular.validation import \
-    validate_min_rows
 from ml.feature_freezing.utils.operators import validate_operators
 from ml.utils.data.loader import load_data_with_loader_validation_hash
 from ml.utils.data.validate_dataset import validate_dataset
+from ml.utils.data.validate_min_rows import validate_min_rows
 from ml.utils.data.validate_row_id import validate_row_id
 from ml.utils.loaders import load_json
 from ml.utils.pipeline_core.step import PipelineStep
