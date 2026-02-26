@@ -4,8 +4,9 @@ from typing import Any, Dict, List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pyparsing.helpers import Enum
 
-from ml.config.validation_schemas.data import DataConfig
 from ml.exceptions import ConfigError
+from ml.utils.experiments.class_weights.constants import \
+    SUPPORTED_SCORING_FUNCTIONS
 
 logger = logging.getLogger(__name__)
 
@@ -140,6 +141,39 @@ class PipelineConfig(BaseModel):
     version: str
     path: str
 
+class ScoringConfig(BaseModel):
+    policy: Literal["fixed", "adaptive_binary", "regression_default"] = "fixed"
+    fixed_metric: Optional[SUPPORTED_SCORING_FUNCTIONS] = None
+    pr_auc_threshold: Optional[float] = None
+
+# Ensure that pr_auc_threshold is set if policy is adaptive_binary, and fixed_metric is set if policy is fixed
+@field_validator("fixed_metric", mode="after")
+def validate_fixed_metric_if_fixed_policy(cls, v, info):
+    if info.data.get("policy") == "fixed" and v is None:
+        msg = "fixed_metric must be specified if scoring policy is 'fixed'."
+        logger.error(msg)
+        raise ConfigError(msg)
+    return v
+
+@field_validator("pr_auc_threshold", mode="after")
+def validate_pr_auc_threshold_if_adaptive_binary_policy(cls, v, info):
+    if info.data.get("policy") == "adaptive_binary" and v is None:
+        msg = "pr_auc_threshold must be specified if scoring policy is 'adaptive_binary'."
+        logger.error(msg)
+        raise ConfigError(msg)
+    return v    
+
+ClassImbalancePolicy = Literal[
+    "off",          # never apply weighting
+    "if_imbalanced",# apply if imbalance exceeds threshold
+    "always"        # always apply
+]
+
+class ClassWeightingConfig(BaseModel):
+    policy: ClassImbalancePolicy = "if_imbalanced"
+    imbalance_threshold: float = 0.1  # e.g., if the minority class is less than 10% of the data, consider it imbalanced
+    strategy: Literal["ratio", "balanced"] = "ratio"
+
 class FeatureImportanceMethodConfig(BaseModel):
     enabled: bool = False
     type: Optional[Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"]] = None
@@ -190,12 +224,13 @@ class ModelSpecs(BaseModel):
     version: str
     task: TaskConfig
     target: TargetConfig
-    data: DataConfig
     segmentation: SegmentationConfig = Field(default_factory=SegmentationConfig)
     split: SplitConfig
     algorithm: AlgorithmConfig
     model_class: str
     pipeline: PipelineConfig
+    scoring: ScoringConfig
+    class_weighting: ClassWeightingConfig = Field(default_factory=ClassWeightingConfig)
     feature_store: FeatureStoreConfig
     explainability: ExplainabilityConfig = Field(default_factory=ExplainabilityConfig)
     data_type: DATA_TYPE

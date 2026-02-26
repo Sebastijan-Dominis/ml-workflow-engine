@@ -1,4 +1,4 @@
-# Modularize if new datasets are added in the future, or if the interim config becomes too large. This will help keep the code organized and maintainable.
+# Modularize if new datas are added in the future, or if the interim config becomes too large. This will help keep the code organized and maintainable.
 
 import logging
 from typing import Optional
@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, model_validator
 
 from ml.exceptions import ConfigError
 from ml.registry.interim_constraints import MIN_CONSTRAINTS, MAX_CONSTRAINTS, ALLOWED_VALUES_CONSTRAINTS
-from ml.data.utils.config.schemas.shared import Input, DatasetInfo
+from ml.data.utils.config.schemas.shared import DataInfo
 
 logger = logging.getLogger(__name__)
 
@@ -148,11 +148,10 @@ class Invariants(BaseModel):
         return values
 
 class InterimConfig(BaseModel):
-    dataset: DatasetInfo
-    input: Input
+    data: DataInfo
     data_schema: DataSchema
     cleaning: Cleaning
     invariants: Invariants
-    drop_duplicates: bool = Field(True, description="Whether to drop duplicate rows from the dataset (default: True).")
+    drop_duplicates: bool = Field(True, description="Whether to drop duplicate rows from the data (default: True).")
     drop_missing_ints: bool = Field(True, description="Whether to drop rows with missing values in integer columns (default: True).")
     min_rows: int = Field(0, description="Minimum number of rows required after cleaning (default: 0).")

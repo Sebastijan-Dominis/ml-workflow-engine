@@ -16,11 +16,6 @@ target:
     positive_class: 1
     min_class_count: 50
   version: v1
-data:
-  path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-  metadata_path: data/processed/hotel_bookings/v1/metadata.json
-  source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-  format: parquet
 segmentation:
   enabled: false
 split:
@@ -67,6 +62,13 @@ feature_store:
       derived_schema: derived_schema.csv
       data_format: parquet
       file_name: features.parquet
+scoring:
+  policy: adaptive_binary  # used only for hyperparameter search
+  pr_auc_threshold: 0.1   # triggers PR-AUC scoring in search if minority class < 10%
+class_weighting:
+  policy: if_imbalanced
+  imbalance_threshold: 0.1
+  strategy: balanced
 explainability:
   enabled: true
   top_k: 20

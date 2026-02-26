@@ -10,12 +10,13 @@ from uuid import uuid4
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
-from ml.search.searchers.base import Searcher
-from ml.logging_config import setup_logging
-from ml.search.utils.get_searcher import get_searcher
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.exceptions import UserError
+from ml.logging_config import setup_logging
 from ml.search.persistence.persist_experiment import persist_experiment
+from ml.search.searchers.base import Searcher
+from ml.search.searchers.output import SearchOutput
+from ml.search.utils.get_searcher import get_searcher
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +83,7 @@ def main() -> int:
     feature_lineage: list[dict]
     pipeline_hash: str
     start_time: float
+    search_output: SearchOutput
 
     args = parse_args()
 
@@ -108,7 +110,12 @@ def main() -> int:
 
         searcher = get_searcher(key)
 
-        search_results, feature_lineage, pipeline_hash = searcher.search(model_cfg, args.strict)
+        search_output = searcher.search(model_cfg, args.strict)
+
+        search_results = search_output.search_results
+        feature_lineage = search_output.feature_lineage
+        pipeline_hash = search_output.pipeline_hash
+        scoring_method = search_output.scoring_method
 
         persist_experiment(
             model_cfg, 
@@ -119,7 +126,8 @@ def main() -> int:
             timestamp=timestamp, 
             start_time=start_time, 
             feature_lineage=feature_lineage, 
-            pipeline_hash=pipeline_hash
+            pipeline_hash=pipeline_hash,
+            scoring_method=scoring_method
         )
 
         logger.info(

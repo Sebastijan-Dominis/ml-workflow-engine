@@ -18,7 +18,7 @@ def prepare_features(data: pd.DataFrame, config: TabularFeaturesConfig) -> pd.Da
         raise DataError(msg)
     missing_cols = set(INCLUDE) - set(data.columns)
     if missing_cols:
-        msg = f"Missing required columns in input data: {missing_cols}"
+        msg = f"Missing required columns in input data: {missing_cols}\nRequired columns: {INCLUDE}\nInput data columns: {data.columns.tolist()}"
         logger.error(msg)
         raise DataError(msg)
     X = data[["row_id"] + INCLUDE].copy()

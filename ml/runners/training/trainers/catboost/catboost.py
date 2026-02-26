@@ -14,9 +14,6 @@ steps and the trained CatBoost model.
 
 from pathlib import Path
 
-from catboost import CatBoostClassifier, CatBoostRegressor
-from sklearn.pipeline import Pipeline
-
 from ml.config.hashing import compute_config_hash
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.runners.training.constants.output import TRAIN_OUTPUT
@@ -27,6 +24,11 @@ from ml.runners.training.utils.metrics.compute_metrics import compute_metrics
 from ml.runners.training.utils.model_specific.catboost import prepare_model
 from ml.utils.catboost.build_pipeline_with_model import \
     build_pipeline_with_model
+from ml.utils.experiments.class_weights.models import DataStats
+from ml.utils.experiments.class_weights.resolve_class_weighting import \
+    resolve_class_weighting
+from ml.utils.experiments.class_weights.stats_resolver import \
+    compute_data_stats
 from ml.utils.features.cat_features import get_cat_features
 from ml.utils.features.loading.schemas import load_schemas
 from ml.utils.features.loading.X_and_y import load_X_and_y
@@ -38,6 +40,8 @@ from ml.utils.loaders import load_yaml
 
 class TrainCatboost(Trainer):
     def train(self, model_cfg: TrainModelConfig, strict: bool) -> TRAIN_OUTPUT:
+        stats: DataStats
+
         X, y, lineage = load_X_and_y(model_cfg, snapshot_selection=None, strict=strict)
         splits = get_splits(
             X=X,
@@ -67,7 +71,10 @@ class TrainCatboost(Trainer):
             cat_features
         )
 
-        model = prepare_model(model_cfg, cat_features)
+        stats = compute_data_stats(y_train)
+        class_weights = resolve_class_weighting(model_cfg, stats, "catboost")
+
+        model = prepare_model(model_cfg, cat_features=cat_features, class_weights=class_weights)
 
         pipeline = build_pipeline_with_model(
             model_cfg=model_cfg,

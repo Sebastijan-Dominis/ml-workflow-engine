@@ -86,7 +86,6 @@ class BroadSearchConfig(BaseModel):
 
 # === Full Search Config ===
 class SearchConfig(BaseModel):
-    scoring: str
     random_state: int
     broad: BroadSearchConfig
     narrow: NarrowSearchConfig = Field(default_factory=lambda: NarrowSearchConfig(

@@ -2,7 +2,9 @@ import argparse
 import logging
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
+from uuid import uuid4
 
 import pandas as pd
 
@@ -18,28 +20,37 @@ from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.data.utils.persistence.save_data import save_data
 from ml.exceptions import DataError, UserError
 from ml.logging_config import setup_logging
-from ml.utils.data.validate_dataset import validate_dataset
+from ml.utils.data.get_data_suffix_and_format import get_data_suffix_and_format
+from ml.utils.data.validate_data import validate_data
 from ml.utils.data.validate_min_rows import validate_min_rows
 from ml.utils.loaders import load_json, load_yaml, read_data
 from ml.utils.persistence.save_metadata import save_metadata
+from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Make interim dataset by cleaning and transforming raw data according to the provided configuration.")
+    parser = argparse.ArgumentParser(description="Make interim data by cleaning and transforming raw data according to the provided configuration.")
 
     parser.add_argument(
-        "--dataset",
+        "--data",
         type=str,
         required=True,
-        help="Dataset name, e.g., 'hotel_bookings'"
+        help="Data name, e.g., 'hotel_bookings'"
     )
 
     parser.add_argument(
         "--version",
         type=str,
         required=True,
-        help="Dataset version, e.g., 'v1'"
+        help="Data version, e.g., 'v1'"
+    )
+
+    parser.add_argument(
+        "--raw-snapshot-id",
+        type=str,
+        default="latest",
+        help="Snapshot ID for the raw data version to use (optional; defaults to latest if not provided)"
     )
 
     parser.add_argument(
@@ -63,32 +74,38 @@ def main() -> int:
     config_raw: dict
     config: InterimConfig
     df: pd.DataFrame
-    dataset_path: Path
+    data_path: Path
     metadata: dict
 
     args = parse_args()
 
     start_time = time.perf_counter()
 
+    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    interim_id = f"{timestamp}_{uuid4().hex[:8]}"
+    
+    data_dir = Path("data/interim") / args.data / args.version / interim_id
+    data_dir.mkdir(parents=True, exist_ok=False)
+
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
-    data_dir = Path("data/interim") / args.dataset / args.version
     setup_logging(data_dir / "make_interim.log", level=log_level)
 
     try:
-        config_raw = load_yaml(Path(f"configs/data/interim/{args.dataset}/{args.version}.yaml"))
+        config_raw = load_yaml(Path(f"configs/data/interim/{args.data}/{args.version}.yaml"))
         config = validate_config(config_raw, type="interim")
 
-        data_path = data_dir / config.dataset.output.path_suffix
-        if data_path.exists():
-            msg = f"Data file {data_path} already exists. Aborting to prevent overwriting."
-            logger.error(msg)
-            raise UserError(msg)
+        raw_data_dir = Path("data/raw") / args.data / args.version
 
-        raw_metadata = load_json(Path(f"data/raw/{args.dataset}/{args.version}/metadata.json"))
+        raw_data_snapshot_path = get_snapshot_path(args.raw_snapshot_id, raw_data_dir)
 
-        validate_dataset(data_path=Path(config.input.path), metadata=raw_metadata)
+        raw_metadata = load_json(raw_data_snapshot_path / "metadata.json")
 
-        df = read_data(config.input.format, Path(config.input.path))
+        raw_data_suffix, raw_data_format = get_data_suffix_and_format(raw_metadata, location="data")
+        
+        raw_data_path = raw_data_snapshot_path / raw_data_suffix
+        validate_data(data_path=raw_data_path, metadata=raw_metadata)
+
+        df = read_data(raw_data_format, raw_data_path)
 
         df = normalize_columns(df, config.cleaning)
         df = enforce_schema(df, schema=config.data_schema, drop_missing_ints=config.drop_missing_ints)
@@ -98,9 +115,9 @@ def main() -> int:
         if config.drop_duplicates:
             df = df.drop_duplicates()
 
-        dataset_path = save_data(df, config=config, data_dir=data_dir)
+        data_path = save_data(df, config=config, data_dir=data_dir)
 
-        logger.info(f"Interim dataset created successfully at {dataset_path} with {len(df)} rows and {len(df.columns)} columns.")
+        logger.info(f"Interim data created successfully at {data_path} with {len(df)} rows and {len(df.columns)} columns.")
 
         memory_usage = get_memory_usage(df)
 
@@ -110,9 +127,12 @@ def main() -> int:
             df, 
             config=config, 
             start_time=start_time,
-            dataset_path=dataset_path,
+            data_path=data_path,
+            source_data_path=raw_data_path,
+            source_data_format=raw_data_format,
             owner=args.owner,
-            memory_info=memory_info
+            memory_info=memory_info,
+            interim_run_id=interim_id
         )
 
         save_metadata(metadata, target_dir=data_dir)

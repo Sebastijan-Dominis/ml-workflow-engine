@@ -3,11 +3,18 @@ from pathlib import Path
 
 from ml.config.hashing import compute_config_hash
 from ml.search.searchers.catboost.pipeline.context import SearchContext
+from ml.utils.experiments.class_weights.models import DataStats
+from ml.utils.experiments.class_weights.resolve_class_weighting import \
+    resolve_class_weighting
+from ml.utils.experiments.class_weights.resolve_metric import resolve_metric
+from ml.utils.experiments.class_weights.stats_resolver import \
+    compute_data_stats
 from ml.utils.features.cat_features import get_cat_features
 from ml.utils.features.loading.schemas import load_schemas
 from ml.utils.features.loading.X_and_y import load_X_and_y
 from ml.utils.features.splitting.splitting import get_splits
-from ml.utils.features.validation.validate_contract import validate_model_feature_pipeline_contract
+from ml.utils.features.validation.validate_contract import \
+    validate_model_feature_pipeline_contract
 from ml.utils.loaders import load_yaml
 from ml.utils.pipeline_core.step import PipelineStep
 
@@ -15,6 +22,8 @@ logger = logging.getLogger(__name__)
 
 class PreparationStep(PipelineStep[SearchContext]):
     name = "preparation"
+
+    stats: DataStats
 
     def before(self, ctx: SearchContext) -> None:
         logger.debug("Starting preparation step.")
@@ -47,7 +56,17 @@ class PreparationStep(PipelineStep[SearchContext]):
             pipeline_cfg,
             cat_features
         )
+
+        stats = compute_data_stats(splits.y_train)
+        logger.info("Data stats | n_samples=%d class_counts=%s minority_ratio=%.4f",
+            stats.n_samples, stats.class_counts, stats.minority_ratio)
         
+        scoring = resolve_metric(ctx.model_cfg, stats)
+        ctx.scoring = scoring
+        
+        class_weights = resolve_class_weighting(ctx.model_cfg, stats, library="catboost")
+        ctx.class_weights = class_weights
+
         ctx.X_train = splits.X_train
         ctx.y_train = splits.y_train
         ctx.pipeline_cfg = pipeline_cfg

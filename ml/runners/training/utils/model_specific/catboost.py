@@ -31,7 +31,12 @@ def extract_catboost_params(model_cfg: TrainModelConfig) -> Dict[str, Any]:
 
     return params
 
-def prepare_model(model_cfg: TrainModelConfig, cat_features: list) -> CatBoostClassifier | CatBoostRegressor:
+def prepare_model(
+    model_cfg: TrainModelConfig, 
+    *,
+    cat_features: list,
+    class_weights: dict
+) -> CatBoostClassifier | CatBoostRegressor:
     best_params = extract_catboost_params(model_cfg)
 
     model = MODEL_CLASS_REGISTRY[model_cfg.model_class](
@@ -42,8 +47,7 @@ def prepare_model(model_cfg: TrainModelConfig, cat_features: list) -> CatBoostCl
         verbose=model_cfg.verbose,               
         random_state=model_cfg.seed,
         cat_features=cat_features,
-        class_weights=getattr(model_cfg, "class_weights", None),
-        # Best params from the run
+        class_weights=class_weights,
         **best_params
     )
 

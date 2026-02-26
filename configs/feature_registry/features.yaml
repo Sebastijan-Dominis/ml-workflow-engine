@@ -4,10 +4,12 @@ booking_context_features:
     description: >
       Features describing the booking itself, independent of the guest's past.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v1
     columns:
@@ -69,10 +71,12 @@ booking_context_features:
     description: >
       Updated version of booking context features, which doesn't include arrival_date_year, arrival_date_month and arrival_date_day_of_month. It also doesn't create ArrivalDate, but still creates ArrivalSeason.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v2
     columns:
@@ -124,10 +128,12 @@ booking_context_features:
     description: >
       Updated version of booking context features, which doesn't include arrival_date_year, arrival_date_week_number, arrival_date_day_of_month, arrival_month, lead_time, and days_in_waiting_list. It also doesn't create arrival_season and arrival_date.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v3
     columns:
@@ -170,10 +176,12 @@ booking_context_features:
     description: >
       Updated version of booking context features, which includes everything from v1, except days_in_waiting_list.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v4
     columns:
@@ -234,10 +242,12 @@ customer_history_features:
     description: >
       Features describing the past behavior of the customer making the booking.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/customer_history_features/v1
     columns:
@@ -270,10 +280,12 @@ customer_history_features:
     description: >
       Updated version of customer history features, which doesn't include is_repeated_guest.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/customer_history_features/v2
     columns:
@@ -304,10 +316,12 @@ customer_history_features:
     description: >
       Updated version of customer history features, which only includes customer_type.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/customer_history_features/v3
     columns:
@@ -335,10 +349,12 @@ pricing_party_features:
     description: >
       Features describing the pricing of the booking, as well as the number of people in the booking, which is relevant for pricing. They answer the question "How much did the booking cost and how many people were in the booking?".
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/pricing_party_features/v1
     columns:
@@ -382,10 +398,12 @@ pricing_party_features:
     description: >
       Updated version of pricing party features, which doesn't include required_car_parking_spaces.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/pricing_party_features/v2
     columns:
@@ -427,10 +445,12 @@ channel_and_agent_features:
     description: >
       Features describing how the booking came in.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/channel_and_agent_features/v1
     columns:
@@ -466,10 +486,12 @@ channel_and_agent_features:
     description: >
       Updated version of channel and agent features, which doesn't include agent.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/channel_and_agent_features/v2
     columns:
@@ -503,10 +525,12 @@ room_allocation_features:
     description: >
       Features describing the allocation of rooms in the booking.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/room_allocation_features/v1
     columns:
@@ -536,10 +560,12 @@ room_allocation_features:
     description: >
       Updated version of room allocation features, which only includes reserved_room_type.
     data:
-      path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-      metadata_path: data/processed/hotel_bookings/v1/metadata.json
-      source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-      format: parquet
+      - ref: data/processed
+        name: hotel_bookings
+        version: v1
+        format: parquet
+        merge_key: row_id
+        path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/room_allocation_features/v2
     columns:

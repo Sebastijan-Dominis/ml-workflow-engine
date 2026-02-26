@@ -8,11 +8,22 @@ import pandas as pd
 import yaml
 
 from ml.data.utils.config.schemas.processed import ProcessedConfig
-from ml.registry.hash_registry import hash_dataset
+from ml.registry.hash_registry import hash_data
 from ml.config.compute_config_hash import compute_config_hash
 
-def prepare_metadata(df: pd.DataFrame, *, config: ProcessedConfig, start_time: float, dataset_path: Path, owner: str, memory_info: dict) -> dict:
-    dataset_hash = hash_dataset(dataset_path)
+def prepare_metadata(
+    df: pd.DataFrame, 
+    *, 
+    config: ProcessedConfig, 
+    start_time: float, 
+    data_path: Path, 
+    source_data_path: Path,
+    source_data_format: str,
+    owner: str, 
+    memory_info: dict,
+    processed_run_id: str
+) -> dict:
+    data_hash = hash_data(data_path)
          
     config_hash = compute_config_hash(config)
     
@@ -21,19 +32,20 @@ def prepare_metadata(df: pd.DataFrame, *, config: ProcessedConfig, start_time: f
     duration = time.perf_counter() - start_time
 
     metadata = {
-        "source_dataset": {
-            "path": config.input.path,
-            "format": config.input.format,
+        "processed_run_id": processed_run_id,
+        "source_data": {
+            "path": str(source_data_path),
+            "format": source_data_format,
         },
-        "dataset": {
-            "name": config.dataset.name,
-            "version": config.dataset.version,
+        "data": {
+            "name": config.data.name,
+            "version": config.data.version,
             "output": {
-                "path_suffix": config.dataset.output.path_suffix,
-                "format": config.dataset.output.format,
-                "compression": config.dataset.output.compression,
+                "path_suffix": config.data.output.path_suffix,
+                "format": config.data.output.format,
+                "compression": config.data.output.compression,
             },
-            "hash": dataset_hash,
+            "hash": data_hash,
         },
         "memory": memory_info,
         "rows": len(df),

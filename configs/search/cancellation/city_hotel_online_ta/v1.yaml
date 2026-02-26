@@ -4,7 +4,6 @@ extends:
   - ../../../../configs/model_specs/cancellation/city_hotel_online_ta/v1.yaml
 
 search:
-  scoring: roc_auc
   random_state: 42
 
   broad:

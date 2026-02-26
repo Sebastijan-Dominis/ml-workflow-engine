@@ -11,23 +11,6 @@ from ml.utils.features.hashing.hash_feature_schema import hash_feature_schema
 
 logger = logging.getLogger(__name__)
 
-def ensure_required_fields_present(snapshot_path: Path, metadata: dict) -> None:
-    required_fields = [
-        "feature_schema_hash",
-        "operators_hash",
-        "feature_type",
-        "loader_validation_hash",
-        "in_memory_hash",
-        "file_hash",
-    ]
-
-    missing_fields = [field for field in required_fields if field not in metadata]
-
-    if missing_fields:
-        msg = f"Metadata for snapshot {snapshot_path} is missing required fields: {', '.join(missing_fields)}"
-        logger.error(msg)
-        raise DataError(msg)
-
 def validate_feature_set(
     feature_set: pd.DataFrame,
     *, 

@@ -4,7 +4,6 @@ extends:
   - ../../../../configs/model_specs/cancellation/global/v1.yaml
 
 search:
-  scoring: roc_auc
   random_state: 42
 
   broad:

@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 
 from ml.exceptions import DataError
-from ml.utils.features.loading.latest_snapshot import get_latest_snapshot
+from ml.utils.snapshots.latest_snapshot import get_latest_snapshot_path
 from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ def resolve_feature_snapshots(
             snapshot_path = version_path / snapshot_id
         else:
             # Default: latest snapshot (train/search)
-            snapshot_path = get_latest_snapshot(version_path)
+            snapshot_path = get_latest_snapshot_path(version_path)
             snapshot_id = snapshot_path.name
 
         logger.debug(f"Resolving feature set {fs.name} {fs.version} to snapshot {snapshot_path}")

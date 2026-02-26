@@ -21,7 +21,12 @@ class BroadSearchStep(PipelineStep[SearchContext]):
         logger.debug("Completed broad search step.")
 
     def run(self, ctx: SearchContext) -> SearchContext:
-        model_1 = prepare_model(ctx.model_cfg, "broad", ctx.require_cat_features)
+        model_1 = prepare_model(
+            ctx.model_cfg, 
+            search_phase="broad",
+            cat_features=ctx.require_cat_features, 
+            class_weights=ctx.require_class_weights
+        )
 
         pipeline_1 = build_pipeline_with_model(
             model_cfg=ctx.model_cfg,
@@ -52,7 +57,8 @@ class BroadSearchStep(PipelineStep[SearchContext]):
                 y_train=ctx.require_y_train,
                 param_distributions=broad_param_distributions,
                 model_cfg=ctx.model_cfg,
-                search_type="broad"
+                scoring=ctx.require_scoring,
+                search_phase="broad"
             )
         except Exception as e:
             msg = f"Broad hyperparameter search failed for problem={ctx.model_cfg.problem} segment={ctx.model_cfg.segment.name} version={ctx.model_cfg.version}: {e}"

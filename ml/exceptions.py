@@ -12,7 +12,7 @@ class ConfigError(UserError):
 
 
 class DataError(UserError):
-    """Feature store or dataset issues."""
+    """Feature store or data issues."""
 
 class PipelineContractError(UserError):
     """Violations of structural or logical expectations between pipeline

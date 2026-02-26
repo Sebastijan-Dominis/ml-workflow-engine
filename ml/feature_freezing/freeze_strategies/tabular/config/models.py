@@ -1,13 +1,20 @@
 import logging
 from pathlib import Path
-from typing import Literal, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from ml.config.validation_schemas.data import DataConfig
 from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
+
+class DatasetConfig(BaseModel):
+    ref: str = Field("data/processed", description="Reference path for the dataset, e.g., 'data/processed'")
+    name: str = Field(..., description="Name of the dataset, e.g., 'hotel_bookings'")
+    version: str = Field(..., description="Version of the dataset, e.g., 'v1'")
+    format: Literal["csv", "parquet"]
+    merge_key: str = Field("row_id", description="Key to merge datasets on, default is 'row_id'")
+    path_suffix: str = Field("data.{format}", description="Suffix for the dataset file, supports {format} placeholder")
 
 class FeatureRolesConfig(BaseModel):
     categorical: list[str]
@@ -36,7 +43,7 @@ class LineageConfig(BaseModel):
 class TabularFeaturesConfig(BaseModel):
     type: str = "tabular"
     description: str | None = None
-    data: DataConfig
+    data: list[DatasetConfig]
     min_rows: int = Field(default=1000, ge=0)
     feature_store_path: Path
     columns: list[str]

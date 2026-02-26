@@ -9,7 +9,8 @@ from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
     FreezeContext
 from ml.feature_freezing.persistence.get_deps import get_deps
 from ml.registry.hash_registry import hash_file
-from ml.utils.features.hashing.hash_dataframe_content import hash_dataframe_content
+from ml.utils.features.hashing.hash_dataframe_content import \
+    hash_dataframe_content
 from ml.utils.features.hashing.hash_feature_schema import hash_feature_schema
 from ml.utils.git import get_git_commit
 from ml.utils.pipeline_core.step import PipelineStep
@@ -61,7 +62,7 @@ class MetadataStep(PipelineStep[FreezeContext]):
             timestamp = ctx.require_timestamp,
             snapshot_path = ctx.require_snapshot_path,
             schema_path = ctx.require_schema_path,
-            loader_validation_hash = ctx.require_loader_validation_hash,
+            data_lineage = [e.__dict__ for e in ctx.require_data_lineage],
             in_memory_hash = in_memory_hash,
             file_hash = file_hash,
             operators_hash = operators_hash,

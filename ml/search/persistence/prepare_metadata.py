@@ -1,4 +1,3 @@
-import json
 import logging
 from pathlib import Path
 
@@ -7,7 +6,17 @@ from ml.utils.git import get_git_commit
 
 logger = logging.getLogger(__name__)
 
-def prepare_metadata(model_cfg: SearchModelConfig, *, search_results: dict, owner: str, experiment_id: str, search_dir: Path, timestamp: str, feature_lineage: list[dict], pipeline_hash: str) -> dict:
+def prepare_metadata(
+    model_cfg: SearchModelConfig, 
+    *, 
+    search_results: dict, 
+    owner: str, 
+    experiment_id: str, 
+    timestamp: str, 
+    feature_lineage: list[dict], 
+    pipeline_hash: str,
+    scoring_method: str
+) -> dict:
     problem = model_cfg.problem
     segment = model_cfg.segment.name
     version = model_cfg.version
@@ -43,7 +52,8 @@ def prepare_metadata(model_cfg: SearchModelConfig, *, search_results: dict, owne
             "git_commit": git_commit,
             "config_hash": config_hash,
             "validation_status": validation_status,
-            "pipeline_hash": pipeline_hash
+            "pipeline_hash": pipeline_hash,
+            "scoring_method": scoring_method
         },
         "config": model_cfg.model_dump(by_alias=True),
         "search_results": search_results,

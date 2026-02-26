@@ -11,6 +11,6 @@ def get_memory_usage(df: pd.DataFrame) -> float:
     try:
         return df.memory_usage(deep=True).sum() / (1024 * 1024)
     except Exception as e:
-        msg = f"Error computing memory usage of the dataset. "
+        msg = f"Error computing memory usage of the data. "
         logger.error(msg + f"Details: {str(e)}")
         raise RuntimeMLException(msg) from e

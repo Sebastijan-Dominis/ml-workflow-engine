@@ -7,6 +7,9 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.pipeline import Pipeline
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.utils.experiments.class_weights.constants import \
+    SUPPORTED_SCORING_FUNCTIONS
+from ml.search.constants import SEARCH_PHASES
 
 logger = logging.getLogger(__name__)
 
@@ -17,12 +20,13 @@ def perform_randomized_search(
     y_train: pd.Series, 
     param_distributions: dict[str, Any], 
     model_cfg: SearchModelConfig, 
-    search_type: str
+    search_phase: SEARCH_PHASES,
+    scoring: SUPPORTED_SCORING_FUNCTIONS
 ) -> dict[str, Any]:
-    search_phase_cfg = getattr(model_cfg.search, search_type)
+    search_phase_cfg = getattr(model_cfg.search, search_phase)
     n_iter = search_phase_cfg.n_iter
     cv = model_cfg.cv
-    scoring = model_cfg.search.scoring
+    scoring = scoring
     verbose = model_cfg.verbose if model_cfg.verbose is not None else 100
     hardware = model_cfg.search.hardware
     n_jobs = 1 if hardware and hardware.task_type.value == "GPU" else -1
@@ -61,6 +65,6 @@ def perform_randomized_search(
         "scoring": scoring,
         "random_state": random_state,
         "error_score": str(error_score),
-        "search_type": search_type,
+        "search_phase": search_phase,
     }
 

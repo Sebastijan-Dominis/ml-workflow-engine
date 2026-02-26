@@ -6,8 +6,11 @@ import pandas as pd
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.exceptions import RuntimeMLException
+from ml.utils.experiments.class_weights.constants import \
+    SUPPORTED_SCORING_FUNCTIONS
 
 logger = logging.getLogger(__name__)
+
 @dataclass
 class SearchContext:
     model_cfg: SearchModelConfig
@@ -21,6 +24,8 @@ class SearchContext:
     pipeline_cfg: Optional[dict] = None
     pipeline_hash: Optional[str] = None
     cat_features: Optional[list[str]] = None
+    scoring: Optional[SUPPORTED_SCORING_FUNCTIONS] = None
+    class_weights: Optional[dict] = None
 
     best_params_1: Optional[dict] = None
     broad_result: Optional[dict] = None
@@ -93,6 +98,22 @@ class SearchContext:
             raise RuntimeMLException(msg)
         return self.cat_features
     
+    @property
+    def require_scoring(self) -> SUPPORTED_SCORING_FUNCTIONS:
+        if self.scoring is None:
+            msg = "Scoring function not prepared yet. Ensure that the preparation step has been run."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.scoring
+    
+    @property
+    def require_class_weights(self) -> dict:
+        if self.class_weights is None:
+            msg = "Class weights not prepared yet. Ensure that the preparation step has been run."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.class_weights
+
     @property
     def require_best_params_1(self) -> dict:
         if self.best_params_1 is None:

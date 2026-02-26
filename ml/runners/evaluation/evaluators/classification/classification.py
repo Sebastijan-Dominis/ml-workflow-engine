@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.exceptions import DataError
 from ml.runners.evaluation.constants.data_splits import DataSplits
 from ml.runners.evaluation.constants.output import EVALUATE_OUTPUT
 from ml.runners.evaluation.evaluators.base import Evaluator

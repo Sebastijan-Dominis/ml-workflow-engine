@@ -77,9 +77,14 @@ def main() -> int:
         config_raw = load_feature_registry(args.feature_set, args.version)
         strategy_type = get_strategy_type(config_raw)
         config = validate_feature_registry(config_raw, strategy_type)
+    except Exception as e:
+        logging.exception("Failed to load and validate feature registry")
+        return resolve_exit_code(e)
 
-        log_path = Path(config.feature_store_path) / snapshot_id / "freeze.log"
-        add_file_handler(log_path, level=log_level)
+    log_path = Path(config.feature_store_path) / snapshot_id / "freeze.log"
+    add_file_handler(log_path, level=log_level)
+
+    try:
 
         strategy = get_strategy(config.type)
 

@@ -15,20 +15,20 @@ SAVE_FORMAT = {
 }
 
 def save_data(df: pd.DataFrame, *, config: InterimConfig | ProcessedConfig, data_dir: Path) -> Path:
-    if not config.dataset.output.format in SAVE_FORMAT:
-        msg = f"Unsupported output format: {config.dataset.output.format}"
+    if not config.data.output.format in SAVE_FORMAT:
+        msg = f"Unsupported output format: {config.data.output.format}"
         logger.error(msg)
         raise ConfigError(msg)
-    data_path = data_dir / config.dataset.output.path_suffix
+    data_path = data_dir / config.data.output.path_suffix
     if not data_dir.exists():
         data_dir.mkdir(parents=True, exist_ok=True)
-    save_func = SAVE_FORMAT[config.dataset.output.format]
-    compression = config.dataset.output.compression
+    save_func = SAVE_FORMAT[config.data.output.format]
+    compression = config.data.output.compression
     try:
         if save_func == pd.DataFrame.to_parquet:
             save_func(df, data_path, compression=compression)
         return data_path
     except Exception as e:
-        msg = f"Error saving data to {data_path} with format {config.dataset.output.format} and compression {compression}. "
+        msg = f"Error saving data to {data_path} with format {config.data.output.format} and compression {compression}. "
         logger.error(msg + f"Details: {str(e)}")        
         raise PersistenceError(msg) from e

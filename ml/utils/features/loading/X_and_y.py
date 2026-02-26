@@ -7,19 +7,21 @@ import pandas as pd
 from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
                                                     TrainModelConfig)
 from ml.exceptions import DataError
-from ml.utils.data.loader import load_data_with_loader_validation_hash
-from ml.utils.data.validate_dataset import validate_dataset
+from ml.utils.data.models import DataLineageEntry
 from ml.utils.data.validate_row_id import validate_row_id
+from ml.utils.features.loading.data_loader import load_and_validate_data
 from ml.utils.features.loading.get_target import get_target_with_row_id
 from ml.utils.features.loading.resolve_feature_snapshots import \
     resolve_feature_snapshots
 from ml.utils.features.segmentation.segment import apply_segmentation
+from ml.utils.features.validation.validate_feature_set import \
+    validate_feature_set
+from ml.utils.features.validation.validate_feature_target_row_id import \
+    validate_feature_target_row_id
 from ml.utils.features.validation.validate_set import validate_set
 from ml.utils.features.validation.validate_target import validate_target
-from ml.utils.features.validation.validate_feature_set import (
-    ensure_required_fields_present, validate_feature_set)
-from ml.utils.loaders import load_json, read_data
-from ml.utils.features.validation.validate_feature_target_row_id import validate_feature_target_row_id
+from ml.utils.loaders import read_data
+from ml.utils.validate_dict import ensure_required_fields_present_in_dict
 
 logger = logging.getLogger(__name__)
 
@@ -42,15 +44,28 @@ def load_X_and_y(
 
     dfs_X = []
     feature_types = set()
-    loader_validation_hashes = set()
-    lineage = []
+    data_lineage: set[DataLineageEntry] = set()
+    feature_lineage = []
+
+    required_fields = [
+        "feature_schema_hash",
+        "operators_hash",
+        "feature_type",
+        "data_lineage",
+        "in_memory_hash",
+        "file_hash",
+    ]
 
     for sel in snapshot_selection:
         fs = sel["fs_spec"]
         snapshot_path = sel["snapshot_path"]
         metadata = sel["metadata"]
 
-        ensure_required_fields_present(snapshot_path, metadata)
+        logger.debug(f"Verifying required metadata fields for feature set {fs.name} v{fs.version} snapshot {snapshot_path.name}")
+        ensure_required_fields_present_in_dict(
+            input_dict=metadata, 
+            required_fields=required_fields
+        )
         
         file_path = snapshot_path / getattr(fs, "file_name")
 
@@ -68,19 +83,24 @@ def load_X_and_y(
         feature_schema_hash = metadata["feature_schema_hash"]
         operators_hash = metadata["operators_hash"]
         feature_type = metadata["feature_type"]
-        loader_validation_hash = metadata["loader_validation_hash"]
         file_hash = metadata["file_hash"]
         in_memory_hash = metadata["in_memory_hash"]
+        for dataset_dict in metadata["data_lineage"]:
+            try:
+                entry = DataLineageEntry(**dataset_dict)
+            except TypeError as e:
+                msg = f"Data lineage entry is missing required fields or has extra fields. Dataset dict: {dataset_dict}. Error: {e}"
+                logger.error(msg)
+                raise DataError(msg)
+            data_lineage.add(entry)
 
         feature_types.add(feature_type)
-        loader_validation_hashes.add(loader_validation_hash)
 
-        lineage.append({
+        feature_lineage.append({
             "name": fs.name,
             "version": fs.version,
             "snapshot_id": snapshot_path.name,
             "snapshot_path": str(snapshot_path),
-            "loader_validation_hash": loader_validation_hash,
             "file_hash": file_hash,
             "in_memory_hash": in_memory_hash,
             "feature_schema_hash": feature_schema_hash,
@@ -90,19 +110,12 @@ def load_X_and_y(
 
     validate_set("Feature type", feature_types, feature_sets)
 
-    dataset, loader_validation_hash = load_data_with_loader_validation_hash(
-        path=Path(model_cfg.data.path),
-        format=model_cfg.data.format
-    )
-    data_metadata = load_json(path=Path(model_cfg.data.metadata_path))
-    validate_dataset(data_path=Path(model_cfg.data.path), metadata=data_metadata)
-    loader_validation_hashes.add(loader_validation_hash)
-    validate_set("Loader validation", loader_validation_hashes, feature_sets)
+    data = load_and_validate_data(data_lineage)
 
     target_name = model_cfg.target.name
     target_version = model_cfg.target.version
     key = (target_name, target_version)
-    y_with_row_id = get_target_with_row_id(data=dataset, key=key)
+    y_with_row_id = get_target_with_row_id(data=data, key=key)
 
     for df in dfs_X:
         validate_row_id(df)
@@ -162,4 +175,4 @@ def load_X_and_y(
 
     logger.info(f"Successfully loaded features and target. Final shapes - X: {X.shape}, y: {y.shape}")
     
-    return X, y, lineage
+    return X, y, feature_lineage

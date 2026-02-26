@@ -1,35 +1,51 @@
+import logging
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
-from ml.registry.hash_registry import hash_dataset
+from ml.exceptions import PersistenceError
+from ml.registry.hash_registry import hash_data
 
-
-def prepare_metadata(df: pd.DataFrame, *, args, dataset_path: Path) -> dict:
-    dataset_hash = hash_dataset(dataset_path)
+logger = logging.getLogger(__name__)
     
+def prepare_metadata(
+    df: pd.DataFrame, 
+    *, 
+    args, 
+    data_path: Path,
+    raw_run_id: str,
+    data_suffix: str
+) -> dict:
+    data_hash = hash_data(data_path)
+        
     timestamp = datetime.now().isoformat()
 
-    metadata = {
-        "dataset": {
-            "name": args.dataset,
-            "version": args.version,
-            "path_suffix": args.path_suffix,
-            "format": args.format,
-            "hash": dataset_hash
-        },
-        "rows": len(df),
-        "columns": {
-            "count": len(df.columns),
-            "names": df.columns.tolist(),
-            "dtypes": df.dtypes.astype(str).to_dict()
-        },
-        "created_at": timestamp,
-        "created_by": "handle_raw.py",
-        "owner": args.owner,
-        "memory_usage_mb": get_memory_usage(df),
-    }
+    try:
+        metadata = {
+            "data": {
+                "name": args.data,
+                "version": args.version,
+                "path_suffix": data_suffix,
+                "format": args.format,
+                "hash": data_hash
+            },
+            "rows": len(df),
+            "columns": {
+                "count": len(df.columns),
+                "names": df.columns.tolist(),
+                "dtypes": df.dtypes.astype(str).to_dict()
+            },
+            "created_at": timestamp,
+            "created_by": "handle_raw.py",
+            "owner": args.owner,
+            "memory_usage_mb": get_memory_usage(df),
+            "raw_run_id": raw_run_id
+        }
 
-    return metadata
+        return metadata
+    except Exception as e:
+        msg = "Failed to prepare metadata for raw data"
+        logger.error(msg + f": {str(e)}")
+        raise PersistenceError(msg) from e

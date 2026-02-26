@@ -50,7 +50,7 @@ from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
     validate_pipeline_cfg
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
-from ml.utils.experiments.snapshot_path import get_snapshot_path
+from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
 
@@ -130,9 +130,13 @@ def main() -> int:
 
     bootstrap_logging(level=log_level)
 
-    experiment_parent_dir = Path("experiments") / args.problem / args.segment / args.version
-    experiment_dir = get_snapshot_path(args.experiment_id, experiment_parent_dir)
-    search_dir = experiment_dir / "search"
+    try:
+        experiment_parent_dir = Path("experiments") / args.problem / args.segment / args.version
+        experiment_dir = get_snapshot_path(args.experiment_id, experiment_parent_dir)
+        search_dir = experiment_dir / "search"
+    except Exception as e:
+        logger.exception("Failed to get experiment directory")
+        return resolve_exit_code(e)
 
     train_run_id = f"{timestamp}_{uuid4().hex[:8]}"
     train_run_dir = experiment_dir / "training" / train_run_id

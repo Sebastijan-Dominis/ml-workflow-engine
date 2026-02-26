@@ -1,7 +1,4 @@
-import hashlib
 from pathlib import Path
-
-import pandas as pd
 
 from ml.utils.features.hashing.hash_arrow_metadata import hash_arrow_metadata
 from ml.utils.features.hashing.hash_parquet_metadata import \
@@ -20,7 +17,7 @@ def hash_file(file_path: Path) -> str:
     """Compute SHA256 of file contents (streaming)."""
     return hash_streaming(file_path)
 
-def hash_dataset(file_path: Path) -> str:
+def hash_data(file_path: Path) -> str:
     """Compute SHA256 of file contents (streaming)."""
     return hash_streaming(file_path)
 

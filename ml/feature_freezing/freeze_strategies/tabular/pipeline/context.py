@@ -6,7 +6,9 @@ from typing import Optional
 import pandas as pd
 
 from ml.exceptions import RuntimeMLException
-from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.feature_freezing.freeze_strategies.tabular.config.models import \
+    TabularFeaturesConfig
+from ml.utils.data.models import DataLineageEntry
 
 logger = logging.getLogger(__name__)
 @dataclass
@@ -18,7 +20,7 @@ class FreezeContext:
     start_time: Optional[float] = None
 
     data: Optional[pd.DataFrame] = None
-    loader_validation_hash: Optional[str] = None
+    data_lineage: Optional[list[DataLineageEntry]] = None
 
     features: Optional[pd.DataFrame] = None
 
@@ -62,12 +64,12 @@ class FreezeContext:
         return self.data
 
     @property
-    def require_loader_validation_hash(self) -> str:
-        if self.loader_validation_hash is None:
-            msg = "Data hash not computed yet. Ensure that the ingestion step has been run."
+    def require_data_lineage(self) -> list[DataLineageEntry]:
+        if self.data_lineage is None:
+            msg = "Data lineage not computed yet. Ensure that the ingestion step has been run."
             logger.error(msg)
             raise RuntimeMLException(msg)
-        return self.loader_validation_hash
+        return self.data_lineage
 
     @property
     def require_features(self) -> pd.DataFrame:

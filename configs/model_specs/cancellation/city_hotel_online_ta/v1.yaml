@@ -16,11 +16,6 @@ target:
     positive_class: 1
     min_class_count: 50
   version: v1
-data:
-  path: data/processed/hotel_bookings/v1/hotel_bookings.parquet
-  metadata_path: data/processed/hotel_bookings/v1/metadata.json
-  source: data/raw/hotel_bookings/v1/hotel_bookings_kaggle.csv
-  format: parquet
 segmentation:
   enabled: true
   include_in_model: false

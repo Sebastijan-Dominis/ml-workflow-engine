@@ -43,7 +43,12 @@ class NarrowSearchStep(PipelineStep[SearchContext]):
             for v in values:
                 validate_param_value(base_param_name, v, str(ctx.model_cfg.search.hardware.task_type.value).upper())
 
-        model_2 = prepare_model(ctx.model_cfg, "narrow", ctx.require_cat_features)
+        model_2 = prepare_model(
+            ctx.model_cfg, 
+            search_phase="narrow",
+            cat_features=ctx.require_cat_features, 
+            class_weights=ctx.require_class_weights
+        )
 
         pipeline_2 = build_pipeline_with_model(
             model_cfg=ctx.model_cfg,
@@ -65,7 +70,8 @@ class NarrowSearchStep(PipelineStep[SearchContext]):
                 y_train=ctx.require_y_train,
                 param_distributions=narrow_param_distributions,
                 model_cfg=ctx.model_cfg,
-                search_type="narrow"
+                scoring=ctx.require_scoring,
+                search_phase="narrow"
             )
         except Exception as e:
             msg = f"Narrow hyperparameter search failed for problem={ctx.model_cfg.problem} segment={ctx.model_cfg.segment.name} version={ctx.model_cfg.version}: {e}"
