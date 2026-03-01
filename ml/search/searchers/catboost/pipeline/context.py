@@ -6,6 +6,7 @@ import pandas as pd
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.exceptions import RuntimeMLException
+from ml.registry.tabular_splits import AllSplitsInfo
 from ml.utils.experiments.class_weights.constants import \
     SUPPORTED_SCORING_FUNCTIONS
 
@@ -18,6 +19,7 @@ class SearchContext:
 
     X_train: Optional[pd.DataFrame] = None
     y_train: Optional[pd.Series] = None
+    splits_info: Optional[AllSplitsInfo] = None
     feature_lineage: Optional[list[dict]] = None
     input_schema: Optional[pd.DataFrame] = None
     derived_schema: Optional[pd.DataFrame] = None
@@ -49,6 +51,14 @@ class SearchContext:
             logger.error(msg)
             raise RuntimeMLException(msg)
         return self.y_train
+
+    @property
+    def require_splits_info(self) -> AllSplitsInfo:
+        if self.splits_info is None:
+            msg = "Splits info not prepared yet. Ensure that the preparation step has been run."
+            logger.error(msg)
+            raise RuntimeMLException(msg)
+        return self.splits_info
 
     @property
     def require_feature_lineage(self) -> list[dict]:

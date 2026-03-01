@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from ml.config.validation_schemas.model_specs import TargetConfig
+from ml.config.validation_schemas.model_cfg import TrainModelConfig, SearchModelConfig
 from ml.exceptions import ConfigError, DataError
 from ml.utils.features.validation.normalize_dtype import normalize_dtype
 
@@ -31,7 +31,7 @@ def validate_min_class_count(y: pd.Series, min_class_count: int):
 def validate_target(
     *,
     y: pd.Series, 
-    tgt_cfg: TargetConfig, 
+    model_cfg: TrainModelConfig | SearchModelConfig,
     data: pd.DataFrame
 ) -> None:
     if y.isnull().any():
@@ -40,33 +40,38 @@ def validate_target(
         raise DataError(msg)
     
     actual_dtype = normalize_dtype(y.dtype)
-    allowed = tgt_cfg.allowed_dtypes
+    allowed = model_cfg.target.allowed_dtypes
     if actual_dtype not in allowed:
         msg = f"Target variable has dtype {y.dtype}, expected one of {allowed}."
         logger.error(msg)
         raise DataError(msg)
     
-    if tgt_cfg.problem_type == "classification":
-        if tgt_cfg.classes is None:
+    if model_cfg.task.type == "classification":
+        if model_cfg.target.classes is None:
             msg = "Classes configuration must be provided for classification problems."
             logger.error(msg)
             raise ConfigError(msg)
-        positive_class = tgt_cfg.classes.positive_class
+        positive_class = model_cfg.target.classes.positive_class
         if positive_class not in y.unique():
             msg = f"Positive class {positive_class} not found in target variable."
             logger.error(msg)
             raise DataError(msg)
         validate_min_class_count(
-            data[tgt_cfg.name],
-            tgt_cfg.classes.min_class_count
+            data[model_cfg.target.name],
+            model_cfg.target.classes.min_class_count
         )
         return # No further checks for classification
 
-    target_constraints = tgt_cfg.constraints
+    target_constraints = model_cfg.target.constraints
     min_val = target_constraints.min_value
     max_val = target_constraints.max_value
-    if tgt_cfg.problem_type == "regression" and (min_val is None or max_val is None):
-        logger.warning("Min and max value constraints are not set for regression problem.")
+    if model_cfg.task.type == "regression":
+        if min_val is None and max_val is None:
+            logger.warning("Min and max value constraints are not set for regression problem.")
+        elif min_val is None:
+            logger.warning("Min value constraint is not set for regression problem.")
+        elif max_val is None:
+            logger.warning("Max value constraint is not set for regression problem.")
     if min_val is not None and y.min() < min_val:
         msg = f"Target min {y.min()} < allowed min {min_val}"
         logger.error(msg)

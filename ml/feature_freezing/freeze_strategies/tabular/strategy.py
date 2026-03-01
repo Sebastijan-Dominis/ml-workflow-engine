@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 
 from ml.feature_freezing.constants.output import FreezeOutput
 from ml.feature_freezing.freeze_strategies.base import FreezeStrategy
@@ -22,10 +21,24 @@ from ml.utils.pipeline_core.runner import PipelineRunner
 logger = logging.getLogger(__name__)
 
 class FreezeTabular(FreezeStrategy):
-    def freeze(self, config: TabularFeaturesConfig, *, timestamp: str, snapshot_id: str, start_time: float) -> FreezeOutput:
+    def freeze(
+        self, 
+        config: TabularFeaturesConfig, 
+        *, 
+        timestamp: str, 
+        snapshot_id: str, 
+        start_time: float, 
+        owner: str
+    ) -> FreezeOutput:
         if not isinstance(config, TabularFeaturesConfig):
             config = validate_feature_registry(config.dict(), "tabular")
-        ctx = FreezeContext(config=config, timestamp=timestamp, snapshot_id=snapshot_id, start_time=start_time)
+        ctx = FreezeContext(
+            config=config, 
+            timestamp=timestamp, 
+            snapshot_id=snapshot_id, 
+            start_time=start_time, 
+            owner=owner
+        )
         runner = PipelineRunner[FreezeContext](steps=[
             IngestionStep(),
             PreprocessingStep(),

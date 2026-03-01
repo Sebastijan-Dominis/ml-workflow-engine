@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 @dataclass
 class FreezeContext:
     config: TabularFeaturesConfig
-
-    timestamp: Optional[str] = None
-    snapshot_id: Optional[str] = None
-    start_time: Optional[float] = None
+    timestamp: str
+    snapshot_id: str
+    start_time: float
+    owner: str
 
     data: Optional[pd.DataFrame] = None
     data_lineage: Optional[list[DataLineageEntry]] = None
@@ -30,30 +30,6 @@ class FreezeContext:
 
     metadata: Optional[dict] = None
     config_hash: Optional[str] = None
-
-    @property
-    def require_timestamp(self) -> str:
-        if self.timestamp is None:
-            msg = "Timestamp not set. Ensure that the timestamp is provided when calling freeze()."
-            logger.error(msg)
-            raise RuntimeMLException(msg)
-        return self.timestamp
-
-    @property
-    def require_snapshot_id(self) -> str:
-        if self.snapshot_id is None:
-            msg = "Snapshot ID not set. Ensure that the snapshot_id is provided when calling freeze()."
-            logger.error(msg)
-            raise RuntimeMLException(msg)
-        return self.snapshot_id
-
-    @property
-    def require_start_time(self) -> float:
-        if self.start_time is None:
-            msg = "Start time not set. Ensure that the start_time is provided when calling freeze()."
-            logger.error(msg)
-            raise RuntimeMLException(msg)
-        return self.start_time
 
     @property
     def require_data(self) -> pd.DataFrame:

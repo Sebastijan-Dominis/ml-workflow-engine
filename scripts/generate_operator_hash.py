@@ -1,9 +1,16 @@
 import argparse
-
+import logging
+import sys
+from datetime import datetime
 from pathlib import Path
-from ml.feature_freezing.utils.operators import generate_operator_hash
+from uuid import uuid4
 
+from ml.feature_freezing.utils.operators import generate_operator_hash
+from ml.logging_config import setup_logging
 from ml.registry.feature_operators import FEATURE_OPERATORS
+from ml.utils.iso_no_col import iso_no_colon
+
+logger = logging.getLogger(__name__)
 
 ALLOWED = set(FEATURE_OPERATORS.keys())
 
@@ -19,20 +26,23 @@ def parse_args():
     return parser.parse_args()
 
 def main() -> int:
-    path = Path("ml/feature_freezing/logs/generate_operator_hash.log")
-    path.parent.mkdir(parents=True, exist_ok=True)
+    timestamp = iso_no_colon(datetime.now())
+    run_id = f"{timestamp}_{uuid4().hex[:8]}"
+    log_file = Path(f"scripts_logs/generate_operator_hash/{run_id}/op_hash_generation.log")
+    log_level = logging.INFO
+    setup_logging(path=log_file, level=log_level)
 
+    args = parse_args()
+    operator_names = args.operators
+    
     try:
-        args = parse_args()
-        operator_names = args.operators
         operators_hash = generate_operator_hash(operator_names)
-        print(f"Generated operators hash: {operators_hash}")
+        logger.info(f"Generated operators hash: {operators_hash}")
         return 0
     
     except Exception as e:
-        print(f"Failed to generate operators hash: {e}")
+        logger.error(f"Failed to generate operators hash: {e}")
         return 1
 
 if __name__ == "__main__":
-    main()
-
+    sys.exit(main())

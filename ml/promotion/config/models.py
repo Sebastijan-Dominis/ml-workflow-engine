@@ -1,7 +1,8 @@
 import logging
+from datetime import datetime
 from enum import Enum
 
-from pydantic import BaseModel, Field, model_validator, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from ml.exceptions import ConfigError
 
@@ -24,7 +25,7 @@ class Direction(str, Enum):
 class PromotionMetricsConfig(BaseModel):
     sets: list[MetricSet] = Field(..., description="List of metric sets to consider for promotion")
     metrics: list[MetricName] = Field(..., description="List of metrics to consider for promotion")
-    directions: dict[MetricName, Direction] = Field(..., description="Dictionary mapping each metric to its optimization direction")
+    directions: dict[MetricName, Direction] = Field(..., description="dictionary mapping each metric to its optimization direction")
 
 @field_validator("directions")
 def validate_directions(cls, v, values):
@@ -36,13 +37,18 @@ def validate_directions(cls, v, values):
         raise ConfigError(msg)
 
 class ThresholdsConfig(BaseModel):
-    test: dict[str, float] = Field(default_factory=dict, description="Dictionary of metric thresholds for the test set")
-    val: dict[str, float] = Field(default_factory=dict, description="Dictionary of metric thresholds for the validation set")
-    train: dict[str, float] = Field(default_factory=dict, description="Dictionary of metric thresholds for the training set")
+    test: dict[str, float] = Field(default_factory=dict, description="dictionary of metric thresholds for the test set")
+    val: dict[str, float] = Field(default_factory=dict, description="dictionary of metric thresholds for the validation set")
+    train: dict[str, float] = Field(default_factory=dict, description="dictionary of metric thresholds for the training set")
+
+class LineageConfig(BaseModel):
+    created_by: str
+    created_at: datetime
 
 class PromotionThresholds(BaseModel):
     promotion_metrics: PromotionMetricsConfig
     thresholds: ThresholdsConfig
+    lineage: LineageConfig
 
     @model_validator(mode="after")
     def validate_consistency(self):

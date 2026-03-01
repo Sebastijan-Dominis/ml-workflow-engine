@@ -1,6 +1,7 @@
 import logging
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 from ml.feature_freezing.freeze_strategies.tabular.persistence import \
@@ -56,10 +57,10 @@ class MetadataStep(PipelineStep[FreezeContext]):
             if ctx.config.operators else "none"
         )
 
-        duration = round(time.perf_counter() - ctx.require_start_time, 3)
-
+        duration = round(time.perf_counter() - ctx.start_time, 3)
+        
         metadata = create_metadata(
-            timestamp = ctx.require_timestamp,
+            timestamp = ctx.timestamp,
             snapshot_path = ctx.require_snapshot_path,
             schema_path = ctx.require_schema_path,
             data_lineage = [e.__dict__ for e in ctx.require_data_lineage],
@@ -70,7 +71,8 @@ class MetadataStep(PipelineStep[FreezeContext]):
             feature_schema_hash = feature_schema_hash,
             runtime = runtime,
             features = features,
-            duration = duration
+            duration = duration,
+            owner = ctx.owner
         )
 
         ctx.metadata = metadata

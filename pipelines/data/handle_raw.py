@@ -55,7 +55,7 @@ def parse_args():
         "--owner",
         type=str,
         default="Sebastijan",
-        help="Owner of the experiment (default: Sebastijan)"
+        help="Owner of the metadata (default: Sebastijan)"
     )
 
     return parser.parse_args()

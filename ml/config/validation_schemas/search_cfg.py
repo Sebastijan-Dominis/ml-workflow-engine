@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -7,18 +7,16 @@ from ml.config.validation_schemas.hardware_cfg import HardwareConfig
 
 # === Broad search model/ensemble params ===
 class BroadModelParams(BaseModel):
-    depth: Optional[List[int]] = None
-    learning_rate: Optional[List[float]] = None
-    l2_leaf_reg: Optional[List[float]] = None
-    colsample_bylevel: Optional[List[float]] = None
-    random_strength: Optional[List[float]] = None
-    min_data_in_leaf: Optional[List[int]] = None
-    border_count: Optional[List[int]] = None
-
+    depth: Optional[list[int]] = None
+    learning_rate: Optional[list[float]] = None
+    l2_leaf_reg: Optional[list[float]] = None
+    colsample_bylevel: Optional[list[float]] = None
+    random_strength: Optional[list[float]] = None
+    min_data_in_leaf: Optional[list[int]] = None
+    border_count: Optional[list[int]] = None
 
 class BroadEnsembleParams(BaseModel):
-    bagging_temperature: Optional[List[float]] = None
-
+    bagging_temperature: Optional[list[float]] = None
 
 class BroadParamDistributions(BaseModel):
     model: BroadModelParams = Field(default_factory=BroadModelParams)
@@ -37,22 +35,19 @@ class BroadParamDistributions(BaseModel):
                 flat[f"{prefix}__{subkey}"] = val
         return flat
 
-
 # === Narrow search schemas ===
 class NarrowIntParam(BaseModel):
     include: bool
-    offsets: Optional[List[int]] = None
+    offsets: Optional[list[int]] = None
     low: Optional[int] = None
     high: Optional[int] = None
 
-
 class NarrowFloatParam(BaseModel):
     include: bool
-    factors: Optional[List[float]] = None
+    factors: Optional[list[float]] = None
     low: Optional[float] = None
     high: Optional[float] = None
     decimals: Optional[int] = None
-
 
 class NarrowModelParams(BaseModel):
     depth: Optional[NarrowIntParam] = None
@@ -76,13 +71,11 @@ class NarrowSearchConfig(BaseModel):
     n_iter: int
     param_configurations: NarrowParamConfig = Field(default_factory=NarrowParamConfig)
 
-
 # === Broad search ===
 class BroadSearchConfig(BaseModel):
     iterations: int
     n_iter: int
     param_distributions: BroadParamDistributions = Field(default_factory=BroadParamDistributions)
-
 
 # === Full Search Config ===
 class SearchConfig(BaseModel):
@@ -94,3 +87,4 @@ class SearchConfig(BaseModel):
         n_iter=0,
     ))
     hardware: HardwareConfig = Field(default_factory=HardwareConfig)
+    

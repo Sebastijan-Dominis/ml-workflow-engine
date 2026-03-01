@@ -17,6 +17,7 @@ from ml.search.persistence.persist_experiment import persist_experiment
 from ml.search.searchers.base import Searcher
 from ml.search.searchers.output import SearchOutput
 from ml.search.utils.get_searcher import get_searcher
+from ml.utils.iso_no_col import iso_no_colon
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +90,7 @@ def main() -> int:
 
     start_time = time.perf_counter()
 
-    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    timestamp = iso_no_colon(datetime.now())
     experiment_id = f"{timestamp}_{uuid4().hex[:8]}"
     experiment_dir = Path("experiments") / args.problem / args.segment / args.version / experiment_id
 
@@ -116,6 +117,7 @@ def main() -> int:
         feature_lineage = search_output.feature_lineage
         pipeline_hash = search_output.pipeline_hash
         scoring_method = search_output.scoring_method
+        splits_info = search_output.splits_info
 
         persist_experiment(
             model_cfg, 
@@ -127,7 +129,8 @@ def main() -> int:
             start_time=start_time, 
             feature_lineage=feature_lineage, 
             pipeline_hash=pipeline_hash,
-            scoring_method=scoring_method
+            scoring_method=scoring_method,
+            splits_info=splits_info
         )
 
         logger.info(

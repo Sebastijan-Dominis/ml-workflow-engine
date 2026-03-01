@@ -18,6 +18,7 @@ from ml.feature_freezing.freeze_strategies.tabular.config.models import \
 from ml.feature_freezing.utils.get_strategy import get_strategy
 from ml.feature_freezing.utils.get_strategy_type import get_strategy_type
 from ml.logging_config import add_file_handler, bootstrap_logging
+from ml.utils.iso_no_col import iso_no_colon
 from ml.utils.persistence.save_metadata import save_metadata
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,13 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--owner", 
+        type=str,
+        default="Sebastijan",
+        help="Owner of the feature set (default: Sebastijan)"
+    )
+
+    parser.add_argument(
         "--logging-level", 
         type=str, 
         default="INFO", 
@@ -50,7 +58,7 @@ def parse_args():
 
 def load_feature_registry(feature_set: str, version: str) -> dict:
     path = Path(f"configs/feature_registry/features.yaml")
-    with open(path, "r") as f:
+    with open(path, "r", encoding="utf-8") as f:
         registry = yaml.safe_load(f)
     return registry[feature_set][version]
 
@@ -70,7 +78,7 @@ def main() -> int:
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
     bootstrap_logging(level=log_level)
 
-    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    timestamp = iso_no_colon(datetime.now())
     snapshot_id = f"{timestamp}_{uuid4().hex[:8]}"
 
     try:
@@ -88,7 +96,13 @@ def main() -> int:
 
         strategy = get_strategy(config.type)
 
-        output = strategy.freeze(config, snapshot_id=snapshot_id, timestamp=timestamp, start_time=start_time)
+        output = strategy.freeze(
+            config, 
+            snapshot_id=snapshot_id, 
+            timestamp=timestamp, 
+            start_time=start_time,
+            owner=args.owner
+        )
         snapshot_path = output.snapshot_path
         metadata = output.metadata
 

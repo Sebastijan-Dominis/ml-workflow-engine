@@ -1,9 +1,11 @@
 import logging
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 
-from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.feature_freezing.freeze_strategies.tabular.config.models import \
+    TabularFeaturesConfig
 from ml.registry.feature_operators import FEATURE_OPERATORS
 
 logger = logging.getLogger(__name__)
@@ -106,12 +108,14 @@ def create_metadata(
     feature_schema_hash: str, 
     runtime: dict, 
     features: pd.DataFrame, 
-    duration: float
+    duration: float,
+    owner: str
 ) -> dict:
 
     metadata = {
         "created_by": "freeze.py",
         "created_at": timestamp,
+        "owner": owner,
         "feature_type": "tabular",
         "snapshot_path": str(snapshot_path),
         "snapshot_id": snapshot_path.name,
@@ -125,7 +129,7 @@ def create_metadata(
         "runtime": runtime,
         "row_count": features.shape[0],
         "column_count": features.shape[1],
-        "duration_seconds": duration,
+        "duration_seconds": duration
     }
 
     return metadata

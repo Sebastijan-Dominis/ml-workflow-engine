@@ -1,0 +1,87 @@
+{
+  "run_identity": {
+    "stage": "explainability",
+    "explain_run_id": "2026-03-01T02-59-06_61e725fb",
+    "train_run_id": "2026-03-01T02-58-52_773dfd30",
+    "snapshot_id": "2026-03-01T02-58-44_dc487f08",
+    "status": "success"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v5",
+        "snapshot_id": "2026-03-01T01-17-50_3ce70900",
+        "snapshot_path": "feature_store\\booking_context_features\\v5\\2026-03-01T01-17-50_3ce70900",
+        "file_hash": "a821ec11aad10a7209acefccac580bf64413dda524ff33f9f8f389aa06632450",
+        "in_memory_hash": "c81989ef7a4ada084e87e31b23e79958",
+        "feature_schema_hash": "aa80b40d6a3d09daab07d9aeeb652b2894319bc2d4120661fd5d6130dc1bca19",
+        "operators_hash": "ab7459cf2079e7d1ec1d4c0beab90399",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v3",
+        "snapshot_id": "2026-03-01T01-17-57_77c9aba9",
+        "snapshot_path": "feature_store\\customer_history_features\\v3\\2026-03-01T01-17-57_77c9aba9",
+        "file_hash": "56ff5796848c336db9876bf869abdd899576a3450eb6d36cabbad79f1f33209b",
+        "in_memory_hash": "b4eb250da5fa238fa1e3fec628318c34",
+        "feature_schema_hash": "5bc66c8f1a74f5bb07add5345914b3853e78d2bec7252b49575c2e90b3ee81b2",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v4",
+        "snapshot_id": "2026-03-01T01-18-03_45ab1db2",
+        "snapshot_path": "feature_store\\pricing_party_features\\v4\\2026-03-01T01-18-03_45ab1db2",
+        "file_hash": "83726ed728a63a46e9de082cd1542e7e53d8c44b3c38e348c4400abcb9899eba",
+        "in_memory_hash": "4e8af545d3dfe2ad85afeb950544f36d",
+        "feature_schema_hash": "2edd7432358de14e17f111b3cb3e4894dc1308a4e4429b37e655fe998f7bcdf1",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-01T01-18-07_35109c66",
+        "snapshot_path": "feature_store\\channel_and_agent_features\\v2\\2026-03-01T01-18-07_35109c66",
+        "file_hash": "9996a1cec03b4eba65fd9a14deee023406ad29cf179f5dca983d7729d662f12c",
+        "in_memory_hash": "95d7f2dfc1ab040cec4e5a189e7aa6da",
+        "feature_schema_hash": "835e18a0eb360678f20b0ed18d92bcbb822a6cdca959bc8926aebfe5e60035cb",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "room_allocation_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-01T01-18-11_634c0e0d",
+        "snapshot_path": "feature_store\\room_allocation_features\\v2\\2026-03-01T01-18-11_634c0e0d",
+        "file_hash": "bacdb147229f30e8a0d432125794c7463772ac454e1177b1dbb8af3d14e2ac37",
+        "in_memory_hash": "5f2043aedb4564c8da60aa9fed376e44",
+        "feature_schema_hash": "c78c25c2a15b3c5954099579a6833444e511305955e39d31c0d98da93936f2cf",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      }
+    ],
+    "target_column": "is_repeated_guest",
+    "problem": "repeated_guest",
+    "segment": "city_hotel",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "20b4934b94fffb77923f460c17c5fc9bf98c1757322d2c614af996cbe21222e0",
+    "pipeline_cfg_hash": "1a7ca9f3aeec3a8e03e47fd820f49e6e4e90c6099f5f74efa0feeea73aab47d1"
+  },
+  "artifacts": {
+    "model_hash": "4f1ad1dfe6131e93465cd7c2b5fd73d47499f43ed9533de17a7b99cd62ab25ed",
+    "model_path": "experiments\\repeated_guest\\city_hotel\\v1\\2026-03-01T02-58-44_dc487f08\\training\\2026-03-01T02-58-52_773dfd30\\model.joblib",
+    "pipeline_path": "experiments\\repeated_guest\\city_hotel\\v1\\2026-03-01T02-58-44_dc487f08\\training\\2026-03-01T02-58-52_773dfd30\\pipeline.joblib",
+    "pipeline_hash": "468c81e35320f6b0eec0761da1bb39621dcf1db5ca7715ac44193eaa4b72e09a",
+    "top_k_feature_importances_path": "experiments\\repeated_guest\\city_hotel\\v1\\2026-03-01T02-58-44_dc487f08\\explainability\\2026-03-01T02-59-06_61e725fb\\top_k_feature_importances.csv",
+    "top_k_feature_importances_hash": "360f52cba13775094f9009b6d7198f76bec15eba5845f9f611d51248e2664f3c",
+    "top_k_shap_importances_path": "experiments\\repeated_guest\\city_hotel\\v1\\2026-03-01T02-58-44_dc487f08\\explainability\\2026-03-01T02-59-06_61e725fb\\top_k_shap_importances.csv",
+    "top_k_shap_importances_hash": "6529a4f5984909e2095dc662a1f5978f9af0f91e294691482e6efc048f409d29"
+  },
+  "top_k": 20
+}

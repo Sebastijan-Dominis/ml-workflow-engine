@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, Literal
+from typing import Any, Literal
 
 from pydantic_core import ValidationError
 
@@ -8,12 +8,12 @@ from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 
-def validate_model_config(cfg_raw: Dict[str, Any], cfg_type: Literal["search", "train"]) -> SearchModelConfig | TrainModelConfig:
+def validate_model_config(cfg_raw: dict[str, Any], cfg_type: Literal["search", "train"]) -> SearchModelConfig | TrainModelConfig:
     """
     Validate a raw model config dict using the appropriate Pydantic schema.
 
     Args:
-        cfg_raw (Dict[str, Any]): Raw config loaded from YAML/JSON.
+        cfg_raw (dict[str, Any]): Raw config loaded from YAML/JSON.
         cfg_type (Literal["search", "train"]): Type of config to validate.
 
     Returns:

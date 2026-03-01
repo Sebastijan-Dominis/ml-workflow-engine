@@ -4,3 +4,5 @@ verbose: 100
 
 training:
   early_stopping_rounds: 100
+
+# No lineage to avoid Pydantic validation issues. This file is not versioned and is meant to be overridden in most cases by model-specific default configuration files.

@@ -44,16 +44,10 @@ def load_config(
         "extends": cfg.get("extends", []),
     }
     cfg.pop("extends", None)  # merge directive, not model content
-    try:
-        cfg = apply_env_overlay(cfg, env, base_path=path.parent, skip_missing=skip_missing_env)
-    except FileNotFoundError as e:
-        msg = f"Environment overlay not found in {path}: {e}"
-        logger.error(msg)
-        raise ConfigError(msg) from e
-    except ValueError as e:
-        msg = f"Invalid env overlay in {path}: {e}"
-        logger.error(msg)
-        raise ConfigError(msg) from e
+
+    base_env_path = Path("configs/env")
+    env_path = (base_env_path / f"{env}.yaml").resolve()
+    cfg = apply_env_overlay(cfg, env, env_path=env_path, skip_missing=skip_missing_env)
 
     cfg["_meta"]["env"] = env
 

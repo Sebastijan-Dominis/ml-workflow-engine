@@ -13,6 +13,7 @@ from ml.utils.features.cat_features import get_cat_features
 from ml.utils.features.loading.schemas import load_schemas
 from ml.utils.features.loading.X_and_y import load_X_and_y
 from ml.utils.features.splitting.splitting import get_splits
+from ml.utils.features.transform_target import transform_target
 from ml.utils.features.validation.validate_contract import \
     validate_model_feature_pipeline_contract
 from ml.utils.loaders import load_yaml
@@ -37,11 +38,12 @@ class PreparationStep(PipelineStep[SearchContext]):
             snapshot_selection=None, 
             strict=ctx.strict
         )
-        splits = get_splits(
+        splits, splits_info = get_splits(
             X,
             y,
             split_cfg=ctx.model_cfg.split,
-            data_type=ctx.model_cfg.data_type
+            data_type=ctx.model_cfg.data_type,
+            task_cfg=ctx.model_cfg.task
         )
         input_schema, derived_schema = load_schemas(ctx.model_cfg)
 
@@ -67,8 +69,11 @@ class PreparationStep(PipelineStep[SearchContext]):
         class_weights = resolve_class_weighting(ctx.model_cfg, stats, library="catboost")
         ctx.class_weights = class_weights
 
+        y_train = transform_target(splits.y_train, ctx.model_cfg.target.transform)
+
         ctx.X_train = splits.X_train
-        ctx.y_train = splits.y_train
+        ctx.y_train = y_train
+        ctx.splits_info = splits_info
         ctx.pipeline_cfg = pipeline_cfg
         ctx.input_schema = input_schema
         ctx.derived_schema = derived_schema

@@ -18,11 +18,11 @@ from ml.data.utils.config.validate_config import validate_config
 from ml.data.utils.memory.compute_memory_change import compute_memory_change
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.data.utils.persistence.save_data import save_data
-from ml.exceptions import DataError, UserError
 from ml.logging_config import setup_logging
 from ml.utils.data.get_data_suffix_and_format import get_data_suffix_and_format
 from ml.utils.data.validate_data import validate_data
 from ml.utils.data.validate_min_rows import validate_min_rows
+from ml.utils.iso_no_col import iso_no_colon
 from ml.utils.loaders import load_json, load_yaml, read_data
 from ml.utils.persistence.save_metadata import save_metadata
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
@@ -47,6 +47,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--raw-version",
+        type=str,
+        required=True,
+        help="Raw data version to use, e.g., 'v1'"
+    )
+
+    parser.add_argument(
         "--raw-snapshot-id",
         type=str,
         default="latest",
@@ -64,7 +71,7 @@ def parse_args() -> argparse.Namespace:
         "--owner",
         type=str,
         default="Sebastijan",
-        help="Owner of the experiment (default: Sebastijan)"
+        help="Owner of the data (default: Sebastijan)"
     )
 
     return parser.parse_args()
@@ -81,7 +88,7 @@ def main() -> int:
 
     start_time = time.perf_counter()
 
-    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    timestamp = iso_no_colon(datetime.now())
     interim_id = f"{timestamp}_{uuid4().hex[:8]}"
     
     data_dir = Path("data/interim") / args.data / args.version / interim_id
@@ -94,7 +101,7 @@ def main() -> int:
         config_raw = load_yaml(Path(f"configs/data/interim/{args.data}/{args.version}.yaml"))
         config = validate_config(config_raw, type="interim")
 
-        raw_data_dir = Path("data/raw") / args.data / args.version
+        raw_data_dir = Path("data/raw") / args.data / args.raw_version
 
         raw_data_snapshot_path = get_snapshot_path(args.raw_snapshot_id, raw_data_dir)
 
@@ -104,20 +111,28 @@ def main() -> int:
         
         raw_data_path = raw_data_snapshot_path / raw_data_suffix
         validate_data(data_path=raw_data_path, metadata=raw_metadata)
+        logger.debug(f"Validated raw data at {raw_data_path} with metadata: {raw_metadata}")
 
         df = read_data(raw_data_format, raw_data_path)
+        logger.debug(f"Read raw data into DataFrame with {len(df)} rows and {len(df.columns)} columns.")
 
         df = normalize_columns(df, config.cleaning)
+        logger.debug(f"Normalized columns. DataFrame now has columns: {df.columns.tolist()}.")
+
         df = enforce_schema(df, schema=config.data_schema, drop_missing_ints=config.drop_missing_ints)
+        logger.debug(f"Enforced schema. DataFrame now has columns: {df.columns.tolist()} with dtypes: {df.dtypes.astype(str).to_dict()}.")
+        
         df = clean_data(df, config.invariants)
+        logger.debug(f"Cleaned data using invariants. DataFrame now has {len(df)} rows and {len(df.columns)} columns.")
+        
         validate_min_rows(df, config.min_rows)
 
         if config.drop_duplicates:
             df = df.drop_duplicates()
+            logger.info(f"Dropped duplicates. DataFrame now has {len(df)} rows.")
 
         data_path = save_data(df, config=config, data_dir=data_dir)
-
-        logger.info(f"Interim data created successfully at {data_path} with {len(df)} rows and {len(df.columns)} columns.")
+        logger.info(f"Interim data saved successfully at {data_path} with {len(df)} rows and {len(df.columns)} columns.")
 
         memory_usage = get_memory_usage(df)
 
@@ -130,6 +145,7 @@ def main() -> int:
             data_path=data_path,
             source_data_path=raw_data_path,
             source_data_format=raw_data_format,
+            source_data_version=args.raw_version,
             owner=args.owner,
             memory_info=memory_info,
             interim_run_id=interim_id

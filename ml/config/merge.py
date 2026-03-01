@@ -63,7 +63,7 @@ def resolve_extends(
 
     return deep_merge(parents + [cfg])
 
-def apply_env_overlay(cfg: dict[str, Any], env: str | None, base_path: Path, skip_missing: bool = True) -> dict[str, Any]:
+def apply_env_overlay(cfg: dict[str, Any], env: str | None, env_path: Path, skip_missing: bool = True) -> dict[str, Any]:
     if not env:
         if skip_missing:
             logger.warning("No environment specified; skipping env overlay.")
@@ -73,11 +73,9 @@ def apply_env_overlay(cfg: dict[str, Any], env: str | None, base_path: Path, ski
             logger.error(msg)
             raise ConfigError(msg)
 
-    env_path = (base_path / "env" / f"{env}.yaml").resolve()
-
     if not env_path.exists():
         if skip_missing:
-            logger.warning("Environment overlay not found: %s", env)
+            logger.warning("Environment overlay %s not found in env_path: %s", env, env_path)
             return cfg
         else:
             msg = f"Environment overlay not found: {env_path}"
@@ -85,6 +83,7 @@ def apply_env_overlay(cfg: dict[str, Any], env: str | None, base_path: Path, ski
             raise PipelineContractError(msg)
 
     env_cfg = load_yaml(env_path)
-    logger.info("Applied environment overlay: %s", env)
 
-    return deep_merge([cfg, env_cfg])
+    result = deep_merge([cfg, env_cfg])
+    logger.info("Applied environment overlay: %s", env)
+    return result

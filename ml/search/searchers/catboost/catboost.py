@@ -30,5 +30,6 @@ class SearchCatboost(Searcher):
             search_results=search_results,
             feature_lineage=ctx.require_feature_lineage,
             pipeline_hash=ctx.require_pipeline_hash,
-            scoring_method=ctx.require_scoring
+            scoring_method=ctx.require_scoring,
+            splits_info=ctx.require_splits_info
         )

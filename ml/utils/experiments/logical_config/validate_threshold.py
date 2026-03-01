@@ -15,7 +15,7 @@ def validate_threshold(task: TaskConfig, metrics_path: Path) -> float | None:
         return None
     
     metrics = load_json(metrics_path)
-    threshold = metrics.get("threshold", {}).get("value")
+    threshold = metrics.get("metrics", {}).get("threshold", {}).get("value")
 
     if threshold is None:
         logger.warning("No threshold value found in metrics. Defaulting to 0.5.")

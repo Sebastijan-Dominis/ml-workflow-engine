@@ -1,13 +1,16 @@
 # Modularize if new datas are added in the future, or if the interim config becomes too large. This will help keep the code organized and maintainable.
 
 import logging
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, Field, model_validator
 
-from ml.exceptions import ConfigError
-from ml.registry.interim_constraints import MIN_CONSTRAINTS, MAX_CONSTRAINTS, ALLOWED_VALUES_CONSTRAINTS
+from ml.data.utils.config.schemas.constants import BorderValue
 from ml.data.utils.config.schemas.shared import DataInfo
+from ml.exceptions import ConfigError
+from ml.registry.interim_constraints import (ALLOWED_VALUES_CONSTRAINTS,
+                                             MAX_CONSTRAINTS, MIN_CONSTRAINTS)
 
 logger = logging.getLogger(__name__)
 
@@ -55,9 +58,11 @@ class Cleaning(BaseModel):
     replace_spaces_in_columns: bool = Field(True, description="Whether to replace spaces in column names with underscores.")
     replace_dashes_in_columns: bool = Field(True, description="Whether to replace dashes in column names with underscores.")
 
+
+
 class Invariant(BaseModel):
-    min: Optional[float] = Field(None, description="Minimum allowed value for the column.")
-    max: Optional[float] = Field(None, description="Maximum allowed value for the column.")
+    min: Optional[BorderValue] = Field(None, description="Minimum allowed value for the column.")
+    max: Optional[BorderValue] = Field(None, description="Maximum allowed value for the column.")
     allowed_values: Optional[list] = Field(None, description="List of allowed values for the column.")
 
 class Invariants(BaseModel):
@@ -103,20 +108,20 @@ class Invariants(BaseModel):
     def validate_constraints(self):
         for field_name, min_allowed in MIN_CONSTRAINTS.items():
             invariant = getattr(self, field_name)
-            if invariant and invariant.min is not None and invariant.min < min_allowed:
+            if invariant and invariant.min is not None and invariant.min.value < min_allowed.value:
                 msg = (
                     f"Invalid invariant for '{field_name}': "
-                    f"min value {invariant.min} is less than {min_allowed}."
+                    f"min value {invariant.min.value} is less than {min_allowed.value}."
                 )
                 logger.error(msg)
                 raise ConfigError(msg)
 
         for field_name, max_allowed in MAX_CONSTRAINTS.items():
             invariant = getattr(self, field_name)
-            if invariant and invariant.max is not None and invariant.max > max_allowed:
+            if invariant and invariant.max is not None and invariant.max.value > max_allowed.value:
                 msg = (
                     f"Invalid invariant for '{field_name}': "
-                    f"max value {invariant.max} is greater than {max_allowed}."
+                    f"max value {invariant.max.value} is greater than {max_allowed.value}."
                 )
                 logger.error(msg)
                 raise ConfigError(msg)
@@ -147,6 +152,10 @@ class Invariants(BaseModel):
                 )
         return values
 
+class LineageConfig(BaseModel):
+    created_by: str
+    created_at: datetime
+
 class InterimConfig(BaseModel):
     data: DataInfo
     data_schema: DataSchema
@@ -155,3 +164,4 @@ class InterimConfig(BaseModel):
     drop_duplicates: bool = Field(True, description="Whether to drop duplicate rows from the data (default: True).")
     drop_missing_ints: bool = Field(True, description="Whether to drop rows with missing values in integer columns (default: True).")
     min_rows: int = Field(0, description="Minimum number of rows required after cleaning (default: 0).")
+    lineage: LineageConfig

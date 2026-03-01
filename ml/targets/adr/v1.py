@@ -4,5 +4,5 @@ from ml.targets.base import TargetStrategy
 
 
 class AdrTargetV1(TargetStrategy):
-    def build(self, data: pd.DataFrame) -> pd.Series:
-        return data["adr"].copy()
+    def _build(self, data: pd.DataFrame) -> pd.DataFrame:
+        return data[["adr", "row_id"]].copy()

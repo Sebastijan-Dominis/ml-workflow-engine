@@ -1,8 +1,7 @@
-from typing import Any
-
 from pydantic import BaseModel, Field
 
-from ml.config.validation_schemas.base_model_params import BaseEnsembleParams, BaseModelParams
+from ml.config.validation_schemas.base_model_params import (BaseEnsembleParams,
+                                                            BaseModelParams)
 from ml.config.validation_schemas.hardware_cfg import HardwareConfig
 
 

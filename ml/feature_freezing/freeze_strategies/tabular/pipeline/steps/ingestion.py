@@ -1,11 +1,9 @@
 import logging
-from pathlib import Path
 
-from ml.exceptions import DataError
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
     FreezeContext
-from ml.feature_freezing.utils.operators import validate_operators
 from ml.feature_freezing.utils.data_loader import load_data_with_lineage
+from ml.feature_freezing.utils.operators import validate_operators
 from ml.utils.data.validate_min_rows import validate_min_rows
 from ml.utils.data.validate_row_id import validate_row_id
 from ml.utils.pipeline_core.step import PipelineStep

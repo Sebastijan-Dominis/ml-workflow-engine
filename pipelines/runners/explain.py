@@ -23,6 +23,7 @@ from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
     validate_pipeline_cfg
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
+from ml.utils.iso_no_col import iso_no_colon
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
@@ -89,8 +90,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--top-k",
         type=int,
-        default=20,
-        help="Number of top features to include in the explainability output (default: 20)"
+        default=None,
+        help="Number of top features to include in the explainability output (will programmatically default to settings-specific values if not provided, but can be overridden with this flag)"
     )
 
     return parser.parse_args()
@@ -102,7 +103,7 @@ def main() -> int:
     args = parse_args()
 
     start_time = time.perf_counter()
-    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    timestamp = iso_no_colon(datetime.now())
 
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
 
@@ -111,10 +112,12 @@ def main() -> int:
     try:
         experiment_parent_dir = Path("experiments") / args.problem / args.segment / args.version
         experiment_dir = get_snapshot_path(args.experiment_id, experiment_parent_dir)
+        print(f"Using experiment directory: {experiment_dir}")
         search_dir = experiment_dir / "search"
 
         train_parent_dir = experiment_dir / "training"
         train_dir = get_snapshot_path(args.train_id, train_parent_dir)
+        print(f"Using training directory: {train_dir}")
         train_run_id = train_dir.name
     except Exception as e:
         logger.exception("Failed to get experiment or training snapshot path")
@@ -149,16 +152,19 @@ def main() -> int:
         key = model_cfg.algorithm.name.lower()
         explainer = get_explainer(key)
 
+        top_k = args.top_k if args.top_k is not None else model_cfg.explainability.top_k
+
         logger.info(
-            "Starting explainability | problem=%s segment=%s version=%s train_id=%s explain_id=%s",
+            "Starting explainability | problem=%s segment=%s version=%s train_id=%s explain_id=%s top_k=%s",
             args.problem,
             args.segment,
             args.version,
             train_run_id,
             explain_run_id,
+            top_k
         )
         
-        output = explainer.explain(model_cfg=model_cfg, train_dir=train_dir, top_k=args.top_k)
+        output = explainer.explain(model_cfg=model_cfg, train_dir=train_dir, top_k=top_k)
 
         explainability_metrics = output.explainability_metrics
         feature_lineage = output.feature_lineage
@@ -183,16 +189,18 @@ def main() -> int:
             start_time=start_time,
             timestamp=timestamp,
             artifacts=artifacts,
-            pipeline_cfg_hash=pipeline_cfg_hash
+            pipeline_cfg_hash=pipeline_cfg_hash,
+            top_k=top_k
         )
 
         logger.info(
-            "Explainability results persisted | problem=%s segment=%s version=%s train_id=%s explain_id=%s",
+            "Explainability results persisted | problem=%s segment=%s version=%s train_id=%s explain_id=%s top_k=%s",
             args.problem,
             args.segment,
             args.version,
             train_run_id,
             explain_run_id,
+            top_k
         )
         return 0
 

@@ -7,15 +7,15 @@ search:
   random_state: 42
 
   broad:
-    iterations: 10
-    n_iter: 1
+    iterations: 300
+    n_iter: 15
     param_distributions:
       model:
-        depth: [4, 6, 8, 10]
+        depth: [2, 4, 6, 8]
         learning_rate: [0.005, 0.01, 0.03, 0.05, 0.1, 0.2, 0.3]
-        l2_leaf_reg: [1.0, 3.0, 5.0, 7.0, 9.0]
+        l2_leaf_reg: [1.0, 3.0, 5.0, 7.0, 10.0, 15.0]
         random_strength: [1.0, 2.0, 5.0, 8.0, 10.0, 12.0]
-        min_data_in_leaf: [1, 3, 5, 8, 10, 15, 20]
+        min_data_in_leaf: [3, 5, 8, 10, 15, 20, 30]
         border_count: [32, 64, 128, 254]
       ensemble:
         colsample_bylevel: [1.0]
@@ -23,8 +23,8 @@ search:
 
   narrow:
     enabled: true
-    iterations: 10
-    n_iter: 1
+    iterations: 300
+    n_iter: 10
     param_configurations:
       model:
         depth:
@@ -42,7 +42,7 @@ search:
           include: true
           factors: [0.7, 0.85, 1.0, 1.15, 1.3]
           low: 1.0
-          high: 30.0
+          high: 40.0
           decimals: 2
         random_strength:
           include: true
@@ -54,7 +54,7 @@ search:
           include: true
           offsets: [2, 5, 10]
           low: 1
-          high: 50
+          high: 60
         border_count:
           include: true
       ensemble:
@@ -64,3 +64,7 @@ search:
           low: 0.0
           high: 5.0
           decimals: 3
+
+search_lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-27t23:53:30z"

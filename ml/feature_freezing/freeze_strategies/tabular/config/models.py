@@ -1,6 +1,7 @@
 import logging
+from datetime import datetime
 from pathlib import Path
-from typing import List, Literal, Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -36,9 +37,8 @@ class StorageConfig(BaseModel):
     compression: Optional[str] = "snappy"
 
 class LineageConfig(BaseModel):
-    feature_set_version: str
     created_by: str
-    created_at: str
+    created_at: datetime
 
 class TabularFeaturesConfig(BaseModel):
     type: str = "tabular"

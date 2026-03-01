@@ -1,8 +1,13 @@
+import logging
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from ml.config.validation_schemas.model_specs import SplitConfig, DATA_TYPE
-from ml.registry.tabular_splits import TabularSplits
+from ml.config.validation_schemas.model_specs import (DATA_TYPE, SplitConfig,
+                                                      TaskConfig)
+from ml.registry.tabular_splits import AllSplitsInfo, SplitInfo, TabularSplits
+
+logger = logging.getLogger(__name__)
 
 SPLIT = tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]
 
@@ -26,7 +31,13 @@ def split_data(X: pd.DataFrame, y: pd.Series, split_cfg: SplitConfig, test_size:
 
     return X1, X2, y1, y2
 
-def get_splits_tabular(X: pd.DataFrame, y: pd.Series, split_cfg: SplitConfig) -> TabularSplits:
+def get_splits_tabular(
+    X: pd.DataFrame, 
+    y: pd.Series, 
+    *,
+    split_cfg: SplitConfig,
+    task_cfg: TaskConfig
+) -> tuple[TabularSplits, AllSplitsInfo]:
     X_train_val, X_test, y_train_val, y_test = split_data(
         X,
         y,
@@ -52,19 +63,45 @@ def get_splits_tabular(X: pd.DataFrame, y: pd.Series, split_cfg: SplitConfig) ->
         X_test=X_test,
         y_train=y_train,
         y_val=y_val,
-        y_test=y_test,
+        y_test=y_test
     )
 
-    return splits
+    train_rows = len(X_train)
+    val_rows = len(X_val)
+    test_rows = len(X_test)
+
+    train_info = SplitInfo(n_rows=train_rows)
+    val_info = SplitInfo(n_rows=val_rows)
+    test_info = SplitInfo(n_rows=test_rows)
+
+    if task_cfg.type == "classification":
+        train_info.class_distribution = y_train.value_counts(normalize=True).to_dict()
+        val_info.class_distribution = y_val.value_counts(normalize=True).to_dict()
+        test_info.class_distribution = y_test.value_counts(normalize=True).to_dict()
+
+        train_info.positive_rate = y_train.mean()        
+        val_info.positive_rate = y_val.mean()
+        test_info.positive_rate = y_test.mean()
+
+    splits_info = AllSplitsInfo(
+        train=train_info,
+        val=val_info,
+        test=test_info
+    )
+
+    return splits, splits_info
 
 def get_splits(
     X: pd.DataFrame, 
     y: pd.Series,
     *, 
     split_cfg: SplitConfig, 
-    data_type: DATA_TYPE
-) -> TabularSplits:
+    data_type: DATA_TYPE,
+    task_cfg: TaskConfig
+) -> tuple[TabularSplits, AllSplitsInfo]:
     if data_type == "tabular":
-        return get_splits_tabular(X, y, split_cfg)
+        splits, splits_info = get_splits_tabular(X, y, split_cfg=split_cfg, task_cfg=task_cfg)
+        logger.debug(f"Data split into train/val/test. Splits info:\n{splits_info}")
+        return splits, splits_info
     elif data_type == "time-series":
         raise NotImplementedError("Time-series split not implemented yet.")

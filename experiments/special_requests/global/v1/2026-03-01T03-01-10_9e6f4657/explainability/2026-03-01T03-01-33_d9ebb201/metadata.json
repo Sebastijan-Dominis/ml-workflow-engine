@@ -1,0 +1,87 @@
+{
+  "run_identity": {
+    "stage": "explainability",
+    "explain_run_id": "2026-03-01T03-01-33_d9ebb201",
+    "train_run_id": "2026-03-01T03-01-19_cc6b7641",
+    "snapshot_id": "2026-03-01T03-01-10_9e6f4657",
+    "status": "success"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v3",
+        "snapshot_id": "2026-03-01T01-17-47_d0f8fcda",
+        "snapshot_path": "feature_store\\booking_context_features\\v3\\2026-03-01T01-17-47_d0f8fcda",
+        "file_hash": "e480ae85e69d0bfaef5f558375cdf52b96e41b0c1190cd88e0f4d6841aa44bcc",
+        "in_memory_hash": "51e3a404fefd1527a5d288506ba038a2",
+        "feature_schema_hash": "6260410133ae4a20da027348589165443b7ff5a0dddc5147309099cfcabe7bbc",
+        "operators_hash": "ab7459cf2079e7d1ec1d4c0beab90399",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-01T01-17-55_150df20d",
+        "snapshot_path": "feature_store\\customer_history_features\\v2\\2026-03-01T01-17-55_150df20d",
+        "file_hash": "192b5d2786f1cd4432f394274e2527f498e909897adae173a2eab3dcc18de54f",
+        "in_memory_hash": "b75585364176390aa75117c6ecad1260",
+        "feature_schema_hash": "21afc96800d985c86b076b4a9774b17e36b795cd98766bb2ebbec6f6571645a5",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v3",
+        "snapshot_id": "2026-03-01T01-18-02_654a46b6",
+        "snapshot_path": "feature_store\\pricing_party_features\\v3\\2026-03-01T01-18-02_654a46b6",
+        "file_hash": "37185e0b667a0f464746e5fce2f81fc55ded867061b7fe768a88271541699231",
+        "in_memory_hash": "4bbf568c51e0898c5566eaade075d96b",
+        "feature_schema_hash": "e05f1403f776dddd08b55e3ca0a931de87bcffbfefcebac4145b177a2f8f6e21",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-01T01-18-06_de06fbf5",
+        "snapshot_path": "feature_store\\channel_and_agent_features\\v1\\2026-03-01T01-18-06_de06fbf5",
+        "file_hash": "0337f41bb50cd3867a3eb3e2df515be8e12bff00deca489c57005e3b00af4ae4",
+        "in_memory_hash": "ab1a91af2b3cf4e926fa615b91614a0f",
+        "feature_schema_hash": "94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "room_allocation_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-01T01-18-11_634c0e0d",
+        "snapshot_path": "feature_store\\room_allocation_features\\v2\\2026-03-01T01-18-11_634c0e0d",
+        "file_hash": "bacdb147229f30e8a0d432125794c7463772ac454e1177b1dbb8af3d14e2ac37",
+        "in_memory_hash": "5f2043aedb4564c8da60aa9fed376e44",
+        "feature_schema_hash": "c78c25c2a15b3c5954099579a6833444e511305955e39d31c0d98da93936f2cf",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      }
+    ],
+    "target_column": "total_of_special_requests",
+    "problem": "special_requests",
+    "segment": "global",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "3d27293fc37acb6f26eb234564aef1324f1eb8c15aac175c0632f81a1b594d72",
+    "pipeline_cfg_hash": "1a7ca9f3aeec3a8e03e47fd820f49e6e4e90c6099f5f74efa0feeea73aab47d1"
+  },
+  "artifacts": {
+    "model_hash": "9d48ee0f228ef3e16517819eb3fb3d3be8a940536e7b71a0dd09a2008c7e2b19",
+    "model_path": "experiments\\special_requests\\global\\v1\\2026-03-01T03-01-10_9e6f4657\\training\\2026-03-01T03-01-19_cc6b7641\\model.joblib",
+    "pipeline_path": "experiments\\special_requests\\global\\v1\\2026-03-01T03-01-10_9e6f4657\\training\\2026-03-01T03-01-19_cc6b7641\\pipeline.joblib",
+    "pipeline_hash": "a81256c96c95838e0890daf1294e7aedeb5555b5b52db3cf44d54272ae8a152a",
+    "top_k_feature_importances_path": "experiments\\special_requests\\global\\v1\\2026-03-01T03-01-10_9e6f4657\\explainability\\2026-03-01T03-01-33_d9ebb201\\top_k_feature_importances.csv",
+    "top_k_feature_importances_hash": "694f66a3009225dcefe9941814be0603161fbc44907d57e7938e6823bc21d29d",
+    "top_k_shap_importances_path": "experiments\\special_requests\\global\\v1\\2026-03-01T03-01-10_9e6f4657\\explainability\\2026-03-01T03-01-33_d9ebb201\\top_k_shap_importances.csv",
+    "top_k_shap_importances_hash": "c893a1c7be5491c529d4fe68adf4fb105cee5bcea29cfedc785897ad55ec2502"
+  },
+  "top_k": 20
+}

@@ -12,6 +12,6 @@ def ensure_required_fields_present_in_dict(
     missing_fields = [field for field in required_fields if field not in input_dict]
 
     if missing_fields:
-        msg = f"Dictionary for is missing required fields: {', '.join(missing_fields)}"
+        msg = f"dictionary for is missing required fields: {', '.join(missing_fields)}"
         logger.error(msg)
         raise DataError(msg)

@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.registry.tabular_splits import AllSplitsInfo
 from ml.search.persistence.prepare_metadata import prepare_metadata
 from ml.utils.persistence.save_metadata import save_metadata
 from ml.utils.runtime.save_runtime import save_runtime_snapshot
@@ -22,7 +23,8 @@ def persist_experiment(
     start_time: float, 
     feature_lineage: list[dict], 
     pipeline_hash: str,
-    scoring_method: str
+    scoring_method: str,
+    splits_info: AllSplitsInfo
 ) -> None:
     
     metadata = prepare_metadata(
@@ -33,7 +35,8 @@ def persist_experiment(
         timestamp=timestamp, 
         feature_lineage=feature_lineage, 
         pipeline_hash=pipeline_hash,
-        scoring_method=scoring_method
+        scoring_method=scoring_method,
+        splits_info=splits_info
     )
 
     save_metadata(metadata=metadata, target_dir=search_dir)

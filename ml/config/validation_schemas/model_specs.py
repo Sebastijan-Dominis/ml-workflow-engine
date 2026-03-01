@@ -1,7 +1,9 @@
 import logging
-from typing import Any, Dict, List, Literal, Optional
+from datetime import datetime
+from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import (BaseModel, ConfigDict, Field, field_validator,
+                      model_validator)
 from pyparsing.helpers import Enum
 
 from ml.exceptions import ConfigError
@@ -39,27 +41,33 @@ class TargetConstraintsConfig(BaseModel):
     min_value: Optional[float] = None
     max_value: Optional[float] = None
 
-class TargetConfig(BaseModel):
-    name: str
-    allowed_dtypes: list[str]
-    problem_type: Literal["classification", "regression"]
-    classes: Optional[ClassesConfig] = None
-    constraints: TargetConstraintsConfig = Field(default_factory=TargetConstraintsConfig)
-    version: str
+class TargetTransformConfig(BaseModel):
+    enabled: bool = False
+    type: Literal["log1p", "sqrt"] | None = None
+    lambda_value: Optional[float] = None  # Only used for Box-Cox transform
 
-    @field_validator("classes", mode="after")
-    @classmethod
-    def validate_classes_for_classification(cls, v, info):
-        if info.data.get("problem_type") == "classification" and v is None:
-            msg = "Classes must be provided for classification problems."
+    # Validate that if type is boxcox, then lambda_value must be provided, and if type is not boxcox, then lambda_value must be None
+    @field_validator("lambda_value", mode="after")
+    def validate_lambda_value_based_on_type(cls, v, info):
+        transform_type = info.data.get("type")
+        if transform_type == "boxcox" and v is None:
+            msg = "lambda_value must be provided for Box-Cox transformation."
             logger.error(msg)
             raise ConfigError(msg)
-        if info.data.get("problem_type") == "classification" and v is not None and v.count < 2:
-            msg = f"Classes count must be at least 2 for classification problems, got {v.count}."
+        if transform_type != "boxcox" and v is not None:
+            msg = "lambda_value should only be provided for Box-Cox transformation."
             logger.error(msg)
             raise ConfigError(msg)
         return v
-    
+
+class TargetConfig(BaseModel):
+    name: str
+    version: str
+    allowed_dtypes: list[str]
+    classes: Optional[ClassesConfig] = None
+    constraints: TargetConstraintsConfig = Field(default_factory=TargetConstraintsConfig)
+    transform: TargetTransformConfig = Field(default_factory=TargetTransformConfig)
+
     @field_validator("version", mode="before")
     @classmethod
     def validate_version_format(cls, v):
@@ -119,7 +127,7 @@ class FeatureSetConfig(BaseModel):
 
 class SplitConfig(BaseModel):
     strategy: Literal["random"]
-    stratify_by: str
+    stratify_by: Optional[str] = None
     test_size: float = Field(gt=0.0, lt=1.0)
     val_size: float = Field(gt=0.0, lt=1.0)
     random_state: int
@@ -170,9 +178,9 @@ ClassImbalancePolicy = Literal[
 ]
 
 class ClassWeightingConfig(BaseModel):
-    policy: ClassImbalancePolicy = "if_imbalanced"
-    imbalance_threshold: float = 0.1  # e.g., if the minority class is less than 10% of the data, consider it imbalanced
-    strategy: Literal["ratio", "balanced"] = "ratio"
+    policy: ClassImbalancePolicy = "off"
+    imbalance_threshold: Optional[float] = None
+    strategy: Optional[Literal["ratio", "balanced"]] = None
 
 class FeatureImportanceMethodConfig(BaseModel):
     enabled: bool = False
@@ -209,13 +217,17 @@ class ExplainabilityConfig(BaseModel):
 
 DATA_TYPE = Literal["tabular", "time-series"]
 
+class ModelSpecsLineageConfig(BaseModel):
+    created_by: str
+    created_at: datetime
+
 class MetaConfig(BaseModel):
     model_config = ConfigDict(extra="allow")
-    sources: Optional[Dict[str, Any]] = None
+    sources: Optional[dict[str, Any]] = None
     env: Optional[str] = None
     best_params_path: Optional[str] = None
     validation_status: Optional[str] = None
-    validation_errors: Optional[List[Any]] = None
+    validation_errors: Optional[list[Any]] = None
     config_hash: Optional[str] = None
 
 class ModelSpecs(BaseModel):
@@ -234,6 +246,64 @@ class ModelSpecs(BaseModel):
     feature_store: FeatureStoreConfig
     explainability: ExplainabilityConfig = Field(default_factory=ExplainabilityConfig)
     data_type: DATA_TYPE
+    model_specs_lineage: ModelSpecsLineageConfig
     meta: MetaConfig = Field(default_factory=MetaConfig, alias="_meta")
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
+
+    @model_validator(mode="after")
+    def validate_task_target_consistency(self):
+        # --- Classification rules ---
+        if self.task.type == TaskType.classification:
+            if self.target.classes is None:
+                msg = "Classes must be provided for classification tasks."
+                logger.error(msg)
+                raise ConfigError(msg)
+
+            if self.target.classes.count < 2:
+                msg = (
+                    f"Classes count must be at least 2 for classification tasks, "
+                    f"got {self.target.classes.count}."
+                )
+                logger.error(msg)
+                raise ConfigError(msg)
+
+        # --- Non-classification rules ---
+        else:
+            if self.target.classes is not None:
+                msg = (
+                    f"Classes should not be provided for task type "
+                    f"'{self.task.type}'."
+                )
+                logger.error(msg)
+                raise ConfigError(msg)
+
+        return self
+    
+    # Validate that target.transform.enabled is False and target.transform.type is None for non-regression tasks, while for regression tasks, if target.transform.enabled is True, then target.transform.type must be specified
+    @model_validator(mode="after")
+    def validate_target_transform_consistency(cls, v):
+        if v.task.type != TaskType.regression:
+            if v.target.transform.enabled:
+                msg = f"Target transformation is only applicable for regression tasks. Found enabled for task type '{v.task.type}'."
+                logger.error(msg)
+                raise ConfigError(msg)
+            if v.target.transform.type is not None:
+                msg = f"Target transformation type should be None for non-regression tasks. Found '{v.target.transform.type}' for task type '{v.task.type}'."
+                logger.error(msg)
+                raise ConfigError(msg)
+        else:
+            if v.target.transform.enabled and v.target.transform.type is None:
+                msg = "Target transformation type must be specified when target transformation is enabled for regression tasks."
+                logger.error(msg)
+                raise ConfigError(msg)
+        return v
+    
+    # validate that class_weighting is off for non-classification tasks
+    @model_validator(mode="after")
+    def validate_class_weighting_consistency(cls, v):
+        if v.task.type != TaskType.classification and v.class_weighting.policy != "off":
+            msg = f"Class weighting is only applicable for classification tasks. Found policy '{v.class_weighting.policy}' for task type '{v.task.type}'."
+            logger.error(msg)
+            raise ConfigError(msg)
+        return v

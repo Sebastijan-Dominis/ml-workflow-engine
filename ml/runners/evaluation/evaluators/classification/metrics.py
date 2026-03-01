@@ -1,9 +1,12 @@
 import logging
-from pathlib import Path
 from typing import Optional
 
+import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
+from sklearn.metrics import (accuracy_score, average_precision_score,
+                             balanced_accuracy_score, brier_score_loss,
+                             confusion_matrix, f1_score, log_loss,
+                             precision_score, recall_score, roc_auc_score)
 from sklearn.pipeline import Pipeline
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
@@ -13,24 +16,107 @@ from ml.runners.evaluation.utils.get_row_ids import get_row_ids
 
 logger = logging.getLogger(__name__)
 
-def compute_metrics(y_true: pd.Series, y_pred: pd.Series, y_prob: Optional[pd.Series] = None) -> dict[str, float]:
-    # Compute basic classification metrics
-    metrics = {
-        "accuracy": accuracy_score(y_true, y_pred),
-        "f1": f1_score(y_true, y_pred),
-    }
+def expected_calibration_error(
+    y_true: pd.Series,
+    y_prob: pd.Series,
+    n_bins: int = 10,
+) -> float:
+    """
+    Computes Expected Calibration Error (ECE).
+    """
+    y_true_np = np.asarray(y_true)
+    y_prob_np = np.asarray(y_prob)
 
-    # Compute ROC AUC, handle case where it's not applicable
+    bins = np.linspace(0.0, 1.0, n_bins + 1)
+    bin_ids = np.digitize(y_prob_np, bins) - 1
+
+    ece = 0.0
+    for i in range(n_bins):
+        mask = bin_ids == i
+        if not np.any(mask):
+            continue
+
+        bin_accuracy = y_true_np[mask].mean()
+        bin_confidence = y_prob_np[mask].mean()
+        bin_weight = mask.mean()
+
+        ece += np.abs(bin_accuracy - bin_confidence) * bin_weight
+
+    return float(ece)
+
+def compute_metrics(
+    y_true: pd.Series,
+    y_pred: pd.Series,
+    y_prob: Optional[pd.Series] = None,
+    *,
+    threshold: float | None = None,
+) -> dict[str, float]:
+
+    metrics: dict[str, float] = {}
+
+    # -------------------------
+    # Base rates
+    # -------------------------
+    metrics["positive_rate"] = float(y_true.mean())
+    metrics["predicted_positive_rate"] = float(y_pred.mean())
+    if threshold is not None:
+        metrics["threshold"] = float(threshold)
+
+    # -------------------------
+    # Threshold-based metrics
+    # -------------------------
+    metrics["accuracy"] = float(accuracy_score(y_true, y_pred))
+    metrics["f1"] = float(f1_score(y_true, y_pred, zero_division=0))
+    metrics["precision"] = float(precision_score(y_true, y_pred, zero_division=0))
+    metrics["recall"] = float(recall_score(y_true, y_pred, zero_division=0))
+    metrics["balanced_accuracy"] = float(balanced_accuracy_score(y_true, y_pred))
+
+    # Specificity (true negative rate)
+    try:
+        tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+        metrics["specificity"] = tn / (tn + fp) if (tn + fp) > 0 else 0.0
+    except ValueError:
+        logger.warning("Confusion matrix could not be computed.")
+        metrics["specificity"] = np.nan
+
+    # -------------------------
+    # Probability-based metrics
+    # -------------------------
     if y_prob is not None:
         try:
-            metrics["roc_auc"] = roc_auc_score(y_true, y_prob)
+            metrics["roc_auc"] = float(roc_auc_score(y_true, y_prob))
         except ValueError:
-            logger.warning("ROC AUC score is not defined for the provided inputs.")
-            metrics["roc_auc"] = "undefined"
-    else:
-        metrics["roc_auc"] = "undefined"
+            logger.warning("ROC AUC undefined.")
+            metrics["roc_auc"] = np.nan
 
-    # Return computed metrics
+        try:
+            metrics["pr_auc"] = float(average_precision_score(y_true, y_prob))
+        except ValueError:
+            logger.warning("PR AUC undefined.")
+            metrics["pr_auc"] = np.nan
+
+        try:
+            metrics["log_loss"] = float(log_loss(y_true, y_prob))
+        except ValueError:
+            logger.warning("Log loss undefined.")
+            metrics["log_loss"] = np.nan
+
+        try:
+            metrics["brier_score"] = float(brier_score_loss(y_true, y_prob))
+        except ValueError:
+            logger.warning("Brier score undefined.")
+            metrics["brier_score"] = np.nan
+
+        # Calibration
+        metrics["ece"] = expected_calibration_error(y_true, y_prob)
+
+    else:
+        metrics["roc_auc"] = np.nan
+        metrics["pr_auc"] = np.nan
+        metrics["log_loss"] = np.nan
+        metrics["brier_score"] = np.nan
+        metrics["ece"] = np.nan
+
     return metrics
 
 def evaluate_split(
@@ -60,7 +146,7 @@ def evaluate_split(
     y_prob = pd.Series(y_prob, index=y.index, name="y_prob")
 
     # Compute and return metrics
-    metrics = compute_metrics(y, y_pred, y_prob)
+    metrics = compute_metrics(y, y_pred, y_prob, threshold=best_threshold)
 
     df_preds = pd.DataFrame({
         "row_id": split_row_ids,
@@ -72,7 +158,13 @@ def evaluate_split(
     
     return metrics, df_preds
 
-def evaluate_model(model_cfg: TrainModelConfig, *, pipeline: Pipeline, data_splits: DataSplits, best_threshold: float | None) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
+def evaluate_model(
+    model_cfg: TrainModelConfig, 
+    *, 
+    pipeline: Pipeline, 
+    data_splits: DataSplits, 
+    best_threshold: float | None
+) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
     # Create a dictionary to hold evaluation results
     evaluation_metrics = {}
     prediction_dfs = {}

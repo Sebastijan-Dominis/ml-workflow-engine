@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.exceptions import PipelineContractError
 from ml.runners.evaluation.constants.data_splits import DataSplits
 from ml.runners.evaluation.constants.output import EVALUATE_OUTPUT
 from ml.runners.evaluation.evaluators.base import Evaluator
@@ -39,7 +40,7 @@ class EvaluateClassification(Evaluator):
         if not hasattr(pipeline, "predict_proba"):
             msg = f"The loaded pipeline does not implement 'predict_proba', which is required for classification evaluation. Please ensure the pipeline is a probabilistic classifier."
             logger.error(msg)
-            raise ValueError(msg)
+            raise PipelineContractError(msg)
 
         # Get data splits
         snapshot_binding = get_snapshot_binding_from_training_metadata(train_metadata)
@@ -58,11 +59,12 @@ class EvaluateClassification(Evaluator):
 
         validate_snapshot_ids(feature_lineage, snapshot_selection)
 
-        splits = get_splits(
+        splits, splits_info = get_splits(
             X=X,
             y=y,
             split_cfg=model_cfg.split,
-            data_type=model_cfg.data_type
+            data_type=model_cfg.data_type,
+            task_cfg=model_cfg.task
         )
         X_train = splits.X_train
         y_train = splits.y_train
@@ -71,7 +73,6 @@ class EvaluateClassification(Evaluator):
         X_test = splits.X_test
         y_test = splits.y_test
 
-        # TODO: Import row_id, validate, and merge with X for each split to ensure row_id is available for creating prediction DataFrames and consistent with original data
         data_splits = DataSplits(
             train=(X_train, y_train),
             val=(X_val, y_val),
@@ -79,7 +80,12 @@ class EvaluateClassification(Evaluator):
         )
 
         # Evaluate the model
-        metrics, prediction_dfs = evaluate_model(model_cfg, pipeline=pipeline, data_splits=data_splits, best_threshold=best_threshold)
+        metrics, prediction_dfs = evaluate_model(
+            model_cfg, 
+            pipeline=pipeline, 
+            data_splits=data_splits, 
+            best_threshold=best_threshold
+        )
 
         output = EVALUATE_OUTPUT(
             metrics=metrics,

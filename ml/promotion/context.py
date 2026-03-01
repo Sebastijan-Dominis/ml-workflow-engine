@@ -5,6 +5,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from ml.promotion.constants.constants import RunnersMetadata
+from ml.utils.iso_no_col import iso_no_colon
 
 
 @dataclass
@@ -29,7 +30,7 @@ class PromotionContext:
 
 
 def build_context(args: argparse.Namespace) -> PromotionContext:
-    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    timestamp = iso_no_colon(datetime.now())
     run_id = f"{timestamp}_{uuid4().hex[:8]}"
 
     model_registry_dir = Path("model_registry")

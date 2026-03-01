@@ -15,3 +15,7 @@ assumptions:
   handles_categoricals: true
   supports_regression: true
   supports_classification: true
+
+lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-27t23:53:30z"

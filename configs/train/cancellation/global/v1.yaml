@@ -4,4 +4,8 @@ extends:
   - ../../../../configs/model_specs/cancellation/global/v1.yaml
 
 training:
-  iterations: 10
+  iterations: 2500
+
+training_lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-27t23:53:30z"

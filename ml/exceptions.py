@@ -10,7 +10,6 @@ class RuntimeMLException(MLException):
 class ConfigError(UserError):
     """Invalid or inconsistent configuration."""
 
-
 class DataError(UserError):
     """Feature store or data issues."""
 

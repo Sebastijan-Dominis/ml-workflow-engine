@@ -17,7 +17,7 @@ def load_yaml(path: Path) -> dict[str, Any]:
         logger.error(msg)
         raise ConfigError(msg)
 
-    with path.open("r") as f:
+    with path.open("r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f) or {}
 
     if not isinstance(cfg, dict):
@@ -33,7 +33,7 @@ def load_json(path: Path) -> dict[str, Any]:
         logger.error(msg)
         raise ConfigError(msg)
 
-    with path.open("r") as f:
+    with path.open("r", encoding="utf-8") as f:
         try:
             cfg = json.load(f)
         except json.JSONDecodeError as e:
@@ -56,7 +56,10 @@ def read_data(format: str, path: Path) -> pd.DataFrame:
         raise ConfigError(msg)
     
     try:
-        df = reader(path)
+        if format == "csv":
+            df = reader(path, na_values=['', 'NA', 'nan'], keep_default_na=True)
+        else:
+            df = reader(path)
         logger.info(f"Successfully read data in format '{format}' from {path}.")
         return df
     except Exception as e:

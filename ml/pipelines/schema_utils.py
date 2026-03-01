@@ -1,11 +1,11 @@
-from typing import List, Tuple
-
 import pandas as pd
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+                                                    TrainModelConfig)
 from ml.pipelines.constants.pipeline_features import PipelineFeatures
 
-def get_categorical_features(schema: pd.DataFrame) -> List[str]:
+
+def get_categorical_features(schema: pd.DataFrame) -> list[str]:
     """
     Return list of categorical feature names from a schema DataFrame.
     """

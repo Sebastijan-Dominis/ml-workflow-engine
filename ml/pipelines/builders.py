@@ -1,5 +1,4 @@
 import logging
-from typing import Dict
 
 import pandas as pd
 from sklearn.pipeline import Pipeline
@@ -16,7 +15,7 @@ __version__ = "1.0.0"
 def build_pipeline(
     *,
     model_cfg: SearchModelConfig | TrainModelConfig,
-    pipeline_cfg: Dict,
+    pipeline_cfg: dict,
     input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame,
 ) -> Pipeline:

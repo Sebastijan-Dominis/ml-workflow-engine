@@ -56,28 +56,52 @@ invariants:
   is_canceled:
     allowed_values: [0, 1]
   lead_time:
-    min: 0
+    min:
+      value: 0
+      op: gte
   arrival_date_year:
-    min: 2015
-    max: 2017
+    min:
+      value: 2015
+      op: gte
+    max:
+      value: 2017
+      op: lte
   arrival_date_month:
     allowed_values: [January, February, March, April, May, June, July, August, September, October, November, December]
   arrival_date_week_number:
-    min: 1
-    max: 53
+    min:
+      value: 1
+      op: gte
+    max:
+      value: 53
+      op: lte
   arrival_date_day_of_month:
-    min: 1
-    max: 31
+    min:
+      value: 1
+      op: gte
+    max:
+      value: 31
+      op: lte
   stays_in_weekend_nights:
-    min: 0
+    min: 
+      value: 0
+      op: gte
   stays_in_week_nights:
-    min: 0
+    min:
+      value: 0
+      op: gte
   adults:
-    min: 0
+    min: 
+      value: 0
+      op: gte
   children:
-    min: 0
+    min: 
+      value: 0
+      op: gte
   babies:
-    min: 0
+    min: 
+      value: 0
+      op: gte
   meal:
     allowed_values: [BB, HB, FB, SC, Undefined]
   market_segment:
@@ -87,21 +111,35 @@ invariants:
   is_repeated_guest:
     allowed_values: [0, 1]
   previous_cancellations:
-    min: 0
+    min:
+      value: 0
+      op: gte
   previous_bookings_not_canceled:
-    min: 0
+    min: 
+      value: 0
+      op: gte
   booking_changes:
-    min: 0
+    min: 
+      value: 0
+      op: gte
   deposit_type:
     allowed_values: [No Deposit, Non Refund, Refundable]
   days_in_waiting_list:
-    min: 0
+    min:
+      value: 0
+      op: gte
   adr:
-    min: 0
+    min: 
+      value: 0
+      op: gte
   required_car_parking_spaces:
-    min: 0
+    min:
+      value: 0
+      op: gte
   total_of_special_requests:
-    min: 0
+    min:
+      value: 0
+      op: gte
   reservation_status:
     allowed_values: [Canceled, Check-Out, No-Show]
   reserved_room_type:
@@ -114,3 +152,7 @@ drop_duplicates: true
 drop_missing_ints: true
 
 min_rows: 100000
+
+lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-27t23:53:30z"

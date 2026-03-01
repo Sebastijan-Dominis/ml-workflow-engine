@@ -23,7 +23,8 @@ def persist_explainability_run(
         start_time: float, 
         timestamp: str, 
         artifacts: dict[str, str], 
-        pipeline_cfg_hash: str
+        pipeline_cfg_hash: str,
+        top_k: int
 ) -> None:
     if explainability_metrics.top_k_feature_importances is not None:
         feature_importances_file = explain_run_dir / "top_k_feature_importances.csv"
@@ -58,7 +59,8 @@ def persist_explainability_run(
             "config_hash": model_cfg.meta.config_hash,
             "pipeline_cfg_hash": pipeline_cfg_hash,
         },
-        "artifacts": artifacts
+        "artifacts": artifacts,
+        "top_k": top_k
     }
 
     save_metadata(metadata, target_dir=explain_run_dir)

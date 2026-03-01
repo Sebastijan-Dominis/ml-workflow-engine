@@ -50,7 +50,7 @@ def apply_best_params(
         return cfg
 
     try:
-        with best_params_path.open("r") as f:
+        with best_params_path.open("r", encoding="utf-8") as f:
             experiment_data = json.load(f)
 
         best_params = (

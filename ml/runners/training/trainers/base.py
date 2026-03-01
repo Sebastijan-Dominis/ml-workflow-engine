@@ -1,7 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Protocol
-
-from sklearn.pipeline import Pipeline
+from typing import Protocol
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.runners.training.constants.output import TRAIN_OUTPUT

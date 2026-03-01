@@ -1,0 +1,76 @@
+{
+  "run_identity": {
+    "stage": "explainability",
+    "explain_run_id": "2026-03-01T03-00-35_7de094b8",
+    "train_run_id": "2026-03-01T03-00-20_1590d079",
+    "snapshot_id": "2026-03-01T03-00-11_860a1c87",
+    "status": "success"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v4",
+        "snapshot_id": "2026-03-01T01-17-49_b43da25f",
+        "snapshot_path": "feature_store\\booking_context_features\\v4\\2026-03-01T01-17-49_b43da25f",
+        "file_hash": "5ecca8f0e3626fb20ed7591871a06f13d0c3a5ed26d7efbc8f03aeaf50d153c3",
+        "in_memory_hash": "6f3a73ed79c1374df4ee655efbdcbbc3",
+        "feature_schema_hash": "096e46d1f94c5ffaf41184d25652f33be0e10a3c337c38fe206f4b45359de96a",
+        "operators_hash": "7403b69c49e9e12717c0574b79d4457c",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-01T01-17-54_6ca3262f",
+        "snapshot_path": "feature_store\\customer_history_features\\v1\\2026-03-01T01-17-54_6ca3262f",
+        "file_hash": "0bf87e7f116f7a557a568eda42c9ff8ae17f06ce2b3e4a5d6bbf18f87ca473f9",
+        "in_memory_hash": "0eba66b8c9271eece84715ba09e1799e",
+        "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-01T01-18-01_0a548c21",
+        "snapshot_path": "feature_store\\pricing_party_features\\v2\\2026-03-01T01-18-01_0a548c21",
+        "file_hash": "1c90063e286ae48dae44fe323277b6ec9c61169f8a2ea4239ef2a4d322b51016",
+        "in_memory_hash": "ef95af16d3c008b947e84e6f7453fe8a",
+        "feature_schema_hash": "6b0c759f033890e5d35918f660df23905c7f2dfa4a05bb6a4b2dca52f6b21736",
+        "operators_hash": "4c7437bfec9d8c4b4af1421186d5277f",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-01T01-18-07_35109c66",
+        "snapshot_path": "feature_store\\channel_and_agent_features\\v2\\2026-03-01T01-18-07_35109c66",
+        "file_hash": "9996a1cec03b4eba65fd9a14deee023406ad29cf179f5dca983d7729d662f12c",
+        "in_memory_hash": "95d7f2dfc1ab040cec4e5a189e7aa6da",
+        "feature_schema_hash": "835e18a0eb360678f20b0ed18d92bcbb822a6cdca959bc8926aebfe5e60035cb",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      }
+    ],
+    "target_column": "room_upgrade",
+    "problem": "room_upgrade",
+    "segment": "global",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "7348d32b4300943d782416eb97dbfc6010a5a7901d076645ba8039ebbcba0efb",
+    "pipeline_cfg_hash": "1a7ca9f3aeec3a8e03e47fd820f49e6e4e90c6099f5f74efa0feeea73aab47d1"
+  },
+  "artifacts": {
+    "model_hash": "11465f81bca151f93cc33377c3d4d1b40c811ecb11f9fd4ac08b6690ae090e8f",
+    "model_path": "experiments\\room_upgrade\\global\\v1\\2026-03-01T03-00-11_860a1c87\\training\\2026-03-01T03-00-20_1590d079\\model.joblib",
+    "pipeline_path": "experiments\\room_upgrade\\global\\v1\\2026-03-01T03-00-11_860a1c87\\training\\2026-03-01T03-00-20_1590d079\\pipeline.joblib",
+    "pipeline_hash": "39ed5f9dba7919b22ecf78609128b30f49ea4bf0f2fe082aa1a0b9c60ad87de8",
+    "top_k_feature_importances_path": "experiments\\room_upgrade\\global\\v1\\2026-03-01T03-00-11_860a1c87\\explainability\\2026-03-01T03-00-35_7de094b8\\top_k_feature_importances.csv",
+    "top_k_feature_importances_hash": "926e5e605a42078602e98aca2d0b15d248b0ac43ded54aba3d685e2fd44efc97",
+    "top_k_shap_importances_path": "experiments\\room_upgrade\\global\\v1\\2026-03-01T03-00-11_860a1c87\\explainability\\2026-03-01T03-00-35_7de094b8\\top_k_shap_importances.csv",
+    "top_k_shap_importances_hash": "7f3c05c87333d69ef5633f7b9a87326ad9ad27e81760e41693ea7b723208d99d"
+  },
+  "top_k": 20
+}

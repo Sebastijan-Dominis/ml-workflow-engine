@@ -50,6 +50,7 @@ from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
     validate_pipeline_cfg
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
+from ml.utils.iso_no_col import iso_no_colon
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
@@ -124,7 +125,7 @@ def main() -> int:
     args = parse_args()
 
     start_time = time.perf_counter()
-    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    timestamp = iso_no_colon(datetime.now())
 
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
 
@@ -133,6 +134,7 @@ def main() -> int:
     try:
         experiment_parent_dir = Path("experiments") / args.problem / args.segment / args.version
         experiment_dir = get_snapshot_path(args.experiment_id, experiment_parent_dir)
+        print(f"Using experiment directory: {experiment_dir}\n")
         search_dir = experiment_dir / "search"
     except Exception as e:
         logger.exception("Failed to get experiment directory")

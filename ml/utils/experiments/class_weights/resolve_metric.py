@@ -21,7 +21,7 @@ def resolve_metric(config: SearchModelConfig | TrainModelConfig, stats: DataStat
         return config.scoring.fixed_metric
 
     if policy == "regression_default":
-        scoring = "rmse"
+        scoring = "neg_root_mean_squared_error" # == RMSE but works with sklearn's RandomizedSearchCV
         logger.info(f"Using default regression metric: {scoring}")
         return scoring
 
@@ -31,7 +31,7 @@ def resolve_metric(config: SearchModelConfig | TrainModelConfig, stats: DataStat
             logger.error(msg)
             raise ConfigError(msg)
         if stats.minority_ratio < config.scoring.pr_auc_threshold:
-            scoring = "pr_auc"
+            scoring = "average_precision" # average_precision is basically the same as pr_auc, but it uses a different method to calculate the area under the curve. It calculates the area using a step function. The terms are used interchangeably in this project.
             logger.info(f"Minority ratio {stats.minority_ratio:.4f} is below threshold {config.scoring.pr_auc_threshold:.4f}, using PR-AUC.")
             return scoring
         scoring = "roc_auc"

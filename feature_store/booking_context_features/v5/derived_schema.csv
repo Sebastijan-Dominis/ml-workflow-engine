@@ -1,0 +1,2 @@
+feature,dtype,role,source_operator,materialized
+total_stay,int8,derived,TotalStay,False

@@ -1,5 +1,4 @@
 import logging
-from typing import Literal
 
 import numpy as np
 from sklearn.utils.class_weight import compute_class_weight
@@ -23,6 +22,10 @@ def resolve_class_weighting(
         return {}
 
     if policy == "if_imbalanced":
+        if config.class_weighting.imbalance_threshold is None:
+            msg = "imbalance_threshold must be set when using 'if_imbalanced' policy."
+            logging.error(msg)
+            raise ConfigError(msg)
         if stats.minority_ratio >= config.class_weighting.imbalance_threshold:
             logging.info(f"Minority ratio {stats.minority_ratio:.4f} is above imbalance threshold {config.class_weighting.imbalance_threshold:.4f}. Class weighting will not be applied.")
             return {}

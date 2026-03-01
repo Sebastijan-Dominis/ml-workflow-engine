@@ -8,7 +8,15 @@ from ml.feature_freezing.freeze_strategies.tabular.config.models import \
 
 class FreezeStrategy(ABC):
     @abstractmethod
-    def freeze(self, config: TabularFeaturesConfig, *, timestamp: str, snapshot_id: str, start_time: float) -> FreezeOutput:
+    def freeze(
+        self, 
+        config: TabularFeaturesConfig, 
+        *, 
+        timestamp: str, 
+        snapshot_id: str, 
+        start_time: float,
+        owner: str
+    ) -> FreezeOutput:
         pass
 
     @staticmethod

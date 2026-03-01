@@ -14,18 +14,34 @@ def prepare_model(
     cat_features: list, 
     class_weights: dict
 ) -> CatBoostClassifier | CatBoostRegressor:
+
     search_phase_cfg = getattr(model_cfg.search, search_phase)
-    model = MODEL_CLASS_REGISTRY[model_cfg.model_class](
-        # Basic hyperparameters
+
+    # Base kwargs shared by classifier & regressor
+    model_kwargs = dict(
         iterations=search_phase_cfg.iterations,
-        task_type=model_cfg.search.hardware.task_type.value,           
-        devices=model_cfg.search.hardware.devices,                
-        verbose=model_cfg.verbose,               
+        task_type=model_cfg.search.hardware.task_type.value,
+        devices=model_cfg.search.hardware.devices,
+        verbose=model_cfg.verbose,
         random_state=model_cfg.seed,
         cat_features=cat_features,
-        class_weights=class_weights
     )
 
-    logger.info(f"Hardware settings for {search_phase} search of {model_cfg.problem} {model_cfg.segment.name} {model_cfg.version} | Task type: {model_cfg.search.hardware.task_type.value}, Devices: {model_cfg.search.hardware.devices}")
+    # Add class_weights ONLY for classifier AND when weighting is enabled
+    if (
+        model_cfg.model_class == "classifier"
+        and model_cfg.class_weighting.policy != "off"
+        and class_weights
+    ):
+        model_kwargs["class_weights"] = class_weights.get("class_weights")
+
+    model = MODEL_CLASS_REGISTRY[model_cfg.model_class](**model_kwargs)
+
+    logger.info(
+        f"Hardware settings for {search_phase} search of "
+        f"{model_cfg.problem} {model_cfg.segment.name} {model_cfg.version} | "
+        f"Task type: {model_cfg.search.hardware.task_type.value}, "
+        f"Devices: {model_cfg.search.hardware.devices}"
+    )
 
     return model

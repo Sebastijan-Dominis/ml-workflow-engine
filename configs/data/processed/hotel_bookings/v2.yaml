@@ -1,0 +1,21 @@
+data:
+  name: hotel_bookings
+  version: v2
+  output:
+    path_suffix: data.parquet
+    format: parquet
+    compression: snappy
+
+remove_columns:
+  - name
+  - email
+  - phone_number
+  - credit_card
+  - booking_changes
+  - company
+  # - reservation_status => intentionally left, since it's used to create a target variable no_show, which is derived from reservation_status
+  - reservation_status_date
+
+lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-27t23:53:30z"

@@ -5,6 +5,7 @@ import pandas as pd
 from ml.data.utils.config.schemas.interim import (Cleaning, DataSchema,
                                                   Invariants)
 from ml.exceptions import DataError
+from ml.registry.op_map import OP_MAP
 
 logger = logging.getLogger(__name__)
 
@@ -54,26 +55,39 @@ def enforce_schema(df: pd.DataFrame, *, schema: DataSchema, drop_missing_ints: b
         logger.error(msg + f"Details: {str(e)}")
         raise DataError(msg) from e
 
+# Keeps missing values - this step doesn't concern with them
 def clean_data(df: pd.DataFrame, invariants: Invariants):
     try:
-        invariants_dict = invariants.model_dump()
         for col in df.columns:
             if df[col].dtype == "object":
                 df[col] = df[col].str.strip()
-            if col in invariants_dict and invariants_dict[col] is not None:
-                rules = invariants_dict[col]
-                if hasattr(rules, 'min') and rules.min is not None:
-                    invalid_rows = df[df[col] < rules.min]
-                    logger.warning("Dropping %d rows where %s < %s", len(invalid_rows), col, rules.min)
-                    df.drop(invalid_rows.index, inplace=True)
-                if hasattr(rules, 'max') and rules.max is not None:
-                    invalid_rows = df[df[col] > rules.max]
-                    logger.warning("Dropping %d rows where %s > %s", len(invalid_rows), col, rules.max)
-                    df.drop(invalid_rows.index, inplace=True)
-                if hasattr(rules, 'allowed_values') and rules.allowed_values is not None:
-                    invalid_rows = df[~df[col].isin(rules.allowed_values)]
-                    logger.warning("Dropping %d rows where %s not in allowed values", len(invalid_rows), col)
-                    df.drop(invalid_rows.index, inplace=True)
+            rules = getattr(invariants, col, None)
+            if rules is None:
+                logger.debug(f"No invariants specified for column '{col}'. Skipping cleaning for this column.")
+                continue
+            logger.debug(f"Applying invariants for column '{col}': {rules}")
+            if rules.min is not None:
+                valid_rows = OP_MAP[rules.min.op](df[col], rules.min.value)
+                valid_rows = valid_rows | df[col].isna() | (df[col] == "")
+                invalid_rows = df[~valid_rows]
+                if not invalid_rows.empty:
+                    logger.warning("Dropping %d rows where %s < %s. Row indices: %s", len(invalid_rows), col, rules.min.value, invalid_rows.index.tolist())
+                df = df[valid_rows]
+            if rules.max is not None:
+                valid_rows = OP_MAP[rules.max.op](df[col], rules.max.value)
+                valid_rows = valid_rows | df[col].isna() | (df[col] == "")
+                invalid_rows = df[~valid_rows]
+                if not invalid_rows.empty:
+                    logger.warning("Dropping %d rows where %s > %s. Row indices: %s", len(invalid_rows), col, rules.max.value, invalid_rows.index.tolist())
+                df = df[valid_rows]
+            if rules.allowed_values is not None:
+                allowed_values = [x for x in rules.allowed_values if x is not None]
+                mask = df[col].isin(allowed_values) | df[col].isna() | (df[col] == "")
+                invalid_rows = df[~mask]
+                if not invalid_rows.empty:
+                    logger.warning("Dropping %d rows where %s not in allowed values. Row indices: %s",
+                            len(invalid_rows), col, invalid_rows.index.tolist())
+                df = df[mask]
         return df
     except Exception as e:
         msg = f"Error cleaning data according to invariants. "

@@ -1,0 +1,11 @@
+extends:
+  - ../../../../configs/defaults/global.yaml
+  - ../../../../configs/defaults/catboost.yaml
+  - ../../../../configs/model_specs/no_show/global/v1.yaml
+
+training:
+  iterations: 2500
+
+training_lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-27t23:53:30z"

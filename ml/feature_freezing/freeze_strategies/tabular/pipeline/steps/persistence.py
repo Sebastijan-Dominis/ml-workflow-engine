@@ -1,13 +1,10 @@
 import logging
-from datetime import datetime
 
 from ml.exceptions import PersistenceError
 from ml.feature_freezing.freeze_strategies.tabular.persistence import (
-    persist_feature_snapshot,
-    save_derived_schema,
-    save_input_schema,
-)
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
+    persist_feature_snapshot, save_derived_schema, save_input_schema)
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
+    FreezeContext
 from ml.utils.pipeline_core.step import PipelineStep
 
 logger = logging.getLogger(__name__)
@@ -29,7 +26,7 @@ class PersistenceStep(PipelineStep[FreezeContext]):
         snapshot_path, data_path = persist_feature_snapshot(
             config,
             features=features,
-            snapshot_id=ctx.require_snapshot_id,
+            snapshot_id=ctx.snapshot_id,
         )
 
         schema_path = config.feature_store_path

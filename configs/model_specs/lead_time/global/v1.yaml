@@ -1,0 +1,95 @@
+problem: lead_time
+segment:
+  name: global
+  description: All bookings
+version: v1
+task:
+  type: regression
+  subtype: single_target
+target:
+  name: lead_time
+  allowed_dtypes:
+    - int64
+  version: v1
+  constraints:
+    min: 0
+  transform:
+    enabled: true
+    type: log1p
+
+segmentation:
+  enabled: false
+
+split:
+  strategy: random
+  test_size: 0.2
+  val_size: 0.12
+  random_state: 42
+
+algorithm: catboost
+model_class: CatBoostRegressor
+
+pipeline:
+  version: v1
+  path: configs/pipelines/tabular/catboost/v1.yaml
+
+feature_store:
+  path: feature_store/
+  feature_sets:
+  - name: booking_context_features
+    version: v6
+    schema_format: csv
+    input_schema: input_schema.csv
+    derived_schema: derived_schema.csv
+    data_format: parquet
+    file_name: features.parquet
+  - name: customer_history_features
+    version: v2
+    schema_format: csv
+    input_schema: input_schema.csv
+    derived_schema: derived_schema.csv
+    data_format: parquet
+    file_name: features.parquet
+  - name: pricing_party_features
+    version: v3
+    schema_format: csv
+    input_schema: input_schema.csv
+    derived_schema: derived_schema.csv
+    data_format: parquet
+    file_name: features.parquet
+  - name: channel_and_agent_features
+    version: v1
+    schema_format: csv
+    input_schema: input_schema.csv
+    derived_schema: derived_schema.csv
+    data_format: parquet
+    file_name: features.parquet
+  - name: room_allocation_features
+    version: v2
+    schema_format: csv
+    input_schema: input_schema.csv
+    derived_schema: derived_schema.csv
+    data_format: parquet
+    file_name: features.parquet
+
+scoring:
+  policy: regression_default
+class_weighting:
+  policy: 'off'
+
+explainability:
+  enabled: true
+  top_k: 20
+  methods:
+    feature_importances:
+      enabled: true
+      type: PredictionValuesChange
+    shap:
+      enabled: true
+      approximate: tree
+
+data_type: tabular
+
+model_specs_lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-27t23:53:30z"

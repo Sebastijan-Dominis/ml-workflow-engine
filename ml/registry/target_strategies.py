@@ -10,8 +10,8 @@ TARGET_STRATEGIES = {
     ("adr", "v1"): AdrTargetV1,
     ("lead_time", "v1"): LeadTimeTargetV1,
     ("no_show", "v1"): NoShowTargetV1,
-    ("repeated_guest", "v1"): RepeatedGuestTargetV1,
+    ("is_repeated_guest", "v1"): RepeatedGuestTargetV1,
     ("room_upgrade", "v1"): RoomUpgradeTargetV1,
-    ("special_requests", "v1"): SpecialRequestsTargetV1,
+    ("total_of_special_requests", "v1"): SpecialRequestsTargetV1,
     ("is_canceled", "v1"): CancellationTargetV1,
 }

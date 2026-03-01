@@ -8,9 +8,10 @@ import numpy as np
 import pandas as pd
 import yaml
 
+from ml.config.compute_config_hash import compute_config_hash
 from ml.data.utils.config.schemas.interim import InterimConfig
 from ml.registry.hash_registry import hash_data
-from ml.config.compute_config_hash import compute_config_hash
+from ml.utils.iso_no_col import iso_no_colon
 
 logger = logging.getLogger(__name__)
 def prepare_metadata(
@@ -21,6 +22,7 @@ def prepare_metadata(
     data_path: Path,
     source_data_path: Path, 
     source_data_format: str,
+    source_data_version: str,
     owner: str, 
     memory_info: dict,
     interim_run_id: str
@@ -29,15 +31,17 @@ def prepare_metadata(
          
     config_hash = compute_config_hash(config)
     
-    timestamp = datetime.now().isoformat(timespec="seconds").replace(":", "-")
+    timestamp = iso_no_colon(datetime.now())
 
     duration = time.perf_counter() - start_time
 
     metadata = {
         "interim_run_id": interim_run_id,
         "source_data": {
+            "name": config.data.name,
             "path": str(source_data_path),
             "format": source_data_format,
+            "version": source_data_version,
         },
         "data": {
             "name": config.data.name,
@@ -68,5 +72,6 @@ def prepare_metadata(
             "python_version": platform.python_version(),
         }
     }
+    logger.debug(f"Prepared metadata: {metadata}")
 
     return metadata

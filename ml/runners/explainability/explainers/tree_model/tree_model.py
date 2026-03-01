@@ -47,11 +47,12 @@ class ExplainTreeModel(Explainer):
         )
 
         X, y, feature_lineage = load_X_and_y(model_cfg, snapshot_selection=snapshot_selection, strict=True)
-        splits = get_splits(
+        splits, splits_info = get_splits(
             X=X,
             y=y,
             split_cfg=model_cfg.split,
             data_type=model_cfg.data_type,
+            task_cfg=model_cfg.task
         )
   
         validate_snapshot_ids(feature_lineage, snapshot_selection)

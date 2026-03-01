@@ -1,21 +1,22 @@
 problem: cancellation
 segment:
-  name: global
-  description: All bookings
+  name: city_hotel_online_ta
+  description: All bookings for City Hotel with market segment Online TA.
 version: v1
 task: 
   type: classification
   subtype: binary
+
 target:
   name: is_canceled
   allowed_dtypes:
     - int64
-  problem_type: classification
   classes:
     count: 2
     positive_class: 1
     min_class_count: 50
   version: v1
+
 segmentation:
   enabled: true
   include_in_model: false
@@ -26,12 +27,14 @@ segmentation:
     - column: market_segment
       op: eq
       value: Online TA
+
 split:
   strategy: random
   stratify_by: is_canceled
   test_size: 0.2
   val_size: 0.12
   random_state: 42
+
 algorithm: catboost
 model_class: CatBoostClassifier
 
@@ -43,13 +46,6 @@ feature_store:
   path: feature_store/
   feature_sets:
     - name: booking_context_features
-      version: v1
-      schema_format: csv
-      input_schema: input_schema.csv
-      derived_schema: derived_schema.csv
-      data_format: parquet
-      file_name: features.parquet
-    - name: channel_and_agent_features
       version: v1
       schema_format: csv
       input_schema: input_schema.csv
@@ -70,6 +66,22 @@ feature_store:
       derived_schema: derived_schema.csv
       data_format: parquet
       file_name: features.parquet
+    - name: channel_and_agent_features
+      version: v1
+      schema_format: csv
+      input_schema: input_schema.csv
+      derived_schema: derived_schema.csv
+      data_format: parquet
+      file_name: features.parquet
+
+scoring:
+  policy: adaptive_binary  # used only for hyperparameter search
+  pr_auc_threshold: 0.1   # triggers PR-AUC scoring in search if minority class < 10%
+class_weighting:
+  policy: if_imbalanced
+  imbalance_threshold: 0.1
+  strategy: balanced
+
 explainability:
   enabled: true
   top_k: 20
@@ -82,3 +94,7 @@ explainability:
       approximate: tree
 
 data_type: tabular
+
+model_specs_lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-27t23:53:30z"

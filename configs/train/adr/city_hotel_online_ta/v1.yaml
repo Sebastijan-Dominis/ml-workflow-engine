@@ -1,0 +1,11 @@
+extends:
+  - ../../../../configs/defaults/global.yaml
+  - ../../../../configs/defaults/catboost.yaml
+  - ../../../../configs/model_specs/adr/city_hotel_online_ta/v1.yaml
+
+training:
+  iterations: 1500
+
+training_lineage:
+  created_by: Sebastijan
+  created_at: "2026-02-28t14:52:20z"

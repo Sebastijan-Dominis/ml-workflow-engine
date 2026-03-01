@@ -163,7 +163,11 @@ def load_X_and_y(
     
     y = full_df[target_name].copy()
 
-    validate_target(y=y, tgt_cfg=model_cfg.target, data=full_df)
+    validate_target(
+        y=y, 
+        model_cfg=model_cfg, 
+        data=full_df
+    )
 
     if drop_row_id:
         if "row_id" not in X.columns:

@@ -1,0 +1,12 @@
+{
+  "task_type": "regression",
+  "algorithm": "catboost",
+  "metrics": {
+    "train_rmse": 51.49200695171479,
+    "val_rmse": 51.45543504633465,
+    "train_mae": 49.74814055458209,
+    "val_mae": 49.73817610331362,
+    "train_r2": -1142.2237112411517,
+    "val_r2": -1162.5366053298123
+  }
+}

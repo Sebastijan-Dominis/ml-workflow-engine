@@ -10,3 +10,6 @@ cancellation:
       test:
         roc_auc: 0.85
         f1: 0.75
+    lineage:
+      created_by: "Sebastijan"
+      created_at: "2026-02-27t23:53:30z"

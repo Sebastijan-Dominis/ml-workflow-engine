@@ -4,6 +4,7 @@ import pandas as pd
 
 from ml.exceptions import DataError, UserError
 from ml.config.validation_schemas.model_specs import SegmentationConfig
+from ml.registry.op_map import OP_MAP
 
 logger = logging.getLogger(__name__)
 
@@ -12,17 +13,6 @@ def apply_segmentation(data: pd.DataFrame, seg_cfg: SegmentationConfig) -> pd.Da
         return data
 
     df = data.copy()
-
-    OP_MAP = {
-        "eq": lambda s, v: s == v,
-        "neq": lambda s, v: s != v,
-        "in": lambda s, v: s.isin(v),
-        "not_in": lambda s, v: ~s.isin(v),
-        "gt": lambda s, v: s > v,
-        "gte": lambda s, v: s >= v,
-        "lt": lambda s, v: s < v,
-        "lte": lambda s, v: s <= v,
-    }
 
     for f in seg_cfg.filters:
         col = f.column

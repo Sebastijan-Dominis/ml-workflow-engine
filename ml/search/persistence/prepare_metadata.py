@@ -1,8 +1,11 @@
 import logging
+from dataclasses import asdict
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.registry.tabular_splits import AllSplitsInfo
 from ml.utils.git import get_git_commit
+from ml.utils.iso_no_col import iso_no_colon
 
 logger = logging.getLogger(__name__)
 
@@ -15,22 +18,39 @@ def prepare_metadata(
     timestamp: str, 
     feature_lineage: list[dict], 
     pipeline_hash: str,
-    scoring_method: str
+    scoring_method: str,
+    splits_info: AllSplitsInfo
 ) -> dict:
+    # Convert search_lineage.created_at and model_specs_lineage.created_at from datetime to ISO format string to avoid errors during JSON serialization in save_metadata
+    search_created_at_str = iso_no_colon(model_cfg.search_lineage.created_at)
+    model_specs_created_at_str = iso_no_colon(model_cfg.model_specs_lineage.created_at)
+    model_cfg_dict = model_cfg.model_dump(by_alias=True)
+    model_cfg_dict["search_lineage"]["created_at"] = search_created_at_str
+    model_cfg_dict["model_specs_lineage"]["created_at"] = model_specs_created_at_str
+
     problem = model_cfg.problem
     segment = model_cfg.segment.name
     version = model_cfg.version
 
-    meta = model_cfg.meta
-    sources = meta.sources if meta.sources else {}
-    env = meta.env if meta.env else "default"
-    best_params_path = meta.best_params_path if meta.best_params_path else "none"
+    algorithm = model_cfg.algorithm.value if getattr(model_cfg, "algorithm", None) else None
+    seed = model_cfg.seed or "none"
+    hardware = (
+        model_cfg.search.hardware.model_dump()
+        if getattr(model_cfg.search, "hardware", None)
+        else {}
+    )
 
-    pipeline_version = model_cfg.pipeline.version if model_cfg.pipeline else "none"
+    meta = model_cfg.meta
+    sources = meta.sources or {}
+    env = meta.env or "default"
+    best_params_path = meta.best_params_path or "none"
+
+    pipeline_version = getattr(model_cfg.pipeline, "version", "none")
 
     git_commit = get_git_commit(Path("."))
-    config_hash = meta.config_hash if meta.config_hash else "none"
-    validation_status = meta.validation_status if meta.validation_status else "unknown"
+    config_hash = meta.config_hash or "none"
+    validation_status = meta.validation_status or "unknown"
+    splits_info_dict = asdict(splits_info)
 
     record = {
         "metadata": {
@@ -41,22 +61,36 @@ def prepare_metadata(
             "sources": sources,
             "env": env,
             "best_params_path": best_params_path,
-            "algorithm": model_cfg.algorithm.value if model_cfg.algorithm else None,
+            "algorithm": algorithm,
             "pipeline_version": pipeline_version,
             "created_by": "search.py",
             "created_at": timestamp,
             "owner": owner,
             "feature_lineage": feature_lineage,
-            "seed": model_cfg.seed if model_cfg.seed is not None else "none",
-            "hardware": model_cfg.search.hardware.model_dump() if model_cfg.search and model_cfg.search.hardware else {},
+            "seed": seed,
+            "hardware": hardware,
             "git_commit": git_commit,
             "config_hash": config_hash,
             "validation_status": validation_status,
             "pipeline_hash": pipeline_hash,
-            "scoring_method": scoring_method
+            "scoring_method": scoring_method,
+            "splits_info": splits_info_dict
         },
-        "config": model_cfg.model_dump(by_alias=True),
+        "config": model_cfg_dict,
         "search_results": search_results,
     }
+
+    task_type = model_cfg.task.type
+
+    if task_type == "regression":
+        transform = model_cfg.target.transform
+        record["metadata"]["target_transform"] = {
+            "enabled": transform.enabled,
+            **({"type": transform.type} if transform.type is not None else {}),
+            **({"lambda": transform.lambda_value} if transform.lambda_value is not None else {}),
+        }
+
+    elif task_type == "classification":
+        record["metadata"]["class_weighting"] = model_cfg.class_weighting.model_dump()
 
     return record
