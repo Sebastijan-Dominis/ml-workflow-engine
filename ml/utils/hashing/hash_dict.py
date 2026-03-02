@@ -3,6 +3,7 @@
 import hashlib
 import json
 
+
 def canonicalize(obj):
     """Recursively canonicalize nested containers into stable ordering.
 

@@ -15,12 +15,12 @@ from uuid import uuid4
 import pandas as pd
 
 from ml.cli.error_handling import resolve_exit_code
+from ml.data.config.schemas.interim import InterimConfig
+from ml.data.config.validate_config import validate_config
 from ml.data.interim.data_preparation.prepare_data import (clean_data,
                                                            enforce_schema,
                                                            normalize_columns)
 from ml.data.interim.persistence.prepare_metadata import prepare_metadata
-from ml.data.config.schemas.interim import InterimConfig
-from ml.data.config.validate_config import validate_config
 from ml.data.utils.memory.compute_memory_change import compute_memory_change
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.data.utils.persistence.save_data import save_data

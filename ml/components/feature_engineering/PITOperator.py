@@ -2,7 +2,8 @@
 
 import pandas as pd
 
-from ml.components.feature_engineering.base import FeatureOperator, SklearnFeatureMixin
+from ml.components.feature_engineering.base import (FeatureOperator,
+                                                    SklearnFeatureMixin)
 
 
 # Currently not used. Optimize better if needed in the future.

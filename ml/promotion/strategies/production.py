@@ -2,14 +2,13 @@
 
 import logging
 
+from ml.exceptions import RuntimeMLException
 from ml.promotion.comparisons.production import \
     compare_against_production_model
+from ml.promotion.constants.constants import RunnersMetadata
 from ml.promotion.persistence.prepare import prepare_run_information
-from ml.promotion.persistence.registry import update_registry_and_archive
 from ml.promotion.result import PromotionResult
 from ml.promotion.strategies.base import PromotionStrategy
-from ml.promotion.constants.constants import RunnersMetadata
-from ml.exceptions import RuntimeMLException
 
 logger = logging.getLogger(__name__)
 

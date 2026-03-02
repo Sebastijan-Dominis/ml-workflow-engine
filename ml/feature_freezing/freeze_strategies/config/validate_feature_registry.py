@@ -3,7 +3,8 @@
 import logging
 
 from ml.exceptions import UserError
-from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.feature_freezing.freeze_strategies.tabular.config.models import \
+    TabularFeaturesConfig
 
 logger = logging.getLogger(__name__)
 

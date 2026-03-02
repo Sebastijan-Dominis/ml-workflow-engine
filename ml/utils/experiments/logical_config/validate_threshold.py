@@ -4,9 +4,9 @@ import logging
 from pathlib import Path
 
 from ml.config.validation_schemas.model_specs import TaskConfig
-from ml.utils.loaders import load_json
 from ml.exceptions import ConfigError
 from ml.registry.tasks_supporting_thresholds import TASKS_SUPPORTING_THRESHOLDS
+from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
 

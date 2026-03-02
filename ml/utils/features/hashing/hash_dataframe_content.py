@@ -4,6 +4,7 @@ import hashlib
 
 import pandas as pd
 
+
 def hash_dataframe_content(X: pd.DataFrame) -> str:
     """Return an MD5 hash of dataframe row content excluding index values.
 

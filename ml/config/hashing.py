@@ -6,7 +6,8 @@ import logging
 from copy import deepcopy
 from typing import Any, overload
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+                                                    TrainModelConfig)
 from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)

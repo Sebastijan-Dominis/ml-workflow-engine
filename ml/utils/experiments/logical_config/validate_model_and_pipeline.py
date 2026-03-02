@@ -3,9 +3,9 @@
 import logging
 from pathlib import Path
 
+from ml.exceptions import PipelineContractError
 from ml.registry.hash_registry import hash_artifact
 from ml.utils.loaders import load_json
-from ml.exceptions import PipelineContractError
 
 logger = logging.getLogger(__name__)
 

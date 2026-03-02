@@ -3,6 +3,7 @@
 from ml.components.base import SklearnFeatureMixin
 from ml.components.feature_engineering.base import FeatureOperator
 
+
 class ArrivalSeason(FeatureOperator, SklearnFeatureMixin):
     """Map arrival week numbers to coarse seasonal labels."""
 

@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Optional
 
 from ml.exceptions import DataError
-from ml.utils.snapshots.latest_snapshot import get_latest_snapshot_path
 from ml.utils.loaders import load_json
+from ml.utils.snapshots.latest_snapshot import get_latest_snapshot_path
 
 logger = logging.getLogger(__name__)
 

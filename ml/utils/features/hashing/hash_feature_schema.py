@@ -4,6 +4,7 @@ import hashlib
 
 import pandas as pd
 
+
 def hash_feature_schema(X: pd.DataFrame) -> str:
     """Compute a stable hash from feature names and dtype signatures.
 

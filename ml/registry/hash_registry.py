@@ -5,8 +5,8 @@ from pathlib import Path
 from ml.utils.features.hashing.hash_arrow_metadata import hash_arrow_metadata
 from ml.utils.features.hashing.hash_parquet_metadata import \
     hash_parquet_metadata
-from ml.utils.hashing.hash_streaming import hash_streaming
 from ml.utils.hashing.hash_dict import hash_dict
+from ml.utils.hashing.hash_streaming import hash_streaming
 
 HASH_LOADER_REGISTRY = {
     "parquet": hash_parquet_metadata,

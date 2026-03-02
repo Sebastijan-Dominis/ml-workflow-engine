@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import overload
 
 from ml.config.hashing import compute_config_hash
-from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+                                                    TrainModelConfig)
 from ml.exceptions import PipelineContractError
 from ml.utils.loaders import load_json
 

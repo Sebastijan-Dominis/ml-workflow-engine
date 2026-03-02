@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 def normalize_dtype(dtype) -> str:
     """Normalize pandas and extension dtypes to stable string categories.
 

@@ -1,7 +1,9 @@
 """Version 1 no-show target strategy."""
 
 import pandas as pd
+
 from ml.targets.base import TargetStrategy
+
 
 class NoShowTargetV1(TargetStrategy):
     """Build a binary no-show target derived from reservation status."""

@@ -3,10 +3,10 @@
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.runners.training.utils.logical_config_checks.validations.validate_allowed_params import validate_allowed_params
-from ml.runners.training.utils.logical_config_checks.validations.validate_training_behavior_consistency import (
-    validate_training_behavior_consistency,
-)
+from ml.runners.training.utils.logical_config_checks.validations.validate_allowed_params import \
+    validate_allowed_params
+from ml.runners.training.utils.logical_config_checks.validations.validate_training_behavior_consistency import \
+    validate_training_behavior_consistency
 
 
 def validate_logical_config(model_cfg: TrainModelConfig, search_dir: Path) -> None:

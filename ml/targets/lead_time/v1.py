@@ -1,7 +1,9 @@
 """Version 1 lead-time target strategy."""
 
-from ml.targets.base import TargetStrategy
 import pandas as pd
+
+from ml.targets.base import TargetStrategy
+
 
 class LeadTimeTargetV1(TargetStrategy):
     """Build the lead-time regression target from booking records."""

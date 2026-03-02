@@ -1,12 +1,13 @@
 """Hashing helpers for Arrow file metadata integrity fingerprints."""
 
-import logging
 import hashlib
+import logging
 from pathlib import Path
+
 import pyarrow as pa
 
-from ml.utils.features.hashing.safe import safe
 from ml.exceptions import RuntimeMLException
+from ml.utils.features.hashing.safe import safe
 
 logger = logging.getLogger(__name__)
 

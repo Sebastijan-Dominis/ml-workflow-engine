@@ -7,11 +7,11 @@ import pandas as pd
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.registry.hash_registry import hash_artifact
+from ml.runners.evaluation.persistence.prepare_metadata import prepare_metadata
 from ml.runners.evaluation.persistence.save_predictions import save_predictions
 from ml.utils.experiments.persistence.save_metrics import save_metrics
 from ml.utils.persistence.save_metadata import save_metadata
 from ml.utils.runtime.save_runtime import save_runtime_snapshot
-from ml.runners.evaluation.persistence.prepare_metadata import prepare_metadata
 
 logger = logging.getLogger(__name__)
 

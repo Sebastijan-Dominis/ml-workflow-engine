@@ -1,7 +1,9 @@
 """Version 1 repeated-guest target strategy."""
 
 import pandas as pd
+
 from ml.targets.base import TargetStrategy
+
 
 class RepeatedGuestTargetV1(TargetStrategy):
     """Build the repeated-guest classification target from booking records."""

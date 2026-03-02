@@ -2,9 +2,9 @@
 
 import logging
 from pathlib import Path
-from ml.registry.hash_registry import hash_data
 
 from ml.exceptions import UserError
+from ml.registry.hash_registry import hash_data
 
 logger = logging.getLogger(__name__)
 

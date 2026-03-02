@@ -1,7 +1,9 @@
 """Version 1 room-upgrade target strategy."""
 
 import pandas as pd
+
 from ml.targets.base import TargetStrategy
+
 
 class RoomUpgradeTargetV1(TargetStrategy):
     """Build a binary room-upgrade target by comparing reserved and assigned rooms."""

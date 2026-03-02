@@ -5,6 +5,7 @@ from typing import Optional
 
 from ml.promotion.constants.constants import ProductionComparisonResult
 
+
 @dataclass
 class PromotionResult:
     """Normalized outcome payload returned by promotion strategies."""

@@ -1,7 +1,9 @@
 """Version 1 special-requests target strategy."""
 
 import pandas as pd
+
 from ml.targets.base import TargetStrategy
+
 
 class SpecialRequestsTargetV1(TargetStrategy):
     """Build the special-requests count target from booking records."""

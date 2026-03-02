@@ -1,8 +1,9 @@
 """Shared schema blocks reused by interim and processed data configs."""
 
-from typing import Optional, Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
+
 
 class Output(BaseModel):
     """Output artifact settings for persisted datasets."""

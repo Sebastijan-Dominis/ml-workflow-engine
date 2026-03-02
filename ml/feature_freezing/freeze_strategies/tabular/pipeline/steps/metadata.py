@@ -3,7 +3,6 @@
 import logging
 import sys
 import time
-from datetime import datetime
 from pathlib import Path
 
 from ml.feature_freezing.freeze_strategies.tabular.persistence import \

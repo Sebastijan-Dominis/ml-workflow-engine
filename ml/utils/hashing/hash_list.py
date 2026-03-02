@@ -3,6 +3,7 @@
 import hashlib
 import json
 
+
 def hash_list(lst: list, order_matters: bool = True) -> str:
     """Return a SHA-256 hash for a JSON-normalized list representation.
 

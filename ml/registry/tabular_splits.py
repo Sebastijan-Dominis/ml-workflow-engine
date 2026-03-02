@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+
 @dataclass
 class SplitInfo:
     """Summary information for a single dataset split."""

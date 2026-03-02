@@ -7,6 +7,7 @@ from typing import Protocol
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.runners.explainability.constants.output import ExplainabilityOutput
 
+
 class Explainer(Protocol):
     """Structural interface implemented by explainability engines."""
 

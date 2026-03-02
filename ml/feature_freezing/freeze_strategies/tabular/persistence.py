@@ -1,7 +1,6 @@
 """Persistence and metadata helpers for tabular feature freezing outputs."""
 
 import logging
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd

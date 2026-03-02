@@ -1,9 +1,10 @@
 """Abstract strategy interface for stage-specific promotion behavior."""
 
 from abc import ABC, abstractmethod
-from ml.promotion.state import PromotionState
+
 from ml.promotion.context import PromotionContext
 from ml.promotion.result import PromotionResult
+from ml.promotion.state import PromotionState
 
 
 class PromotionStrategy(ABC):

@@ -2,6 +2,7 @@
 
 from ml.utils.hashing.hash_list import hash_list
 
+
 def compute_cols_for_row_id_fingerprint(cols):
     """Compute an order-insensitive fingerprint for row-id column definitions.
 

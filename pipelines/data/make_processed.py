@@ -16,11 +16,11 @@ from uuid import uuid4
 import pandas as pd
 
 from ml.cli.error_handling import resolve_exit_code
+from ml.data.config.schemas.processed import ProcessedConfig
+from ml.data.config.validate_config import validate_config
 from ml.data.processed.persistence.prepare_metadata import prepare_metadata
 from ml.data.processed.processing.process_data import (add_row_id,
                                                        remove_columns)
-from ml.data.config.schemas.processed import ProcessedConfig
-from ml.data.config.validate_config import validate_config
 from ml.data.utils.memory.compute_memory_change import compute_memory_change
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.data.utils.persistence.save_data import save_data

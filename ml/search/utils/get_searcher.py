@@ -2,8 +2,8 @@
 
 import logging
 
-from ml.registry.search_registry import SEARCHERS
 from ml.exceptions import PipelineContractError
+from ml.registry.search_registry import SEARCHERS
 from ml.search.searchers.base import Searcher
 
 logger = logging.getLogger(__name__)

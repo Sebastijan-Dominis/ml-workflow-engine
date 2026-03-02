@@ -1,7 +1,7 @@
 """Utilities for computing class-distribution statistics from targets."""
 
-from collections import Counter
 import logging
+from collections import Counter
 
 from ml.utils.experiments.class_weights.models import DataStats
 

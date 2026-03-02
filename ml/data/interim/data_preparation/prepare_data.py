@@ -8,8 +8,7 @@ import logging
 
 import pandas as pd
 
-from ml.data.config.schemas.interim import (Cleaning, DataSchema,
-                                                  Invariants)
+from ml.data.config.schemas.interim import Cleaning, DataSchema, Invariants
 from ml.exceptions import DataError
 from ml.registry.op_map import OP_MAP
 

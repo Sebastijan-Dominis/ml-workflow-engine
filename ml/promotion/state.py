@@ -2,8 +2,11 @@
 
 from dataclasses import dataclass
 from typing import Optional
-from ml.promotion.constants.constants import PreviousProductionRunIdentity, ThresholdComparisonResult
+
 from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.constants.constants import (PreviousProductionRunIdentity,
+                                              ThresholdComparisonResult)
+
 
 @dataclass
 class PromotionState:

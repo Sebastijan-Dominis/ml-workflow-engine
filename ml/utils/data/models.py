@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class DataLineageEntry:
     """Normalized lineage record for a dataset included in a merged artifact."""

@@ -1,14 +1,9 @@
 """Narrow-search parameter refinement helpers for CatBoost searches."""
 
-from ml.search.params.refiners import (
-    refine_border_count,
-    refine_float_mult,
-    refine_int,
-)
-from ml.search.params.utils import (
-    get_default_float_params,
-    get_default_int_params,
-)
+from ml.search.params.refiners import (refine_border_count, refine_float_mult,
+                                       refine_int)
+from ml.search.params.utils import (get_default_float_params,
+                                    get_default_int_params)
 
 
 def prepare_narrow_params(best_params: dict, narrow_params_cfg, task_type: str) -> dict:

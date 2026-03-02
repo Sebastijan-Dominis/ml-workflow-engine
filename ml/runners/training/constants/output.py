@@ -1,10 +1,10 @@
 """Typed output contract for training runner implementations."""
 
 from dataclasses import dataclass
+from typing import Optional
 
 from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.pipeline import Pipeline
-from typing import Optional
 
 SUPPORTED_MODELS = CatBoostClassifier | CatBoostRegressor
 

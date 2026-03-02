@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class PipelineFeatures:
     """Feature groups used during pipeline assembly and validation."""

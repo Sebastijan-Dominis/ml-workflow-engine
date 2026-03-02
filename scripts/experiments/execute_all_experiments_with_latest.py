@@ -18,8 +18,8 @@ from uuid import uuid4
 
 from ml.logging_config import setup_logging
 from ml.utils.formatting.iso_no_col import iso_no_colon
-from ml.utils.scripts.logging import log_completion
 from ml.utils.formatting.str_2_bol import str2bool
+from ml.utils.scripts.logging import log_completion
 
 MODEL_SPECS_DIR = Path("configs/model_specs")
 

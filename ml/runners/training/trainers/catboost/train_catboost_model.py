@@ -1,7 +1,6 @@
 """Low-level CatBoost fitting helper used by training runner."""
 
 import logging
-from pathlib import Path
 
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor

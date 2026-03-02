@@ -4,10 +4,9 @@ import logging
 
 from ml.exceptions import RuntimeMLException
 from ml.promotion.constants.constants import RunnersMetadata
-from ml.promotion.strategies.base import PromotionStrategy
-from ml.promotion.result import PromotionResult
 from ml.promotion.persistence.prepare import prepare_run_information
-from ml.promotion.persistence.registry import update_registry_and_archive
+from ml.promotion.result import PromotionResult
+from ml.promotion.strategies.base import PromotionStrategy
 
 logger = logging.getLogger(__name__)
 

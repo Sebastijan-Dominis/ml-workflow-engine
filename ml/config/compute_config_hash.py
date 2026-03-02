@@ -1,14 +1,15 @@
 """Hash utilities for non-model Pydantic configuration objects."""
 
-import logging
 import hashlib
+import logging
 
 import yaml
 
 from ml.data.config.schemas.interim import InterimConfig
 from ml.data.config.schemas.processed import ProcessedConfig
-from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.exceptions import RuntimeMLException
+from ml.feature_freezing.freeze_strategies.tabular.config.models import \
+    TabularFeaturesConfig
 
 logger = logging.getLogger(__name__)
 

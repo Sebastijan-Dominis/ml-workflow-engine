@@ -5,7 +5,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+                                                    TrainModelConfig)
 from ml.exceptions import DataError
 
 logger = logging.getLogger(__name__)

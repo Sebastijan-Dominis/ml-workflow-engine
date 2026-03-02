@@ -2,7 +2,8 @@
 
 import logging
 
-from ml.utils.runtime.runtime_snapshot import get_conda_env_export, hash_environment
+from ml.utils.runtime.runtime_snapshot import (get_conda_env_export,
+                                               hash_environment)
 
 logger = logging.getLogger(__name__)
 

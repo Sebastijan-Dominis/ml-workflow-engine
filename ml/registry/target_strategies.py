@@ -1,12 +1,12 @@
 """Registry mapping target-name/version keys to target strategy classes."""
 
 from ml.targets.adr.v1 import AdrTargetV1
+from ml.targets.cancellation.v1 import CancellationTargetV1
 from ml.targets.lead_time.v1 import LeadTimeTargetV1
 from ml.targets.no_show.v1 import NoShowTargetV1
 from ml.targets.repeated_guest.v1 import RepeatedGuestTargetV1
 from ml.targets.room_upgrade.v1 import RoomUpgradeTargetV1
 from ml.targets.special_requests.v1 import SpecialRequestsTargetV1
-from ml.targets.cancellation.v1 import CancellationTargetV1
 
 TARGET_STRATEGIES = {
     ("adr", "v1"): AdrTargetV1,

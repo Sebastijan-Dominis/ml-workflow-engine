@@ -2,7 +2,7 @@
 
 import logging
 
-from  ml.exceptions import UserError
+from ml.exceptions import UserError
 
 logger = logging.getLogger(__name__)
 

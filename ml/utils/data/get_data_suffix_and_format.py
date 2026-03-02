@@ -1,9 +1,9 @@
 """Helpers for resolving dataset path suffix and format from metadata."""
 
 import logging
+from typing import Literal
 
 from ml.exceptions import UserError
-from typing import Literal
 
 logger = logging.getLogger(__name__)
 
