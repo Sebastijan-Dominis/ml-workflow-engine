@@ -1,6 +1,6 @@
 import numpy as np
 
-from ml.data.utils.config.schemas.constants import BorderValue
+from ml.data.config.schemas.constants import BorderValue
 
 MIN_CONSTRAINTS = {
     "lead_time": BorderValue(value=0, op="gte"),

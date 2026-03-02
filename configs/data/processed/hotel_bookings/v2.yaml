@@ -6,6 +6,8 @@ data:
     format: parquet
     compression: snappy
 
+interim_data_version: v1
+
 remove_columns:
   - name
   - email

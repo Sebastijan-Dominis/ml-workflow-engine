@@ -9,7 +9,7 @@ import pandas as pd
 import yaml
 
 from ml.config.compute_config_hash import compute_config_hash
-from ml.data.utils.config.schemas.interim import InterimConfig
+from ml.data.config.schemas.interim import InterimConfig
 from ml.registry.hash_registry import hash_data
 from ml.utils.formatting.iso_no_col import iso_no_colon
 
@@ -22,7 +22,6 @@ def prepare_metadata(
     data_path: Path,
     source_data_path: Path, 
     source_data_format: str,
-    source_data_version: str,
     owner: str, 
     memory_info: dict,
     interim_run_id: str
@@ -39,9 +38,10 @@ def prepare_metadata(
         "interim_run_id": interim_run_id,
         "source_data": {
             "name": config.data.name,
+            "snapshot_id": source_data_path.parent.name,
             "path": str(source_data_path),
             "format": source_data_format,
-            "version": source_data_version,
+            "version": config.raw_data_version,
         },
         "data": {
             "name": config.data.name,

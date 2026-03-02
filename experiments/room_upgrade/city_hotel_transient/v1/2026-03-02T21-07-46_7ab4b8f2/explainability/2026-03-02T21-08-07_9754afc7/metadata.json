@@ -1,0 +1,76 @@
+{
+  "run_identity": {
+    "stage": "explainability",
+    "explain_run_id": "2026-03-02T21-08-07_9754afc7",
+    "train_run_id": "2026-03-02T21-07-54_fda7cc61",
+    "snapshot_id": "2026-03-02T21-07-46_7ab4b8f2",
+    "status": "success"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v4",
+        "snapshot_id": "2026-03-02T21-02-23_f37e5db6",
+        "snapshot_path": "feature_store\\booking_context_features\\v4\\2026-03-02T21-02-23_f37e5db6",
+        "file_hash": "5ecca8f0e3626fb20ed7591871a06f13d0c3a5ed26d7efbc8f03aeaf50d153c3",
+        "in_memory_hash": "6f3a73ed79c1374df4ee655efbdcbbc3",
+        "feature_schema_hash": "096e46d1f94c5ffaf41184d25652f33be0e10a3c337c38fe206f4b45359de96a",
+        "operators_hash": "7403b69c49e9e12717c0574b79d4457c",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-02T21-02-28_f61880d8",
+        "snapshot_path": "feature_store\\customer_history_features\\v1\\2026-03-02T21-02-28_f61880d8",
+        "file_hash": "0bf87e7f116f7a557a568eda42c9ff8ae17f06ce2b3e4a5d6bbf18f87ca473f9",
+        "in_memory_hash": "0eba66b8c9271eece84715ba09e1799e",
+        "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-02T21-02-34_f361cb43",
+        "snapshot_path": "feature_store\\pricing_party_features\\v2\\2026-03-02T21-02-34_f361cb43",
+        "file_hash": "1c90063e286ae48dae44fe323277b6ec9c61169f8a2ea4239ef2a4d322b51016",
+        "in_memory_hash": "ef95af16d3c008b947e84e6f7453fe8a",
+        "feature_schema_hash": "6b0c759f033890e5d35918f660df23905c7f2dfa4a05bb6a4b2dca52f6b21736",
+        "operators_hash": "4c7437bfec9d8c4b4af1421186d5277f",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-02T21-02-41_877477e0",
+        "snapshot_path": "feature_store\\channel_and_agent_features\\v2\\2026-03-02T21-02-41_877477e0",
+        "file_hash": "9996a1cec03b4eba65fd9a14deee023406ad29cf179f5dca983d7729d662f12c",
+        "in_memory_hash": "95d7f2dfc1ab040cec4e5a189e7aa6da",
+        "feature_schema_hash": "835e18a0eb360678f20b0ed18d92bcbb822a6cdca959bc8926aebfe5e60035cb",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      }
+    ],
+    "target_column": "room_upgrade",
+    "problem": "room_upgrade",
+    "segment": "city_hotel_transient",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "6d9e5481c4ee644eeba8a1ef7ac62183b64d5425afb04cf9bed903916febb5e7",
+    "pipeline_cfg_hash": "1a7ca9f3aeec3a8e03e47fd820f49e6e4e90c6099f5f74efa0feeea73aab47d1"
+  },
+  "artifacts": {
+    "model_hash": "ffb04efc5d15148b7a9d08d7e274d0af0ddc5afff767ffd90a6163a1d4a05282",
+    "model_path": "experiments\\room_upgrade\\city_hotel_transient\\v1\\2026-03-02T21-07-46_7ab4b8f2\\training\\2026-03-02T21-07-54_fda7cc61\\model.joblib",
+    "pipeline_path": "experiments\\room_upgrade\\city_hotel_transient\\v1\\2026-03-02T21-07-46_7ab4b8f2\\training\\2026-03-02T21-07-54_fda7cc61\\pipeline.joblib",
+    "pipeline_hash": "c2e3542105a3bca9758a9f1310fab0c151d30fdea9846f1383dfbd9857ce2275",
+    "top_k_feature_importances_path": "experiments\\room_upgrade\\city_hotel_transient\\v1\\2026-03-02T21-07-46_7ab4b8f2\\explainability\\2026-03-02T21-08-07_9754afc7\\top_k_feature_importances.csv",
+    "top_k_feature_importances_hash": "996ae8ed59b72ff5a94320e498fb16d377e88d7be895daa2f85946a45f3c4f4f",
+    "top_k_shap_importances_path": "experiments\\room_upgrade\\city_hotel_transient\\v1\\2026-03-02T21-07-46_7ab4b8f2\\explainability\\2026-03-02T21-08-07_9754afc7\\top_k_shap_importances.csv",
+    "top_k_shap_importances_hash": "5c8692e7dfa78942f8a132f3fc244bca588101a80c040a457107d6220e37b356"
+  },
+  "top_k": 20
+}

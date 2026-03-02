@@ -12,8 +12,8 @@ from ml.cli.error_handling import resolve_exit_code
 from ml.data.processed.persistence.prepare_metadata import prepare_metadata
 from ml.data.processed.processing.process_data import (add_row_id,
                                                        remove_columns)
-from ml.data.utils.config.schemas.processed import ProcessedConfig
-from ml.data.utils.config.validate_config import validate_config
+from ml.data.config.schemas.processed import ProcessedConfig
+from ml.data.config.validate_config import validate_config
 from ml.data.utils.memory.compute_memory_change import compute_memory_change
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.data.utils.persistence.save_data import save_data
@@ -43,13 +43,6 @@ def parse_args() -> argparse.Namespace:
         type=str,
         required=True,
         help="Data version, e.g., 'v1'"
-    )
-
-    parser.add_argument(
-        "--interim-version",
-        type=str,
-        required=True,
-        help="Interim data version to use, e.g., 'v1'"
     )
 
     parser.add_argument(
@@ -100,7 +93,7 @@ def main() -> int:
         config_raw = load_yaml(Path(f"configs/data/processed/{args.data}/{args.version}.yaml"))
         config = validate_config(config_raw, type="processed")
 
-        interim_data_dir = Path("data/interim") / args.data / args.interim_version
+        interim_data_dir = Path("data/interim") / args.data / config.interim_data_version
 
         interim_data_snapshot_path = get_snapshot_path(args.interim_snapshot_id, interim_data_dir)
 
@@ -137,7 +130,7 @@ def main() -> int:
             data_path=data_path, 
             source_data_path=interim_data_path,
             source_data_format=interim_data_format,
-            source_data_version=args.interim_version,
+            source_data_version=config.interim_data_version,
             owner=args.owner, 
             memory_info=memory_info, 
             processed_run_id=processed_id,

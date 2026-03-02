@@ -16,6 +16,7 @@ def prepare_metadata(
     args, 
     data_path: Path,
     raw_run_id: str,
+    data_format: str,
     data_suffix: str
 ) -> dict:
     data_hash = hash_data(data_path)
@@ -28,7 +29,7 @@ def prepare_metadata(
                 "name": args.data,
                 "version": args.version,
                 "path_suffix": data_suffix,
-                "format": args.format,
+                "format": data_format,
                 "hash": data_hash
             },
             "rows": len(df),

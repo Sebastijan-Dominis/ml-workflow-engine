@@ -1,0 +1,79 @@
+{
+  "run_identity": {
+    "stage": "evaluation",
+    "eval_run_id": "2026-03-02T21-06-34_1134bbda",
+    "train_run_id": "2026-03-02T21-06-26_32d53ee1",
+    "snapshot_id": "2026-03-02T21-06-17_bfd081d4",
+    "status": "success"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v7",
+        "snapshot_id": "2026-03-02T21-02-27_8e0ee2a9",
+        "snapshot_path": "feature_store\\booking_context_features\\v7\\2026-03-02T21-02-27_8e0ee2a9",
+        "file_hash": "f034d055ebbc2c3c9fa5857217bcdf34d9fd4e17e715e58bdfdf009b6c585308",
+        "in_memory_hash": "48f3a54941d2725138934fd3c713875b",
+        "feature_schema_hash": "fd9b83dcc7039767c54a0e99b7f09f5f58dff7fbe7ca99904475a5df4260edc2",
+        "operators_hash": "7403b69c49e9e12717c0574b79d4457c",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v4",
+        "snapshot_id": "2026-03-02T21-02-32_70232d7b",
+        "snapshot_path": "feature_store\\customer_history_features\\v4\\2026-03-02T21-02-32_70232d7b",
+        "file_hash": "0bf87e7f116f7a557a568eda42c9ff8ae17f06ce2b3e4a5d6bbf18f87ca473f9",
+        "in_memory_hash": "0eba66b8c9271eece84715ba09e1799e",
+        "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v5",
+        "snapshot_id": "2026-03-02T21-02-38_3eed76ad",
+        "snapshot_path": "feature_store\\pricing_party_features\\v5\\2026-03-02T21-02-38_3eed76ad",
+        "file_hash": "ba6c2ac4b0861179f2715891ae3c29756e773e2b9fff83ef039317d01f7c0bfe",
+        "in_memory_hash": "433a14a4ac447a0061fff9b1634e9d1c",
+        "feature_schema_hash": "a4bbc08d48fcf27ef4d98c05db120e208c649dd186c86a3b907671918e3772dd",
+        "operators_hash": "4c7437bfec9d8c4b4af1421186d5277f",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v3",
+        "snapshot_id": "2026-03-02T21-02-42_bb482006",
+        "snapshot_path": "feature_store\\channel_and_agent_features\\v3\\2026-03-02T21-02-42_bb482006",
+        "file_hash": "0337f41bb50cd3867a3eb3e2df515be8e12bff00deca489c57005e3b00af4ae4",
+        "in_memory_hash": "ab1a91af2b3cf4e926fa615b91614a0f",
+        "feature_schema_hash": "94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      }
+    ],
+    "target_column": "no_show",
+    "problem": "no_show",
+    "segment": "global",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "1aa59e3e18a001499f47f60ee731fd758f15ae38508b218397887e3aea71e973",
+    "pipeline_cfg_hash": "1a7ca9f3aeec3a8e03e47fd820f49e6e4e90c6099f5f74efa0feeea73aab47d1"
+  },
+  "artifacts": {
+    "model_hash": "3e8d2f6e60c75eb2725e6d1b93653a2bce0c1cfb248c26aa7b49840fc3c45c8c",
+    "model_path": "experiments\\no_show\\global\\v1\\2026-03-02T21-06-17_bfd081d4\\training\\2026-03-02T21-06-26_32d53ee1\\model.joblib",
+    "pipeline_path": "experiments\\no_show\\global\\v1\\2026-03-02T21-06-17_bfd081d4\\training\\2026-03-02T21-06-26_32d53ee1\\pipeline.joblib",
+    "pipeline_hash": "2f39be155bc52267ec576d87fb986faea3ba8e83fbdae1a13fce2edce3470915",
+    "metrics_path": "experiments\\no_show\\global\\v1\\2026-03-02T21-06-17_bfd081d4\\evaluation\\2026-03-02T21-06-34_1134bbda\\metrics.json",
+    "metrics_hash": "2fc5e78a27e008efee8bde54bc77d8dbaf99bf0692f8f64b45471cacb77bb603",
+    "predictions_train_path": "experiments\\no_show\\global\\v1\\2026-03-02T21-06-17_bfd081d4\\evaluation\\2026-03-02T21-06-34_1134bbda\\predictions_train.parquet",
+    "predictions_train_hash": "71a3db1bfaaf765d7eff15c440d703ca62c955e1d3286dae93eaa980b770885a",
+    "predictions_val_path": "experiments\\no_show\\global\\v1\\2026-03-02T21-06-17_bfd081d4\\evaluation\\2026-03-02T21-06-34_1134bbda\\predictions_val.parquet",
+    "predictions_val_hash": "d29710c95d1f34cc32203aabd02fddf23fb92e248ea663f27aac7781a950c221",
+    "predictions_test_path": "experiments\\no_show\\global\\v1\\2026-03-02T21-06-17_bfd081d4\\evaluation\\2026-03-02T21-06-34_1134bbda\\predictions_test.parquet",
+    "predictions_test_hash": "2060fb3161ef8e70cf841b0751bae941e43f7b3af1e4ec7b900f7c93d5e705d6"
+  }
+}

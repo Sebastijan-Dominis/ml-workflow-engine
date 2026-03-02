@@ -3,8 +3,8 @@ import hashlib
 
 import yaml
 
-from ml.data.utils.config.schemas.interim import InterimConfig
-from ml.data.utils.config.schemas.processed import ProcessedConfig
+from ml.data.config.schemas.interim import InterimConfig
+from ml.data.config.schemas.processed import ProcessedConfig
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.exceptions import RuntimeMLException
 

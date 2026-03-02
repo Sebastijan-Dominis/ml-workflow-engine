@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from ml.data.utils.config.schemas.processed import ProcessedConfig
+from ml.data.config.schemas.processed import ProcessedConfig
 from ml.exceptions import DataError, UserError
 from ml.registry.row_id_registry import ROW_ID_FUNCTIONS
 

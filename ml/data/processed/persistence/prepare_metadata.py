@@ -9,7 +9,7 @@ import pandas as pd
 import yaml
 
 from ml.config.compute_config_hash import compute_config_hash
-from ml.data.utils.config.schemas.processed import ProcessedConfig
+from ml.data.config.schemas.processed import ProcessedConfig
 from ml.registry.hash_registry import hash_data
 from ml.utils.formatting.iso_no_col import iso_no_colon
 
@@ -41,6 +41,7 @@ def prepare_metadata(
         "processed_run_id": processed_run_id,
         "source_data": {
             "name": config.data.name,
+            "snapshot_id": source_data_path.parent.name,
             "path": str(source_data_path),
             "format": source_data_format,
             "version": source_data_version,

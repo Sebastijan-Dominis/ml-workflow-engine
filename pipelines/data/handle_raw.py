@@ -31,13 +31,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--format", 
-        type=str, 
-        required=True, 
-        help="Format of the data (e.g., csv, parquet)."
-    )
-
-    parser.add_argument(
         "--snapshot_id",
         type=str,
         default="latest",
@@ -79,16 +72,25 @@ def main():
     log_path = data_dir / "handle_raw.log"
     add_file_handler(log_path, level=log_level)
     try:
+        data_files = list(data_dir.glob("data.*"))
 
-        data_suffix = f"data.{args.format}"
-        data_path = data_dir / data_suffix
-        df = read_data(args.format, data_path)
+        if len(data_files) != 1:
+            raise UserError(
+                f"Expected exactly one data file in {data_dir}, found {len(data_files)}"
+            )
+
+        data_path = data_files[0]
+        data_suffix = data_path.name
+        data_format = data_path.suffix.lstrip(".")
+
+        df = read_data(data_format, data_path)
 
         metadata = prepare_metadata(
             df, 
             args=args, 
             data_path=data_path, 
             raw_run_id=data_dir.name,
+            data_format=data_format,
             data_suffix=data_suffix
         )
 

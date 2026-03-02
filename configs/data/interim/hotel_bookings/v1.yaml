@@ -44,6 +44,8 @@ data_schema:
   phone_number: string
   credit_card: string
 
+raw_data_version: v1
+
 cleaning:
   lowercase_columns: true
   strip_strings: true

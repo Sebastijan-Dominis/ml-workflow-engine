@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from ml.data.utils.config.schemas.interim import InterimConfig
-from ml.data.utils.config.schemas.processed import ProcessedConfig
+from ml.data.config.schemas.interim import InterimConfig
+from ml.data.config.schemas.processed import ProcessedConfig
 from ml.exceptions import ConfigError, PersistenceError
 
 logger = logging.getLogger(__name__)

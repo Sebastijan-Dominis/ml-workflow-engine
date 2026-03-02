@@ -13,8 +13,8 @@ from ml.data.interim.data_preparation.prepare_data import (clean_data,
                                                            enforce_schema,
                                                            normalize_columns)
 from ml.data.interim.persistence.prepare_metadata import prepare_metadata
-from ml.data.utils.config.schemas.interim import InterimConfig
-from ml.data.utils.config.validate_config import validate_config
+from ml.data.config.schemas.interim import InterimConfig
+from ml.data.config.validate_config import validate_config
 from ml.data.utils.memory.compute_memory_change import compute_memory_change
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.data.utils.persistence.save_data import save_data
@@ -44,13 +44,6 @@ def parse_args() -> argparse.Namespace:
         type=str,
         required=True,
         help="Data version, e.g., 'v1'"
-    )
-
-    parser.add_argument(
-        "--raw-version",
-        type=str,
-        required=True,
-        help="Raw data version to use, e.g., 'v1'"
     )
 
     parser.add_argument(
@@ -101,7 +94,7 @@ def main() -> int:
         config_raw = load_yaml(Path(f"configs/data/interim/{args.data}/{args.version}.yaml"))
         config = validate_config(config_raw, type="interim")
 
-        raw_data_dir = Path("data/raw") / args.data / args.raw_version
+        raw_data_dir = Path("data/raw") / args.data / config.raw_data_version
 
         raw_data_snapshot_path = get_snapshot_path(args.raw_snapshot_id, raw_data_dir)
 
@@ -145,7 +138,6 @@ def main() -> int:
             data_path=data_path,
             source_data_path=raw_data_path,
             source_data_format=raw_data_format,
-            source_data_version=args.raw_version,
             owner=args.owner,
             memory_info=memory_info,
             interim_run_id=interim_id

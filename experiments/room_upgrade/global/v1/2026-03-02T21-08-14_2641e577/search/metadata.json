@@ -1,0 +1,631 @@
+{
+  "metadata": {
+    "problem": "room_upgrade",
+    "segment": "global",
+    "version": "v1",
+    "experiment_id": "2026-03-02T21-08-14_2641e577",
+    "sources": {
+      "main": "configs\\search\\room_upgrade\\global\\v1.yaml",
+      "extends": [
+        "../../../../configs/defaults/global.yaml",
+        "../../../../configs/defaults/catboost.yaml",
+        "../../../../configs/model_specs/room_upgrade/global/v1.yaml"
+      ]
+    },
+    "env": "dev",
+    "best_params_path": "none",
+    "algorithm": "catboost",
+    "pipeline_version": "v1",
+    "created_by": "search.py",
+    "created_at": "2026-03-02T21-08-14",
+    "owner": "Sebastijan",
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v4",
+        "snapshot_id": "2026-03-02T21-02-23_f37e5db6",
+        "snapshot_path": "feature_store\\booking_context_features\\v4\\2026-03-02T21-02-23_f37e5db6",
+        "file_hash": "5ecca8f0e3626fb20ed7591871a06f13d0c3a5ed26d7efbc8f03aeaf50d153c3",
+        "in_memory_hash": "6f3a73ed79c1374df4ee655efbdcbbc3",
+        "feature_schema_hash": "096e46d1f94c5ffaf41184d25652f33be0e10a3c337c38fe206f4b45359de96a",
+        "operators_hash": "7403b69c49e9e12717c0574b79d4457c",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-02T21-02-28_f61880d8",
+        "snapshot_path": "feature_store\\customer_history_features\\v1\\2026-03-02T21-02-28_f61880d8",
+        "file_hash": "0bf87e7f116f7a557a568eda42c9ff8ae17f06ce2b3e4a5d6bbf18f87ca473f9",
+        "in_memory_hash": "0eba66b8c9271eece84715ba09e1799e",
+        "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-02T21-02-34_f361cb43",
+        "snapshot_path": "feature_store\\pricing_party_features\\v2\\2026-03-02T21-02-34_f361cb43",
+        "file_hash": "1c90063e286ae48dae44fe323277b6ec9c61169f8a2ea4239ef2a4d322b51016",
+        "in_memory_hash": "ef95af16d3c008b947e84e6f7453fe8a",
+        "feature_schema_hash": "6b0c759f033890e5d35918f660df23905c7f2dfa4a05bb6a4b2dca52f6b21736",
+        "operators_hash": "4c7437bfec9d8c4b4af1421186d5277f",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-02T21-02-41_877477e0",
+        "snapshot_path": "feature_store\\channel_and_agent_features\\v2\\2026-03-02T21-02-41_877477e0",
+        "file_hash": "9996a1cec03b4eba65fd9a14deee023406ad29cf179f5dca983d7729d662f12c",
+        "in_memory_hash": "95d7f2dfc1ab040cec4e5a189e7aa6da",
+        "feature_schema_hash": "835e18a0eb360678f20b0ed18d92bcbb822a6cdca959bc8926aebfe5e60035cb",
+        "operators_hash": "none",
+        "feature_type": "tabular"
+      }
+    ],
+    "seed": 42,
+    "hardware": {
+      "task_type": "CPU",
+      "devices": [
+        0
+      ],
+      "memory_limit_gb": null,
+      "allow_growth": false
+    },
+    "git_commit": "757acccfe79d8acdb9afaccc46433d2e38af8993",
+    "config_hash": "a5db60d645d8c9a610703704a9c394ebdba223349fc988fa0d625ad2bfb47798",
+    "validation_status": "ok",
+    "pipeline_hash": "1a7ca9f3aeec3a8e03e47fd820f49e6e4e90c6099f5f74efa0feeea73aab47d1",
+    "scoring_method": "roc_auc",
+    "splits_info": {
+      "train": {
+        "n_rows": 81181,
+        "class_distribution": {
+          "0": 0.8750569714588389,
+          "1": 0.12494302854116111
+        },
+        "positive_rate": 0.12494302854116111
+      },
+      "val": {
+        "n_rows": 14327,
+        "class_distribution": {
+          "0": 0.875061073497592,
+          "1": 0.12493892650240804
+        },
+        "positive_rate": 0.12493892650240804
+      },
+      "test": {
+        "n_rows": 23877,
+        "class_distribution": {
+          "0": 0.8750680571261046,
+          "1": 0.12493194287389538
+        },
+        "positive_rate": 0.12493194287389538
+      }
+    },
+    "class_weighting": {
+      "policy": "if_imbalanced",
+      "imbalance_threshold": 0.1,
+      "strategy": "balanced"
+    }
+  },
+  "config": {
+    "problem": "room_upgrade",
+    "segment": {
+      "name": "global",
+      "description": "All bookings"
+    },
+    "version": "v1",
+    "task": {
+      "type": "classification",
+      "subtype": "binary"
+    },
+    "target": {
+      "name": "room_upgrade",
+      "version": "v1",
+      "allowed_dtypes": [
+        "int64"
+      ],
+      "classes": {
+        "count": 2,
+        "positive_class": 1,
+        "min_class_count": 200
+      },
+      "constraints": {
+        "min_value": null,
+        "max_value": null
+      },
+      "transform": {
+        "enabled": false,
+        "type": null,
+        "lambda_value": null
+      }
+    },
+    "segmentation": {
+      "enabled": false,
+      "include_in_model": false,
+      "filters": []
+    },
+    "min_rows": 10000,
+    "split": {
+      "strategy": "random",
+      "stratify_by": "room_upgrade",
+      "test_size": 0.2,
+      "val_size": 0.12,
+      "random_state": 42
+    },
+    "algorithm": "catboost",
+    "model_class": "CatBoostClassifier",
+    "pipeline": {
+      "version": "v1",
+      "path": "configs/pipelines/tabular/catboost/v1.yaml"
+    },
+    "scoring": {
+      "policy": "adaptive_binary",
+      "fixed_metric": null,
+      "pr_auc_threshold": 0.1
+    },
+    "class_weighting": {
+      "policy": "if_imbalanced",
+      "imbalance_threshold": 0.1,
+      "strategy": "balanced"
+    },
+    "feature_store": {
+      "path": "feature_store/",
+      "feature_sets": [
+        {
+          "name": "booking_context_features",
+          "version": "v4",
+          "schema_format": "csv",
+          "input_schema": "input_schema.csv",
+          "derived_schema": "derived_schema.csv",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "customer_history_features",
+          "version": "v1",
+          "schema_format": "csv",
+          "input_schema": "input_schema.csv",
+          "derived_schema": "derived_schema.csv",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "pricing_party_features",
+          "version": "v2",
+          "schema_format": "csv",
+          "input_schema": "input_schema.csv",
+          "derived_schema": "derived_schema.csv",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "channel_and_agent_features",
+          "version": "v2",
+          "schema_format": "csv",
+          "input_schema": "input_schema.csv",
+          "derived_schema": "derived_schema.csv",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        }
+      ]
+    },
+    "explainability": {
+      "enabled": true,
+      "top_k": 20,
+      "methods": {
+        "feature_importances": {
+          "enabled": true,
+          "type": "PredictionValuesChange"
+        },
+        "shap": {
+          "enabled": true,
+          "approximate": "tree"
+        }
+      }
+    },
+    "data_type": "tabular",
+    "model_specs_lineage": {
+      "created_by": "Sebastijan",
+      "created_at": "2026-02-27T23-53-30+00-00"
+    },
+    "_meta": {
+      "sources": {
+        "main": "configs\\search\\room_upgrade\\global\\v1.yaml",
+        "extends": [
+          "../../../../configs/defaults/global.yaml",
+          "../../../../configs/defaults/catboost.yaml",
+          "../../../../configs/model_specs/room_upgrade/global/v1.yaml"
+        ]
+      },
+      "env": "dev",
+      "best_params_path": null,
+      "validation_status": "ok",
+      "validation_errors": null,
+      "config_hash": "a5db60d645d8c9a610703704a9c394ebdba223349fc988fa0d625ad2bfb47798"
+    },
+    "extends": [],
+    "search": {
+      "random_state": 42,
+      "broad": {
+        "iterations": 2,
+        "n_iter": 1,
+        "param_distributions": {
+          "model": {
+            "depth": [
+              4,
+              6,
+              8,
+              10
+            ],
+            "learning_rate": [
+              0.005,
+              0.01,
+              0.03,
+              0.05,
+              0.1,
+              0.2,
+              0.3
+            ],
+            "l2_leaf_reg": [
+              1.0,
+              3.0,
+              5.0,
+              7.0,
+              9.0
+            ],
+            "colsample_bylevel": null,
+            "random_strength": [
+              1.0,
+              2.0,
+              5.0,
+              8.0,
+              10.0,
+              12.0
+            ],
+            "min_data_in_leaf": [
+              1,
+              3,
+              5,
+              8,
+              10,
+              15,
+              20
+            ],
+            "border_count": [
+              32,
+              64,
+              128,
+              254
+            ]
+          },
+          "ensemble": {
+            "bagging_temperature": [
+              0.0,
+              0.25,
+              0.5,
+              0.75,
+              1.0,
+              2.0,
+              5.0
+            ]
+          }
+        }
+      },
+      "narrow": {
+        "enabled": true,
+        "iterations": 2,
+        "n_iter": 1,
+        "param_configurations": {
+          "model": {
+            "depth": {
+              "include": true,
+              "offsets": [
+                1,
+                2
+              ],
+              "low": 2,
+              "high": 12
+            },
+            "learning_rate": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 0.003,
+              "high": 0.5,
+              "decimals": 5
+            },
+            "l2_leaf_reg": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 1.0,
+              "high": 30.0,
+              "decimals": 2
+            },
+            "colsample_bylevel": null,
+            "random_strength": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 0.0,
+              "high": 20.0,
+              "decimals": 2
+            },
+            "min_data_in_leaf": {
+              "include": true,
+              "offsets": [
+                2,
+                5,
+                10
+              ],
+              "low": 1,
+              "high": 50
+            },
+            "border_count": {
+              "include": true,
+              "offsets": null,
+              "low": null,
+              "high": null
+            }
+          },
+          "ensemble": {
+            "bagging_temperature": {
+              "include": true,
+              "factors": [
+                0.6,
+                0.8,
+                1.0,
+                1.2,
+                1.5
+              ],
+              "low": 0.0,
+              "high": 5.0,
+              "decimals": 3
+            }
+          }
+        }
+      },
+      "hardware": {
+        "task_type": "CPU",
+        "devices": [
+          0
+        ],
+        "memory_limit_gb": null,
+        "allow_growth": false
+      },
+      "error_score": "raise"
+    },
+    "seed": 42,
+    "cv": 3,
+    "verbose": 100,
+    "search_lineage": {
+      "created_by": "Sebastijan",
+      "created_at": "2026-02-27T23-53-30+00-00"
+    },
+    "training": {
+      "early_stopping_rounds": 100,
+      "model": {
+        "learning_rate": 0.03,
+        "depth": 6,
+        "l2_leaf_reg": 3,
+        "random_strength": 1,
+        "border_count": 128
+      },
+      "ensemble": {
+        "bagging_temperature": 1.0
+      },
+      "iterations": 2,
+      "hardware": {
+        "task_type": "cpu"
+      },
+      "snapshot_interval_seconds": 300
+    }
+  },
+  "search_results": {
+    "best_pipeline_params": {
+      "Model__random_strength": 3.5,
+      "Model__min_data_in_leaf": 13,
+      "Model__learning_rate": 0.17,
+      "Model__l2_leaf_reg": 6.3,
+      "Model__depth": 9,
+      "Model__border_count": 64,
+      "Model__bagging_temperature": 1.6
+    },
+    "best_model_params": {
+      "random_strength": 3.5,
+      "min_data_in_leaf": 13,
+      "learning_rate": 0.17,
+      "l2_leaf_reg": 6.3,
+      "depth": 9,
+      "border_count": 64,
+      "bagging_temperature": 1.6
+    },
+    "phases": {
+      "broad": {
+        "best_params": {
+          "Model__random_strength": 5.0,
+          "Model__min_data_in_leaf": 15,
+          "Model__learning_rate": 0.2,
+          "Model__l2_leaf_reg": 9.0,
+          "Model__depth": 8,
+          "Model__border_count": 32,
+          "Model__bagging_temperature": 2.0
+        },
+        "best_score": 0.6260705678575801,
+        "best_index": 0,
+        "cv_results": {
+          "mean_test_score": [
+            0.6260705678575801
+          ],
+          "std_test_score": [
+            0.043150428183678986
+          ],
+          "rank_test_score": [
+            1
+          ]
+        },
+        "param_distributions": {
+          "Model__depth": [
+            4,
+            6,
+            8,
+            10
+          ],
+          "Model__learning_rate": [
+            0.005,
+            0.01,
+            0.03,
+            0.05,
+            0.1,
+            0.2,
+            0.3
+          ],
+          "Model__l2_leaf_reg": [
+            1.0,
+            3.0,
+            5.0,
+            7.0,
+            9.0
+          ],
+          "Model__random_strength": [
+            1.0,
+            2.0,
+            5.0,
+            8.0,
+            10.0,
+            12.0
+          ],
+          "Model__min_data_in_leaf": [
+            1,
+            3,
+            5,
+            8,
+            10,
+            15,
+            20
+          ],
+          "Model__border_count": [
+            32,
+            64,
+            128,
+            254
+          ],
+          "Model__bagging_temperature": [
+            0.0,
+            0.25,
+            0.5,
+            0.75,
+            1.0,
+            2.0,
+            5.0
+          ]
+        },
+        "n_iter": 1,
+        "cv": 3,
+        "scoring": "roc_auc",
+        "random_state": 42,
+        "error_score": "raise",
+        "search_phase": "broad"
+      },
+      "narrow": {
+        "best_params": {
+          "Model__random_strength": 3.5,
+          "Model__min_data_in_leaf": 13,
+          "Model__learning_rate": 0.17,
+          "Model__l2_leaf_reg": 6.3,
+          "Model__depth": 9,
+          "Model__border_count": 64,
+          "Model__bagging_temperature": 1.6
+        },
+        "best_score": 0.6798135482744052,
+        "best_index": 0,
+        "cv_results": {
+          "mean_test_score": [
+            0.6798135482744052
+          ],
+          "std_test_score": [
+            0.017105692398855763
+          ],
+          "rank_test_score": [
+            1
+          ]
+        },
+        "param_distributions": {
+          "Model__depth": [
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "Model__learning_rate": [
+            0.14,
+            0.17,
+            0.2,
+            0.23,
+            0.26
+          ],
+          "Model__l2_leaf_reg": [
+            6.3,
+            7.65,
+            9.0,
+            10.35,
+            11.7
+          ],
+          "Model__bagging_temperature": [
+            1.2,
+            1.6,
+            2.0,
+            2.4,
+            3.0
+          ],
+          "Model__min_data_in_leaf": [
+            5,
+            10,
+            13,
+            15,
+            17,
+            20,
+            25
+          ],
+          "Model__random_strength": [
+            3.5,
+            4.25,
+            5.0,
+            5.75,
+            6.5
+          ],
+          "Model__border_count": [
+            32,
+            64
+          ]
+        },
+        "n_iter": 1,
+        "cv": 3,
+        "scoring": "roc_auc",
+        "random_state": 42,
+        "error_score": "raise",
+        "search_phase": "narrow"
+      }
+    }
+  }
+}
