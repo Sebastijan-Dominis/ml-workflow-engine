@@ -1,3 +1,5 @@
+"""Persistence service for promotion decisions, registry updates, and metadata."""
+
 import logging
 
 from ml.exceptions import RuntimeMLException
@@ -12,8 +14,19 @@ from ml.utils.persistence.save_metadata import save_metadata
 logger = logging.getLogger(__name__)
 
 class PromotionPersister:
+    """Persists promotion outcomes and registry mutations."""
 
     def _build_reason_and_log_msg(self, context: PromotionContext, state: PromotionState, result: PromotionResult) -> tuple[str, str]:
+        """Build human-readable decision reason and corresponding log message.
+
+        Args:
+            context: Promotion execution context.
+            state: Promotion state snapshot.
+            result: Promotion strategy result.
+
+        Returns:
+            tuple[str, str]: Decision reason and log message.
+        """
         if result.promotion_decision:
             if context.args.stage == "production":
                 reason = "Model meets all promotion criteria."
@@ -69,6 +82,16 @@ class PromotionPersister:
         state: PromotionState,
         result: PromotionResult,
     ):
+        """Persist decision effects, registry diffs, and promotion metadata.
+
+        Args:
+            context: Promotion execution context.
+            state: Promotion state snapshot.
+            result: Promotion strategy result.
+
+        Returns:
+            None: Persists promotion side effects.
+        """
         updated_registry = None
         reason, log_msg = self._build_reason_and_log_msg(context, state, result)
 

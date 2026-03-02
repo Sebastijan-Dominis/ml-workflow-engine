@@ -1,3 +1,5 @@
+"""Persistence orchestration for explainability artifacts and metadata."""
+
 import logging
 from pathlib import Path
 
@@ -26,6 +28,26 @@ def persist_explainability_run(
         pipeline_cfg_hash: str,
         top_k: int
 ) -> None:
+    """Persist explainability metrics, metadata, and runtime snapshot.
+
+    Args:
+        model_cfg: Validated training model configuration.
+        explain_run_id: Explainability run identifier.
+        train_run_id: Upstream training run identifier.
+        experiment_dir: Base experiment directory.
+        explain_run_dir: Explainability output directory.
+        explainability_metrics: Computed explainability metrics container.
+        feature_lineage: Feature lineage records.
+        start_time: Process start time used for runtime metadata.
+        timestamp: Run timestamp string.
+        artifacts: Mutable artifact-path/hash mapping.
+        pipeline_cfg_hash: Pipeline configuration hash.
+        top_k: Number of top features persisted per explainability method.
+
+    Returns:
+        None.
+    """
+
     if explainability_metrics.top_k_feature_importances is not None:
         feature_importances_file = explain_run_dir / "top_k_feature_importances.csv"
         save_metrics_csv(explainability_metrics.top_k_feature_importances, target_file=feature_importances_file, name="Feature importances")

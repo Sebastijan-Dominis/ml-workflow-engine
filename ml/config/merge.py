@@ -1,3 +1,5 @@
+"""Config composition helpers for recursive merges and overlays."""
+
 import logging
 from copy import deepcopy
 from pathlib import Path
@@ -9,10 +11,13 @@ from ml.utils.loaders import load_yaml
 logger = logging.getLogger(__name__)
 
 def deep_merge(dicts: list[dict[str, Any]]) -> dict[str, Any]:
-    """
-    Uses manual recursive merging to merge a list of dicts into one. 
-    Later dicts take precedence over earlier ones.
-    Primitives and lists are replaced.
+    """Recursively merge config dictionaries where later entries take precedence.
+
+    Args:
+        dicts: Ordered dictionaries to merge.
+
+    Returns:
+        dict[str, Any]: Deep-merged configuration dictionary.
     """
     result: dict[str, Any] = {}
 
@@ -37,6 +42,17 @@ def resolve_extends(
     *,
     skip_missing: bool = False,
 ) -> dict[str, Any]:
+    """Resolve recursive ``extends`` references and deep-merge parent configs.
+
+    Args:
+        cfg: Raw configuration dictionary.
+        base_path: Directory used to resolve relative parent paths.
+        skip_missing: Whether missing parent configs should be ignored.
+
+    Returns:
+        dict[str, Any]: Configuration with all parent configs merged.
+    """
+
     parents = []
 
     for parent in cfg.get("extends", []):
@@ -64,6 +80,18 @@ def resolve_extends(
     return deep_merge(parents + [cfg])
 
 def apply_env_overlay(cfg: dict[str, Any], env: str | None, env_path: Path, skip_missing: bool = True) -> dict[str, Any]:
+    """Apply environment overlay config on top of the base configuration.
+
+    Args:
+        cfg: Base configuration dictionary.
+        env: Environment overlay key.
+        env_path: Environment config file path.
+        skip_missing: Whether missing overlays should be ignored.
+
+    Returns:
+        dict[str, Any]: Configuration after applying env overlay.
+    """
+
     if not env:
         if skip_missing:
             logger.warning("No environment specified; skipping env overlay.")

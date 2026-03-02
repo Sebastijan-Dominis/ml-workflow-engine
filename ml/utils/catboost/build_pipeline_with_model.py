@@ -1,3 +1,5 @@
+"""Helpers for constructing CatBoost-ready sklearn pipelines."""
+
 import logging
 
 import pandas as pd
@@ -19,6 +21,19 @@ def build_pipeline_with_model(
     derived_schema: pd.DataFrame,
     model: CatBoostClassifier | CatBoostRegressor
 ) -> Pipeline:
+    """Build a feature pipeline and append a validated CatBoost model step.
+
+    Args:
+        model_cfg: Validated search or train model configuration.
+        pipeline_cfg: Pipeline configuration dictionary.
+        input_schema: Input feature schema dataframe.
+        derived_schema: Derived feature schema dataframe.
+        model: Instantiated CatBoost estimator.
+
+    Returns:
+        Pipeline: Constructed sklearn pipeline with final `Model` step attached.
+    """
+
     pipeline = build_pipeline(
         model_cfg=model_cfg,
         pipeline_cfg=pipeline_cfg,

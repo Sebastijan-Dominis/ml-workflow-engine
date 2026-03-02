@@ -1,3 +1,5 @@
+"""Orchestration utilities for loading, validating, and aligning features and targets."""
+
 import logging
 from pathlib import Path
 from typing import Optional
@@ -33,6 +35,31 @@ def load_X_and_y(
     drop_row_id: bool = True,
     strict: bool = True
 ) -> tuple[pd.DataFrame, pd.Series, list[dict]]:
+    """Load feature sets and target, apply validations, and return `(X, y, lineage)`.
+
+    Args:
+        model_cfg: Validated model configuration driving data loading and validation behavior.
+        snapshot_selection: Optional pre-resolved snapshot selection descriptors.
+        drop_row_id: Whether to drop `row_id` from output features.
+        strict: Whether strict hash/integrity checks should be enforced.
+
+    Returns:
+        tuple[pd.DataFrame, pd.Series, list[dict]]: Features, target series, and feature-lineage metadata.
+
+    Raises:
+        DataError: If feature/target integrity checks fail, required metadata is
+            invalid, or segmentation/alignment leaves invalid data.
+
+    Notes:
+        When ``snapshot_selection`` is not supplied, snapshots are resolved from
+        the feature-store config and then validated for schema, hashing, lineage,
+        and row alignment before target extraction.
+
+    Side Effects:
+        Performs disk reads across feature snapshots/metadata and emits extensive
+        validation logs.
+    """
+
     segmented_df: pd.DataFrame
     y_with_row_id: pd.DataFrame
     y: pd.Series

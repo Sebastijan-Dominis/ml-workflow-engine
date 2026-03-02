@@ -1,4 +1,9 @@
-# CRITICAL WARNING: This script is the absolute master orchestrator. It runs EVERYTHING. Use with extreme caution.
+"""Master orchestration script that executes all major project workflows.
+
+Warning:
+    This script triggers full preprocessing, feature freezing, and experiment
+    execution. It is intentionally powerful and should be run with care.
+"""
 
 import argparse
 import logging
@@ -18,6 +23,11 @@ logger = logging.getLogger(__name__)
 
 
 def parse_args():
+    """Parse command-line arguments for the master orchestrator.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(
         description="Absolute master orchestrator. Runs EVERYTHING."
     )
@@ -51,6 +61,15 @@ def parse_args():
 
 
 def run_step(cmd: list[str], step_name: str):
+    """Run one orchestration step command with structured logging.
+
+    Args:
+        cmd: Command and arguments for the step.
+        step_name: Human-readable step name for logs.
+
+    Returns:
+        int: Subprocess return code (``0`` on success).
+    """
     logger.info(f"Starting step: {step_name}")
     result = subprocess.run(cmd, text=True)
     if result.returncode != 0:
@@ -61,6 +80,22 @@ def run_step(cmd: list[str], step_name: str):
 
 
 def main():
+    """Execute all high-level orchestration steps in sequence.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        This is a high-impact orchestrator that chains full preprocessing,
+        freezing, and experiment execution; partial failures stop later stages.
+
+    Side Effects:
+        Launches multiple long-running subprocess workflows and writes a single
+        master orchestration log.
+
+    Examples:
+        python -m scripts.nuclear.just_do_it --env dev --skip-if-existing true
+    """
     args = parse_args()
     start_time = time.perf_counter()
 

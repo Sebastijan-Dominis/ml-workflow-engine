@@ -1,3 +1,9 @@
+"""CLI for building interim datasets from raw snapshots.
+
+This pipeline loads raw data, applies schema and cleaning rules defined in
+configuration, writes the interim dataset, and persists run metadata.
+"""
+
 import argparse
 import logging
 import sys
@@ -30,6 +36,11 @@ from ml.utils.snapshots.snapshot_path import get_snapshot_path
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments for interim data creation.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Make interim data by cleaning and transforming raw data according to the provided configuration.")
 
     parser.add_argument(
@@ -70,6 +81,26 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main() -> int:
+    """Execute the interim data preparation workflow.
+
+    The workflow loads and validates interim configuration, reads source raw
+    data, applies normalization/schema/cleaning steps, writes the transformed
+    dataset, and persists metadata for reproducibility.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are converted to process exit codes; the function is designed
+        as a CLI boundary and does not propagate failures upward.
+
+    Side Effects:
+        Creates a new interim snapshot directory, writes transformed dataset
+        artifacts, metadata, and run logs.
+
+    Examples:
+        python pipelines/data/make_interim.py --data hotel_bookings --version v1 --raw-snapshot-id latest
+    """
     args: argparse.Namespace
     config_raw: dict
     config: InterimConfig

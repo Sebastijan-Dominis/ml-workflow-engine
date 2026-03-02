@@ -1,3 +1,5 @@
+"""Production-baseline comparison logic for promotion decisions."""
+
 import logging
 from typing import Optional
 
@@ -17,6 +19,19 @@ def compare_against_production_model(
     metric_names: list[MetricName],
     directions: dict[MetricName, Direction]
 ) -> ProductionComparisonResult:
+    """Compare candidate evaluation metrics against current production metrics.
+
+    Args:
+        evaluation_metrics: Nested metrics grouped by split set.
+        current_prod_model_info: Registry payload for current production model.
+        metric_sets: Metric sets to compare.
+        metric_names: Metric names to compare.
+        directions: Comparison direction for each metric.
+
+    Returns:
+        ProductionComparisonResult: Production comparison outcome.
+    """
+
     if not current_prod_model_info:
         msg = "No current production model found. Skipping comparison against production model."
         logger.warning(msg)

@@ -1,3 +1,5 @@
+"""Helpers for resolving feature snapshot directories for data loading."""
+
 # TODO: Adjust the rest of the code to actually enable snapshot binding
 import logging
 from pathlib import Path
@@ -14,22 +16,17 @@ def resolve_feature_snapshots(
     feature_sets: list,
     snapshot_binding: Optional[list[dict]] = None
 ) -> list[dict]:
-    """
-    Resolve the snapshot paths to load for each feature set.
+    """Resolve snapshot metadata for each feature set using binding or latest snapshot.
 
     Args:
-        feature_store_path: Base path to feature store
-        feature_sets: List of feature set specs from model config
-        snapshot_binding: Optional. If provided, a list of dicts containing
-                          pre-selected snapshot_ids for each feature set (from train metadata)
+        feature_store_path: Root path of the feature store.
+        feature_sets: Configured feature-set specifications.
+        snapshot_binding: Optional explicit snapshot mapping, typically from training metadata.
 
     Returns:
-        List of dicts with keys:
-            - fs_spec: the feature set spec
-            - snapshot_path: Path object to the snapshot
-            - snapshot_id: the snapshot folder name
-            - metadata: loaded metadata.json
+        list[dict]: Resolved snapshot descriptors containing feature spec, path, id, and metadata.
     """
+
     resolved = []
 
     for i, fs in enumerate(feature_sets):

@@ -1,4 +1,4 @@
-# Modularize if new datas are added in the future, or if the interim config becomes too large. This will help keep the code organized and maintainable.
+"""Validation schemas for interim-stage data processing configuration."""
 
 import logging
 from datetime import datetime
@@ -15,6 +15,8 @@ from ml.registry.interim_constraints import (ALLOWED_VALUES_CONSTRAINTS,
 logger = logging.getLogger(__name__)
 
 class DataSchema(BaseModel):
+    """Expected interim dataset column names and target dtypes."""
+
     hotel: str = "category"
     is_canceled: str = "int8"
     lead_time: str = "int16"
@@ -53,6 +55,8 @@ class DataSchema(BaseModel):
     credit_card: str = "string"
 
 class Cleaning(BaseModel):
+    """Column-name normalization options for preprocessing input data."""
+
     lowercase_columns: bool = Field(True, description="Whether to convert column names to lowercase.")
     strip_strings: bool = Field(True, description="Whether to strip leading/trailing whitespace from string columns.")
     replace_spaces_in_columns: bool = Field(True, description="Whether to replace spaces in column names with underscores.")
@@ -61,11 +65,15 @@ class Cleaning(BaseModel):
 
 
 class Invariant(BaseModel):
+    """Validation and filtering rules for a single column."""
+
     min: Optional[BorderValue] = Field(None, description="Minimum allowed value for the column.")
     max: Optional[BorderValue] = Field(None, description="Maximum allowed value for the column.")
     allowed_values: Optional[list] = Field(None, description="List of allowed values for the column.")
 
 class Invariants(BaseModel):
+    """Column-level invariant rules covering the interim dataset schema."""
+
     hotel: Optional[Invariant] = None
     is_canceled: Optional[Invariant] = None
     lead_time: Optional[Invariant] = None
@@ -106,6 +114,11 @@ class Invariants(BaseModel):
     @model_validator(mode="after")
     # validate that the invariants specified in the config do not violate the predefined constraints
     def validate_constraints(self):
+        """Ensure configured invariants stay within registry-defined limits.
+
+        Returns:
+            Invariants: Validated invariants object.
+        """
         for field_name, min_allowed in MIN_CONSTRAINTS.items():
             invariant = getattr(self, field_name)
             if invariant and invariant.min is not None and invariant.min.value < min_allowed.value:
@@ -143,6 +156,14 @@ class Invariants(BaseModel):
     @model_validator(mode="before")
     # assign default invariants for columns that are not specified in the config
     def assign_default_invariants(cls, values):
+        """Populate missing column invariants with registry-based defaults.
+
+        Args:
+            values: Raw invariants payload dictionary.
+
+        Returns:
+            dict: Invariants payload with defaults assigned.
+        """
         for field_name in DataSchema.model_fields.keys():
             if field_name not in values:
                 values[field_name] = Invariant(
@@ -153,10 +174,14 @@ class Invariants(BaseModel):
         return values
 
 class LineageConfig(BaseModel):
+    """Lineage metadata describing interim config provenance."""
+
     created_by: str
     created_at: datetime
 
 class InterimConfig(BaseModel):
+    """Top-level validated configuration for interim data creation."""
+
     data: DataInfo
     data_schema: DataSchema
     raw_data_version: str
@@ -170,6 +195,14 @@ class InterimConfig(BaseModel):
     # ensure that the raw_data_version is not empty and follows a specific format (e.g., v1, v2, etc.)
     @model_validator(mode="after")
     def validate_raw_data_version(cls, config):
+        """Validate that ``raw_data_version`` follows the ``v{number}`` format.
+
+        Args:
+            config: Candidate interim configuration object.
+
+        Returns:
+            InterimConfig: Validated interim configuration object.
+        """
         if not config.raw_data_version.startswith("v") or not config.raw_data_version[1:].isdigit():
             msg = f"Invalid raw_data_version '{config.raw_data_version}'. It must start with 'v' followed by a number (e.g., v1, v2)."
             logger.error(msg)

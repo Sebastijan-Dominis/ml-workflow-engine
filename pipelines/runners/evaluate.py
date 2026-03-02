@@ -7,7 +7,8 @@ evaluators and persists evaluation results via updater functions.
 Typical usage example:
     python -m ml.training.evaluation_scripts.evaluate \\
         --problem cancellation --segment global --version v1 \\
-        --experiment-id 20260206_154343_2f5c2000
+        --experiment-id 20260206_154343_2f5c2000 \\
+        --train-id 20260206_162120_sdg42000 \
 
 The module exposes helper functions used by the CLI and a `main()` function
 which orchestrates the complete evaluation flow.
@@ -50,6 +51,11 @@ from ml.utils.snapshots.snapshot_path import get_snapshot_path
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments for evaluation.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Evaluate a model.")
 
     parser.add_argument(
@@ -111,6 +117,22 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main() -> int:
+    """Run model evaluation and persist evaluation artifacts.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are converted to process exit codes; the function is designed
+        as a CLI boundary and does not propagate failures upward.
+
+    Side Effects:
+        Creates evaluation run directories, writes predictions/metrics artifacts,
+        metadata, runtime snapshots, and evaluation logs.
+
+    Examples:
+        python pipelines/runners/evaluate.py --problem cancellation --segment global --version v1 --experiment-id latest --train-id latest
+    """
     args: argparse.Namespace
     model_cfg: TrainModelConfig
     pipeline_cfg_hash: str

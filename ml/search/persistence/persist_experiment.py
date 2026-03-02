@@ -1,3 +1,5 @@
+"""Persistence orchestration for search experiment metadata and runtime."""
+
 import logging
 from pathlib import Path
 
@@ -27,6 +29,25 @@ def persist_experiment(
     splits_info: AllSplitsInfo,
     overwrite_existing: bool = False
 ) -> None:
+    """Persist search metadata and runtime snapshot for an experiment run.
+
+    Args:
+        model_cfg: Validated search model configuration.
+        search_results: Search results payload.
+        owner: Owner identifier for the experiment.
+        experiment_id: Experiment identifier.
+        search_dir: Target experiment directory.
+        timestamp: Run timestamp string.
+        start_time: Process start time used for runtime metadata.
+        feature_lineage: Feature lineage records.
+        pipeline_hash: Pipeline hash fingerprint.
+        scoring_method: Scoring method used during search.
+        splits_info: Dataset split information.
+        overwrite_existing: Whether existing metadata/runtime should be overwritten.
+
+    Returns:
+        None.
+    """
     
     metadata = prepare_metadata(
         model_cfg, 

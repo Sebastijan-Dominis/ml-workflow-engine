@@ -1,3 +1,5 @@
+"""Registry of datasets requiring row-id generation and their handlers."""
+
 from ml.data.processed.processing.hotel_bookings.add_row_id import \
     AddRowIDToHotelBookings
 

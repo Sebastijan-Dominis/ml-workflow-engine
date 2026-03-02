@@ -1,3 +1,5 @@
+"""Concrete feature-freezing strategy for tabular datasets."""
+
 import logging
 
 from ml.feature_freezing.constants.output import FreezeOutput
@@ -21,6 +23,8 @@ from ml.utils.pipeline_core.runner import PipelineRunner
 logger = logging.getLogger(__name__)
 
 class FreezeTabular(FreezeStrategy):
+    """Run the tabular freeze pipeline and return snapshot metadata."""
+
     def freeze(
         self, 
         config: TabularFeaturesConfig, 
@@ -30,6 +34,18 @@ class FreezeTabular(FreezeStrategy):
         start_time: float, 
         owner: str
     ) -> FreezeOutput:
+        """Execute tabular freezing steps using pipeline runner orchestration.
+
+        Args:
+            config: Validated tabular feature-freezing configuration.
+            timestamp: Run timestamp string used for metadata and paths.
+            snapshot_id: Unique snapshot identifier.
+            start_time: Process start time used for runtime metadata.
+            owner: Owner identifier stored in snapshot metadata.
+
+        Returns:
+            Freeze output containing persisted snapshot path and metadata.
+        """
         if not isinstance(config, TabularFeaturesConfig):
             config = validate_feature_registry(config.dict(), "tabular")
         ctx = FreezeContext(

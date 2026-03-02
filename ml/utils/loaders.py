@@ -1,3 +1,5 @@
+"""Loading helpers for YAML/JSON configs and tabular data artifacts."""
+
 import json
 import logging
 from pathlib import Path
@@ -12,6 +14,15 @@ from ml.registry.format_registry import FORMAT_REGISTRY_READ
 logger = logging.getLogger(__name__)
 
 def load_yaml(path: Path) -> dict[str, Any]:
+    """Load a YAML mapping from disk with validation and typed errors.
+
+    Args:
+        path: YAML file path.
+
+    Returns:
+        dict[str, Any]: Parsed YAML mapping.
+    """
+
     if not path.exists():
         msg = f"Config file not found: {path}"
         logger.error(msg)
@@ -28,6 +39,16 @@ def load_yaml(path: Path) -> dict[str, Any]:
     return cfg
 
 def load_json(path: Path, strict = True) -> dict[str, Any]:
+    """Load a JSON object from disk, optionally returning empty dict when absent.
+
+    Args:
+        path: JSON file path.
+        strict: Whether missing files should raise instead of returning `{}`.
+
+    Returns:
+        dict[str, Any]: Parsed JSON object.
+    """
+
     if not path.exists():
         if strict:
             msg = f"File not found: {path}"
@@ -53,6 +74,16 @@ def load_json(path: Path, strict = True) -> dict[str, Any]:
     return tgt_json
 
 def read_data(format: str, path: Path) -> pd.DataFrame:
+    """Read tabular data by registered format and normalize read-time failures.
+
+    Args:
+        format: Registered file format key.
+        path: Data file path.
+
+    Returns:
+        pd.DataFrame: Loaded dataframe.
+    """
+
     reader = FORMAT_REGISTRY_READ.get(format)
     if not reader:
         msg = f"Unsupported data format: {format}"

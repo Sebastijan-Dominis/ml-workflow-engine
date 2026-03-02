@@ -1,3 +1,5 @@
+"""Orchestrator for logical consistency validations on training config."""
+
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig

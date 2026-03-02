@@ -1,3 +1,5 @@
+"""Configuration loading, composition, and validation entrypoints."""
+
 import logging
 from pathlib import Path
 from typing import Any, Literal, overload
@@ -22,6 +24,20 @@ def load_config(
     skip_missing_extends: bool = False,
     skip_missing_env: bool = True,
 ) -> dict[str, Any]:
+    """Load and compose raw config with extends/env overlays and metadata.
+
+    Args:
+        path: Primary config file path.
+        env: Environment overlay key.
+        cfg_type: Configuration type (search or train).
+        search_dir: Search output directory used by train configs.
+        merge_target: Section where best params are merged for train configs.
+        skip_missing_extends: Whether to ignore missing extended config files.
+        skip_missing_env: Whether to ignore missing env overlay files.
+
+    Returns:
+        dict[str, Any]: Merged raw configuration dictionary.
+    """
     cfg = load_yaml(path)
 
     try:
@@ -78,7 +94,20 @@ def load_and_validate_config(
     *,
     cfg_type: Literal["search"],
     env: str = "default",
-) -> SearchModelConfig: ...
+) -> SearchModelConfig:
+    """Typed overload for loading and validating search configurations.
+
+    Args:
+        path: Config file path.
+        search_dir: Search directory placeholder (unused for search configs).
+        cfg_type: Literal discriminator for search config.
+        env: Environment overlay key.
+
+    Returns:
+        SearchModelConfig: Validated search configuration object.
+    """
+
+    ...
 
 @overload
 def load_and_validate_config(
@@ -87,7 +116,20 @@ def load_and_validate_config(
     *,
     cfg_type: Literal["train"],
     env: str = "default",
-) -> TrainModelConfig: ...
+) -> TrainModelConfig:
+    """Typed overload for loading and validating training configurations.
+
+    Args:
+        path: Config file path.
+        search_dir: Search output directory used for best-params merge.
+        cfg_type: Literal discriminator for train config.
+        env: Environment overlay key.
+
+    Returns:
+        TrainModelConfig: Validated training configuration object.
+    """
+
+    ...
 
 def load_and_validate_config(
     path: Path,
@@ -96,6 +138,18 @@ def load_and_validate_config(
     cfg_type: Literal["search", "train"],
     env: str = "default",
 ) -> SearchModelConfig | TrainModelConfig:
+    """Load and validate model config into typed schema objects.
+
+    Args:
+        path: Config file path.
+        search_dir: Optional search run directory for training configs.
+        cfg_type: Config type discriminator.
+        env: Environment overlay key.
+
+    Returns:
+        SearchModelConfig | TrainModelConfig: Validated typed configuration.
+    """
+
     cfg_raw = load_config(path, env=env, search_dir=search_dir, cfg_type=cfg_type)
     cfg = validate_model_config(cfg_raw, cfg_type=cfg_type)
     return cfg

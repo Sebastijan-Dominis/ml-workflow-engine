@@ -1,3 +1,5 @@
+"""Persistence and metadata helpers for tabular feature freezing outputs."""
+
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -16,6 +18,16 @@ def freeze_parquet(
     features: pd.DataFrame,
     compression=None
 ) -> Path:
+    """Persist feature dataframe as parquet and return output file path.
+
+    Args:
+        path: Snapshot directory path.
+        features: Features dataframe to persist.
+        compression: Optional parquet compression codec.
+
+    Returns:
+        Path: Path to persisted parquet file.
+    """
     features.to_parquet(path / "features.parquet", index=False, compression=compression)
     
     logger.info(f"Tabular features saved to {path}")
@@ -30,6 +42,17 @@ def persist_feature_snapshot(
         features: pd.DataFrame,
         snapshot_id: str
     ) -> tuple[Path, Path]:
+    """Persist frozen feature snapshot and return snapshot/data paths.
+
+    Args:
+        config: Tabular feature freezing configuration.
+        features: Features dataframe to persist.
+        snapshot_id: Snapshot identifier.
+
+    Returns:
+        tuple[Path, Path]: Snapshot directory path and persisted data-file path.
+    """
+
     path = Path(f"{config.feature_store_path}/{snapshot_id}")
     path.mkdir(parents=True, exist_ok=True)
 
@@ -48,6 +71,16 @@ def persist_feature_snapshot(
     return path, data_path
 
 def save_input_schema(path: Path, features: pd.DataFrame):
+    """Persist input schema CSV when missing.
+
+    Args:
+        path: Snapshot directory path.
+        features: Input dataframe for schema extraction.
+
+    Returns:
+        None: This function writes schema side effects only.
+    """
+
     # Stop if raw schema already exists
     schema_path = path / "input_schema.csv"
     if schema_path.exists():
@@ -70,6 +103,18 @@ def save_derived_schema(
     operator_names: list[str], 
     mode: str
 ):
+    """Persist derived schema CSV inferred from configured operators.
+
+    Args:
+        path: Snapshot directory path.
+        features: Sample features dataframe.
+        operator_names: Ordered operator names used to derive features.
+        mode: Operator execution mode.
+
+    Returns:
+        None: This function writes schema side effects only.
+    """
+
     # Stop if derived schema already exists
     schema_path = path / "derived_schema.csv"
     if schema_path.exists():
@@ -111,6 +156,26 @@ def create_metadata(
     duration: float,
     owner: str
 ) -> dict:
+    """Build final metadata payload for a frozen tabular feature snapshot.
+
+    Args:
+        timestamp: Snapshot creation timestamp.
+        snapshot_path: Snapshot directory path.
+        schema_path: Input schema file path.
+        data_lineage: Data lineage entries backing the features.
+        in_memory_hash: Hash of in-memory features frame.
+        file_hash: Hash of persisted feature artifact.
+        operators_hash: Hash representing applied operators.
+        config_hash: Feature-freezing config hash.
+        feature_schema_hash: Hash of feature schema representation.
+        runtime: Runtime metadata payload.
+        features: Persisted features dataframe.
+        duration: Snapshot creation duration in seconds.
+        owner: Snapshot owner identifier.
+
+    Returns:
+        dict: Metadata payload ready for persistence.
+    """
 
     metadata = {
         "created_by": "freeze.py",

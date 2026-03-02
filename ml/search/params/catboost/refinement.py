@@ -1,3 +1,5 @@
+"""Narrow-search parameter refinement helpers for CatBoost searches."""
+
 from ml.search.params.refiners import (
     refine_border_count,
     refine_float_mult,
@@ -10,6 +12,28 @@ from ml.search.params.utils import (
 
 
 def prepare_narrow_params(best_params: dict, narrow_params_cfg, task_type: str) -> dict:
+    """Build narrow search distributions around broad-search best parameters.
+
+    Args:
+        best_params: Best-parameter mapping returned by broad search.
+        narrow_params_cfg: Narrow-search configuration object with refinement rules.
+        task_type: Compute task type (for example ``CPU`` or ``GPU``).
+
+    Returns:
+        Refined parameter distributions for narrow search.
+
+    Notes:
+        GPU-specific constraints are applied for selected parameters (for
+        example ``colsample_bylevel``), and only params marked ``include`` in
+        narrow config are expanded.
+
+    Examples:
+        >>> params = prepare_narrow_params(best_params, narrow_cfg, task_type="GPU")
+
+    Side Effects:
+        None.
+    """
+
     narrow_params = {}
 
     # Tree depth

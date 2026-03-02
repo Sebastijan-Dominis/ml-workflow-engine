@@ -1,3 +1,5 @@
+"""Feature operator for constructing a normalized arrival datetime column."""
+
 import pandas as pd
 
 from ml.components.base import SklearnFeatureMixin
@@ -9,9 +11,20 @@ month_map = {
 }
 
 class ArrivalDate(FeatureOperator, SklearnFeatureMixin):
+    """Create ``arrival_date`` from year, month-name, and day columns."""
+
     output_features = ["arrival_date"]
 
     def transform(self, X):
+        """Build a datetime feature representing booking arrival date.
+
+        Args:
+            X: Input feature frame containing arrival year, month name, and day
+                components.
+
+        Returns:
+            DataFrame with an added ``arrival_date`` datetime column.
+        """
         if not hasattr(self, "n_features_in_"):
             self.fit(X)
 

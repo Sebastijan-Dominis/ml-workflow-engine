@@ -1,3 +1,5 @@
+"""Metadata assembly helpers for interim data pipeline outputs."""
+
 import logging
 import platform
 import time
@@ -14,6 +16,7 @@ from ml.registry.hash_registry import hash_data
 from ml.utils.formatting.iso_no_col import iso_no_colon
 
 logger = logging.getLogger(__name__)
+
 def prepare_metadata(
     df: pd.DataFrame, 
     *, 
@@ -26,6 +29,23 @@ def prepare_metadata(
     memory_info: dict,
     interim_run_id: str
 ) -> dict:
+    """Build metadata payload describing an interim data run.
+
+    Args:
+        df: Final interim dataframe.
+        config: Validated interim configuration.
+        start_time: Run start timestamp from ``time.perf_counter``.
+        data_path: Persisted interim data file path.
+        source_data_path: Source raw data file path.
+        source_data_format: Source raw data format.
+        owner: Human owner for governance metadata.
+        memory_info: Memory usage delta details.
+        interim_run_id: Unique interim run identifier.
+
+    Returns:
+        dict: Serializable metadata dictionary.
+    """
+
     data_hash = hash_data(data_path)
          
     config_hash = compute_config_hash(config)

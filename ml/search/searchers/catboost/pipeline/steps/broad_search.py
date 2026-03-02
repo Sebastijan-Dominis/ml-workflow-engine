@@ -1,3 +1,5 @@
+"""Broad hyperparameter search pipeline step for CatBoost searcher."""
+
 import logging
 
 import numpy as np
@@ -15,15 +17,41 @@ from ml.utils.pipeline_core.step import PipelineStep
 logger = logging.getLogger(__name__)
 
 class BroadSearchStep(PipelineStep[SearchContext]):
+    """Execute broad randomized search and persist resumable broad state."""
+
     name = "broad_search"
 
     def before(self, ctx: SearchContext) -> None:
+        """Emit pre-step log message.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Starting broad search step.")
         
     def after(self, ctx: SearchContext) -> None:
+        """Emit post-step log message.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Completed broad search step.")
 
     def run(self, ctx: SearchContext) -> SearchContext:
+        """Run broad search phase or restore existing broad phase outputs.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            SearchContext: Updated context with broad-search outputs.
+        """
         broad_info_path = ctx.failure_management_dir / "broad_info.json"
         best_broad_info = load_json(broad_info_path, strict=False)
         if best_broad_info:

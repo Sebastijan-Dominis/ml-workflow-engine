@@ -1,3 +1,9 @@
+"""CLI for freezing and versioning feature sets.
+
+The script loads feature registry configuration, resolves the appropriate freeze
+strategy, materializes a feature snapshot, and writes snapshot metadata.
+"""
+
 import argparse
 import logging
 import sys
@@ -24,6 +30,11 @@ from ml.utils.persistence.save_metadata import save_metadata
 logger = logging.getLogger(__name__)
 
 def parse_args():
+    """Parse command-line arguments for feature freezing.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Freeze features.")
 
     parser.add_argument(
@@ -57,12 +68,37 @@ def parse_args():
     return parser.parse_args()
 
 def load_feature_registry(feature_set: str, version: str) -> dict:
+    """Load feature registry configuration for a feature set version.
+
+    Args:
+        feature_set: Name of the feature set in the registry.
+        version: Version key under the feature set.
+
+    Returns:
+        dict: Raw registry configuration for the requested feature set version.
+    """
     path = Path(f"configs/feature_registry/features.yaml")
     with open(path, "r", encoding="utf-8") as f:
         registry = yaml.safe_load(f)
     return registry[feature_set][version]
 
 def main() -> int:
+    """Execute the feature freeze workflow.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are converted to process exit codes; the function is designed
+        as a CLI boundary and does not propagate failures upward.
+
+    Side Effects:
+        Creates a feature snapshot directory, writes freeze logs, and persists
+        feature snapshot metadata.
+
+    Examples:
+        python pipelines/features/freeze.py --feature-set booking_context_features --version v1
+    """
     args: argparse.Namespace
     start_time: float
     config_raw: dict

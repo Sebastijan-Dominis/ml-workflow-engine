@@ -1,3 +1,5 @@
+"""Validation helpers for tabular feature constraints and data types."""
+
 import logging
 
 import pandas as pd
@@ -10,6 +12,16 @@ from ml.utils.features.validation.normalize_dtype import normalize_dtype
 logger = logging.getLogger(__name__)
         
 def validate_input_no_nulls(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
+    """Validate configured no-null constraints on selected feature columns.
+
+    Args:
+        X: Feature dataframe or series.
+        config: Tabular feature-freezing configuration.
+
+    Returns:
+        None: Raises on validation failure.
+    """
+
     forbidden_nulls = config.constraints.forbid_nulls
     if forbidden_nulls:
         for col in forbidden_nulls:
@@ -20,6 +32,16 @@ def validate_input_no_nulls(X: pd.DataFrame | pd.Series, config: TabularFeatures
     logger.debug("Null value validation passed for all features.")
         
 def validate_max_cardinality(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
+    """Validate categorical cardinality does not exceed configured limits.
+
+    Args:
+        X: Feature dataframe or series.
+        config: Tabular feature-freezing configuration.
+
+    Returns:
+        None: Raises on validation failure.
+    """
+
     categorical_features = config.feature_roles.categorical
     max_cardinality = config.constraints.max_cardinality
 
@@ -34,10 +56,30 @@ def validate_max_cardinality(X: pd.DataFrame | pd.Series, config: TabularFeature
     logger.debug("Max cardinality validation passed for all categorical features.")
 
 def validate_constraints(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
+    """Run all configured feature constraint validations.
+
+    Args:
+        X: Feature dataframe or series.
+        config: Tabular feature-freezing configuration.
+
+    Returns:
+        None: Raises on validation failure.
+    """
+
     validate_input_no_nulls(X, config)
     validate_max_cardinality(X, config)
 
 def validate_data_types(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
+    """Validate feature dtypes against configured role-specific allowlists.
+
+    Args:
+        X: Feature dataframe or series.
+        config: Tabular feature-freezing configuration.
+
+    Returns:
+        None: Raises on validation failure.
+    """
+
     categorical_features = config.feature_roles.categorical
     numerical_features = config.feature_roles.numerical
     datetime_features = config.feature_roles.datetime

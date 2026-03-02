@@ -1,3 +1,5 @@
+"""Utilities for applying persisted best-search parameters to configs."""
+
 import json
 import logging
 from pathlib import Path
@@ -14,6 +16,16 @@ MODEL_KEYS = {"depth", "learning_rate", "l2_leaf_reg", "random_strength", "min_d
 ENSEMBLE_KEYS = {"bagging_temperature"}
 
 def unflatten_best_params(flat: dict[str, Any]) -> dict[str, Any]:
+    """Convert flattened search parameters into structured model/ensemble blocks.
+
+    Args:
+        flat: Flat parameter mapping, typically using ``section__name`` keys.
+
+    Returns:
+        Structured parameter mapping with ``model`` and ``ensemble`` groups when
+        matching keys are present.
+    """
+
     model: dict[str, Any] = {}
     ensemble: dict[str, Any] = {}
     other: dict[str, Any] = {}
@@ -41,6 +53,17 @@ def apply_best_params(
     merge_target: MergeTarget = "training",
     strict: bool = True,
 ) -> dict[str, Any]:
+    """Merge best parameters from search metadata into a config dictionary.
+
+    Args:
+        cfg: Base configuration dictionary.
+        best_params_path: Path to search metadata containing best parameters.
+        merge_target: Config section where structured params are merged.
+        strict: Whether missing/invalid data should raise instead of warn.
+
+    Returns:
+        dict[str, Any]: Updated configuration dictionary.
+    """
     if not best_params_path.exists():
         msg = f"best_params file not found: {best_params_path}"
         if strict:

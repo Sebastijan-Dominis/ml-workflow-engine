@@ -1,3 +1,5 @@
+"""Metadata step for tabular feature-freezing pipeline."""
+
 import logging
 import sys
 import time
@@ -20,18 +22,55 @@ from ml.utils.runtime.runtime_info import get_runtime_info
 logger = logging.getLogger(__name__)
 
 class MetadataStep(PipelineStep[FreezeContext]):
+    """Compute hashes/runtime metadata and attach final metadata payload."""
+
     name = "metadata"
 
     def before(self, ctx: FreezeContext) -> None:
+        """Emit pre-step log message.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
+
         logger.info("Starting metadata step.")
 
     def after(self, ctx: FreezeContext) -> None:
+        """Emit post-step log message.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
+
         logger.info("Completed metadata step.")
 
     def __init__(self, hash_config):
+        """Initialize metadata step with injected config-hash function.
+
+        Args:
+            hash_config: Callable used to hash configuration payloads.
+
+        Returns:
+            None: Initializes step dependencies.
+        """
+
         self.hash_config = hash_config
 
     def run(self, ctx: FreezeContext) -> FreezeContext:
+        """Build and store metadata payload for the frozen snapshot.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            FreezeContext: Updated context with computed metadata.
+        """
         ctx.config_hash = self.hash_config(ctx.config)
 
         features = ctx.require_features

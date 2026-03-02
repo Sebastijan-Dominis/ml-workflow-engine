@@ -1,3 +1,5 @@
+"""Utilities for resolving explicit or latest snapshot directory paths."""
+
 import logging
 from pathlib import Path
 
@@ -7,6 +9,16 @@ from ml.utils.snapshots.latest_snapshot import get_latest_snapshot_path
 logger = logging.getLogger(__name__)
 
 def get_snapshot_path(snapshot_id: str, snapshot_dir: Path) -> Path:
+    """Resolve snapshot path from ID, supporting automatic latest selection.
+
+    Args:
+        snapshot_id: Snapshot identifier or ``latest``.
+        snapshot_dir: Directory containing snapshot subdirectories.
+
+    Returns:
+        Resolved snapshot path.
+    """
+
     if snapshot_id == "latest":
         try:
             latest_snapshot = get_latest_snapshot_path(snapshot_dir)

@@ -1,8 +1,12 @@
+"""CatBoost hyperparameter constraint definitions used by validation logic."""
+
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class ParamConstraints:
+    """Numeric bounds and sign constraints for a single hyperparameter."""
+
     min_value: float | int | None = None
     max_value: float | int | None = None
     allow_zero: bool = True

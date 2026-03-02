@@ -1,3 +1,5 @@
+"""Feature selection transformer for fixed-column model inputs."""
+
 import logging
 
 from ml.components.base import SklearnFeatureMixin
@@ -13,9 +15,25 @@ class FeatureSelector(SklearnFeatureMixin):
     """
 
     def __init__(self, selected_features):
+        """Initialize selector with the required feature list.
+
+        Args:
+            selected_features: Feature names to keep.
+
+        Returns:
+            None: Initializes selector state.
+        """
         self.selected_features = selected_features
 
     def transform(self, X):
+        """Return only selected features after validating their presence.
+
+        Args:
+            X: Input dataframe.
+
+        Returns:
+            pd.DataFrame: Dataframe restricted to selected features.
+        """
         # select only required columns, ignore extras
         missing = [c for c in self.selected_features if c not in X.columns]
         if missing:

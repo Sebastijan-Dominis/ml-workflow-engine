@@ -1,3 +1,5 @@
+"""Threshold search utility for maximizing F1 in binary classification."""
+
 import logging
 
 import numpy as np
@@ -6,6 +8,17 @@ from sklearn.metrics import f1_score
 logger = logging.getLogger(__name__)
 
 def get_best_f1_thresh(pipeline, X, y_true):
+    """Find probability threshold in [0, 1] grid that maximizes F1 score.
+
+    Args:
+        pipeline: Fitted probabilistic classifier pipeline.
+        X: Feature matrix used to generate predicted probabilities.
+        y_true: Ground-truth binary labels.
+
+    Returns:
+        Tuple containing best threshold and corresponding F1 score.
+    """
+
     y_probs = pipeline.predict_proba(X)[:, 1]
 
     thresholds = np.linspace(0,1,101)

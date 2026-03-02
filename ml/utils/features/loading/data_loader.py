@@ -1,3 +1,5 @@
+"""Data loading utilities for assembling merged feature datasets from lineage."""
+
 import logging
 from pathlib import Path
 from typing import Iterable
@@ -28,6 +30,15 @@ required_fields = [
 ]
 
 def lineage_identity(entry: DataLineageEntry) -> tuple:
+    """Return the identity tuple used for lineage consistency comparisons.
+
+    Args:
+        entry: Dataset lineage entry.
+
+    Returns:
+        tuple: Identity fields used to compare expected and actual lineage.
+    """
+
     return (
         entry.name,
         entry.version,
@@ -38,6 +49,15 @@ def lineage_identity(entry: DataLineageEntry) -> tuple:
     )
 
 def load_and_validate_data(input_lineage: Iterable[DataLineageEntry]) -> pd.DataFrame:
+    """Load, merge, hash-validate, and lineage-validate datasets from lineage entries.
+
+    Args:
+        input_lineage: Iterable of dataset lineage entries to load and merge.
+
+    Returns:
+        pd.DataFrame: Fully merged dataframe assembled from all lineage datasets.
+    """
+
     input_lineage = list(input_lineage)
     data = pd.DataFrame()
     data_lineage = []

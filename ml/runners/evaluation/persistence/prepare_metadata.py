@@ -1,3 +1,5 @@
+"""Metadata payload construction for evaluation runs."""
+
 from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
@@ -13,6 +15,21 @@ def prepare_metadata(
     artifacts: dict[str, str], 
     pipeline_cfg_hash: str
 ) -> dict:
+    """Build evaluation metadata payload for persistence.
+
+    Args:
+        model_cfg: Validated training model configuration.
+        eval_run_id: Evaluation run identifier.
+        train_run_id: Source training run identifier.
+        experiment_dir: Experiment directory path.
+        feature_lineage: Feature lineage records for reproducibility.
+        artifacts: Mapping of artifact names to persisted paths.
+        pipeline_cfg_hash: Hash of the runtime pipeline configuration.
+
+    Returns:
+        Evaluation metadata dictionary for run persistence.
+    """
+
     metadata = {
         "run_identity": {
             "stage": "evaluation",

@@ -40,6 +40,8 @@ from ml.utils.features.transform_target import transform_target
 
 
 class TrainCatboost(Trainer):
+    """Concrete trainer for CatBoost models within project training flow."""
+
     def train(
         self, 
         model_cfg: TrainModelConfig, 
@@ -47,6 +49,30 @@ class TrainCatboost(Trainer):
         strict: bool,
         failure_management_dir: Path
     ) -> TRAIN_OUTPUT:
+        """Execute end-to-end CatBoost training and return standardized output.
+
+        Args:
+            model_cfg: Validated model configuration for training.
+            strict: Whether feature/data loading operations should fail strictly.
+            failure_management_dir: Directory for storing failure-management artifacts.
+
+        Returns:
+            Standardized training output containing model, pipeline, lineage, and metrics.
+
+        Raises:
+            PipelineContractError: Propagated when pipeline/model contract checks
+                fail in downstream validation helpers.
+
+        Notes:
+            Class weighting and categorical feature handling are resolved
+            dynamically from configuration and task type before model fitting.
+
+        Side Effects:
+            Performs model training and pipeline fitting, which can be
+            computationally intensive and may write failure-management artifacts
+            through downstream helpers.
+        """
+
         stats: DataStats
 
         X, y, lineage = load_X_and_y(model_cfg, snapshot_selection=None, strict=strict)

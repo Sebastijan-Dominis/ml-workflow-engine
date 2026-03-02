@@ -1,3 +1,5 @@
+"""Threshold comparison logic for promotion decisions."""
+
 import logging
 
 from ml.exceptions import ConfigError, UserError
@@ -12,6 +14,16 @@ def compare_against_thresholds(
     evaluation_metrics: dict[str, dict[str, float]], 
     promotion_thresholds: PromotionThresholds
 ) -> ThresholdComparisonResult:
+    """Compare evaluation metrics against configured promotion thresholds.
+
+    Args:
+        evaluation_metrics: Nested metrics grouped by split set.
+        promotion_thresholds: Validated threshold configuration.
+
+    Returns:
+        ThresholdComparisonResult: Threshold comparison outcome.
+    """
+
     target_sets = promotion_thresholds.promotion_metrics.sets
     target_metrics = promotion_thresholds.promotion_metrics.metrics
     directions = promotion_thresholds.promotion_metrics.directions

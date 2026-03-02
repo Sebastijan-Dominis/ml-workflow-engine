@@ -1,3 +1,9 @@
+"""Explainability runner CLI.
+
+This module runs explainability for a selected trained run, validates lineage
+and reproducibility constraints, and persists explainability outputs.
+"""
+
 import argparse
 import logging
 import sys
@@ -30,6 +36,11 @@ from ml.utils.snapshots.snapshot_path import get_snapshot_path
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments for explainability execution.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Explain a model.")
 
     parser.add_argument(
@@ -98,6 +109,22 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main() -> int:
+    """Execute explainability for a trained model run.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are converted to process exit codes; the function is designed
+        as a CLI boundary and does not propagate failures upward.
+
+    Side Effects:
+        Creates explainability run directories, writes explainability artifacts,
+        metadata, runtime snapshots, and explainability logs.
+
+    Examples:
+        python pipelines/runners/explain.py --problem cancellation --segment global --version v1 --experiment-id latest --train-id latest --top-k 20
+    """
     args: argparse.Namespace
     output: ExplainabilityOutput
 

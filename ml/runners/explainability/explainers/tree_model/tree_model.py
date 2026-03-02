@@ -1,3 +1,5 @@
+"""Tree-model explainability runner implementation."""
+
 import logging
 from pathlib import Path
 
@@ -29,7 +31,32 @@ from ml.utils.experiments.loading.get_snapshot_binding_from_training_metadata im
 logger = logging.getLogger(__name__)
 
 class ExplainTreeModel(Explainer):
+    """Run explainability workflow for tree-based pipelines."""
+
     def explain(self, *, model_cfg: TrainModelConfig, train_dir: Path, top_k: int) -> ExplainabilityOutput:
+        """Load artifacts/data and compute configured explainability outputs.
+
+        Args:
+            model_cfg: Validated training model configuration.
+            train_dir: Directory containing training artifacts and metadata.
+            top_k: Number of top features to include in explainability outputs.
+
+        Returns:
+            Explainability output with computed metrics and feature lineage.
+
+        Raises:
+            DataError: Propagated when required artifact/data lineage inputs are
+                inconsistent or missing during explainability preparation.
+
+        Notes:
+            Explanations are computed on the test split after applying the same
+            preprocessing pipeline used during training.
+
+        Side Effects:
+            Loads persisted training metadata/artifacts and may incur substantial
+            compute for SHAP calculations.
+        """
+
         splits: TabularSplits
 
         train_metadata_file = train_dir / "metadata.json"

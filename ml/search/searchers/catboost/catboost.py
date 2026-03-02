@@ -1,3 +1,5 @@
+"""CatBoost searcher implementation using multi-step pipeline orchestration."""
+
 import logging
 from pathlib import Path
 
@@ -18,6 +20,8 @@ from ml.utils.pipeline_core.runner import PipelineRunner
 logger = logging.getLogger(__name__)
 
 class SearchCatboost(Searcher):
+    """Run preparation, broad search, and optional narrow search phases."""
+
     def search(
         self, 
         model_cfg: SearchModelConfig, 
@@ -25,6 +29,16 @@ class SearchCatboost(Searcher):
         strict: bool, 
         failure_management_dir: Path,
     ) -> SearchOutput:
+        """Execute CatBoost hyperparameter search and return structured output.
+
+        Args:
+            model_cfg: Validated search configuration.
+            strict: Whether loading and validation stages should fail strictly.
+            failure_management_dir: Directory for persisting failure-management artifacts.
+
+        Returns:
+            Search output containing search results, lineage, and run metadata.
+        """
         ctx = SearchContext(
             model_cfg=model_cfg, 
             strict=strict,

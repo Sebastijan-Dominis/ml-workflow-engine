@@ -1,3 +1,5 @@
+"""Helpers for resolving dataset path suffix and format from metadata."""
+
 import logging
 
 from ml.exceptions import UserError
@@ -6,6 +8,16 @@ from typing import Literal
 logger = logging.getLogger(__name__)
 
 def get_data_suffix_and_format(metadata: dict, location: Literal["data/output", "data"]) -> tuple[str, str]:
+    """Extract required data path suffix and format fields for a metadata location.
+
+    Args:
+        metadata: Metadata dictionary containing data path and format fields.
+        location: Metadata location key to resolve (``data/output`` or ``data``).
+
+    Returns:
+        Tuple of data path suffix and data format.
+    """
+
     if location == "data/output":
         data_suffix = metadata.get("data", {}).get("output", {}).get("path_suffix")
         data_format = metadata.get("data", {}).get("output", {}).get("format")

@@ -1,3 +1,5 @@
+"""Factory helper for resolving explainability implementations by key."""
+
 import logging
 
 from ml.exceptions import PipelineContractError
@@ -7,6 +9,15 @@ from ml.runners.explainability.explainers.base import Explainer
 logger = logging.getLogger(__name__)
 
 def get_explainer(key: str) -> Explainer:
+    """Instantiate explainer class registered for the provided key.
+
+    Args:
+        key: Explainer registry key, typically aligned with model family.
+
+    Returns:
+        Instantiated explainer implementation.
+    """
+
     explainer_cls = EXPLAINERS.get(key)
 
     if not explainer_cls:

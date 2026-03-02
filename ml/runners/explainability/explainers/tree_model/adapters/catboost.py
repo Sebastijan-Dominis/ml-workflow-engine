@@ -1,3 +1,5 @@
+"""CatBoost-specific implementation of the tree-model adapter interface."""
+
 import logging
 from typing import Literal, Optional
 
@@ -12,8 +14,17 @@ from ml.runners.explainability.explainers.tree_model.adapters.base import \
 logger = logging.getLogger(__name__)
 
 class CatBoostAdapter(TreeModelAdapter):
+    """Adapter exposing CatBoost SHAP and feature-importance APIs."""
 
     def compute_shap_values(self, X: pd.DataFrame) -> np.ndarray:
+        """Compute SHAP values for CatBoost model and return feature-only matrix.
+
+        Args:
+            X: Feature dataframe for SHAP computation.
+
+        Returns:
+            np.ndarray: SHAP value matrix excluding expected-value column.
+        """
         try:
             pool = Pool(
                 data=X,
@@ -31,6 +42,14 @@ class CatBoostAdapter(TreeModelAdapter):
         return shap_values[:, :-1]
     
     def compute_feature_importances(self, importance_type: Optional[Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"]]) -> np.ndarray:
+        """Compute CatBoost feature importances for the requested type.
+
+        Args:
+            importance_type: Requested CatBoost importance type.
+
+        Returns:
+            np.ndarray: Feature importance values.
+        """
         try:
             return self.model.get_feature_importance(type=importance_type)
         except Exception as e:

@@ -1,3 +1,5 @@
+"""Ingestion step for tabular feature-freezing pipeline."""
+
 import logging
 
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
@@ -11,15 +13,41 @@ from ml.utils.pipeline_core.step import PipelineStep
 logger = logging.getLogger(__name__)
 
 class IngestionStep(PipelineStep[FreezeContext]):
+    """Load source data, validate prerequisites, and attach lineage."""
+
     name = "ingestion"
 
     def before(self, ctx: FreezeContext) -> None:
+        """Emit pre-step log message.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Starting data ingestion step.")
 
     def after(self, ctx: FreezeContext) -> None:
+        """Emit post-step log message.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Completed data ingestion step.")
     
     def run(self, ctx: FreezeContext) -> FreezeContext:
+        """Execute ingestion workflow and update context with data and lineage.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            FreezeContext: Updated context with loaded data and lineage.
+        """
         data, data_lineage = load_data_with_lineage(ctx.config)
 
         validate_row_id(data)

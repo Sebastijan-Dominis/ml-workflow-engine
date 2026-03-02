@@ -1,3 +1,5 @@
+"""Registry update and diff-persistence helpers for promotion workflow."""
+
 import copy
 import logging
 import os
@@ -21,6 +23,22 @@ def update_registry_and_archive(
     registry_path: Path = Path("model_registry") / "models.yaml",
     archive_path: Path = Path("model_registry") / "archive.yaml"
 ) -> dict:
+    """Update active registry and archive previous production entry when needed.
+
+    Args:
+        model_registry: Current active model registry.
+        archive_registry: Current archive registry.
+        stage: Promotion stage.
+        run_info: Registry run-info payload.
+        problem: Problem key.
+        segment: Segment key.
+        registry_path: Active registry file path.
+        archive_path: Archive registry file path.
+
+    Returns:
+        dict: Updated active registry dictionary.
+    """
+
     new_registry = copy.deepcopy(model_registry, {})
     
     new_registry.setdefault(problem, {})
@@ -68,6 +86,17 @@ def persist_registry_diff(
     updated_registry: dict,
     run_dir: Path
 ) -> None:
+    """Persist before/after registry snapshot for auditability.
+
+    Args:
+        previous_registry: Registry state before update.
+        updated_registry: Registry state after update.
+        run_dir: Promotion run directory.
+
+    Returns:
+        None: Writes registry-diff artifact to disk.
+    """
+
     diff_path = run_dir / "registry_diff.yaml"
     diff = {
         "previous": previous_registry,

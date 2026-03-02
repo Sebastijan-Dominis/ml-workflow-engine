@@ -1,3 +1,10 @@
+"""Bulk feature freezing orchestrator.
+
+This script iterates through feature registry entries and executes the feature
+freeze pipeline for each feature-set version, with optional skipping when
+existing snapshot folders are present.
+"""
+
 import argparse
 import logging
 import subprocess
@@ -15,6 +22,11 @@ from ml.utils.loaders import load_yaml
 logger = logging.getLogger(__name__)
 
 def parse_args():
+    """Parse command-line arguments for bulk feature freezing.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Freeze features.")
 
     parser.add_argument(
@@ -41,12 +53,34 @@ def parse_args():
     return parser.parse_args()
 
 def log_completion(start_time: float, message: str):
+    """Log script completion timing details.
+
+    Args:
+        start_time: Start time from ``time.perf_counter()``.
+        message: Completion message to emit.
+    """
     end_time = time.perf_counter()
     duration = end_time - start_time
     end = iso_no_colon(datetime.now())
     logger.info(f"{message} at {end} after {duration:.2f} seconds")
 
 def main() -> int:
+    """Freeze all feature sets registered in the feature registry.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Existing freeze directories can be skipped for idempotent runs when
+        ``--skip-if-existing`` is enabled.
+
+    Side Effects:
+        Executes feature-freezing subprocess calls per registry entry and writes
+        batch-level logs.
+
+    Examples:
+        python -m scripts.features.freeze_all_feature_sets --skip-if-existing true
+    """
     args = parse_args()
 
     start_time = time.perf_counter()

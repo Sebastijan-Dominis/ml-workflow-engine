@@ -1,3 +1,5 @@
+"""Dataset persistence helpers for interim and processed pipeline stages."""
+
 import logging
 from pathlib import Path
 
@@ -15,6 +17,17 @@ SAVE_FORMAT = {
 }
 
 def save_data(df: pd.DataFrame, *, config: InterimConfig | ProcessedConfig, data_dir: Path) -> Path:
+    """Persist dataframe using output settings from validated stage config.
+
+    Args:
+        df: Dataframe to persist.
+        config: Validated interim or processed configuration.
+        data_dir: Target run directory where output file is written.
+
+    Returns:
+        Path: Absolute path to the written data file.
+    """
+
     if not config.data.output.format in SAVE_FORMAT:
         msg = f"Unsupported output format: {config.data.output.format}"
         logger.error(msg)

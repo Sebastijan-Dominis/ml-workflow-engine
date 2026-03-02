@@ -1,3 +1,5 @@
+"""Factory helper for resolving registered searcher implementations."""
+
 import logging
 
 from ml.registry.search_registry import SEARCHERS
@@ -7,19 +9,28 @@ from ml.search.searchers.base import Searcher
 logger = logging.getLogger(__name__)
 
 def get_searcher(key: str) -> Searcher:
-        searcher_cls = SEARCHERS.get(key)
+    """Instantiate the searcher registered for the provided algorithm key.
 
-        if not searcher_cls:
-            msg = f"No searcher registered for algorithm {key}."
-            logger.error(msg)
-            raise PipelineContractError(msg)
+    Args:
+        key: Searcher registry key identifying the algorithm implementation.
 
-        searcher = searcher_cls()
+    Returns:
+        Instantiated searcher implementation.
+    """
 
-        logger.debug(
-            "Using searcher %s for algorithm=%s",
-            searcher.__class__.__name__,
-            key,
-        )
+    searcher_cls = SEARCHERS.get(key)
 
-        return searcher
+    if not searcher_cls:
+        msg = f"No searcher registered for algorithm {key}."
+        logger.error(msg)
+        raise PipelineContractError(msg)
+
+    searcher = searcher_cls()
+
+    logger.debug(
+        "Using searcher %s for algorithm=%s",
+        searcher.__class__.__name__,
+        key,
+    )
+
+    return searcher

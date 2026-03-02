@@ -1,3 +1,5 @@
+"""Registry mapping file formats to pandas reader callables."""
+
 import pandas as pd
 
 FORMAT_REGISTRY_READ = {

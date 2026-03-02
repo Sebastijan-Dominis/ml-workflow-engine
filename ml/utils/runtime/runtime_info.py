@@ -1,3 +1,5 @@
+"""Runtime platform information collection utilities."""
+
 import logging
 import platform
 
@@ -8,6 +10,15 @@ from ml.exceptions import RuntimeMLException
 logger = logging.getLogger(__name__)
 
 def get_runtime_info() -> dict:
+    """Collect OS, hardware, and Python runtime characteristics.
+
+    Args:
+        None.
+
+    Returns:
+        Dictionary containing runtime platform characteristics.
+    """
+
     try:
         ram_total_gb = round(psutil.virtual_memory().total / 1e9, 2)
         runtime_info = {

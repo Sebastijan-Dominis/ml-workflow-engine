@@ -59,6 +59,11 @@ from ml.utils.snapshots.snapshot_path import get_snapshot_path
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments for training.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Train a model.")
 
     parser.add_argument(
@@ -134,6 +139,22 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main() -> int:
+    """Run training, persist artifacts, and register run metadata.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are converted to process exit codes; the function is designed
+        as a CLI boundary and does not propagate failures upward.
+
+    Side Effects:
+        Creates/updates training run directories, writes logs/artifacts/metadata,
+        and may delete failure-management folders on success.
+
+    Examples:
+        python pipelines/runners/train.py --problem cancellation --segment global --version v1 --experiment-id latest
+    """
     args: argparse.Namespace
     model_cfg: TrainModelConfig
     trainer: Trainer

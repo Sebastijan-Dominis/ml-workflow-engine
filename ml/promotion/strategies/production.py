@@ -1,3 +1,5 @@
+"""Production-stage promotion strategy implementation."""
+
 import logging
 
 from ml.promotion.comparisons.production import \
@@ -12,7 +14,30 @@ from ml.exceptions import RuntimeMLException
 logger = logging.getLogger(__name__)
 
 class ProductionPromotionStrategy(PromotionStrategy):
+    """Apply thresholds and production-baseline checks for promotion."""
+
     def execute(self, context, state):
+        """Execute production promotion decision logic.
+
+        Args:
+            context: Promotion runtime context with arguments, paths, and metadata.
+            state: Loaded promotion state with thresholds and production metrics.
+
+        Returns:
+            Promotion decision result for the production strategy.
+
+        Raises:
+            RuntimeMLException: If required runner metadata is missing from
+                promotion context.
+
+        Notes:
+            Promotion requires both threshold compliance and improvement against
+            currently deployed production metrics.
+
+        Side Effects:
+            Emits promotion decision logs and may construct promotion run metadata
+            payload for downstream persistence.
+        """
         if not isinstance(context.runners_metadata, RunnersMetadata):
             msg = "Runners metadata is required for production promotion strategy but was not found in context."
             logger.error(msg)

@@ -1,3 +1,5 @@
+"""Resolve the scoring metric according to policy and dataset characteristics."""
+
 import logging
 
 from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
@@ -10,6 +12,16 @@ from ml.utils.experiments.class_weights.models import DataStats
 logger = logging.getLogger(__name__)
 
 def resolve_metric(config: SearchModelConfig | TrainModelConfig, stats: DataStats | None) -> SUPPORTED_SCORING_FUNCTIONS:
+    """Select and return the scoring metric for search/training workflows.
+
+    Args:
+        config: Validated training or search configuration with scoring policy.
+        stats: Optional class-distribution statistics for adaptive policies.
+
+    Returns:
+        Scoring function name used by search/training routines.
+    """
+
     policy = config.scoring.policy
 
     if policy == "fixed":

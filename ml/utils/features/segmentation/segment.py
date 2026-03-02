@@ -1,3 +1,5 @@
+"""Segmentation utilities for filtering datasets by configured criteria."""
+
 import logging
 
 import pandas as pd
@@ -9,6 +11,16 @@ from ml.registry.op_map import OP_MAP
 logger = logging.getLogger(__name__)
 
 def apply_segmentation(data: pd.DataFrame, seg_cfg: SegmentationConfig) -> pd.DataFrame:
+    """Apply configured segmentation filters and remove segmentation columns.
+
+    Args:
+        data: Input dataframe before segmentation filters.
+        seg_cfg: Segmentation configuration containing enabled flag and filters.
+
+    Returns:
+        pd.DataFrame: Filtered dataframe with segmentation columns removed.
+    """
+
     if not seg_cfg.enabled:
         logger.debug("Segmentation step is disabled. Returning original data.")
         return data

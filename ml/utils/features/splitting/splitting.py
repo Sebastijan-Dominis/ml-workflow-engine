@@ -1,3 +1,5 @@
+"""Utilities for train/validation/test splitting of feature datasets."""
+
 import logging
 
 import pandas as pd
@@ -12,9 +14,34 @@ logger = logging.getLogger(__name__)
 SPLIT = tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]
 
 def random_split(X: pd.DataFrame, y: pd.Series, test_size: float, random_state: int, stratify: pd.Series | None) -> SPLIT:
+    """Perform a random train-test split with optional stratification.
+
+    Args:
+        X: Feature dataframe.
+        y: Target series.
+        test_size: Fraction reserved for the holdout partition.
+        random_state: Random seed used by sklearn split.
+        stratify: Optional stratification series.
+
+    Returns:
+        SPLIT: Split tuple ``(X_train, X_test, y_train, y_test)``.
+    """
+
     return tuple(train_test_split(X, y, test_size=test_size, random_state=random_state, stratify=stratify))
 
 def split_data(X: pd.DataFrame, y: pd.Series, split_cfg: SplitConfig, test_size: float) -> SPLIT:
+    """Dispatch to the configured split strategy and return split partitions.
+
+    Args:
+        X: Feature dataframe.
+        y: Target series.
+        split_cfg: Split strategy configuration.
+        test_size: Holdout fraction for this split call.
+
+    Returns:
+        SPLIT: Split tuple ``(X_1, X_2, y_1, y_2)`` for the configured strategy.
+    """
+
     # Expandable for future split strategies
     SPLIT_REGISTRY = {
         "random": random_split,
@@ -38,6 +65,18 @@ def get_splits_tabular(
     split_cfg: SplitConfig,
     task_cfg: TaskConfig
 ) -> tuple[TabularSplits, AllSplitsInfo]:
+    """Produce tabular train/val/test splits and corresponding summary statistics.
+
+    Args:
+        X: Feature dataframe.
+        y: Target series.
+        split_cfg: Split configuration with test/validation fractions.
+        task_cfg: Task configuration used for classification-specific metrics.
+
+    Returns:
+        tuple[TabularSplits, AllSplitsInfo]: Materialized split data and split metadata.
+    """
+
     X_train_val, X_test, y_train_val, y_test = split_data(
         X,
         y,
@@ -99,6 +138,19 @@ def get_splits(
     data_type: DATA_TYPE,
     task_cfg: TaskConfig
 ) -> tuple[TabularSplits, AllSplitsInfo]:
+    """Route split logic by data type and return splits with metadata.
+
+    Args:
+        X: Feature dataframe.
+        y: Target series.
+        split_cfg: Split configuration.
+        data_type: Dataset modality selector.
+        task_cfg: Task configuration for split metadata generation.
+
+    Returns:
+        tuple[TabularSplits, AllSplitsInfo]: Computed splits and associated split info.
+    """
+
     if data_type == "tabular":
         splits, splits_info = get_splits_tabular(X, y, split_cfg=split_cfg, task_cfg=task_cfg)
         logger.info(f"Data split into train/val/test. Splits info:\n{splits_info}")

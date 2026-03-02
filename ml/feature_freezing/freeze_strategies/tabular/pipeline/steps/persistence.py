@@ -1,3 +1,5 @@
+"""Persistence step for tabular feature-freezing pipeline."""
+
 import logging
 
 from ml.exceptions import PersistenceError
@@ -10,15 +12,41 @@ from ml.utils.pipeline_core.step import PipelineStep
 logger = logging.getLogger(__name__)
 
 class PersistenceStep(PipelineStep[FreezeContext]):
+    """Persist feature snapshot and associated schema artifacts."""
+
     name = "persistence"
 
     def before(self, ctx: FreezeContext) -> None:
+        """Emit pre-step log message.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Starting data persistence step.")
         
     def after(self, ctx: FreezeContext) -> None:
+        """Emit post-step log message.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Completed data persistence step.")
 
     def run(self, ctx: FreezeContext) -> FreezeContext:
+        """Persist data and schemas, then update context artifact paths.
+
+        Args:
+            ctx: Freeze pipeline context.
+
+        Returns:
+            FreezeContext: Updated context with persisted artifact paths.
+        """
         config = ctx.config
 
         features = ctx.require_features

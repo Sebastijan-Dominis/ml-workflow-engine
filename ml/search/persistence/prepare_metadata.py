@@ -1,3 +1,5 @@
+"""Metadata payload construction for search experiment persistence."""
+
 import logging
 from dataclasses import asdict
 from pathlib import Path
@@ -21,6 +23,30 @@ def prepare_metadata(
     scoring_method: str,
     splits_info: AllSplitsInfo
 ) -> dict:
+    """Build metadata record for a completed search experiment.
+
+    Args:
+        model_cfg: Validated search model configuration.
+        search_results: Search results payload to persist.
+        owner: Owner identifier for the search run.
+        experiment_id: Experiment identifier.
+        timestamp: Run creation timestamp.
+        feature_lineage: Feature lineage records used by the run.
+        pipeline_hash: Pipeline configuration hash.
+        scoring_method: Metric/scoring method used during search.
+        splits_info: Dataset split information for reproducibility metadata.
+
+    Returns:
+        Search metadata record ready for persistence.
+
+    Notes:
+        Datetime lineage fields are normalized to ISO strings before payload
+        assembly to keep metadata JSON-serializable.
+
+    Side Effects:
+        Reads git commit metadata from the active repository context.
+    """
+
     # Convert search_lineage.created_at and model_specs_lineage.created_at from datetime to ISO format string to avoid errors during JSON serialization in save_metadata
     search_created_at_str = iso_no_colon(model_cfg.search_lineage.created_at)
     model_specs_created_at_str = iso_no_colon(model_cfg.model_specs_lineage.created_at)

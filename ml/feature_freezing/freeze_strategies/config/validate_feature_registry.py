@@ -1,3 +1,5 @@
+"""Validation entrypoint for feature registry strategy configs."""
+
 import logging
 
 from ml.exceptions import UserError
@@ -10,6 +12,16 @@ SCHEMAS = {
 }
 
 def validate_feature_registry(raw_config: dict, data_type: str) -> TabularFeaturesConfig:
+    """Validate raw feature registry payload for the given strategy type.
+
+    Args:
+        raw_config: Raw strategy config dictionary.
+        data_type: Feature strategy type identifier.
+
+    Returns:
+        TabularFeaturesConfig: Validated tabular strategy configuration.
+    """
+
     try:
         if data_type not in SCHEMAS:
             msg = f"Unsupported data type: {data_type}"

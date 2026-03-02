@@ -1,4 +1,10 @@
-# IMPORTANT: This scripts defaults to using the latest experiment id for train, and latest experiment id along with latest train id for evaluate and explain. This means that if you have multiple experiments, it will always pick the latest one, which may not be what you want. For example, if a new experiment is created while this script is running, it may pick that new experiment for evaluate and explain, which may lead to unexpected results. Proceed with caution, and always check the logs to see which experiment ids and train ids were picked for each step.
+"""Single-model experiment orchestrator using staged pipeline CLIs.
+
+Warning:
+    This script intentionally relies on "latest" snapshot resolution for
+    selected stages unless explicit identifiers are provided by invoked
+    downstream commands. Review logs carefully in concurrent environments.
+"""
 
 import argparse
 import logging
@@ -17,6 +23,11 @@ from ml.utils.scripts.logging import log_completion
 logger = logging.getLogger(__name__)
 
 def parse_args():
+    """Parse command-line arguments for single-model orchestration.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Run the entire experiment by defaulting to latest experiment id in train, and latest experiment id, along with latest train id, in evaluate and explain.")
 
     parser.add_argument(
@@ -99,6 +110,22 @@ def parse_args():
     return parser.parse_args()
 
 def main() -> int:
+    """Run search, train, evaluate, and explain steps for one model config.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Orchestration relies on downstream commands that may resolve latest run
+        identifiers dynamically; concurrent writes can influence selection.
+
+    Side Effects:
+        Invokes search/train/evaluate/explain subprocesses and writes aggregated
+        experiment orchestration logs.
+
+    Examples:
+        python -m scripts.experiments.execute_experiment_with_latest --problem no_show --segment global --version v1
+    """
     args = parse_args()
 
     start_time = time.perf_counter()

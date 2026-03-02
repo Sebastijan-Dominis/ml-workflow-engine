@@ -1,9 +1,17 @@
+"""Utilities for normalizing pandas dtypes to canonical string labels."""
+
 import numpy as np
 
 def normalize_dtype(dtype) -> str:
+    """Normalize pandas and extension dtypes to stable string categories.
+
+    Args:
+        dtype: Pandas or NumPy dtype object.
+
+    Returns:
+        Canonical dtype category string.
     """
-    Normalize any pandas dtype (including extension dtypes) to a string.
-    """
+
     # Handle categorical
     if hasattr(dtype, "categories") and hasattr(dtype, "ordered"):
         return "category"

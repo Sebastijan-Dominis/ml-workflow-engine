@@ -1,3 +1,5 @@
+"""Helpers for assembling normalized search-results payloads."""
+
 from typing import Any
 
 from ml.search.searchers.catboost.pipeline.context import SearchContext
@@ -5,6 +7,15 @@ from ml.search.utils.model_params_extraction import extract_model_params
 
 
 def create_search_results(ctx: SearchContext) -> dict[str, Any]:
+    """Build final search results from context state across completed phases.
+
+    Args:
+        ctx: Search pipeline context with broad/narrow phase outputs.
+
+    Returns:
+        Normalized search-results payload ready for persistence.
+    """
+
     best_pipeline_params = ctx.best_params_1 if ctx.require_narrow_disabled else ctx.require_best_params
     best_model_params = extract_model_params(best_pipeline_params)
     search_results =  {

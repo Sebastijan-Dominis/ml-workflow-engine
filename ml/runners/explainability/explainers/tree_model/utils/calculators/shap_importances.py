@@ -1,3 +1,5 @@
+"""SHAP-based importance calculation helpers for tree-model explainability."""
+
 import logging
 
 import numpy as np
@@ -21,6 +23,19 @@ def get_shap_importances(
     X_test_transformed: pd.DataFrame,
     adapter: TreeModelAdapter
     ) -> pd.DataFrame | None:
+    """Compute top-k mean absolute SHAP importances for transformed test data.
+
+    Args:
+        feature_names: Transformed feature-name array.
+        model_configs: Validated training model configuration.
+        top_k: Number of top features to return.
+        X_test_transformed: Transformed test feature dataframe.
+        adapter: Tree-model adapter implementing SHAP computation.
+
+    Returns:
+        Top-k SHAP-importance dataframe, or ``None`` when disabled.
+    """
+
     if not model_configs.explainability.methods.shap.enabled:
         logger.warning("SHAP method is not enabled in the configuration. Skipping SHAP importance computation.")
         return None

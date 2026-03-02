@@ -1,3 +1,5 @@
+"""CatBoost-specific model parameter extraction and estimator preparation."""
+
 import logging
 from pathlib import Path
 from typing import Any
@@ -12,6 +14,15 @@ from ml.registry.regression_loss_functions import REGRESSION_LOSS_FUNCTIONS
 logger = logging.getLogger(__name__)
 
 def extract_catboost_params(model_cfg: TrainModelConfig) -> dict[str, Any]:
+    """Extract non-null CatBoost model and ensemble params from config.
+
+    Args:
+        model_cfg: Training model configuration.
+
+    Returns:
+        dict[str, Any]: Flattened CatBoost parameter mapping.
+    """
+
     params: dict[str, Any] = {}
 
     # model params
@@ -41,6 +52,17 @@ def prepare_model(
     class_weights: dict,
     failure_management_dir: Path
 ) -> CatBoostClassifier | CatBoostRegressor:
+    """Construct configured CatBoost estimator for the current training run.
+
+    Args:
+        model_cfg: Training model configuration.
+        cat_features: Categorical feature names.
+        class_weights: Class-weight payload.
+        failure_management_dir: Directory used by CatBoost for logs/artifacts.
+
+    Returns:
+        CatBoostClassifier | CatBoostRegressor: Configured CatBoost estimator instance.
+    """
 
     best_params = extract_catboost_params(model_cfg)
 

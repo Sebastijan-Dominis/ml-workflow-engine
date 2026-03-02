@@ -1,3 +1,5 @@
+"""Utilities for forward and inverse transformations of target variables."""
+
 import logging
 from typing import Literal
 
@@ -18,6 +20,16 @@ def transform_target(
     transform_config: TargetTransformConfig,
     split_name: str
 ) -> pd.Series:
+    """Apply configured target transformation for a named dataset split.
+
+    Args:
+        y: Target values for a single split.
+        transform_config: Target transformation configuration.
+        split_name: Human-readable split label for logging.
+
+    Returns:
+        pd.Series: Transformed target values indexed like input `y`.
+    """
 
     logger.debug(f"Running the transform_target function for the '{split_name}' split; y_min: {y.min()}, y_max: {y.max()}")
     if not transform_config.enabled:
@@ -80,6 +92,16 @@ def inverse_transform_target(
     transform_config: TargetTransformConfig,
     split_name: str
 ) -> np.ndarray:
+    """Apply inverse transformation to transformed target predictions or values.
+
+    Args:
+        y_transformed: Transformed target array.
+        transform_config: Target transformation configuration.
+        split_name: Human-readable split label for logging.
+
+    Returns:
+        np.ndarray: Values mapped back to the original target scale.
+    """
 
     logger.debug(f"Running the inverse_transform_target function for the '{split_name}' split; y_transformed_min: {y_transformed.min()}, y_transformed_max: {y_transformed.max()}")
     if not transform_config.enabled:

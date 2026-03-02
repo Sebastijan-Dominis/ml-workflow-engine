@@ -1,3 +1,5 @@
+"""Preparation helpers for promotion run-info and metadata payloads."""
+
 import argparse
 import logging
 from pathlib import Path
@@ -27,6 +29,25 @@ def prepare_run_information(
     metrics: dict, 
     git_commit: str,
 ) -> dict:
+    """Build run-info payload to be written into model registry entries.
+
+    Args:
+        args: Parsed promotion CLI arguments.
+        experiment_id: Experiment identifier.
+        train_run_id: Training run identifier.
+        eval_run_id: Evaluation run identifier.
+        explain_run_id: Explainability run identifier.
+        run_id: Promotion/staging run identifier.
+        timestamp: Current timestamp string.
+        training_metadata: Training metadata payload.
+        explain_metadata: Explainability metadata payload.
+        metrics: Evaluation metrics payload.
+        git_commit: Git commit hash.
+
+    Returns:
+        dict: Registry-ready run information payload.
+    """
+
     artifacts = get_artifacts(explain_metadata)
 
     feature_lineage = get_feature_lineage(training_metadata)
@@ -74,6 +95,34 @@ def prepare_metadata(
     previous_production_run_identity: PreviousProductionRunIdentity,
     train_run_dir: Path
 ) -> dict:
+    """Build promotion metadata payload persisted in promotion run directory.
+
+    Args:
+        run_id: Promotion/staging run identifier.
+        args: Parsed promotion CLI arguments.
+        metrics: Evaluation metrics payload.
+        previous_production_metrics: Metrics for previous production run, if any.
+        promotion_thresholds: Validated promotion thresholds.
+        promoted: Whether promotion decision is positive.
+        beats_previous: Whether candidate beats previous production model.
+        reason: Human-readable decision reason.
+        git_commit: Git commit hash.
+        timestamp: Current timestamp string.
+        previous_production_run_identity: Previous production run identity metadata.
+        train_run_dir: Training run directory.
+
+    Returns:
+        dict: Promotion metadata payload.
+
+    Notes:
+        Promotion and training conda-environment hashes are compared and logged
+        to surface reproducibility risk without blocking promotion flow.
+
+    Side Effects:
+        Captures runtime environment export and may emit warnings on
+        environment/hash mismatches.
+    """
+
     conda_env_export = get_conda_env_export()
     promotion_conda_env_hash = hash_environment(conda_env_export)
 

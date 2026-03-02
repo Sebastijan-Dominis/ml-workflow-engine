@@ -1,3 +1,5 @@
+"""Persistence orchestration for evaluation run artifacts and metadata."""
+
 import logging
 from pathlib import Path
 
@@ -28,6 +30,26 @@ def persist_evaluation_run(
     artifacts: dict[str, str], 
     pipeline_cfg_hash: str
 ) -> None:
+    """Persist evaluation metrics, predictions, metadata, and runtime snapshot.
+
+    Args:
+        model_cfg: Validated training model configuration.
+        eval_run_id: Evaluation run identifier.
+        train_run_id: Upstream training run identifier.
+        experiment_dir: Base experiment directory.
+        eval_run_dir: Evaluation output directory.
+        metrics: Evaluation metrics payload.
+        prediction_dfs: Per-split prediction dataframes.
+        feature_lineage: Feature lineage records.
+        start_time: Process start time used for runtime metadata.
+        timestamp: Run timestamp string.
+        artifacts: Mutable artifact-path/hash mapping.
+        pipeline_cfg_hash: Pipeline configuration hash.
+
+    Returns:
+        None.
+    """
+
     metrics_file = save_metrics(
         metrics, 
         model_cfg=model_cfg, 

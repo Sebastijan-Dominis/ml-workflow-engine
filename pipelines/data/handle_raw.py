@@ -1,3 +1,9 @@
+"""CLI for validating and recording metadata for raw data snapshots.
+
+This module resolves a raw snapshot path, loads the snapshot's single data file,
+prepares metadata, and persists that metadata alongside the snapshot.
+"""
+
 import argparse
 import logging
 import sys
@@ -14,6 +20,11 @@ from ml.utils.snapshots.snapshot_path import get_snapshot_path
 logger = logging.getLogger(__name__)
 
 def parse_args():
+    """Parse command-line arguments for the raw data handling pipeline.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Handle raw data for the hotel management ML project.")
 
     parser.add_argument(
@@ -54,6 +65,26 @@ def parse_args():
     return parser.parse_args()
 
 def main():
+    """Run the raw data handling workflow.
+
+    The workflow resolves the requested raw snapshot, validates that exactly one
+    data file is present, reads the file, builds metadata, and persists
+    `metadata.json` into the snapshot directory.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are translated to standardized CLI exit codes via
+        ``resolve_exit_code`` rather than being re-raised.
+
+    Side Effects:
+        Creates/updates ``handle_raw.log`` and writes ``metadata.json`` to the
+        selected raw snapshot directory.
+
+    Examples:
+        python pipelines/data/handle_raw.py --data hotel_bookings --version v1 --snapshot_id latest
+    """
     args: argparse.Namespace
 
     args = parse_args()

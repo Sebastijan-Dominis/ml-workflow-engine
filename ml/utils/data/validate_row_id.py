@@ -1,3 +1,5 @@
+"""Validation helpers for row identifier integrity in feature datasets."""
+
 import logging
 
 import pandas as pd
@@ -7,6 +9,15 @@ from ml.exceptions import DataError
 logger = logging.getLogger(__name__)
 
 def validate_row_id(df: pd.DataFrame) -> None:
+    """Validate that `row_id` exists and is unique within the dataframe.
+
+    Args:
+        df: Dataframe expected to contain unique ``row_id`` values.
+
+    Returns:
+        None.
+    """
+
     if "row_id" not in df.columns:
         msg = "Each feature set must contain a 'row_id' column for proper merging and alignment with the target variable."
         logger.error(msg)

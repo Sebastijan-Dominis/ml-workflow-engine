@@ -1,3 +1,5 @@
+"""Hashing helpers for Arrow file metadata integrity fingerprints."""
+
 import logging
 import hashlib
 from pathlib import Path
@@ -9,6 +11,15 @@ from ml.exceptions import RuntimeMLException
 logger = logging.getLogger(__name__)
 
 def hash_arrow_metadata(path: Path) -> str:
+    """Compute a deterministic hash from Arrow schema and batch metadata.
+
+    Args:
+        path: Path to the Arrow file to fingerprint.
+
+    Returns:
+        Deterministic metadata hash for the Arrow file.
+    """
+
     try:
         with pa.memory_map(path, 'r') as source:
             reader = pa.ipc.open_file(source)

@@ -1,3 +1,5 @@
+"""Staging-stage promotion strategy implementation."""
+
 import logging
 
 from ml.exceptions import RuntimeMLException
@@ -10,7 +12,18 @@ from ml.promotion.persistence.registry import update_registry_and_archive
 logger = logging.getLogger(__name__)
 
 class StagingPromotionStrategy(PromotionStrategy):
+    """Apply threshold-only checks for staging promotion decisions."""
+
     def execute(self, context, state):
+        """Execute staging promotion decision logic.
+
+        Args:
+            context: Promotion runtime context with arguments, paths, and metadata.
+            state: Loaded promotion state with thresholds and metrics.
+
+        Returns:
+            Promotion decision result for the staging strategy.
+        """
         if not isinstance(context.runners_metadata, RunnersMetadata):
             msg = "Runners metadata is required for staging promotion strategy but was not found in context."
             logger.error(msg)

@@ -1,3 +1,5 @@
+"""Persistence helpers for writing training and evaluation metrics artifacts."""
+
 import json
 import logging
 from pathlib import Path
@@ -9,6 +11,19 @@ from ml.exceptions import PersistenceError
 logger = logging.getLogger(__name__)
 
 def save_metrics(metrics: dict[str, float] | dict[str, dict[str, float]], *, model_cfg: TrainModelConfig, target_run_id: str, experiment_dir: Path, stage: Literal["training", "evaluation"]) -> str:
+    """Serialize and persist metrics payload for a run stage, returning file path.
+
+    Args:
+        metrics: Metrics payload for the run stage.
+        model_cfg: Validated training configuration.
+        target_run_id: Target run identifier for stage-specific output.
+        experiment_dir: Base experiment directory path.
+        stage: Run stage name (training or evaluation).
+
+    Returns:
+        String path to the persisted metrics file.
+    """
+
     metrics_file = experiment_dir / stage / target_run_id / "metrics.json"
 
     metrics_file.parent.mkdir(parents=True, exist_ok=True)

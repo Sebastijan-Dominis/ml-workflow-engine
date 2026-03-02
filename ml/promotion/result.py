@@ -1,3 +1,5 @@
+"""Result model for promotion strategy execution outcomes."""
+
 from dataclasses import dataclass
 from typing import Optional
 
@@ -5,6 +7,8 @@ from ml.promotion.constants.constants import ProductionComparisonResult
 
 @dataclass
 class PromotionResult:
+    """Normalized outcome payload returned by promotion strategies."""
+
     promotion_decision: bool
     beats_previous: bool
     previous_production_metrics: Optional[dict]

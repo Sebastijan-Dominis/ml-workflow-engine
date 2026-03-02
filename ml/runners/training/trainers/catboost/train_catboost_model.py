@@ -1,3 +1,5 @@
+"""Low-level CatBoost fitting helper used by training runner."""
+
 import logging
 from pathlib import Path
 
@@ -20,7 +22,7 @@ def train_catboost_model(
     X_val: pd.DataFrame,
     y_val: pd.Series
 ) -> tuple[CatBoostClassifier | CatBoostRegressor, Pipeline]:
-    """Fit preprocessing steps and the CatBoost model, returning a Pipeline.
+    """Fit preprocessing steps and CatBoost model, returning trained pipeline.
 
     The function separates preprocessing steps from the final model, fits
     the preprocessing pipeline on the training data, transforms both train
@@ -33,8 +35,8 @@ def train_catboost_model(
         X_train, y_train, X_val, y_val: Training and validation data.
 
     Returns:
-        tuple[CatBoostClassifier | CatBoostRegressor, Pipeline]: A fitted ``sklearn.pipeline.Pipeline`` combining preprocessing
-        and the trained model.
+        tuple[CatBoostClassifier | CatBoostRegressor, Pipeline]: Trained model
+        and fitted preprocessing+model pipeline.
     """
     try:
         # Separate preprocessing and model without using the steps variable

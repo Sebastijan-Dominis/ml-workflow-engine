@@ -1,3 +1,5 @@
+"""Dependency version collection utilities for freeze runtime metadata."""
+
 import logging
 from importlib.metadata import version
 
@@ -6,9 +8,24 @@ from ml.exceptions import RuntimeMLException
 logger = logging.getLogger(__name__)
 
 def get_pkg_version(name):
+    """Return installed package version for the provided package name.
+
+    Args:
+        name: Package name.
+
+    Returns:
+        str: Installed package version.
+    """
+
     return version(name)
 
 def get_deps():
+    """Collect key runtime dependency versions for metadata persistence.
+
+    Returns:
+        dict: Dependency versions keyed by package name.
+    """
+
     try:
         deps = {
             "numpy": get_pkg_version("numpy"),

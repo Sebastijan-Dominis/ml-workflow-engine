@@ -1,3 +1,5 @@
+"""Registry mapping target-name/version keys to target strategy classes."""
+
 from ml.targets.adr.v1 import AdrTargetV1
 from ml.targets.lead_time.v1 import LeadTimeTargetV1
 from ml.targets.no_show.v1 import NoShowTargetV1

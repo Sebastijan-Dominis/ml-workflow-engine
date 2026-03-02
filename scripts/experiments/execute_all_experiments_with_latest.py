@@ -1,4 +1,11 @@
-# IMPORTANT: This script is a major orchestrator, is intended to be run in a development environment, and may not be suitable for production use without modifications. It runs all experiments by defaulting to the latest experiment id for train, and latest experiment id along with latest train id for evaluate and explain. This means that if you have multiple experiments, it will always pick the latest one, which may not be what you want. For example, if a new experiment is created while this script is running, it may pick that new experiment for evaluate and explain, which may lead to unexpected results. Proceed with caution, and always check the logs to see which experiment ids and train ids were picked for each step.
+"""Bulk experiment orchestrator for all configured model specs.
+
+Warning:
+    This script is intended primarily for development usage. It delegates to a
+    downstream orchestrator that defaults to "latest" snapshot resolution for
+    several stages, which can produce surprising results in highly dynamic
+    environments.
+"""
 
 import argparse
 import logging
@@ -19,6 +26,11 @@ MODEL_SPECS_DIR = Path("configs/model_specs")
 logger = logging.getLogger(__name__)
 
 def parse_args():
+    """Parse command-line arguments for the bulk experiments runner.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Run all of the experiments by defaulting to latest experiment id in train, and latest experiment id, along with latest train id, in evaluate and explain.")
 
     parser.add_argument(
@@ -80,7 +92,12 @@ def parse_args():
     return parser.parse_args()
 
 def discover_models():
-    """Discover all available models based on the directory structure."""
+    """Discover model tuples from the model specs directory structure.
+
+    Returns:
+        list[tuple[str, str, str]]: ``(problem, segment, version)`` tuples for
+        all discoverable model specs.
+    """
     models = []
     if not MODEL_SPECS_DIR.exists():
         logger.error(f"Model specs directory does not exist: {MODEL_SPECS_DIR}")
@@ -107,7 +124,18 @@ def run_model(
     args: argparse.Namespace,
     start_time: float
 ):
-    """Run the experiment script for a specific model."""
+    """Run the end-to-end experiment orchestrator for one model tuple.
+
+    Args:
+        problem: Problem name.
+        segment: Segment name.
+        version: Model version.
+        args: Parsed CLI arguments.
+        start_time: Parent run timer start for shared completion logging.
+
+    Returns:
+        int: Return code from the delegated subprocess.
+    """
     model_experiments_dir = Path("experiments") / problem / segment / version
     existing_experiment_dirs = [d for d in model_experiments_dir.iterdir() if d.is_dir()] if model_experiments_dir.exists() else []
     if existing_experiment_dirs and args.skip_if_existing:
@@ -140,6 +168,22 @@ def run_model(
     return result.returncode
 
 def main():
+    """Execute experiments for all discovered model specs.
+
+    Returns:
+        int: ``0`` on full success, otherwise non-zero.
+
+    Notes:
+        The script continues across model failures and reports aggregate status
+        at the end, enabling batch execution with partial tolerance.
+
+    Side Effects:
+        Discovers model specs from disk, runs delegated experiment subprocesses,
+        and writes consolidated batch logs.
+
+    Examples:
+        python -m scripts.experiments.execute_all_experiments_with_latest --env dev --skip-if-existing true
+    """
     args = parse_args()
 
     start_time = time.perf_counter()

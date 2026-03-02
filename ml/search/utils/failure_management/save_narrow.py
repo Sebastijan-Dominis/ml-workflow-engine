@@ -1,3 +1,5 @@
+"""Persistence helper for saving narrow-search resumable state."""
+
 import json
 import logging
 from pathlib import Path
@@ -13,6 +15,8 @@ def save_narrow(
     best_params: dict,
     tgt_file: Path
 ) -> None:
+    """Persist narrow search result and best params to JSON marker file."""
+
     narrow_info = {
         "narrow_result": narrow_result,
         "best_params": best_params

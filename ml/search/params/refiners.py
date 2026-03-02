@@ -1,3 +1,5 @@
+"""Primitive refinement functions for integer/float search neighborhoods."""
+
 import logging
 
 from ml.exceptions import ConfigError
@@ -5,6 +7,18 @@ from ml.exceptions import ConfigError
 logger = logging.getLogger(__name__)
 
 def refine_int(center, offsets, low, high):
+    """Generate bounded integer neighborhood around center using offsets.
+
+    Args:
+        center: Center integer value.
+        offsets: Integer offsets around center.
+        low: Minimum allowed value.
+        high: Maximum allowed value.
+
+    Returns:
+        list[int]: Sorted bounded integer candidates.
+    """
+
     if not isinstance(center, int):
         msg = f"Expected integer center value, got {center} of type {type(center)}"
         logger.error(msg)
@@ -17,6 +31,19 @@ def refine_int(center, offsets, low, high):
     return sorted(v for v in values if low <= v <= high)
 
 def refine_float_mult(center, factors, low, high, decimals=5):
+    """Generate bounded multiplicative float neighborhood around center.
+
+    Args:
+        center: Center numeric value.
+        factors: Multipliers to apply around center.
+        low: Minimum allowed value.
+        high: Maximum allowed value.
+        decimals: Rounding precision.
+
+    Returns:
+        list[float]: Sorted bounded float candidates.
+    """
+
     if not isinstance(center, (float, int)):
         msg = f"Expected numeric center value, got {center} of type {type(center)}"
         logger.error(msg)
@@ -31,6 +58,15 @@ def refine_float_mult(center, factors, low, high, decimals=5):
     return sorted(values)
 
 def refine_border_count(center):
+    """Refine GPU-safe CatBoost border_count using adjacent allowed values.
+
+    Args:
+        center: Current border_count value.
+
+    Returns:
+        list[int]: Neighboring allowed border_count values including center.
+    """
+
     options = [32, 64, 128, 254]
     if center in options:
         idx = options.index(center)

@@ -1,3 +1,5 @@
+"""Persistence helper for saving broad-search resumable state."""
+
 import json
 import logging
 from pathlib import Path
@@ -13,6 +15,8 @@ def save_broad(
     best_params_1: dict, 
     tgt_file: Path
 ) -> None:
+    """Persist broad search result and best params to JSON marker file."""
+
     broad_info = {
         "broad_result": broad_result,
         "best_params_1": best_params_1

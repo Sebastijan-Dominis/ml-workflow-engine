@@ -1,3 +1,5 @@
+"""Utilities for loading serialized model and pipeline artifacts safely."""
+
 import logging
 from pathlib import Path
 from typing import Literal, overload
@@ -11,20 +13,42 @@ from ml.registry.allowed_models_registry import AllowedModels
 logger = logging.getLogger(__name__)
 
 @overload
-def load_model_or_pipeline(file: Path, target_type: Literal["model"]) -> AllowedModels: ...
-
-@overload
-def load_model_or_pipeline(file: Path, target_type: Literal["pipeline"]) -> Pipeline: ...
-
-def load_model_or_pipeline(file: Path, target_type: Literal["model", "pipeline"]) -> AllowedModels | Pipeline:
-    """Load a serialized pipeline from disk.
+def load_model_or_pipeline(file: Path, target_type: Literal["model"]) -> AllowedModels:
+    """Typed overload for loading serialized estimator/model artifacts.
 
     Args:
-        file (pathlib.Path): Path to the serialized pipeline file.
+        file: Serialized artifact file path.
+        target_type: Artifact type discriminator.
 
     Returns:
-        AllowedModels | Pipeline: Deserialized model/estimator.
+        AllowedModels: Deserialized model instance.
     """
+    ...
+
+@overload
+def load_model_or_pipeline(file: Path, target_type: Literal["pipeline"]) -> Pipeline:
+    """Typed overload for loading serialized sklearn pipeline artifacts.
+
+    Args:
+        file: Serialized artifact file path.
+        target_type: Artifact type discriminator.
+
+    Returns:
+        Pipeline: Deserialized sklearn pipeline instance.
+    """
+    ...
+
+def load_model_or_pipeline(file: Path, target_type: Literal["model", "pipeline"]) -> AllowedModels | Pipeline:
+    """Load and type-validate a serialized model or pipeline artifact from disk.
+
+    Args:
+        file: Serialized artifact file path.
+        target_type: Artifact type discriminator.
+
+    Returns:
+        AllowedModels | Pipeline: Deserialized artifact with expected type.
+    """
+
     if not file.exists():
         msg = f"File not found at {file}"
         logger.error(msg)

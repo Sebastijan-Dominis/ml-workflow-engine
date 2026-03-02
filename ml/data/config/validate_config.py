@@ -1,3 +1,5 @@
+"""Validation entrypoint for interim and processed data configs."""
+
 import logging
 from typing import Literal, overload
 
@@ -8,12 +10,41 @@ from ml.exceptions import ConfigError
 logger = logging.getLogger(__name__)
 
 @overload
-def validate_config(config: dict, type: Literal["interim"]) -> InterimConfig: ...
+def validate_config(config: dict, type: Literal["interim"]) -> InterimConfig:
+    """Typed overload for validating interim data configuration payloads.
+
+    Args:
+        config: Raw configuration payload.
+        type: Config type discriminator.
+
+    Returns:
+        InterimConfig: Validated interim configuration object.
+    """
+    ...
 
 @overload
-def validate_config(config: dict, type: Literal["processed"]) -> ProcessedConfig: ...
+def validate_config(config: dict, type: Literal["processed"]) -> ProcessedConfig:
+    """Typed overload for validating processed data configuration payloads.
+
+    Args:
+        config: Raw configuration payload.
+        type: Config type discriminator.
+
+    Returns:
+        ProcessedConfig: Validated processed configuration object.
+    """
+    ...
 
 def validate_config(config: dict, type: Literal["interim", "processed"]) -> InterimConfig | ProcessedConfig:
+    """Validate raw config dictionary using stage-specific Pydantic schema.
+
+    Args:
+        config: Raw configuration payload.
+        type: Config type selector (``"interim"`` or ``"processed"``).
+
+    Returns:
+        InterimConfig | ProcessedConfig: Typed validated configuration object.
+    """
     try:
         if type == "interim":
             return InterimConfig(**config)

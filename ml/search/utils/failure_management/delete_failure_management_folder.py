@@ -1,3 +1,5 @@
+"""Cleanup helpers for search/training failure-management directories."""
+
 import logging
 from pathlib import Path
 from typing import Literal
@@ -12,6 +14,8 @@ def delete_failure_management_folder(
     cleanup: bool, 
     stage: Literal["search", "train"]
 ) -> None:
+    """Safely remove failure-management directories when cleanup is enabled."""
+
     logger.debug(f"Running delete_failure_management_folder with folder_path={folder_path} and cleanup={cleanup}")
     if not cleanup:
         logger.info(f"Skipping cleanup of failure management folder for experiment {folder_path.name}.")

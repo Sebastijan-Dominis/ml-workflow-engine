@@ -1,3 +1,5 @@
+"""Lineage validation helpers that verify runtime config hash consistency."""
+
 import logging
 from pathlib import Path
 from typing import overload
@@ -10,12 +12,42 @@ from ml.utils.loaders import load_json
 logger = logging.getLogger(__name__)
 
 @overload
-def validate_configs_match(train_dir: Path, cfg: TrainModelConfig) -> None: ...
+def validate_configs_match(train_dir: Path, cfg: TrainModelConfig) -> None:
+    """Typed overload for validating training-config lineage hash consistency.
+
+    Args:
+        train_dir: Training run directory.
+        cfg: Training configuration object.
+
+    Returns:
+        None: Raises on mismatch.
+    """
+    ...
 
 @overload
-def validate_configs_match(train_dir: Path, cfg: SearchModelConfig) -> None: ...
+def validate_configs_match(train_dir: Path, cfg: SearchModelConfig) -> None:
+    """Typed overload for validating search-config lineage hash consistency.
+
+    Args:
+        train_dir: Training run directory.
+        cfg: Search configuration object.
+
+    Returns:
+        None: Raises on mismatch.
+    """
+    ...
 
 def validate_configs_match(train_dir: Path, cfg: TrainModelConfig | SearchModelConfig) -> None:
+    """Validate that runtime config hash matches the hash persisted in metadata.
+
+    Args:
+        train_dir: Training run directory.
+        cfg: Search or training configuration object.
+
+    Returns:
+        None: Raises on mismatch.
+    """
+
     train_metadata_path = train_dir / "metadata.json"
     if not train_metadata_path.exists():
         msg = f"Lineage integrity validation failed: {train_metadata_path} does not exist."

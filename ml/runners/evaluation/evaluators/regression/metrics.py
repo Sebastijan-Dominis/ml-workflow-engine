@@ -1,3 +1,5 @@
+"""Metric computation and split evaluation helpers for regression tasks."""
+
 import logging
 
 import numpy as np
@@ -20,6 +22,15 @@ def compute_metrics(
     y_true: pd.Series,
     y_pred: pd.Series,
 ) -> dict[str, float]:
+    """Compute core regression metrics and residual summary statistics.
+
+    Args:
+        y_true: Ground-truth regression targets.
+        y_pred: Predicted regression values.
+
+    Returns:
+        dict[str, float]: Computed regression metrics.
+    """
 
     metrics: dict[str, float] = {}
 
@@ -50,6 +61,19 @@ def evaluate_split(
     split_name: str,
     transform_cfg: TargetTransformConfig,
 ) -> tuple[dict[str, float], pd.DataFrame]:
+    """Evaluate one split and return metrics and per-row prediction output.
+
+    Args:
+        pipeline: Fitted model pipeline.
+        X: Split features.
+        y: Split target values.
+        split_row_ids: Row identifiers for split records.
+        split_name: Split label.
+        transform_cfg: Target-transform configuration for inverse transform.
+
+    Returns:
+        tuple[dict[str, float], pd.DataFrame]: Split metrics and prediction dataframe.
+    """
 
     # Generate predictions
     y_pred = pipeline.predict(X)
@@ -86,6 +110,16 @@ def evaluate_model(
     data_splits: DataSplits,
     transform_cfg: TargetTransformConfig,
 ) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
+    """Evaluate all splits and aggregate regression metrics/predictions.
+
+    Args:
+        pipeline: Fitted model pipeline.
+        data_splits: Dataset split container.
+        transform_cfg: Target-transform configuration for inverse transform.
+
+    Returns:
+        tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]: Metrics and predictions by split.
+    """
 
     evaluation_metrics: dict[str, dict[str, float]] = {}
     prediction_dfs: dict[str, pd.DataFrame] = {}

@@ -1,3 +1,5 @@
+"""CatBoost estimator preparation utilities for search phases."""
+
 import logging
 
 from catboost import CatBoostClassifier, CatBoostRegressor
@@ -14,6 +16,17 @@ def prepare_model(
     cat_features: list, 
     class_weights: dict | None
 ) -> CatBoostClassifier | CatBoostRegressor:
+    """Build CatBoost model configured for broad or narrow search phase.
+
+    Args:
+        model_cfg: Validated search model configuration.
+        search_phase: Search phase whose settings should be applied.
+        cat_features: Categorical feature indices or names for CatBoost.
+        class_weights: Optional class-weight mapping for classification tasks.
+
+    Returns:
+        Configured CatBoost classifier or regressor instance.
+    """
 
     search_phase_cfg = getattr(model_cfg.search, search_phase)
 

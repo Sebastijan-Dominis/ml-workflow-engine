@@ -1,3 +1,5 @@
+"""Protocol definition for model training runner implementations."""
+
 from abc import abstractmethod
 from pathlib import Path
 from typing import Protocol
@@ -7,6 +9,8 @@ from ml.runners.training.constants.output import TRAIN_OUTPUT
 
 
 class Trainer(Protocol):
+    """Structural interface implemented by concrete model trainers."""
+
     @abstractmethod
     def train(
         self, 
@@ -14,4 +18,15 @@ class Trainer(Protocol):
         *,
         strict: bool,
         failure_management_dir: Path
-    ) -> TRAIN_OUTPUT: ...
+    ) -> TRAIN_OUTPUT:
+        """Train model artifacts using provided configuration and runtime controls.
+
+        Args:
+            model_cfg: Validated training model configuration.
+            strict: Whether data/validation loading should fail strictly.
+            failure_management_dir: Directory for failure-management artifacts.
+
+        Returns:
+            Standardized training output.
+        """
+        ...

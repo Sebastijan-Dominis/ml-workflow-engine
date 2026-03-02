@@ -1,3 +1,5 @@
+"""Hashing helpers for Parquet metadata integrity fingerprints."""
+
 import logging
 import hashlib
 from pathlib import Path
@@ -9,6 +11,15 @@ from ml.exceptions import RuntimeMLException
 logger = logging.getLogger(__name__)
 
 def hash_parquet_metadata(path: Path) -> str:
+    """Compute a deterministic hash from Parquet schema and statistics metadata.
+
+    Args:
+        path: Path to the Parquet file to fingerprint.
+
+    Returns:
+        Deterministic metadata hash for the Parquet file.
+    """
+
     try:
         pf = pq.ParquetFile(path)
         meta = pf.metadata

@@ -1,3 +1,5 @@
+"""Runtime snapshot builders for reproducibility and environment capture."""
+
 import hashlib
 import logging
 import os
@@ -17,6 +19,12 @@ from ml.utils.runtime.runtime_info import get_runtime_info
 logger = logging.getLogger(__name__)
 
 def find_conda_executable():
+    """Locate the `conda` executable from PATH or active conda environment.
+
+    Returns:
+        str: Absolute path to the `conda` executable.
+    """
+
     conda = shutil.which("conda")
     if conda:
         return conda
@@ -32,6 +40,15 @@ def find_conda_executable():
     raise RuntimeMLException("Could not locate conda executable.")
 
 def _run_command(cmd: list[str]) -> str:
+    """Execute command and return stdout, raising structured runtime errors.
+
+    Args:
+        cmd: Command and arguments to execute.
+
+    Returns:
+        str: Command standard output text.
+    """
+
     try:
         result = subprocess.run(
             cmd,
@@ -47,10 +64,12 @@ def _run_command(cmd: list[str]) -> str:
 
 
 def get_conda_env_export() -> str:
+    """Return raw YAML output of `conda env export --no-builds`.
+
+    Returns:
+        str: Full conda environment export YAML content.
     """
-    Returns raw YAML string from:
-        conda env export
-    """
+
     try:
         conda = find_conda_executable()
         return _run_command([conda, "env", "export", "--no-builds"])
@@ -61,10 +80,30 @@ def get_conda_env_export() -> str:
 
 
 def hash_environment(env_export: str) -> str:
+    """Compute deterministic SHA-256 hash for exported environment text.
+
+    Args:
+        env_export: Raw conda environment export text.
+
+    Returns:
+        str: SHA-256 hash digest for the export payload.
+    """
+
     return hashlib.sha256(env_export.encode()).hexdigest()
 
 
 def build_runtime_snapshot(timestamp: str, hardware_info: HardwareConfig, start_time: float) -> dict:
+    """Build and return runtime snapshot metadata for experiment persistence.
+
+    Args:
+        timestamp: Run creation timestamp string.
+        hardware_info: Validated hardware configuration.
+        start_time: Monotonic run start time for duration calculation.
+
+    Returns:
+        dict: Runtime snapshot payload containing execution, runtime, GPU, and environment info.
+    """
+
     try:
         git_commit = get_git_commit(Path("."))
         python_executable = sys.executable

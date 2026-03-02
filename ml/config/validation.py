@@ -1,3 +1,5 @@
+"""Validation entrypoint for model configuration dictionaries."""
+
 import logging
 from typing import Any, Literal
 
@@ -9,15 +11,14 @@ from ml.exceptions import ConfigError
 logger = logging.getLogger(__name__)
 
 def validate_model_config(cfg_raw: dict[str, Any], cfg_type: Literal["search", "train"]) -> SearchModelConfig | TrainModelConfig:
-    """
-    Validate a raw model config dict using the appropriate Pydantic schema.
+    """Validate raw model config payload with the appropriate schema.
 
     Args:
-        cfg_raw (dict[str, Any]): Raw config loaded from YAML/JSON.
-        cfg_type (Literal["search", "train"]): Type of config to validate.
+        cfg_raw: Raw config loaded from YAML/JSON.
+        cfg_type: Type of config to validate.
 
     Returns:
-        SearchModelConfig | TrainModelConfig: Validated config as a Pydantic model instance.
+        SearchModelConfig | TrainModelConfig: Validated config model instance.
 
     Raises:
         ConfigError: If cfg_type is unknown or validation fails.

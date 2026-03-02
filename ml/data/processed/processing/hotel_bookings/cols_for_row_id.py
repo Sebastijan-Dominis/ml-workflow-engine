@@ -1,3 +1,5 @@
+"""Immutable source columns and fingerprint used for hotel-bookings row-id generation."""
+
 # These columns should *never* be changed, as they are used to create the row_id, which is the unique identifier for each row in the dataset. Changing any of these columns would change the row_id, which would break the lineage and tracking of data through the pipeline. If you need to change any of these columns, you must create a new column with the updated value and keep the original column for row_id creation. Ensure that each version of the dataset has the same values in these columns for the same rows to maintain consistent row_id values across versions, which is crucial for tracking and lineage.
 cols_for_row_id = [
     'hotel',

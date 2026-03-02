@@ -1,3 +1,9 @@
+"""Interim-stage data preparation utilities.
+
+Includes column normalization, schema enforcement, and invariant-driven row
+filtering used by the interim data pipeline.
+"""
+
 import logging
 
 import pandas as pd
@@ -11,6 +17,16 @@ logger = logging.getLogger(__name__)
 
 
 def normalize_columns(df: pd.DataFrame, cleaning: Cleaning):
+    """Normalize column names according to configured cleaning options.
+
+    Args:
+        df: Input dataframe whose column names are normalized.
+        cleaning: Cleaning configuration flags controlling normalization steps.
+
+    Returns:
+        Dataframe with normalized column names.
+    """
+
     if cleaning.lowercase_columns:
         df.columns = df.columns.str.lower()
     if cleaning.strip_strings:
@@ -22,6 +38,28 @@ def normalize_columns(df: pd.DataFrame, cleaning: Cleaning):
     return df
 
 def enforce_schema(df: pd.DataFrame, *, schema: DataSchema, drop_missing_ints: bool) -> pd.DataFrame:
+    """Validate columns and coerce dataframe dtypes to schema definition.
+
+    Args:
+        df: Input dataframe.
+        schema: Expected column-to-dtype mapping.
+        drop_missing_ints: Whether to drop rows with nulls in integer columns.
+
+    Returns:
+        pd.DataFrame: Schema-aligned dataframe.
+
+    Raises:
+        DataError: If required columns are missing or type coercion/validation fails.
+
+    Notes:
+        Integer columns containing nulls are either row-dropped or widened to
+        ``float64`` depending on ``drop_missing_ints``.
+
+    Side Effects:
+        May drop extra columns and may mutate row count when null integer rows
+        are removed.
+    """
+
     try:
         schema_cols = schema.model_dump().keys()
         missing_cols = set(schema_cols) - set(df.columns)
@@ -57,6 +95,23 @@ def enforce_schema(df: pd.DataFrame, *, schema: DataSchema, drop_missing_ints: b
 
 # Keeps missing values - this step doesn't concern with them
 def clean_data(df: pd.DataFrame, invariants: Invariants):
+    """Filter dataframe rows using configured invariant constraints.
+
+    Args:
+        df: Input dataframe.
+        invariants: Column-level min/max/allowed-value constraints.
+
+    Returns:
+        pd.DataFrame: Cleaned dataframe after invariant filtering.
+
+    Raises:
+        DataError: If invariant evaluation fails.
+
+    Side Effects:
+        Performs row filtering and object-string trimming; resulting row count can
+        decrease substantially based on configured invariants.
+    """
+
     try:
         for col in df.columns:
             if df[col].dtype == "object":

@@ -1,3 +1,5 @@
+"""Prediction artifact persistence helpers for evaluation splits."""
+
 import logging
 from pathlib import Path
 
@@ -8,6 +10,16 @@ from ml.exceptions import PersistenceError
 logger = logging.getLogger(__name__)
 
 def save_predictions(predictions_df: dict[str, pd.DataFrame], target_dir: Path) -> dict[str, str]:
+    """Persist per-split prediction dataframes as parquet artifacts.
+
+    Args:
+        predictions_df: Mapping from split names to prediction dataframes.
+        target_dir: Directory where prediction parquet files are written.
+
+    Returns:
+        Mapping from split names to saved artifact paths.
+    """
+
     target_dir.mkdir(parents=True, exist_ok=True)
     paths = {}
 

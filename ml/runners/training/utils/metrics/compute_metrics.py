@@ -1,3 +1,5 @@
+"""Training-time metric computation helpers across task types."""
+
 import logging
 from typing import Any
 
@@ -25,6 +27,33 @@ def compute_metrics(
     X_val: pd.DataFrame, 
     y_val: pd.Series
 ) -> dict[str, float]:
+    """Compute training/validation metrics for configured model task type.
+
+    Args:
+        model: Fitted model instance.
+        pipeline: Fitted pipeline used for prediction.
+        model_cfg: Validated training model configuration.
+        X_train: Training feature dataframe.
+        y_train: Training target series.
+        X_val: Validation feature dataframe.
+        y_val: Validation target series.
+
+    Returns:
+        Dictionary of computed training and validation metrics.
+
+    Raises:
+        UserError: If ``model_cfg.task.type`` is unsupported.
+
+    Notes:
+        Classification metrics are computed from probabilistic outputs at the
+        model's best iteration. Regression/forecasting branches inverse-transform
+        predictions before metric calculation when target transformation is enabled.
+
+    Side Effects:
+        Executes model/pipeline inference on both train and validation splits and
+        emits task-specific metric computation logs.
+    """
+
     if model_cfg.task.type == "classification":
         best_iter = model.get_best_iteration()
         train_pred = pipeline.predict_proba(X_train, ntree_end=best_iter)[:, 1]

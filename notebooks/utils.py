@@ -1,3 +1,9 @@
+"""Notebook utility helpers for binary classification evaluation.
+
+This module provides plotting and scoring helpers commonly used during model
+exploration in notebooks.
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import (ConfusionMatrixDisplay, RocCurveDisplay,
@@ -5,6 +11,33 @@ from sklearn.metrics import (ConfusionMatrixDisplay, RocCurveDisplay,
 
 
 def evaluate_binary_classifier(pipeline, X_train, y_train, X_test, y_test, positive_label, negative_label):
+    """Evaluate a binary classifier on train and test sets.
+
+    The function computes predictions, prints classification reports, plots
+    confusion matrices for train and test splits, and plots ROC curves with AUC
+    summaries.
+
+    Args:
+        pipeline: Fitted estimator or pipeline with ``predict`` and
+            ``predict_proba`` methods.
+        X_train: Training feature matrix.
+        y_train: Training target vector.
+        X_test: Test feature matrix.
+        y_test: Test target vector.
+        positive_label: Display label for the positive class.
+        negative_label: Display label for the negative class.
+
+    Returns:
+        None
+
+    Raises:
+        AttributeError: If ``pipeline`` does not implement required prediction
+            methods.
+
+    Side Effects:
+        Prints classification summaries and renders multiple matplotlib figures
+        (confusion matrices and ROC curves).
+    """
     y_pred_train = pipeline.predict(X_train)
     y_pred_test = pipeline.predict(X_test)
 
@@ -45,6 +78,20 @@ def evaluate_binary_classifier(pipeline, X_train, y_train, X_test, y_test, posit
     plt.show();
 
 def optimal_f1_search(pipeline, X, y_true):
+    """Search for the probability threshold that maximizes F1 score.
+
+    The function evaluates thresholds on a fixed grid from ``0.00`` to ``1.00``
+    in ``0.01`` increments, reports the best threshold and F1 score, and plots
+    F1 versus threshold.
+
+    Args:
+        pipeline: Fitted estimator or pipeline with a ``predict_proba`` method.
+        X: Feature matrix for threshold search.
+        y_true: True binary labels corresponding to ``X``.
+
+    Returns:
+        float: Threshold that yields the maximum F1 score on the provided data.
+    """
     
     y_probs = pipeline.predict_proba(X)[:, 1]
 

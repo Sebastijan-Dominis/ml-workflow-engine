@@ -1,3 +1,5 @@
+"""Regression evaluator implementation for trained model artifacts."""
+
 import logging
 from pathlib import Path
 
@@ -22,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class EvaluateRegression(Evaluator):
+    """Evaluate regression models across train/val/test splits."""
 
     def evaluate(
         self,
@@ -31,6 +34,28 @@ class EvaluateRegression(Evaluator):
         best_threshold: float | None,  # unused, kept for interface consistency
         train_dir: Path
     ) -> EVALUATE_OUTPUT:
+        """Load artifacts and data, run split-wise regression evaluation.
+
+        Args:
+            model_cfg: Validated training model configuration.
+            strict: Whether data-loading checks should fail strictly.
+            best_threshold: Unused threshold parameter kept for interface parity.
+            train_dir: Directory containing training artifacts and metadata.
+
+        Returns:
+            Evaluation output with metrics, predictions, and feature lineage.
+
+        Raises:
+            PipelineContractError: If loaded pipeline cannot produce predictions.
+
+        Notes:
+            Uses training metadata lineage bindings to resolve feature snapshots so
+            evaluation inputs match training-time feature versions.
+
+        Side Effects:
+            Loads persisted artifacts and executes split-wise inference on
+            train/validation/test data.
+        """
 
         # -------------------------
         # Load trained pipeline

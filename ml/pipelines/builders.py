@@ -1,13 +1,15 @@
+"""Pipeline builder utilities for assembling configured sklearn pipelines."""
+
 import logging
 
 import pandas as pd
 from sklearn.pipeline import Pipeline
 
+from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
+from ml.exceptions import ConfigError
 from ml.pipelines.operator_factory import build_operators
 from ml.pipelines.schema_utils import get_pipeline_features
 from ml.registry.pipeline_components import PIPELINE_COMPONENTS
-from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
-from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 __version__ = "1.0.0"
@@ -19,16 +21,16 @@ def build_pipeline(
     input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame,
 ) -> Pipeline:
-    """
-    Build an sklearn Pipeline from a config dictionary.
+    """Build an sklearn ``Pipeline`` from config and schema metadata.
 
     Args:
+        model_cfg: Validated search or training model config.
         pipeline_cfg: dict with keys 'steps' and optional 'assumptions'.
         input_schema: DataFrame with columns 'feature' and 'dtype' for raw inputs.
         derived_schema: DataFrame with columns 'feature' and 'source_operator' for engineered features.
 
     Returns:
-        sklearn.pipeline.Pipeline instance with configured steps.
+        Pipeline: Configured sklearn pipeline instance.
     """
     steps = []
 

@@ -1,3 +1,5 @@
+"""Utilities for running randomized hyperparameter searches."""
+
 import logging
 from typing import Any
 
@@ -24,6 +26,44 @@ def perform_randomized_search(
     search_phase: SEARCH_PHASES,
     scoring: SUPPORTED_SCORING_FUNCTIONS
 ) -> dict[str, Any]:
+    """Run randomized search and return serializable best-result metadata.
+
+    Args:
+        pipeline: Estimator pipeline used for randomized search.
+        X_train: Training feature matrix.
+        y_train: Training target vector.
+        param_distributions: Hyperparameter distributions for randomized sampling.
+        model_cfg: Validated search model configuration.
+        search_phase: Search phase identifier (broad or narrow).
+        scoring: Supported scoring method used by the search.
+
+    Returns:
+        Serializable dictionary containing best parameters, scores, and CV summary.
+
+    Raises:
+        ValueError: Propagated when search inputs are invalid (for example,
+            incompatible parameter distributions or CV configuration).
+
+    Notes:
+        For GPU execution, ``n_jobs`` is forced to ``1`` to avoid parallel worker
+        contention with GPU-bound estimators.
+
+    Side Effects:
+        Fits ``pipeline`` via ``RandomizedSearchCV.fit`` and emits detailed run
+        configuration logs.
+
+    Examples:
+        >>> results = perform_randomized_search(
+        ...     pipeline,
+        ...     X_train=X_train,
+        ...     y_train=y_train,
+        ...     param_distributions=param_distributions,
+        ...     model_cfg=model_cfg,
+        ...     search_phase="broad",
+        ...     scoring="roc_auc",
+        ... )
+    """
+
     search_phase_cfg = getattr(model_cfg.search, search_phase)
     n_iter = search_phase_cfg.n_iter
     cv = model_cfg.cv

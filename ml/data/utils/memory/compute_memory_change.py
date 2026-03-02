@@ -1,3 +1,5 @@
+"""Utilities to compute memory usage deltas across data pipeline stages."""
+
 import logging
 from typing import Literal
 
@@ -6,6 +8,17 @@ from ml.exceptions import DataError
 logger = logging.getLogger(__name__)
 
 def compute_memory_change(*, target_metadata: dict, new_memory_usage: float, stage: Literal["interim", "processed"]) -> dict:
+    """Compute old/new memory usage and change metrics for a pipeline stage.
+
+    Args:
+        target_metadata: Upstream stage metadata containing baseline memory.
+        new_memory_usage: Memory usage of the current dataframe in MB.
+        stage: Stage being evaluated (``"interim"`` or ``"processed"``).
+
+    Returns:
+        dict: Memory delta payload with absolute and percentage change.
+    """
+
     try:
         if stage == "interim":
             old_memory_usage = target_metadata["memory_usage_mb"]

@@ -1,3 +1,5 @@
+"""Metric computation and split evaluation helpers for classification tasks."""
+
 import logging
 from typing import Optional
 
@@ -21,9 +23,17 @@ def expected_calibration_error(
     y_prob: pd.Series,
     n_bins: int = 10,
 ) -> float:
+    """Compute expected calibration error (ECE) from labels and probabilities.
+
+    Args:
+        y_true: Ground-truth binary labels.
+        y_prob: Predicted probabilities for the positive class.
+        n_bins: Number of confidence bins.
+
+    Returns:
+        float: Expected calibration error value.
     """
-    Computes Expected Calibration Error (ECE).
-    """
+
     y_true_np = np.asarray(y_true)
     y_prob_np = np.asarray(y_prob)
 
@@ -51,6 +61,17 @@ def compute_metrics(
     *,
     threshold: float | None = None,
 ) -> dict[str, float]:
+    """Compute threshold-based and probability-based classification metrics.
+
+    Args:
+        y_true: Ground-truth binary labels.
+        y_pred: Predicted binary labels.
+        y_prob: Optional predicted probabilities for the positive class.
+        threshold: Optional decision threshold used for converting probabilities.
+
+    Returns:
+        dict[str, float]: Computed classification metrics.
+    """
 
     metrics: dict[str, float] = {}
 
@@ -128,6 +149,20 @@ def evaluate_split(
     split_name: str, 
     best_threshold: float | None
 ) -> tuple[dict[str, float], pd.DataFrame]: # default threshold=0.5
+    """Evaluate a single split and return metrics plus prediction dataframe.
+
+    Args:
+        pipeline: Fitted model pipeline.
+        X: Split features.
+        y: Split target labels.
+        split_row_ids: Row identifiers corresponding to split records.
+        split_name: Split label (train/val/test).
+        best_threshold: Decision threshold for positive-class prediction.
+
+    Returns:
+        tuple[dict[str, float], pd.DataFrame]: Split metrics and prediction rows.
+    """
+
     # Predict probabilities for the positive class
     probs = pipeline.predict_proba(X)
     if probs.shape[1] < 2:
@@ -166,6 +201,18 @@ def evaluate_model(
     data_splits: DataSplits, 
     best_threshold: float | None
 ) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
+    """Evaluate all configured splits and aggregate metrics/prediction frames.
+
+    Args:
+        model_cfg: Training configuration used for task/subtype decisions.
+        pipeline: Fitted model pipeline.
+        data_splits: Data split container.
+        best_threshold: Decision threshold for positive-class prediction.
+
+    Returns:
+        tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]: Metrics and predictions by split.
+    """
+
     # Create a dictionary to hold evaluation results
     evaluation_metrics = {}
     prediction_dfs = {}

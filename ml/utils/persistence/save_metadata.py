@@ -1,3 +1,5 @@
+"""Persistence utilities for writing experiment metadata artifacts."""
+
 import json
 import logging
 from pathlib import Path
@@ -13,6 +15,28 @@ def save_metadata(
     target_dir: Path,
     overwrite_existing: bool = False
 ) -> None:
+    """Persist metadata JSON to target directory with overwrite safeguards.
+
+    Args:
+        metadata: Metadata dictionary to persist.
+        target_dir: Target directory for ``metadata.json``.
+        overwrite_existing: Whether existing metadata file may be overwritten.
+
+    Returns:
+        None.
+
+    Raises:
+        PersistenceError: If overwrite policy is violated or file serialization
+            fails.
+
+    Side Effects:
+        Creates target directories as needed and writes/overwrites
+        ``metadata.json`` on disk.
+
+    Examples:
+        >>> save_metadata({"run_identity": {"stage": "training"}}, target_dir=Path("runs/123"))
+    """
+
     metadata_file = target_dir / "metadata.json"
 
     metadata_file.parent.mkdir(parents=True, exist_ok=True)

@@ -1,4 +1,5 @@
-# General imports
+"""Pipeline artifact persistence helpers for training runs."""
+
 import logging
 from pathlib import Path
 
@@ -10,6 +11,16 @@ from ml.exceptions import PersistenceError
 logger = logging.getLogger(__name__)
 
 def save_pipeline(pipeline: Pipeline, path: Path) -> Path:
+    """Persist trained preprocessing+model pipeline and return file path.
+
+    Args:
+        pipeline: Trained sklearn pipeline to serialize.
+        path: Target directory where the pipeline artifact is saved.
+
+    Returns:
+        Filesystem path to the persisted pipeline artifact.
+    """
+
     pipeline_file = path / "pipeline.joblib"
     
     try:

@@ -1,3 +1,9 @@
+"""Hyperparameter search runner CLI.
+
+This module executes model search for a given problem/segment/version,
+persists search outputs, and manages failure-management cleanup.
+"""
+
 import argparse
 import logging
 import sys
@@ -25,6 +31,11 @@ from ml.utils.formatting.str_2_bol import str2bool
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments for hyperparameter search.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Search for best hyperparameters and save training configuration.")
 
     parser.add_argument(
@@ -100,7 +111,22 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main() -> int:
-    """Main function to perform hyperparameter search and save training configuration."""
+    """Perform hyperparameter search and persist experiment artifacts.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are converted to process exit codes; the function is designed
+        as a CLI boundary and does not propagate failures upward.
+
+    Side Effects:
+        Creates/updates search run directories, writes logs/metadata/runtime
+        artifacts, and may delete failure-management folders on success.
+
+    Examples:
+        python pipelines/search/search.py --problem cancellation --segment global --version v1
+    """
     args: argparse.Namespace
     model_cfg: SearchModelConfig 
     searcher: Searcher

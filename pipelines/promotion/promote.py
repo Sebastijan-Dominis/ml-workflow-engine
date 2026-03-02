@@ -1,3 +1,9 @@
+"""CLI for staging or promoting trained model runs.
+
+This entrypoint builds a promotion context from CLI inputs, configures logging
+for the promotion run, and delegates execution to the promotion service.
+"""
+
 import argparse
 import logging
 import sys
@@ -10,6 +16,11 @@ from ml.promotion.service import PromotionService
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments for the model promotion workflow.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Stage or promote a model.")
 
     parser.add_argument(
@@ -78,6 +89,22 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main() -> int:
+    """Execute model staging or production promotion.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are converted to process exit codes; the function is designed
+        as a CLI boundary and does not propagate failures upward.
+
+    Side Effects:
+        Creates a promotion run directory with logs and persists promotion
+        artifacts through the promotion service.
+
+    Examples:
+        python pipelines/promotion/promote.py --problem no_show --segment global --version v1 --experiment-id <id> --train-run-id <id> --eval-run-id <id> --explain-run-id <id> --stage staging
+    """
     args: argparse.Namespace
     context: PromotionContext
     service: PromotionService

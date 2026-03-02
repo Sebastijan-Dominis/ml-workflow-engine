@@ -1,3 +1,5 @@
+"""Logical-config validation for model and pipeline artifact integrity."""
+
 import logging
 from pathlib import Path
 
@@ -8,6 +10,15 @@ from ml.exceptions import PipelineContractError
 logger = logging.getLogger(__name__)
 
 def validate_model_and_pipeline(train_dir: Path) -> dict:
+    """Validate persisted artifact hashes and return artifact metadata payload.
+
+    Args:
+        train_dir: Training run directory containing metadata and artifacts.
+
+    Returns:
+        Artifact metadata mapping after successful integrity checks.
+    """
+
     train_metadata_file = train_dir / "metadata.json"
     train_metadata = load_json(train_metadata_file)
 

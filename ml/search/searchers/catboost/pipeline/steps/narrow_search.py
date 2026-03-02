@@ -1,3 +1,5 @@
+"""Narrow hyperparameter search pipeline step for CatBoost searcher."""
+
 import logging
 
 import numpy as np
@@ -17,15 +19,54 @@ from ml.utils.pipeline_core.step import PipelineStep
 logger = logging.getLogger(__name__)
 
 class NarrowSearchStep(PipelineStep[SearchContext]):
+    """Execute narrow randomized search around broad-phase best parameters."""
+
     name = "narrow_search"
 
     def before(self, ctx: SearchContext) -> None:
+        """Emit pre-step log message.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Starting narrow search step.")
 
     def after(self, ctx: SearchContext) -> None:
+        """Emit post-step log message.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Completed narrow search step.")
 
     def run(self, ctx: SearchContext) -> SearchContext:
+        """Run narrow phase, validate params, and persist resumable state.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            SearchContext: Updated context with narrow-search outputs.
+
+        Raises:
+            UserError: If resumable narrow-search state is malformed.
+            ConfigError: If narrow-search configuration is missing/invalid.
+            SearchError: If underlying narrow randomized search execution fails.
+
+        Notes:
+            The step supports resume mode via ``narrow_info.json`` and may skip
+            compute when previously persisted outputs are available.
+
+        Side Effects:
+            May write failure-management narrow-search state to disk and emits
+            step-level progress logs.
+        """
         narrow_info_path = ctx.failure_management_dir / "narrow_info.json"
         narrow_info = load_json(narrow_info_path, strict=False)
         if narrow_info:

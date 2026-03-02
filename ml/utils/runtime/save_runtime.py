@@ -1,3 +1,5 @@
+"""Persistence utilities for writing runtime snapshot artifacts."""
+
 import json
 import logging
 from pathlib import Path
@@ -16,6 +18,8 @@ def save_runtime_snapshot(
     start_time: float,
     overwrite_existing: bool = False
 ) -> None:
+    """Build and persist runtime snapshot JSON with overwrite protections."""
+
     snapshot = build_runtime_snapshot(timestamp, hardware_info, start_time=start_time)
     snapshot_path = target_dir / "runtime.json"
 

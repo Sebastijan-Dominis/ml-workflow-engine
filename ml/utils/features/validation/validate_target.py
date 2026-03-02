@@ -1,3 +1,5 @@
+"""Validation utilities for classification and regression target constraints."""
+
 import logging
 
 import pandas as pd
@@ -9,6 +11,16 @@ from ml.utils.features.validation.normalize_dtype import normalize_dtype
 logger = logging.getLogger(__name__)
 
 def validate_min_class_count(y: pd.Series, min_class_count: int):
+    """Validate minimum sample count requirements across target classes.
+
+    Args:
+        y: Target class labels.
+        min_class_count: Minimum count required per class.
+
+    Returns:
+        None: Raises on validation failure.
+    """
+
     if y.nunique() < 2:
         msg = "Target variable must have at least two classes for classification."
         logger.error(msg)
@@ -34,6 +46,17 @@ def validate_target(
     model_cfg: TrainModelConfig | SearchModelConfig,
     data: pd.DataFrame
 ) -> None:
+    """Validate target nullability, dtype, and task-specific target constraints.
+
+    Args:
+        y: Target series.
+        model_cfg: Model configuration with target constraints.
+        data: Full data frame used for additional class-count checks.
+
+    Returns:
+        None: Raises on validation failure.
+    """
+
     if y.isnull().any():
         msg = "Target variable contains null values."
         logger.error(msg)

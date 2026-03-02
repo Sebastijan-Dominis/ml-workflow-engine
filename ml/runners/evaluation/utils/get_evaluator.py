@@ -1,3 +1,5 @@
+"""Factory helper for resolving evaluation implementations by task key."""
+
 import logging
 
 from ml.exceptions import PipelineContractError
@@ -7,6 +9,15 @@ from ml.runners.evaluation.evaluators.base import Evaluator
 logger = logging.getLogger(__name__)
 
 def get_evaluator(key: str) -> Evaluator:
+    """Instantiate evaluator class registered for the provided key.
+
+    Args:
+        key: Evaluator registry key, typically aligned with task or algorithm.
+
+    Returns:
+        Instantiated evaluator implementation.
+    """
+
     evaluator_cls = EVALUATORS.get(key)
 
     if not evaluator_cls:

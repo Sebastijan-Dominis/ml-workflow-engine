@@ -1,3 +1,5 @@
+"""Schema-derived feature list utilities for pipeline assembly."""
+
 import pandas as pd
 
 from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
@@ -6,8 +8,13 @@ from ml.pipelines.constants.pipeline_features import PipelineFeatures
 
 
 def get_categorical_features(schema: pd.DataFrame) -> list[str]:
-    """
-    Return list of categorical feature names from a schema DataFrame.
+    """Return categorical feature names inferred from schema dtypes.
+
+    Args:
+        schema: Schema dataframe containing at least ``feature`` and ``dtype``.
+
+    Returns:
+        List of feature names with categorical-compatible dtypes.
     """
     return schema.loc[schema["dtype"].isin(["object", "string", "category"]), "feature"].tolist()
 
@@ -17,8 +24,15 @@ def get_pipeline_features(
     input_schema: pd.DataFrame, 
     derived_schema: pd.DataFrame
 ) -> PipelineFeatures:
-    """
-    Returns (input_features, derived_features, categorical_features, selected_features)
+    """Compute feature groups used by the training/inference pipeline.
+
+    Args:
+        model_cfg: Validated search or training model config.
+        input_schema: Schema dataframe for raw input features.
+        derived_schema: Schema dataframe for engineered features.
+
+    Returns:
+        PipelineFeatures: Structured feature groups for pipeline construction.
     """
     input_features = input_schema["feature"].tolist()
     derived_features = derived_schema["feature"].tolist()

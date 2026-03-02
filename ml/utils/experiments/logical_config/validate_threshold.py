@@ -1,3 +1,5 @@
+"""Validation helpers for threshold compatibility and value constraints."""
+
 import logging
 from pathlib import Path
 
@@ -9,6 +11,16 @@ from ml.registry.tasks_supporting_thresholds import TASKS_SUPPORTING_THRESHOLDS
 logger = logging.getLogger(__name__)
 
 def validate_threshold(task: TaskConfig, metrics_path: Path) -> float | None:
+    """Return validated threshold for supported tasks or `None` when unsupported.
+
+    Args:
+        task: Task configuration describing problem type/subtype.
+        metrics_path: Metrics file path potentially containing a threshold value.
+
+    Returns:
+        Validated threshold value, default threshold, or ``None`` when unsupported.
+    """
+
     key = (task.type.lower(), task.subtype.lower() if task.subtype else None)
     if key not in TASKS_SUPPORTING_THRESHOLDS:
         logger.debug(f"Task type '{task.type}' does not support thresholds. Skipping threshold validation.")

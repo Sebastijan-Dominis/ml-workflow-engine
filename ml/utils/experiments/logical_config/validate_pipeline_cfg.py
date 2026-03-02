@@ -1,3 +1,5 @@
+"""Validation helpers for pipeline configuration hash consistency."""
+
 import logging
 from pathlib import Path
 
@@ -9,6 +11,16 @@ from ml.utils.loaders import load_json, load_yaml
 logger = logging.getLogger(__name__)
 
 def validate_pipeline_cfg(metadata_file: Path, model_cfg: TrainModelConfig) -> str:
+    """Validate active pipeline config hash against metadata and return hash.
+
+    Args:
+        metadata_file: Metadata file path containing expected pipeline hash.
+        model_cfg: Validated training configuration with pipeline location.
+
+    Returns:
+        Validated active pipeline configuration hash.
+    """
+
     metadata = load_json(metadata_file)
     expected_pipeline_hash = metadata.get("metadata", {}).get("pipeline_hash")
     if not expected_pipeline_hash:

@@ -1,3 +1,5 @@
+"""Validation utilities for feature-set schema and integrity hash checks."""
+
 import logging
 from pathlib import Path
 
@@ -18,6 +20,18 @@ def validate_feature_set(
     file_path: Path, 
     strict: bool = True
 ) -> None:
+    """Validate required columns and metadata hash consistency for a feature set.
+
+    Args:
+        feature_set: Feature dataframe to validate.
+        metadata: Snapshot metadata containing expected hashes.
+        file_path: Feature file path used for file-hash validation.
+        strict: Whether to enforce strict in-memory and file hash checks.
+
+    Returns:
+        None.
+    """
+
     if "row_id" not in feature_set.columns:
         msg = f"Feature set loaded from {file_path} is missing required 'row_id' column."
         logger.error(msg)

@@ -1,4 +1,5 @@
-import numpy as np
+"""Predefined column constraint registries for interim data validation."""
+
 
 from ml.data.config.schemas.constants import BorderValue
 

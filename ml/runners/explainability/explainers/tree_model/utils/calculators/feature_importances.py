@@ -1,3 +1,5 @@
+"""Feature-importance calculation helpers for tree-model explainability."""
+
 import logging
 
 import numpy as np
@@ -22,6 +24,19 @@ def get_feature_importances(
     model_cfg: TrainModelConfig, 
     top_k: int
 ) -> pd.DataFrame | None:
+    """Compute top-k feature importances from configured explainability method.
+
+    Args:
+        feature_names: Transformed feature-name array.
+        adapter: Tree-model adapter implementing importance extraction.
+        pipeline: Fitted pipeline whose last step is the model.
+        model_cfg: Validated training model configuration.
+        top_k: Number of top features to return.
+
+    Returns:
+        Top-k feature-importance dataframe, or ``None`` when disabled.
+    """
+
     type_param = model_cfg.explainability.methods.feature_importances.type
     model = pipeline[-1]
     try:

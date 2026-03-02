@@ -1,3 +1,5 @@
+"""Reproducibility checks for git commit ancestry and branch alignment."""
+
 import logging
 
 from ml.utils.git import get_git_commit, is_descendant_commit
@@ -5,6 +7,23 @@ from ml.utils.git import get_git_commit, is_descendant_commit
 logger = logging.getLogger(__name__)
 
 def validate_git_commits_match(runtime_info: dict) -> None:
+    """Compare current git commit to expected commit and log reproducibility risk.
+
+    Args:
+        runtime_info: Runtime metadata dictionary containing expected git commit.
+
+    Returns:
+        None.
+
+    Notes:
+        This check is advisory by design: it logs reproducibility risks for
+        descendant/divergent commits and does not raise to avoid blocking
+        post-hoc reproducibility inspection workflows.
+
+    Side Effects:
+        Executes git introspection helpers and emits warning/debug logs.
+    """
+
     git_commit = get_git_commit()
     expected_commit = runtime_info.get("execution", {}).get("git_commit", "<unknown>")
 

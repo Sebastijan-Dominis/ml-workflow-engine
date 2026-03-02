@@ -1,3 +1,5 @@
+"""Metadata assembly helper for raw data snapshots."""
+
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -19,6 +21,20 @@ def prepare_metadata(
     data_format: str,
     data_suffix: str
 ) -> dict:
+    """Build metadata payload for a raw data snapshot.
+
+    Args:
+        df: Loaded raw dataframe.
+        args: CLI arguments namespace with data/version/owner fields.
+        data_path: Raw data file path.
+        raw_run_id: Unique run identifier for raw handling stage.
+        data_format: Raw data file format.
+        data_suffix: Raw data file name or suffix.
+
+    Returns:
+        dict: Serializable metadata dictionary.
+    """
+
     data_hash = hash_data(data_path)
         
     timestamp = datetime.now().isoformat()

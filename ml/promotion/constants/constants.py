@@ -1,3 +1,5 @@
+"""Shared constants and typed result containers for promotion workflows."""
+
 import logging
 from dataclasses import dataclass
 from typing import Literal
@@ -10,12 +12,16 @@ Stage = Literal["staging", "production"]
 
 @dataclass
 class RunnersMetadata():
+    """Metadata payloads loaded from train/eval/explain run directories."""
+
     train_metadata: dict
     eval_metadata: dict
     explain_metadata: dict
 
 @dataclass
 class ThresholdComparisonResult():
+    """Outcome of comparing evaluation metrics against promotion thresholds."""
+
     meets_thresholds: bool
     message: str
     target_sets: list[MetricSet]
@@ -24,12 +30,16 @@ class ThresholdComparisonResult():
 
 @dataclass
 class ProductionComparisonResult():
+    """Outcome of comparing candidate model metrics against production."""
+
     beats_previous: bool
     message: str
     previous_production_metrics: dict | None
 
 @dataclass
 class PreviousProductionRunIdentity():
+    """Identifiers for the currently registered production model run."""
+
     experiment_id: str | None
     train_run_id: str | None
     eval_run_id: str | None

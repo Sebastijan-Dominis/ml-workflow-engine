@@ -1,3 +1,5 @@
+"""Pydantic schemas for tabular feature-freezing strategy configuration."""
+
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -10,6 +12,8 @@ from ml.exceptions import ConfigError
 logger = logging.getLogger(__name__)
 
 class DatasetConfig(BaseModel):
+    """Source dataset definition used for feature freezing ingestion."""
+
     ref: str = Field("data/processed", description="Reference path for the dataset, e.g., 'data/processed'")
     name: str = Field(..., description="Name of the dataset, e.g., 'hotel_bookings'")
     version: str = Field(..., description="Version of the dataset, e.g., 'v1'")
@@ -18,29 +22,41 @@ class DatasetConfig(BaseModel):
     path_suffix: str = Field("data.{format}", description="Suffix for the dataset file, supports {format} placeholder")
 
 class FeatureRolesConfig(BaseModel):
+    """Feature role partitioning for validation and downstream usage."""
+
     categorical: list[str]
     numerical: list[str]
     datetime: list[str]
 
 class OperatorsConfig(BaseModel):
+    """Operator execution settings and reproducibility hash metadata."""
+
     mode: Literal["materialized","logical"]
     names: list[str]
     hash: str
     required_features: dict[str, list[str]]
 
 class ConstraintsConfig(BaseModel):
+    """Data quality constraints enforced on frozen features."""
+
     forbid_nulls: list[str]
     max_cardinality: dict[str, int]
 
 class StorageConfig(BaseModel):
+    """Snapshot storage format and compression settings."""
+
     format: Literal["parquet"]
     compression: Optional[str] = "snappy"
 
 class LineageConfig(BaseModel):
+    """Lineage metadata for feature registry config provenance."""
+
     created_by: str
     created_at: datetime
 
 class TabularFeaturesConfig(BaseModel):
+    """Top-level validated config for tabular feature freezing."""
+
     type: str = "tabular"
     description: str | None = None
     data: list[DatasetConfig]
@@ -54,10 +70,21 @@ class TabularFeaturesConfig(BaseModel):
     lineage: LineageConfig
     ...
     class Config:
+        """Pydantic options for strict schema validation behavior."""
+
         extra = "forbid"
 
     @field_validator("operators", mode="before")
     def required_features_must_equal_operator_names(cls, v):
+        """Validate operator names align with required-features mapping keys.
+
+        Args:
+            v: Raw operators payload.
+
+        Returns:
+            Any: Validated operators payload.
+        """
+
         if v is None:
             return v
         names = set(v["names"])
@@ -70,6 +97,15 @@ class TabularFeaturesConfig(BaseModel):
     
     @model_validator(mode="after")
     def validate_feature_roles_match_columns(cls, config):
+        """Ensure feature role assignments exactly match included columns.
+
+        Args:
+            config: Candidate tabular feature config.
+
+        Returns:
+            TabularFeaturesConfig: Validated config.
+        """
+
         columns = set(config.columns)
         roles = set(config.feature_roles.categorical + config.feature_roles.numerical + config.feature_roles.datetime)
         if columns != roles:
@@ -82,6 +118,15 @@ class TabularFeaturesConfig(BaseModel):
     
     @model_validator(mode="after")
     def validate_constraints_match_columns(cls, config):
+        """Ensure constraint-referenced columns exist in included columns.
+
+        Args:
+            config: Candidate tabular feature config.
+
+        Returns:
+            TabularFeaturesConfig: Validated config.
+        """
+
         columns = set(config.columns)
         forbidden_nulls = set(config.constraints.forbid_nulls)
         max_cardinality_cols = set(config.constraints.max_cardinality.keys())
@@ -100,6 +145,15 @@ class TabularFeaturesConfig(BaseModel):
     # validate that all of the required features for operators are included in columns
     @model_validator(mode="after")
     def validate_required_features_for_operators(cls, config):
+        """Ensure all operator required features are present in included columns.
+
+        Args:
+            config: Candidate tabular feature config.
+
+        Returns:
+            TabularFeaturesConfig: Validated config.
+        """
+
         if config.operators is None:
             return config
         columns = set(config.columns)

@@ -1,14 +1,26 @@
+"""Feature preparation and operator-application helpers for tabular freezing."""
+
 import logging
 
 import pandas as pd
 
-from ml.exceptions import UserError, DataError
+from ml.exceptions import DataError, UserError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.registry.feature_operators import FEATURE_OPERATORS
 
 logger = logging.getLogger(__name__)
 
 def prepare_features(data: pd.DataFrame, config: TabularFeaturesConfig) -> pd.DataFrame:
+    """Select configured feature columns and enforce ``row_id`` presence.
+
+    Args:
+        data: Source dataframe.
+        config: Tabular feature-freezing configuration.
+
+    Returns:
+        pd.DataFrame: Prepared feature dataframe including `row_id`.
+    """
+
     INCLUDE = config.columns
 
     # include row_id as well; fail if not present, as it's required for downstream steps and evaluation
@@ -26,6 +38,17 @@ def prepare_features(data: pd.DataFrame, config: TabularFeaturesConfig) -> pd.Da
     return X
 
 def apply_operators(X: pd.DataFrame, operator_names: list[str], required_features: dict[str, list[str]]) -> pd.DataFrame:
+    """Apply configured feature operators after dependency checks.
+
+    Args:
+        X: Input feature dataframe.
+        operator_names: Ordered operator names to apply.
+        required_features: Operator dependency mapping.
+
+    Returns:
+        pd.DataFrame: Transformed feature dataframe.
+    """
+
     missing = set()
     for name, features in required_features.items():
         missing.update(set(features) - set(X.columns))

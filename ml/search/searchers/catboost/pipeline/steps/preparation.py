@@ -1,3 +1,5 @@
+"""Preparation pipeline step for CatBoost search orchestration."""
+
 import logging
 from pathlib import Path
 
@@ -22,17 +24,56 @@ from ml.utils.pipeline_core.step import PipelineStep
 logger = logging.getLogger(__name__)
 
 class PreparationStep(PipelineStep[SearchContext]):
+    """Load data/schemas, resolve scoring, and prepare search context state."""
+
     name = "preparation"
 
     stats: DataStats
 
     def before(self, ctx: SearchContext) -> None:
+        """Emit pre-step log message.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Starting preparation step.")
 
     def after(self, ctx: SearchContext) -> None:
+        """Emit post-step log message.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            None: Emits logging side effect only.
+        """
         logger.info("Completed preparation step.")
     
     def run(self, ctx: SearchContext) -> SearchContext:
+        """Prepare training inputs/config artifacts required by search phases.
+
+        Args:
+            ctx: Search pipeline context.
+
+        Returns:
+            SearchContext: Updated context with prepared data/config artifacts.
+
+        Raises:
+            DataError: Propagated from feature/target loading and validation.
+            PipelineContractError: Propagated when model/pipeline contract checks
+                fail.
+
+        Notes:
+            This step centralizes all shared preparation work so broad and narrow
+            phases consume the same validated inputs and derived artifacts.
+
+        Side Effects:
+            Reads data/config files from disk and mutates multiple context fields
+            required by downstream search steps.
+        """
         X, y, lineage = load_X_and_y(
             ctx.model_cfg, 
             snapshot_selection=None, 

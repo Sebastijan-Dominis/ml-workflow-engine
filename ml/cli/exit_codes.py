@@ -1,3 +1,9 @@
+"""Canonical process exit codes for project CLIs.
+
+The constants in this module define stable numeric exit codes for broad
+failure categories so shell scripts and orchestrators can react reliably.
+"""
+
 EXIT_SUCCESS = 0
 EXIT_UNEXPECTED_ERROR = 1
 EXIT_CONFIG_ERROR = 2

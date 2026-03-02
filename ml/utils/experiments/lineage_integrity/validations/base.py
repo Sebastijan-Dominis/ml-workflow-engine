@@ -1,3 +1,5 @@
+"""Base lineage integrity checks for required experiment metadata files."""
+
 import logging
 from pathlib import Path
 
@@ -6,6 +8,15 @@ from ml.exceptions import PipelineContractError
 logger = logging.getLogger(__name__)
 
 def validate_base_lineage_integrity(source_dir: Path) -> None:
+    """Ensure core lineage files exist in the provided experiment directory.
+
+    Args:
+        source_dir: Experiment/run directory expected to contain lineage artifacts.
+
+    Returns:
+        None.
+    """
+
     metadata_json_path = source_dir / "metadata.json"
     if not metadata_json_path.exists():
         msg = f"Lineage integrity validation failed: {metadata_json_path} does not exist."

@@ -1,3 +1,5 @@
+"""Hash utilities for non-model Pydantic configuration objects."""
+
 import logging
 import hashlib
 
@@ -11,6 +13,14 @@ from ml.exceptions import RuntimeMLException
 logger = logging.getLogger(__name__)
 
 def compute_config_hash(config: InterimConfig | ProcessedConfig | TabularFeaturesConfig) -> str:
+    """Compute a deterministic MD5 hash for a typed configuration object.
+
+    Args:
+        config: Interim, processed, or tabular feature-freezing config object.
+
+    Returns:
+        str: Hex digest of the serialized configuration content.
+    """
     try:        
         config_str = yaml.dump(config, sort_keys=True)
         return hashlib.md5(config_str.encode('utf-8')).hexdigest()

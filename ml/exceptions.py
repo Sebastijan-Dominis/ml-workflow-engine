@@ -1,3 +1,9 @@
+"""Project-wide exception hierarchy for ML workflows.
+
+The hierarchy separates user-actionable issues from internal runtime failures,
+enabling consistent error handling, logging, and CLI exit-code mapping.
+"""
+
 class MLException(Exception):
     """Base class for all ML pipeline errors."""
 

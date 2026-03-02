@@ -1,3 +1,5 @@
+"""State-loading service for promotion workflow execution."""
+
 import logging
 
 from ml.promotion.comparisons.thresholds import compare_against_thresholds
@@ -12,8 +14,17 @@ from ml.utils.loaders import load_json, load_yaml
 logger = logging.getLogger(__name__)
 
 class PromotionStateLoader:
+    """Loads registries, thresholds, and metrics into a promotion state object."""
 
     def load(self, context: PromotionContext) -> PromotionState:
+        """Load and assemble promotion state from persisted artifacts.
+
+        Args:
+            context: Promotion context containing paths and run arguments.
+
+        Returns:
+            Promotion state with registries, thresholds, metrics, and comparisons.
+        """
         model_registry = load_yaml(context.paths.registry_path)
         archive_registry = load_yaml(context.paths.archive_path)
 

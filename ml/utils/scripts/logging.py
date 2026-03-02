@@ -1,3 +1,5 @@
+"""Script logging helpers for standardized completion messages."""
+
 import logging
 import time
 from datetime import datetime
@@ -9,6 +11,16 @@ logger = logging.getLogger(__name__)
 
 
 def log_completion(start_time: float, message: str):
+    """Log operation completion timestamp and human-readable duration.
+
+    Args:
+        start_time: Monotonic start time captured before operation execution.
+        message: Completion message prefix.
+
+    Returns:
+        None.
+    """
+
     end_time = time.perf_counter()
     duration = end_time - start_time
     # Decide whether to use seconds, minutes, or hours based on duration

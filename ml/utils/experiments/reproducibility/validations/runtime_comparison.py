@@ -1,9 +1,20 @@
+"""Reproducibility checks comparing runtime platform characteristics."""
+
 import logging
 import platform
 
 logger = logging.getLogger(__name__)
 
 def validate_runtime(runtime_info: dict) -> None:
+    """Compare current runtime details with expected metadata and log mismatches.
+
+    Args:
+        runtime_info: Runtime metadata dictionary with expected platform details.
+
+    Returns:
+        None.
+    """
+
     python_version = platform.python_version()
     expected_python_version = runtime_info.get("runtime", {}).get("python_version", "<unknown>")
     if expected_python_version != python_version:

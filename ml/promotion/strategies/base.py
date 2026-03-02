@@ -1,3 +1,5 @@
+"""Abstract strategy interface for stage-specific promotion behavior."""
+
 from abc import ABC, abstractmethod
 from ml.promotion.state import PromotionState
 from ml.promotion.context import PromotionContext
@@ -5,6 +7,7 @@ from ml.promotion.result import PromotionResult
 
 
 class PromotionStrategy(ABC):
+    """Base contract for promotion strategy implementations."""
 
     @abstractmethod
     def execute(
@@ -12,4 +15,13 @@ class PromotionStrategy(ABC):
         context: PromotionContext,
         state: PromotionState,
     ) -> PromotionResult:
+        """Execute stage-specific promotion logic and return result payload.
+
+        Args:
+            context: Promotion runtime context.
+            state: Loaded promotion state.
+
+        Returns:
+            Promotion decision result.
+        """
         ...

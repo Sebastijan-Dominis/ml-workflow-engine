@@ -1,3 +1,10 @@
+"""CLI for producing processed datasets from interim snapshots.
+
+This module loads an interim dataset snapshot, applies processing rules such as
+column removal and optional row identifier creation, then persists processed
+data and metadata.
+"""
+
 import argparse
 import logging
 import sys
@@ -29,6 +36,11 @@ from ml.utils.snapshots.snapshot_path import get_snapshot_path
 logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments for processed data creation.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Make processed data by removing columns and creating new ones.")
 
     parser.add_argument(
@@ -69,6 +81,26 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 def main() -> int:
+    """Execute the processed data generation workflow.
+
+    The workflow loads and validates processed configuration, reads the selected
+    interim snapshot, performs configured transformations, writes output data,
+    and saves metadata for traceability.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        Exceptions are converted to process exit codes; the function is designed
+        as a CLI boundary and does not propagate failures upward.
+
+    Side Effects:
+        Creates a new processed snapshot directory and writes processed data,
+        metadata, and run logs.
+
+    Examples:
+        python pipelines/data/make_processed.py --data hotel_bookings --version v1 --interim-snapshot-id latest
+    """
     args: argparse.Namespace
     config_raw: dict
     config: ProcessedConfig

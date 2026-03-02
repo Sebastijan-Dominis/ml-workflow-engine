@@ -1,3 +1,5 @@
+"""Resolve class-weight parameters from policy, data statistics, and library."""
+
 import logging
 
 import numpy as np
@@ -15,6 +17,17 @@ def resolve_class_weighting(
         stats: DataStats, 
         library: SUPPORTED_LIBRARIES
     ) -> dict:
+    """Return library-specific class-weight parameters based on configured policy.
+
+    Args:
+        config: Validated training or search configuration with class-weighting settings.
+        stats: Dataset class distribution statistics.
+        library: Target ML library receiving class-weight parameters.
+
+    Returns:
+        Dictionary of class-weight parameters for the selected library.
+    """
+
     policy = config.class_weighting.policy
     
     if policy == "off":

@@ -1,3 +1,5 @@
+"""Classification evaluator implementation for trained model artifacts."""
+
 import logging
 from pathlib import Path
 
@@ -22,7 +24,33 @@ from ml.utils.loaders import load_json
 logger = logging.getLogger(__name__)
 
 class EvaluateClassification(Evaluator):
+    """Evaluate binary classification models across train/val/test splits."""
+
     def evaluate(self, *, model_cfg: TrainModelConfig, strict: bool, best_threshold: float | None, train_dir: Path) -> EVALUATE_OUTPUT:
+        """Load artifacts and data, run split-wise evaluation, return outputs.
+
+        Args:
+            model_cfg: Validated training model configuration.
+            strict: Whether data-loading checks should fail strictly.
+            best_threshold: Optional decision threshold for binary classification.
+            train_dir: Directory containing training artifacts and metadata.
+
+        Returns:
+            Evaluation output with metrics, predictions, and feature lineage.
+
+        Raises:
+            PipelineContractError: If the loaded pipeline does not expose
+                ``predict_proba`` required for classification evaluation.
+
+        Notes:
+            Uses training metadata lineage bindings to resolve feature snapshots so
+            evaluation inputs match training-time feature versions.
+
+        Side Effects:
+            Loads persisted artifacts and executes split-wise inference on
+            train/validation/test data.
+        """
+
         data_splits: DataSplits
 
         if best_threshold is None and model_cfg.task.subtype and model_cfg.task.subtype.lower() == "binary":

@@ -1,3 +1,9 @@
+"""CLI exception-to-exit-code mapping utilities.
+
+This module centralizes translation of domain-specific exceptions into stable
+process exit codes so command-line entrypoints can fail consistently.
+"""
+
 from ml.cli.exit_codes import (
     EXIT_CONFIG_ERROR,
     EXIT_DATA_ERROR,
@@ -34,8 +40,19 @@ EXCEPTION_EXIT_CODE_MAP = {
 }
 
 def resolve_exit_code(exc: Exception) -> int:
-    """
-    Convert an exception into a CLI exit code.
+    """Resolve a process exit code from an exception instance.
+
+    Resolution order:
+        1. Exact/derived matches from ``EXCEPTION_EXIT_CODE_MAP``.
+        2. ``UserError`` fallback to configuration error exit code.
+        3. ``RuntimeMLException`` fallback to unexpected error exit code.
+        4. Default unexpected error exit code for all other exceptions.
+
+    Args:
+        exc: Exception raised during CLI execution.
+
+    Returns:
+        int: Exit code representing the error category.
     """
     for exc_type, code in EXCEPTION_EXIT_CODE_MAP.items():
         if isinstance(exc, exc_type):

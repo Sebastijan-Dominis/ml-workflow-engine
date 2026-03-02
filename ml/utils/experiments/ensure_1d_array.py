@@ -1,3 +1,5 @@
+"""Validation utilities for normalizing prediction outputs to 1D arrays."""
+
 import logging
 from typing import Any
 
@@ -8,6 +10,15 @@ from ml.exceptions import PipelineContractError
 logger = logging.getLogger(__name__)
 
 def ensure_1d_array(pred: Any) -> np.ndarray:
+    """Validate prediction output is one-dimensional and return as ndarray.
+
+    Args:
+        pred: Prediction output from a model or pipeline.
+
+    Returns:
+        One-dimensional NumPy array of predictions.
+    """
+
     if isinstance(pred, tuple):
         msg = "Tuple predictions are not supported. Ensure your model's predict method returns a 1D array of predictions."
         logger.error(msg)

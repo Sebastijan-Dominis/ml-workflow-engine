@@ -1,3 +1,5 @@
+"""Validation helper for allowed best-parameter keys by algorithm."""
+
 import logging
 from pathlib import Path
 
@@ -9,6 +11,16 @@ from ml.utils.loaders import load_json
 logger = logging.getLogger(__name__)
 
 def validate_allowed_params(model_cfg: TrainModelConfig, search_dir: Path) -> None:
+    """Validate search-derived best params contain only allowed keys.
+
+    Args:
+        model_cfg: Validated training model configuration.
+        search_dir: Search run directory containing metadata.
+
+    Returns:
+        None.
+    """
+
     allowed_params = MODEL_PARAM_REGISTRY[model_cfg.algorithm.value.lower()]
     metadata = load_json(search_dir / "metadata.json")
     best_model_params = metadata.get("best_model_params", {})

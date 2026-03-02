@@ -1,3 +1,5 @@
+"""Schema loading and aggregation utilities for configured feature sets."""
+
 import logging
 from pathlib import Path
 
@@ -9,6 +11,15 @@ from ml.exceptions import DataError
 logger = logging.getLogger(__name__)
 
 def load_feature_set_schemas(features_path: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Load input and derived schema CSVs for a single feature-set version path.
+
+    Args:
+        features_path: Feature-set version directory containing schema files.
+
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame]: Input schema and derived schema dataframes.
+    """
+
     input_schema_path = features_path / "input_schema.csv"
     derived_schema_path = features_path / "derived_schema.csv"
     if not input_schema_path.exists():
@@ -29,6 +40,15 @@ def load_feature_set_schemas(features_path: Path) -> tuple[pd.DataFrame, pd.Data
         raise
 
 def aggregate_schema_dfs(schemas: list[pd.DataFrame]) -> pd.DataFrame:
+    """Aggregate schema rows while preserving first occurrence per feature name.
+
+    Args:
+        schemas: List of schema dataframes to combine.
+
+    Returns:
+        pd.DataFrame: Aggregated schema dataframe with deduplicated features.
+    """
+
     if not schemas:
         return pd.DataFrame()
 
@@ -50,6 +70,15 @@ def aggregate_schema_dfs(schemas: list[pd.DataFrame]) -> pd.DataFrame:
     return pd.DataFrame(aggregated_rows).reset_index(drop=True)
 
 def load_schemas(model_cfg: SearchModelConfig | TrainModelConfig) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Load and aggregate input/derived schemas for all configured feature sets.
+
+    Args:
+        model_cfg: Validated model configuration containing feature-store settings.
+
+    Returns:
+        tuple[pd.DataFrame, pd.DataFrame]: Aggregated input and derived schemas.
+    """
+
     feature_store_path = Path(model_cfg.feature_store.path)
     feature_sets = model_cfg.feature_store.feature_sets
 

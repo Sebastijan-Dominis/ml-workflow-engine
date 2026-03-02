@@ -1,3 +1,5 @@
+"""Utilities for resolving the latest valid snapshot directory."""
+
 import logging
 from datetime import datetime
 from pathlib import Path
@@ -7,6 +9,15 @@ from ml.exceptions import DataError
 logger = logging.getLogger(__name__)
 
 def get_latest_snapshot_path(snapshot_dir: Path) -> Path:
+    """Return newest valid snapshot path using timestamp and UUID tie-breaking.
+
+    Args:
+        snapshot_dir: Directory containing snapshot subdirectories.
+
+    Returns:
+        Path: Latest valid snapshot path.
+    """
+
     snapshots = []
     
     for s in snapshot_dir.iterdir():
@@ -28,6 +39,15 @@ def get_latest_snapshot_path(snapshot_dir: Path) -> Path:
         raise DataError(msg)
 
     def parse_snapshot(p: Path) -> tuple[datetime, str]:
+        """Parse snapshot folder name into comparable datetime and UUID parts.
+
+        Args:
+            p: Snapshot directory path.
+
+        Returns:
+            tuple[datetime, str]: Parsed timestamp and UUID components.
+        """
+
         timestamp_str, uuid_str = p.name.split("_")
         date_part, time_part = timestamp_str.split('T')
         time_part = time_part.replace('-', ':')

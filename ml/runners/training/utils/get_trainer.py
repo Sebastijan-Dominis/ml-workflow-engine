@@ -1,3 +1,5 @@
+"""Factory helper for resolving training runner implementations by key."""
+
 import logging
 
 from ml.exceptions import PipelineContractError
@@ -7,6 +9,15 @@ from ml.runners.training.trainers.base import Trainer
 logger = logging.getLogger(__name__)
 
 def get_trainer(key: str) -> Trainer:
+    """Instantiate trainer class registered for the provided algorithm key.
+
+    Args:
+        key: Trainer registry key identifying the algorithm implementation.
+
+    Returns:
+        Instantiated trainer implementation.
+    """
+
     trainer_cls = TRAINERS.get(key)
 
     if not trainer_cls:

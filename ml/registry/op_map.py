@@ -1,3 +1,5 @@
+"""Operator map from invariant comparison keys to vectorized predicates."""
+
 OP_MAP = {
     "eq": lambda s, v: s == v,
     "neq": lambda s, v: s != v,

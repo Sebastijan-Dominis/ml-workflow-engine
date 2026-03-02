@@ -1,3 +1,5 @@
+"""Context builders and path models for promotion workflow execution."""
+
 import argparse
 from dataclasses import dataclass
 from datetime import datetime
@@ -10,6 +12,8 @@ from ml.utils.formatting.iso_no_col import iso_no_colon
 
 @dataclass
 class PromotionPaths:
+    """Filesystem paths required during a promotion run."""
+
     model_registry_dir: Path
     run_dir: Path
     promotion_configs_dir: Path
@@ -22,6 +26,8 @@ class PromotionPaths:
 
 @dataclass
 class PromotionContext:
+    """Runtime context passed through promotion service components."""
+
     args: argparse.Namespace
     run_id: str
     timestamp: str
@@ -30,6 +36,15 @@ class PromotionContext:
 
 
 def build_context(args: argparse.Namespace) -> PromotionContext:
+    """Build promotion context with generated run identity and paths.
+
+    Args:
+        args: Parsed CLI arguments for the promotion command.
+
+    Returns:
+        Promotion context containing run identifiers, resolved paths, and metadata.
+    """
+
     timestamp = iso_no_colon(datetime.now())
     run_id = f"{timestamp}_{uuid4().hex[:8]}"
 

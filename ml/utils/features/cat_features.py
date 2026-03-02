@@ -1,3 +1,5 @@
+"""Utilities for resolving categorical feature columns for model training."""
+
 import pandas as pd
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig, TrainModelConfig
@@ -8,6 +10,17 @@ def get_cat_features(
     input_schema: pd.DataFrame, 
     derived_schema: pd.DataFrame
 ) -> list:
+    """Return categorical feature names from input/derived schemas with segmentation rules.
+
+    Args:
+        model_cfg: Validated training or search model configuration.
+        input_schema: Schema dataframe for raw input features.
+        derived_schema: Schema dataframe for derived features.
+
+    Returns:
+        Combined list of categorical input and derived feature names.
+    """
+
     input_categoricals = input_schema.loc[
         input_schema["dtype"].isin(["object", "string", "category"]),
         "feature",

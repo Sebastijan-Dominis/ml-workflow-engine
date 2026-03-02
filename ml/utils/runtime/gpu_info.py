@@ -1,14 +1,31 @@
+"""Runtime GPU information collection helpers backed by NVML."""
+
 import pynvml
 
 from ml.config.validation_schemas.hardware_cfg import HardwareConfig
 
 
 def parse_cuda_driver_version(version_int: int) -> str:
+    """Convert NVML integer CUDA version encoding into dotted string format.
+
+    Args:
+        version_int: NVML-encoded CUDA driver version.
+
+    Returns:
+        str: CUDA version in dotted ``major.minor`` format.
+    """
+
     major = version_int // 1000
     minor = (version_int % 1000) // 10
     return f"{major}.{minor}"
 
 def prepare_gpu_info() -> tuple[list[str], list[int], list[int], str, str]:
+    """Collect available GPU names, indices, memory, and driver version metadata.
+
+    Returns:
+        tuple[list[str], list[int], list[int], str, str]: Names, indices, memory sizes, CUDA version, and driver version.
+    """
+
     gpu_names = []
     gpu_memories_gb = []
 
@@ -36,6 +53,15 @@ def prepare_gpu_info() -> tuple[list[str], list[int], list[int], str, str]:
     return gpu_names, gpu_devices_available, gpu_memories_gb, cuda_version_str, gpu_driver_version
 
 def get_gpu_info(hardware_info: HardwareConfig) -> dict:
+    """Assemble standardized GPU runtime info aligned with hardware config.
+
+    Args:
+        hardware_info: Hardware configuration with selected GPU settings.
+
+    Returns:
+        dict: GPU runtime summary payload.
+    """
+
     gpu_info = {}
 
     gpu_names, gpu_devices_available, gpu_memories_gb, cuda_version_str, gpu_driver_version = prepare_gpu_info()

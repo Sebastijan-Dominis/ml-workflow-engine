@@ -1,3 +1,5 @@
+"""Metadata assembly helpers for processed data pipeline outputs."""
+
 import logging
 import platform
 import time
@@ -29,6 +31,25 @@ def prepare_metadata(
     processed_run_id: str,
     row_id_info: dict | None = None
 ) -> dict:
+    """Build metadata payload describing a processed data run.
+
+    Args:
+        df: Final processed dataframe.
+        config: Validated processed configuration.
+        start_time: Run start timestamp from ``time.perf_counter``.
+        data_path: Persisted processed data file path.
+        source_data_path: Source interim data file path.
+        source_data_format: Source interim data format.
+        source_data_version: Source interim data version.
+        owner: Human owner for governance metadata.
+        memory_info: Memory usage delta details.
+        processed_run_id: Unique processed run identifier.
+        row_id_info: Optional row-id generation trace metadata.
+
+    Returns:
+        dict: Serializable metadata dictionary.
+    """
+
     data_hash = hash_data(data_path)
          
     config_hash = compute_config_hash(config)

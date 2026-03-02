@@ -1,3 +1,5 @@
+"""Reproducibility checks for conda environment hash consistency."""
+
 import logging
 
 from ml.utils.runtime.runtime_snapshot import get_conda_env_export, hash_environment
@@ -5,6 +7,15 @@ from ml.utils.runtime.runtime_snapshot import get_conda_env_export, hash_environ
 logger = logging.getLogger(__name__)
 
 def validate_conda_envs_match(runtime_info: dict) -> None:
+    """Compare current conda environment hash with expected runtime metadata hash.
+
+    Args:
+        runtime_info: Runtime metadata dictionary containing expected environment hash.
+
+    Returns:
+        None.
+    """
+
     env_export = get_conda_env_export()
     conda_env_hash = hash_environment(env_export)
 

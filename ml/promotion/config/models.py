@@ -1,3 +1,5 @@
+"""Pydantic schemas and enums for promotion policy configuration."""
+
 import logging
 from datetime import datetime
 from enum import Enum
@@ -9,26 +11,44 @@ from ml.exceptions import ConfigError
 logger = logging.getLogger(__name__)
 
 class MetricSet(str, Enum):
+    """Supported metric split sets for promotion evaluation."""
+
     TEST = "test"
     VAL = "val"
     TRAIN = "train"
 
 class MetricName(str, Enum):
+    """Supported metric names used in promotion criteria."""
+
     ACCURACY = "accuracy"
     F1 = "f1"
     ROC_AUC = "roc_auc"
 
 class Direction(str, Enum):
+    """Optimization direction per promotion metric."""
+
     MAXIMIZE = "maximize"
     MINIMIZE = "minimize"
 
 class PromotionMetricsConfig(BaseModel):
+    """Metric selection and direction configuration for promotion checks."""
+
     sets: list[MetricSet] = Field(..., description="List of metric sets to consider for promotion")
     metrics: list[MetricName] = Field(..., description="List of metrics to consider for promotion")
     directions: dict[MetricName, Direction] = Field(..., description="dictionary mapping each metric to its optimization direction")
 
 @field_validator("directions")
 def validate_directions(cls, v, values):
+    """Ensure direction entries are provided for every configured metric.
+
+    Args:
+        v: Directions mapping.
+        values: Other field values from validation context.
+
+    Returns:
+        dict: Validated directions mapping.
+    """
+
     metrics = set(values.get("metrics", []))
     direction_metrics = set(v.keys())
     if metrics != direction_metrics:
@@ -37,21 +57,33 @@ def validate_directions(cls, v, values):
         raise ConfigError(msg)
 
 class ThresholdsConfig(BaseModel):
+    """Per-split threshold values for promotion metrics."""
+
     test: dict[str, float] = Field(default_factory=dict, description="dictionary of metric thresholds for the test set")
     val: dict[str, float] = Field(default_factory=dict, description="dictionary of metric thresholds for the validation set")
     train: dict[str, float] = Field(default_factory=dict, description="dictionary of metric thresholds for the training set")
 
 class LineageConfig(BaseModel):
+    """Lineage metadata describing threshold config provenance."""
+
     created_by: str
     created_at: datetime
 
 class PromotionThresholds(BaseModel):
+    """Top-level validated promotion threshold configuration."""
+
     promotion_metrics: PromotionMetricsConfig
     thresholds: ThresholdsConfig
     lineage: LineageConfig
 
     @model_validator(mode="after")
     def validate_consistency(self):
+        """Validate metric sets/metrics align with provided threshold blocks.
+
+        Returns:
+            PromotionThresholds: Validated promotion-threshold object.
+        """
+
         expected_sets = set(self.promotion_metrics.sets)
         thresholds_dump = self.thresholds.model_dump()
 

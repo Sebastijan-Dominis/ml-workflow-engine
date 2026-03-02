@@ -1,3 +1,5 @@
+"""Validation schema for model training-stage configuration."""
+
 from pydantic import BaseModel, Field
 
 from ml.config.validation_schemas.base_model_params import (BaseEnsembleParams,
@@ -6,6 +8,8 @@ from ml.config.validation_schemas.hardware_cfg import HardwareConfig
 
 
 class TrainConfig(BaseModel):
+    """Training hyperparameters, hardware settings, and runtime controls."""
+
     iterations: int
     model: BaseModelParams = Field(default_factory=BaseModelParams)
     ensemble: BaseEnsembleParams = Field(default_factory=BaseEnsembleParams)

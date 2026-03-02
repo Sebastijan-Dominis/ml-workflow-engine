@@ -1,3 +1,5 @@
+"""Operator hashing and validation utilities for feature freezing integrity."""
+
 import hashlib
 import inspect
 import json
@@ -13,6 +15,15 @@ from ml.registry.feature_operators import FEATURE_OPERATORS
 logger = logging.getLogger(__name__)
 
 def generate_operator_hash(operator_names):
+    """Generate deterministic hash for operator set and runtime context.
+
+    Args:
+        operator_names: Operator names included in the freeze process.
+
+    Returns:
+        str: Deterministic operator hash.
+    """
+
     operator_names = sorted(operator_names)
     operators = [FEATURE_OPERATORS[name] for name in operator_names]
     operator_sources = ""
@@ -35,6 +46,16 @@ def generate_operator_hash(operator_names):
     return operators_hash
 
 def validate_operators(operators: list, operator_hash: str):
+    """Validate operator names and verify computed hash matches expected hash.
+
+    Args:
+        operators: Operator names to validate.
+        operator_hash: Expected operator hash value.
+
+    Returns:
+        None: Raises on validation/hash mismatch failure.
+    """
+
     for name in operators:
         if name not in FEATURE_OPERATORS:
             raise UserError(f"Unknown operator: {name}")

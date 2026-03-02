@@ -1,3 +1,5 @@
+"""Dataset loading and lineage assembly utilities for feature freezing."""
+
 import logging
 from pathlib import Path
 
@@ -15,6 +17,16 @@ from ml.utils.snapshots.latest_snapshot import get_latest_snapshot_path
 logger = logging.getLogger(__name__)
 
 def load_data_with_lineage(config: TabularFeaturesConfig) -> tuple[pd.DataFrame, list[DataLineageEntry]]:
+    """Load configured datasets, merge them, and build lineage entries.
+
+    Args:
+        config: Validated tabular freeze configuration.
+
+    Returns:
+        tuple[pd.DataFrame, list[DataLineageEntry]]: Merged dataframe and
+        dataset lineage metadata.
+    """
+
     data = pd.DataFrame()
     data_lineage = []
 

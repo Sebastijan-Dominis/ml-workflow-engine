@@ -1,3 +1,5 @@
+"""State model containing promotion inputs loaded from persisted artifacts."""
+
 from dataclasses import dataclass
 from typing import Optional
 from ml.promotion.constants.constants import PreviousProductionRunIdentity, ThresholdComparisonResult
@@ -5,6 +7,8 @@ from ml.promotion.config.models import PromotionThresholds
 
 @dataclass
 class PromotionState:
+    """Immutable-like snapshot of loaded state for promotion decision flow."""
+
     model_registry: dict
     archive_registry: dict
     evaluation_metrics: dict

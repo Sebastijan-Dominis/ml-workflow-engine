@@ -1,3 +1,5 @@
+"""Validation helpers for CatBoost hyperparameter value constraints."""
+
 import logging
 
 from ml.exceptions import ConfigError
@@ -6,6 +8,17 @@ from ml.registry.param_constraints.catboost import CATBOOST_PARAM_CONSTRAINTS
 logger = logging.getLogger(__name__)
 
 def validate_param_value(param_name: str, value, task_type: str):
+    """Validate one hyperparameter value against configured constraints.
+
+    Args:
+        param_name: Hyperparameter name to validate.
+        value: Hyperparameter value to validate.
+        task_type: Compute task type (for example ``CPU`` or ``GPU``).
+
+    Returns:
+        None.
+    """
+
     constraints = CATBOOST_PARAM_CONSTRAINTS.get(param_name)
     if not constraints:
         return

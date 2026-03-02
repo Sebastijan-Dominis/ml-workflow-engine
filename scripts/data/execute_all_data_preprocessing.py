@@ -1,3 +1,10 @@
+"""Batch runner for end-to-end data preprocessing.
+
+This script orchestrates three pipeline stages across discovered datasets and
+configurations: raw metadata handling, interim dataset generation, and
+processed dataset generation.
+"""
+
 import argparse
 import logging
 import subprocess
@@ -16,11 +23,25 @@ logger = logging.getLogger(__name__)
 
 
 def run_cmd(cmd: list[str]) -> None:
+    """Execute a subprocess command and log captured standard output.
+
+    Args:
+        cmd: Command and arguments to execute.
+
+    Raises:
+        subprocess.CalledProcessError: If the command exits with a non-zero
+            status code.
+    """
     result = subprocess.run(cmd, check=True, capture_output=True, text=True)
     if result.stdout:
         logger.info(result.stdout)
 
 def parse_args():
+    """Parse command-line arguments for the preprocessing orchestrator.
+
+    Returns:
+        argparse.Namespace: Parsed CLI arguments.
+    """
     parser = argparse.ArgumentParser(description="Run the full data preprocessing pipeline, including handling raw data, making interim data, and making processed data. This script will look for all raw data snapshots in the data/raw directory, all interim config files in configs/data/interim, and all processed config files in configs/data/processed, and run the corresponding scripts for each of them.")
 
     parser.add_argument(
@@ -33,6 +54,22 @@ def parse_args():
     return parser.parse_args()
 
 def main() -> int:
+    """Run data preprocessing steps for all discoverable datasets.
+
+    Returns:
+        int: Process exit code where ``0`` indicates success.
+
+    Notes:
+        The workflow is best-effort per stage ordering (raw -> interim ->
+        processed) and supports idempotent skipping when prior outputs exist.
+
+    Side Effects:
+        Executes multiple subprocess pipelines, writes consolidated script logs,
+        and may create new snapshot artifacts across data stages.
+
+    Examples:
+        python -m scripts.data.execute_all_data_preprocessing --skip-if-existing true
+    """
     args = parse_args()
 
     start_time = time.perf_counter()
