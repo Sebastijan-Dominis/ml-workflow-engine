@@ -23,10 +23,10 @@ class MetadataStep(PipelineStep[FreezeContext]):
     name = "metadata"
 
     def before(self, ctx: FreezeContext) -> None:
-        logger.debug("Starting metadata step.")
+        logger.info("Starting metadata step.")
 
     def after(self, ctx: FreezeContext) -> None:
-        logger.debug("Completed metadata step.")
+        logger.info("Completed metadata step.")
 
     def __init__(self, hash_config):
         self.hash_config = hash_config

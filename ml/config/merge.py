@@ -85,5 +85,5 @@ def apply_env_overlay(cfg: dict[str, Any], env: str | None, env_path: Path, skip
     env_cfg = load_yaml(env_path)
 
     result = deep_merge([cfg, env_cfg])
-    logger.info("Applied environment overlay: %s", env)
+    logger.debug("Applied environment overlay: %s", env)
     return result

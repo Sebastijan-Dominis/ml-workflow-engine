@@ -23,7 +23,8 @@ from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
     validate_pipeline_cfg
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.formatting.str_2_bol import str2bool
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
@@ -61,7 +62,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--strict",
-        type=bool,
+        type=str2bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
@@ -154,29 +155,13 @@ def main() -> int:
 
         top_k = args.top_k if args.top_k is not None else model_cfg.explainability.top_k
 
-        logger.info(
-            "Starting explainability | problem=%s segment=%s version=%s train_id=%s explain_id=%s top_k=%s",
-            args.problem,
-            args.segment,
-            args.version,
-            train_run_id,
-            explain_run_id,
-            top_k
-        )
-        
+        logger.info("Explaining the model using experiment_id = %s, train_id = %s, and top_k = %s.", experiment_dir.name, train_run_id, top_k)        
         output = explainer.explain(model_cfg=model_cfg, train_dir=train_dir, top_k=top_k)
+        logger.info("Explainability completed. Persisting explainability run...")
 
         explainability_metrics = output.explainability_metrics
         feature_lineage = output.feature_lineage
 
-        logger.info(
-            "Explainability completed | problem=%s segment=%s version=%s train_id=%s explain_id=%s",
-            args.problem,
-            args.segment,
-            args.version,
-            train_run_id,
-            explain_run_id,
-        )
 
         persist_explainability_run(
             model_cfg=model_cfg,
@@ -193,19 +178,12 @@ def main() -> int:
             top_k=top_k
         )
 
-        logger.info(
-            "Explainability results persisted | problem=%s segment=%s version=%s train_id=%s explain_id=%s top_k=%s",
-            args.problem,
-            args.segment,
-            args.version,
-            train_run_id,
-            explain_run_id,
-            top_k
-        )
+        logger.info("Explainability run successfully persisted.")
+
         return 0
 
     except Exception as e:
-        logger.exception("An error occurred during explainability.")
+        logger.exception("An error occurred during the explainability run.")
         return resolve_exit_code(e)
 
 if __name__ == "__main__":

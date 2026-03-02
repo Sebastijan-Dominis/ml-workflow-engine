@@ -11,3 +11,4 @@ class TrainConfig(BaseModel):
     ensemble: BaseEnsembleParams = Field(default_factory=BaseEnsembleParams)
     hardware: HardwareConfig = Field(default_factory=HardwareConfig)
     early_stopping_rounds: int = 0
+    snapshot_interval_seconds: int = 600

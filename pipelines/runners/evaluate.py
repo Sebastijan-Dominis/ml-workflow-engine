@@ -43,7 +43,8 @@ from ml.utils.experiments.logical_config.validate_threshold import \
     validate_threshold
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.formatting.str_2_bol import str2bool
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
@@ -81,7 +82,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--strict",
-        type=bool,
+        type=str2bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
@@ -169,29 +170,13 @@ def main() -> int:
         key = model_cfg.task.type.lower()
         evaluator = get_evaluator(key)
 
-        logger.info(
-            "Starting evaluation | problem=%s segment=%s version=%s train_id=%s eval_id=%s",
-            args.problem,
-            args.segment,
-            args.version,
-            args.train_id,
-            eval_run_id,
-        )
-
+        logger.info("Starting evaluation using experiment_id = %s and train_id = %s.", experiment_dir.name, train_run_id)
         output = evaluator.evaluate(model_cfg=model_cfg, strict=args.strict, best_threshold=best_threshold, train_dir=train_dir)
+        logger.info("Evaluation completed. Persisting evaluation run...")
 
         metrics = output.metrics
         prediction_dfs = output.prediction_dfs
         feature_lineage = output.lineage
-
-        logger.info(
-            "Evaluation completed | problem=%s segment=%s version=%s train_id=%s eval_id=%s",
-            args.problem,
-            args.segment,
-            args.version,
-            args.train_id,
-            eval_run_id,
-        )
 
         persist_evaluation_run(
             model_cfg,
@@ -208,14 +193,7 @@ def main() -> int:
             pipeline_cfg_hash=pipeline_cfg_hash
         )
 
-        logger.info(
-            "Evaluation results persisted | problem=%s segment=%s version=%s train_id=%s eval_id=%s",
-            args.problem,
-            args.segment,
-            args.version,
-            train_run_id,
-            eval_run_id,
-        )
+        logger.info("Evaluation run successfully persisted.")
 
         return 0
 

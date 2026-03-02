@@ -14,10 +14,10 @@ class PreprocessingStep(PipelineStep[FreezeContext]):
     name = "preprocessing"
 
     def before(self, ctx: FreezeContext) -> None:
-        logger.debug("Starting data preprocessing step.")
+        logger.info("Starting data preprocessing step.")
         
     def after(self, ctx: FreezeContext) -> None:
-        logger.debug("Completed data preprocessing step.")
+        logger.info("Completed data preprocessing step.")
 
     def run(self, ctx: FreezeContext) -> FreezeContext:
         features = prepare_features(ctx.require_data, ctx.config)

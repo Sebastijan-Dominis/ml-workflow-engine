@@ -17,6 +17,7 @@ def validate_input_no_nulls(X: pd.DataFrame | pd.Series, config: TabularFeatures
                 msg = f"Feature {col} contains null values, which is forbidden by constraints."
                 logger.error(msg)
                 raise DataError(msg)
+    logger.debug("Null value validation passed for all features.")
         
 def validate_max_cardinality(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
     categorical_features = config.feature_roles.categorical
@@ -30,6 +31,7 @@ def validate_max_cardinality(X: pd.DataFrame | pd.Series, config: TabularFeature
                     msg = f"Categorical feature {col} exceeds max cardinality of {max_cardinality.get(col, float('inf'))} with {cardinality} unique values."
                     logger.error(msg)
                     raise DataError(msg)
+    logger.debug("Max cardinality validation passed for all categorical features.")
 
 def validate_constraints(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
     validate_input_no_nulls(X, config)
@@ -66,3 +68,5 @@ def validate_data_types(X: pd.DataFrame | pd.Series, config: TabularFeaturesConf
                 msg = f"Datetime feature {col} has invalid dtype {X[col].dtype}"
                 logger.error(msg)
                 raise DataError(msg)
+            
+    logger.debug("Data type validation passed for all features.")

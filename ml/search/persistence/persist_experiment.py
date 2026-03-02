@@ -24,7 +24,8 @@ def persist_experiment(
     feature_lineage: list[dict], 
     pipeline_hash: str,
     scoring_method: str,
-    splits_info: AllSplitsInfo
+    splits_info: AllSplitsInfo,
+    overwrite_existing: bool = False
 ) -> None:
     
     metadata = prepare_metadata(
@@ -39,11 +40,18 @@ def persist_experiment(
         splits_info=splits_info
     )
 
-    save_metadata(metadata=metadata, target_dir=search_dir)
+    logger.debug(f"Persisting experiment with overwrite_existing={overwrite_existing}.")
+
+    save_metadata(
+        metadata=metadata, 
+        target_dir=search_dir,
+        overwrite_existing=overwrite_existing
+    )
 
     save_runtime_snapshot(
         target_dir=search_dir, 
         timestamp=timestamp, 
         hardware_info=model_cfg.search.hardware, 
-        start_time=start_time
+        start_time=start_time,
+        overwrite_existing=overwrite_existing
     )

@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
 from ml.search.searchers.base import Searcher
@@ -17,8 +18,18 @@ from ml.utils.pipeline_core.runner import PipelineRunner
 logger = logging.getLogger(__name__)
 
 class SearchCatboost(Searcher):
-    def search(self, model_cfg: SearchModelConfig, strict: bool) -> SearchOutput:
-        ctx = SearchContext(model_cfg=model_cfg, strict=strict)
+    def search(
+        self, 
+        model_cfg: SearchModelConfig, 
+        *,
+        strict: bool, 
+        failure_management_dir: Path,
+    ) -> SearchOutput:
+        ctx = SearchContext(
+            model_cfg=model_cfg, 
+            strict=strict,
+            failure_management_dir=failure_management_dir
+        )
         runner = PipelineRunner(steps=[
             PreparationStep(),
             BroadSearchStep(),

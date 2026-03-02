@@ -27,26 +27,30 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
     return cfg
 
-def load_json(path: Path) -> dict[str, Any]:
+def load_json(path: Path, strict = True) -> dict[str, Any]:
     if not path.exists():
-        msg = f"File not found: {path}"
-        logger.error(msg)
-        raise ConfigError(msg)
+        if strict:
+            msg = f"File not found: {path}"
+            logger.error(msg)
+            raise ConfigError(msg)
+        else:
+            # No logger warning, since non-strict loading is used in some cases where the file may not exist on first run (e.g. loading best broad params before they are saved). Log warnings separately if needed.
+            return {}
 
     with path.open("r", encoding="utf-8") as f:
         try:
-            cfg = json.load(f)
+            tgt_json = json.load(f)
         except json.JSONDecodeError as e:
             msg = f"Invalid JSON in file {path}: {e}"
             logger.error(msg)
             raise ConfigError(msg)
 
-    if not isinstance(cfg, dict):
+    if not isinstance(tgt_json, dict):
         msg = f"Content at {path} must be a JSON object"
         logger.error(msg)
         raise ConfigError(msg)
 
-    return cfg
+    return tgt_json
 
 def read_data(format: str, path: Path) -> pd.DataFrame:
     reader = FORMAT_REGISTRY_READ.get(format)
@@ -60,7 +64,7 @@ def read_data(format: str, path: Path) -> pd.DataFrame:
             df = reader(path, na_values=['', 'NA', 'nan'], keep_default_na=True)
         else:
             df = reader(path)
-        logger.info(f"Successfully read data in format '{format}' from {path}.")
+        logger.debug(f"Successfully read data in format '{format}' from {path}.")
         return df
     except Exception as e:
         msg = f"Error reading data in format '{format}' from {path}. Details: {str(e)}"

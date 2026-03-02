@@ -23,4 +23,5 @@ def get_deps():
         logger.error(msg)
         raise RuntimeMLException(msg)
 
+    logger.debug(f"Collected dependencies: {deps}")
     return deps

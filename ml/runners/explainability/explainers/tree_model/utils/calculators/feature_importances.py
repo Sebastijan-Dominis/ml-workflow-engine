@@ -26,6 +26,7 @@ def get_feature_importances(
     model = pipeline[-1]
     try:
         if  model_cfg.explainability.methods.feature_importances.enabled:
+            logger.info(f"Computing feature importances using feature importances method: '{type_param}'...")
             importances = adapter.compute_feature_importances(importance_type=type_param)
         else:
             msg = "Feature importance method is not enabled in the configuration. Skipping feature importance computation."

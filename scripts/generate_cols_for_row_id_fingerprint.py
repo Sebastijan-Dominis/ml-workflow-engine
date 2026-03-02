@@ -9,7 +9,7 @@ from ml.data.processed.processing.hotel_bookings.cols_for_row_id import \
 from ml.logging_config import setup_logging
 from ml.utils.data.compute_cols_for_row_id_fingerprint import \
     compute_cols_for_row_id_fingerprint
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
 
 logger = logging.getLogger(__name__)
 

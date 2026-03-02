@@ -9,7 +9,7 @@ from ml.utils.experiments.class_weights.models import DataStats
 
 logger = logging.getLogger(__name__)
 
-def resolve_metric(config: SearchModelConfig | TrainModelConfig, stats: DataStats) -> SUPPORTED_SCORING_FUNCTIONS:
+def resolve_metric(config: SearchModelConfig | TrainModelConfig, stats: DataStats | None) -> SUPPORTED_SCORING_FUNCTIONS:
     policy = config.scoring.policy
 
     if policy == "fixed":
@@ -24,6 +24,11 @@ def resolve_metric(config: SearchModelConfig | TrainModelConfig, stats: DataStat
         scoring = "neg_root_mean_squared_error" # == RMSE but works with sklearn's RandomizedSearchCV
         logger.info(f"Using default regression metric: {scoring}")
         return scoring
+
+    if stats is None:
+        msg = f"Stats must be provided for non-fixed scoring policies. Got None for policy {policy}."
+        logger.error(msg)
+        raise ConfigError(msg)
 
     if policy == "adaptive_binary":
         if not config.scoring.pr_auc_threshold:

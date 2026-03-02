@@ -101,7 +101,7 @@ def get_splits(
 ) -> tuple[TabularSplits, AllSplitsInfo]:
     if data_type == "tabular":
         splits, splits_info = get_splits_tabular(X, y, split_cfg=split_cfg, task_cfg=task_cfg)
-        logger.debug(f"Data split into train/val/test. Splits info:\n{splits_info}")
+        logger.info(f"Data split into train/val/test. Splits info:\n{splits_info}")
         return splits, splits_info
     elif data_type == "time-series":
         raise NotImplementedError("Time-series split not implemented yet.")

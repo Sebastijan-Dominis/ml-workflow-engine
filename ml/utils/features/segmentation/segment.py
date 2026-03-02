@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 def apply_segmentation(data: pd.DataFrame, seg_cfg: SegmentationConfig) -> pd.DataFrame:
     if not seg_cfg.enabled:
+        logger.debug("Segmentation step is disabled. Returning original data.")
         return data
 
     df = data.copy()
@@ -48,6 +49,6 @@ def apply_segmentation(data: pd.DataFrame, seg_cfg: SegmentationConfig) -> pd.Da
         logger.error(msg)
         raise DataError(msg)
     
-    logger.debug(f"Applied the segmentation step. Resulting shape: {df.shape}")
+    logger.info(f"Applied the segmentation step. Resulting shape: {df.shape}")
 
     return df

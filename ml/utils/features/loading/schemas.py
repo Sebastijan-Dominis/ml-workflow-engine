@@ -72,6 +72,6 @@ def load_schemas(model_cfg: SearchModelConfig | TrainModelConfig) -> tuple[pd.Da
     input_schema = aggregate_schema_dfs(input_schemas)
     derived_schema = aggregate_schema_dfs(derived_schemas)
 
-    logger.info(f"Successfully loaded and aggregated schemas for feature sets: {[fs.name for fs in feature_sets]}. Final schema shapes - Input: {input_schema.shape}, Derived: {derived_schema.shape}")
+    logger.debug(f"Successfully loaded and aggregated schemas for feature sets: {[fs.name for fs in feature_sets]}. Final schema shapes - Input: {input_schema.shape}, Derived: {derived_schema.shape}")
 
     return input_schema, derived_schema

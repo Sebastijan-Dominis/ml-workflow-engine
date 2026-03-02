@@ -27,10 +27,10 @@ class PreparationStep(PipelineStep[SearchContext]):
     stats: DataStats
 
     def before(self, ctx: SearchContext) -> None:
-        logger.debug("Starting preparation step.")
+        logger.info("Starting preparation step.")
 
     def after(self, ctx: SearchContext) -> None:
-        logger.debug("Completed preparation step.")
+        logger.info("Completed preparation step.")
     
     def run(self, ctx: SearchContext) -> SearchContext:
         X, y, lineage = load_X_and_y(
@@ -59,17 +59,22 @@ class PreparationStep(PipelineStep[SearchContext]):
             cat_features
         )
 
-        stats = compute_data_stats(splits.y_train)
-        logger.info("Data stats | n_samples=%d class_counts=%s minority_ratio=%.4f",
-            stats.n_samples, stats.class_counts, stats.minority_ratio)
+        stats = None
+        if ctx.model_cfg.task.type == "classification":
+            stats = compute_data_stats(splits.y_train)
         
         scoring = resolve_metric(ctx.model_cfg, stats)
         ctx.scoring = scoring
         
-        class_weights = resolve_class_weighting(ctx.model_cfg, stats, library="catboost")
-        ctx.class_weights = class_weights
+        if stats is not None:
+            class_weights = resolve_class_weighting(ctx.model_cfg, stats, library="catboost")
+            ctx.class_weights = class_weights
 
-        y_train = transform_target(splits.y_train, ctx.model_cfg.target.transform)
+        y_train = transform_target(
+            splits.y_train, 
+            transform_config=ctx.model_cfg.target.transform,
+            split_name="train"
+        )
 
         ctx.X_train = splits.X_train
         ctx.y_train = y_train

@@ -13,10 +13,10 @@ class PersistenceStep(PipelineStep[FreezeContext]):
     name = "persistence"
 
     def before(self, ctx: FreezeContext) -> None:
-        logger.debug("Starting data persistence step.")
+        logger.info("Starting data persistence step.")
         
     def after(self, ctx: FreezeContext) -> None:
-        logger.debug("Completed data persistence step.")
+        logger.info("Completed data persistence step.")
 
     def run(self, ctx: FreezeContext) -> FreezeContext:
         config = ctx.config

@@ -38,9 +38,10 @@ def validate_operators(operators: list, operator_hash: str):
     for name in operators:
         if name not in FEATURE_OPERATORS:
             raise UserError(f"Unknown operator: {name}")
-        
+
     generated_hash = generate_operator_hash(operators)
     if generated_hash != operator_hash:
         msg = f"Operator hash mismatch: expected {operator_hash}, got {generated_hash}"
         logger.error(msg)
         raise DataError(msg)
+    logger.debug(f"Operators validated successfully with hash: {generated_hash}")

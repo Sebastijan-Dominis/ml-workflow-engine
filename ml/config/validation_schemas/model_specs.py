@@ -237,6 +237,7 @@ class ModelSpecs(BaseModel):
     task: TaskConfig
     target: TargetConfig
     segmentation: SegmentationConfig = Field(default_factory=SegmentationConfig)
+    min_rows: int = 10000
     split: SplitConfig
     algorithm: AlgorithmConfig
     model_class: str

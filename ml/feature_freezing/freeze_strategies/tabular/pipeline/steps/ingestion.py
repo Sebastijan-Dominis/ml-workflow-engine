@@ -14,10 +14,10 @@ class IngestionStep(PipelineStep[FreezeContext]):
     name = "ingestion"
 
     def before(self, ctx: FreezeContext) -> None:
-        logger.debug("Starting data ingestion step.")
+        logger.info("Starting data ingestion step.")
 
     def after(self, ctx: FreezeContext) -> None:
-        logger.debug("Completed data ingestion step.")
+        logger.info("Completed data ingestion step.")
     
     def run(self, ctx: FreezeContext) -> FreezeContext:
         data, data_lineage = load_data_with_lineage(ctx.config)

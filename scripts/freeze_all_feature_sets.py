@@ -8,7 +8,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from ml.logging_config import setup_logging
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
 from ml.utils.loaders import load_yaml
 
 logger = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ def main() -> int:
                 log_completion(start_time, f"Script terminated after successfully freezing {successes_count} feature sets")
                 return e.returncode
 
-    log_completion(start_time, f"Script completed successfully after freezing {successes_count} feature sets ")
+    log_completion(start_time, f"Script completed successfully after freezing {successes_count} feature sets")
     return 0
     
 if __name__ == "__main__":

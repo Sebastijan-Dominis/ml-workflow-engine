@@ -56,11 +56,16 @@ def evaluate_split(
 
     y_pred = ensure_1d_array(y_pred)
 
-    y_pred = inverse_transform_target(y_pred, transform_cfg)
+    y_pred = inverse_transform_target(
+        y_pred, 
+        transform_config=transform_cfg, 
+        split_name=split_name
+    )
 
     y_pred = pd.Series(y_pred, index=y.index, name="y_pred")
 
     # Compute metrics
+    logger.info(f"Computing regression metrics for the {split_name} split...")
     metrics = compute_metrics(y, y_pred)
 
     # Create prediction dataframe

@@ -22,9 +22,11 @@ def get_shap_importances(
     adapter: TreeModelAdapter
     ) -> pd.DataFrame | None:
     if not model_configs.explainability.methods.shap.enabled:
-        msg = "SHAP method is not enabled in the configuration. Skipping SHAP importance computation."
-        logger.warning(msg)
+        logger.warning("SHAP method is not enabled in the configuration. Skipping SHAP importance computation.")
         return None
+
+    shap_method = model_configs.explainability.methods.shap.approximate
+    logger.info(f"Calculating SHAP importances using shap method: '{shap_method}'...")
 
     n = min(1000, X_test_transformed.shape[0])
     rng = np.random.default_rng(42)
@@ -37,7 +39,7 @@ def get_shap_importances(
     
     X_test_sample = X_test_transformed.iloc[idx]
     
-    if model_configs.explainability.methods.shap.approximate == "tree":
+    if shap_method == "tree":
         try:
             shap_values = adapter.compute_shap_values(X_test_sample)
         except Exception:
@@ -46,7 +48,7 @@ def get_shap_importances(
             raise ExplainabilityError(msg)
 
     else:
-        msg = f"Unsupported SHAP method: {model_configs.explainability.methods.shap.approximate}. Currently, only 'tree' is supported for CatBoost models."
+        msg = f"Unsupported SHAP method: {shap_method}. Currently, only 'tree' is supported for CatBoost models."
         logger.error(msg)
         raise ConfigError(msg)
 

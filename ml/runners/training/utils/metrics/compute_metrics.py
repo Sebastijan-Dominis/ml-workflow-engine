@@ -13,6 +13,7 @@ from ml.runners.training.utils.metrics.best_f1 import get_best_f1_thresh
 from ml.utils.experiments.ensure_1d_array import ensure_1d_array
 from ml.utils.features.transform_target import inverse_transform_target
 
+logger = logging.getLogger(__name__)
 
 def compute_metrics(
     *, 
@@ -51,8 +52,16 @@ def compute_metrics(
         forecast_train = ensure_1d_array(forecast_train)
         forecast_val = ensure_1d_array(forecast_val)
 
-        forecast_train = inverse_transform_target(forecast_train, model_cfg.target.transform)
-        forecast_val = inverse_transform_target(forecast_val, model_cfg.target.transform)
+        forecast_train = inverse_transform_target(
+            forecast_train, 
+            transform_config=model_cfg.target.transform,
+            split_name="train"
+        )
+        forecast_val = inverse_transform_target(
+            forecast_val, 
+            transform_config=model_cfg.target.transform,
+            split_name="val"
+        )
         
         metrics = {
             "train_rmse": root_mean_squared_error(y_train, forecast_train),
@@ -69,8 +78,18 @@ def compute_metrics(
         train_pred = ensure_1d_array(train_pred)
         val_pred = ensure_1d_array(val_pred)
         
-        train_pred = inverse_transform_target(train_pred, model_cfg.target.transform)
-        val_pred = inverse_transform_target(val_pred, model_cfg.target.transform)
+        train_pred = inverse_transform_target(
+            train_pred, 
+            transform_config=model_cfg.target.transform,
+            split_name="train"
+        )
+        val_pred = inverse_transform_target(
+            val_pred, 
+            transform_config=model_cfg.target.transform, 
+            split_name="val"
+        )
+
+        logger.info("Computing regression metrics...")
 
         metrics = {
             "train_rmse": root_mean_squared_error(y_train, train_pred),
@@ -83,7 +102,7 @@ def compute_metrics(
 
     else:
         msg = f"Task type {model_cfg.task.type} not supported"
-        logging.error(msg)
+        logger.error(msg)
         raise UserError(msg)
 
     return metrics

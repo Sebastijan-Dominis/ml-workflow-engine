@@ -40,7 +40,13 @@ from ml.utils.features.transform_target import transform_target
 
 
 class TrainCatboost(Trainer):
-    def train(self, model_cfg: TrainModelConfig, strict: bool) -> TRAIN_OUTPUT:
+    def train(
+        self, 
+        model_cfg: TrainModelConfig, 
+        *,
+        strict: bool,
+        failure_management_dir: Path
+    ) -> TRAIN_OUTPUT:
         stats: DataStats
 
         X, y, lineage = load_X_and_y(model_cfg, snapshot_selection=None, strict=strict)
@@ -53,9 +59,17 @@ class TrainCatboost(Trainer):
         )
 
         X_train = splits.X_train
-        y_train = transform_target(splits.y_train, model_cfg.target.transform)
+        y_train = transform_target(
+            splits.y_train, 
+            transform_config=model_cfg.target.transform,
+            split_name="train"
+        )
         X_val = splits.X_val
-        y_val = transform_target(splits.y_val, model_cfg.target.transform)
+        y_val = transform_target(
+            splits.y_val, 
+            transform_config=model_cfg.target.transform,
+            split_name="val"
+        )
 
         input_schema, derived_schema = load_schemas(model_cfg)
 
@@ -78,7 +92,12 @@ class TrainCatboost(Trainer):
             stats = compute_data_stats(y_train)
             class_weights = resolve_class_weighting(model_cfg, stats, "catboost")
 
-        model = prepare_model(model_cfg, cat_features=cat_features, class_weights=class_weights)
+        model = prepare_model(
+            model_cfg, 
+            cat_features=cat_features, 
+            class_weights=class_weights,
+            failure_management_dir=failure_management_dir
+        )
 
         pipeline = build_pipeline_with_model(
             model_cfg=model_cfg,

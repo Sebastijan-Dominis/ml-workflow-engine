@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional
 
 import pandas as pd
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 class SearchContext:
     model_cfg: SearchModelConfig
     strict: bool
+    failure_management_dir: Path
 
     X_train: Optional[pd.DataFrame] = None
     y_train: Optional[pd.Series] = None
@@ -115,14 +117,6 @@ class SearchContext:
             logger.error(msg)
             raise RuntimeMLException(msg)
         return self.scoring
-    
-    @property
-    def require_class_weights(self) -> dict:
-        if self.class_weights is None:
-            msg = "Class weights not prepared yet. Ensure that the preparation step has been run."
-            logger.error(msg)
-            raise RuntimeMLException(msg)
-        return self.class_weights
 
     @property
     def require_best_params_1(self) -> dict:

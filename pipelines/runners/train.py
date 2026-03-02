@@ -44,13 +44,16 @@ from ml.runners.training.trainers.base import Trainer
 from ml.runners.training.utils.get_trainer import get_trainer
 from ml.runners.training.utils.logical_config_checks.validate_logical_config import \
     validate_logical_config
+from ml.search.utils.failure_management.delete_failure_management_folder import \
+    delete_failure_management_folder
 from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import \
     validate_lineage_integrity
 from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
     validate_pipeline_cfg
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.formatting.str_2_bol import str2bool
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
@@ -80,6 +83,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--train-run-id",
+        type=str,
+        default=None,
+        help="Train run ID to use for this run (default: None, which generates a new unique train run ID). If provided, it should be in the format 'timestamp_randomstring', e.g., '20240101T120000_abcdef12'."
+    )
+
+    parser.add_argument(
         "--env",
         type=str,
         default="default",
@@ -88,7 +98,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--strict",
-        type=bool,
+        type=str2bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
@@ -105,6 +115,20 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default="INFO",
         help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
+    )
+
+    parser.add_argument(
+        "--clean_up-failure-management",
+        type=str2bool,
+        default=True,
+        help="Whether to clean up failure management folder after successful run (default: True)"
+    )
+
+    parser.add_argument(
+        "--overwrite-existing",
+        type=str2bool,
+        default=False,
+        help="Whether to overwrite existing train run data if the train run ID already exists (default: False). If False and files (other than train.log) already exist within the train run, the script will raise an error to prevent accidental data loss."
     )
 
     return parser.parse_args()
@@ -140,11 +164,27 @@ def main() -> int:
         logger.exception("Failed to get experiment directory")
         return resolve_exit_code(e)
 
-    train_run_id = f"{timestamp}_{uuid4().hex[:8]}"
+    train_run_id = args.train_run_id if args.train_run_id else f"{timestamp}_{uuid4().hex[:8]}"
     train_run_dir = experiment_dir / "training" / train_run_id
-    train_run_dir.mkdir(parents=True, exist_ok=False)
 
-    add_file_handler(train_run_dir / f"train.log", level=log_level)
+    if not train_run_dir.exists() and args.train_run_id:
+        msg = f"Train run directory {train_run_dir} does not exist for provided train run ID {args.train_run_id}."
+        logger.error(msg)
+        return 1
+    
+    if train_run_dir.exists():
+        add_file_handler(train_run_dir / f"train.log", level=log_level)
+        existing_files = [f.name for f in train_run_dir.iterdir() if f.is_file() and f.name != "train.log"]
+        if existing_files and not args.overwrite_existing:
+            msg = f"Train run directory {train_run_dir} already exists and contains files: {', '.join(existing_files)}. To prevent accidental data loss, the script will not overwrite existing train run data. To run training with this train run ID, please delete the existing files (if deemed appropriate), or set --overwrite-existing to True (if you want to overwrite the existing data)."
+            logger.error(msg)
+            return 1
+    else:
+        train_run_dir.mkdir(parents=True, exist_ok=False)
+        add_file_handler(train_run_dir / f"train.log", level=log_level)
+
+    failure_management_dir = Path("failure_management") / experiment_dir.name / "training" / train_run_id
+    failure_management_dir.mkdir(parents=True, exist_ok=True)
 
     try:
         model_cfg = load_and_validate_config(
@@ -165,8 +205,13 @@ def main() -> int:
 
         trainer = get_trainer(algorithm)
 
-        logger.info(f"Starting training for problem={args.problem} segment={args.segment} version={args.version} using algorithm={algorithm}.")
-        output = trainer.train(model_cfg, args.strict)
+        logger.info(f"Starting training using experiment_id = {experiment_dir.name}.")
+        output = trainer.train(
+            model_cfg, 
+            strict=args.strict,
+            failure_management_dir=failure_management_dir,
+        )
+        logger.info("Training completed. Persisting training run...")
 
         model = output.model
         model_path = save_model(model, train_run_dir)
@@ -207,12 +252,12 @@ def main() -> int:
             timestamp=timestamp
         )
 
-        logger.info(
-            "Training completed | problem=%s segment=%s version=%s experiment_id=%s",
-            args.problem,
-            args.segment,
-            args.version,
-            args.experiment_id,
+        logger.info("Training run successfully persisted.")
+
+        delete_failure_management_folder(
+            folder_path=failure_management_dir, 
+            cleanup=args.clean_up_failure_management, 
+            stage="train"
         )
 
         return 0

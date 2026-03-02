@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
 
 logger = logging.getLogger(__name__)
 

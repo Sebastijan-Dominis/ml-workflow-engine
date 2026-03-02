@@ -10,7 +10,8 @@ from pathlib import Path
 from uuid import uuid4
 
 from ml.logging_config import setup_logging
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.formatting.str_2_bol import str2bool
 from ml.utils.scripts.logging import log_completion
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,7 @@ def parse_args():
 
     parser.add_argument(
         "--strict",
-        type=bool,
+        type=str2bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
@@ -65,6 +66,27 @@ def parse_args():
         type=str,
         default="Sebastijan",
         help="Owner of the experiment (default: Sebastijan)"
+    )
+
+    parser.add_argument(
+        "--clean-up-failure-management",
+        type=str2bool,
+        default=True,
+        help="Whether to clean up failure management folder after successful run (default: True)"
+    )
+
+    parser.add_argument(
+        "--experiment-id",
+        type=str,
+        default=None,
+        help="Experiment ID to use for this run (default: None, which generates a new unique experiment ID). If provided, it should be in the format 'timestamp_randomstring', e.g., '20240101T120000_abcdef12'."
+    )
+
+    parser.add_argument(
+        "--overwrite-existing",
+        type=str2bool,
+        default=False,
+        help="Whether to overwrite existing metadata and runtime snapshot files if they already exist in the target directory (default: False). If set to False and such files already exist, the script will raise an error to prevent accidental overwriting. Set to True to allow overwriting existing files."
     )
 
     parser.add_argument(
@@ -100,8 +122,12 @@ def main() -> int:
             "--env", args.env,
             "--strict", str(args.strict),
             "--logging-level", args.logging_level,
-            "--owner", args.owner
+            "--owner", args.owner,
+            "--clean-up-failure-management", str(args.clean_up_failure_management),
+            "--overwrite-existing", str(args.overwrite_existing)
         ]
+        if args.experiment_id:
+            search_cmd.extend(["--experiment-id", args.experiment_id])
         logger.info(f"Running hyperparameter search with command: {' '.join(search_cmd)}")
         subprocess.run(search_cmd, check=True)
 

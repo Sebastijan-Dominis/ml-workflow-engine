@@ -15,6 +15,7 @@ def save_predictions(predictions_df: dict[str, pd.DataFrame], target_dir: Path) 
         for split_name, df in predictions_df.items():
             split_path = target_dir / f"predictions_{split_name}.parquet"
             df.to_parquet(split_path)
+            logger.info(f"Saved predictions for the {split_name} split to {split_path}")
             paths[split_name] = str(split_path)
         return paths
     

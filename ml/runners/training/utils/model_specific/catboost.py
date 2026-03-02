@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 from typing import Any
 
 from catboost import CatBoostClassifier, CatBoostRegressor
@@ -37,7 +38,8 @@ def prepare_model(
     model_cfg: TrainModelConfig, 
     *,
     cat_features: list,
-    class_weights: dict
+    class_weights: dict,
+    failure_management_dir: Path
 ) -> CatBoostClassifier | CatBoostRegressor:
 
     best_params = extract_catboost_params(model_cfg)
@@ -48,6 +50,7 @@ def prepare_model(
         verbose=model_cfg.verbose,
         random_state=model_cfg.seed,
         cat_features=cat_features,
+        train_dir=str(failure_management_dir),  # CatBoost expects a string path for train_dir
         **best_params
     )
 
@@ -81,10 +84,6 @@ def prepare_model(
 
     model = MODEL_CLASS_REGISTRY[model_cfg.model_class](**model_kwargs)
 
-    logger.info(
-        f"Hardware settings for training of {model_cfg.problem} {model_cfg.segment.name} {model_cfg.version} | "
-        f"Task type: {model_cfg.training.hardware.task_type.value}, "
-        f"Devices: {model_cfg.training.hardware.devices}"
-    )
+    logger.info("Model set to use task_type: %s, devices: %s", model.get_params().get("task_type"), model.get_params().get("devices", "N/A"))
 
     return model

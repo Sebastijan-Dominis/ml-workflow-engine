@@ -8,6 +8,7 @@ from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
                                                     TrainModelConfig)
 from ml.exceptions import DataError
 from ml.utils.data.models import DataLineageEntry
+from ml.utils.data.validate_min_rows import validate_min_rows
 from ml.utils.data.validate_row_id import validate_row_id
 from ml.utils.features.loading.data_loader import load_and_validate_data
 from ml.utils.features.loading.get_target import get_target_with_row_id
@@ -158,6 +159,8 @@ def load_X_and_y(
     X = segmented_df.loc[:, ~segmented_df.columns.duplicated()].copy()
 
     validate_feature_target_row_id(X=X, y_with_row_id=y_with_row_id)
+
+    validate_min_rows(X, model_cfg.min_rows)
 
     full_df = X.merge(y_with_row_id, on="row_id", how="inner", suffixes=("", "_target"))
     

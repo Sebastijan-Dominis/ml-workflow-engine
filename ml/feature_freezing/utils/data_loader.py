@@ -72,6 +72,6 @@ def load_data_with_lineage(config: TabularFeaturesConfig) -> tuple[pd.DataFrame,
         logger.debug(f"Loaded dataset {dataset.name} {dataset.version} snapshot {dataset_snapshot_path.name} "
              f"file {dataset_path} loader hash {loader_validation_hash}")
 
-    logger.info(f"Completed loading {len(config.data)} datasets. Final merged dataset shape: {data.shape}. Lineage: {data_lineage}")
+    logger.info(f"Completed loading {len(config.data)} dataframes. Final merged dataframe shape: {data.shape}. Lineage: {data_lineage}")
 
     return data, data_lineage

@@ -21,7 +21,7 @@ from ml.logging_config import setup_logging
 from ml.registry.row_id_registry import ROW_ID_REQUIRED
 from ml.utils.data.get_data_suffix_and_format import get_data_suffix_and_format
 from ml.utils.data.validate_data import validate_data
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
 from ml.utils.loaders import load_json, load_yaml, read_data
 from ml.utils.persistence.save_metadata import save_metadata
 from ml.utils.snapshots.snapshot_path import get_snapshot_path

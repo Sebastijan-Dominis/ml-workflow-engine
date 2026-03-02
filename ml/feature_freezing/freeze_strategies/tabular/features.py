@@ -41,4 +41,8 @@ def apply_operators(X: pd.DataFrame, operator_names: list[str], required_feature
         operators.append(FEATURE_OPERATORS[name]())
     for op in operators:
         X = op.transform(X)
+    if operators:
+        logger.debug(f"Applied operators: {operator_names}. Resulting features: {X.columns.tolist()}")
+    else:
+        logger.debug("No operators to apply.")
     return X

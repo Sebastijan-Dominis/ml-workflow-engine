@@ -16,8 +16,11 @@ from ml.logging_config import setup_logging
 from ml.search.persistence.persist_experiment import persist_experiment
 from ml.search.searchers.base import Searcher
 from ml.search.searchers.output import SearchOutput
+from ml.search.utils.failure_management.delete_failure_management_folder import \
+    delete_failure_management_folder
 from ml.search.utils.get_searcher import get_searcher
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.formatting.str_2_bol import str2bool
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +49,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--experiment-id",
+        type=str,
+        default=None,
+        help="Experiment ID to use for this run (default: None, which generates a new unique experiment ID). If provided, it should be in the format 'timestamp_randomstring', e.g., '20240101T120000_abcdef12'."
+    )
+
+    parser.add_argument(
         "--env",
         type=str,
         default="default",
@@ -54,7 +64,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--strict",
-        type=bool,
+        type=str2bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
@@ -71,6 +81,20 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default="Sebastijan",
         help="Owner of the experiment (default: Sebastijan)"
+    )
+
+    parser.add_argument(
+        "--clean-up-failure-management",
+        type=str2bool,
+        default=True,
+        help="Whether to clean up failure management folder after successful run (default: True)"
+    )
+
+    parser.add_argument(
+        "--overwrite-existing",
+        type=str2bool,
+        default=False,
+        help="Whether to overwrite existing experiment data if the experiment ID already exists (default: False). If False and files (other than search.log) already exist within the experiment, the script will raise an error to prevent accidental data loss."
     )
 
     return parser.parse_args()
@@ -91,27 +115,47 @@ def main() -> int:
     start_time = time.perf_counter()
 
     timestamp = iso_no_colon(datetime.now())
-    experiment_id = f"{timestamp}_{uuid4().hex[:8]}"
+    experiment_id = args.experiment_id if args.experiment_id else f"{timestamp}_{uuid4().hex[:8]}"
     experiment_dir = Path("experiments") / args.problem / args.segment / args.version / experiment_id
 
-    search_dir = experiment_dir / "search"
-    search_dir.mkdir(parents=True, exist_ok=True)
+    if not experiment_dir.exists() and args.experiment_id:
+        msg = f"Experiment directory {experiment_dir} does not exist for provided experiment ID {experiment_id}."
+        logger.error(msg)
+        return 1
 
+    search_dir = experiment_dir / "search"
     log_level = getattr(logging, args.logging_level.upper(), logging.INFO)
-    setup_logging(search_dir / "search.log", level=log_level)
+
+    if search_dir.exists():
+        setup_logging(search_dir / "search.log", level=log_level)
+        existing_files = [f.name for f in search_dir.iterdir() if f.is_file() and f.name != "search.log"]
+        if existing_files and not args.overwrite_existing:
+            msg = f"Search directory {search_dir} already exists and contains files: {', '.join(existing_files)}. To prevent accidental data loss, the script will not overwrite existing experiment data. To run search with this experiment ID, please delete the existing files (if deemed appropriate), or set --overwrite-existing to True (if you want to overwrite the existing data)."
+            logger.error(msg)
+            return 1
+    else:
+        search_dir.mkdir(parents=True, exist_ok=True)
+        setup_logging(search_dir / "search.log", level=log_level)
+
+    failure_management_dir = Path("failure_management") / experiment_id
+    failure_management_dir.mkdir(parents=True, exist_ok=True)
 
     try:
         model_cfg = load_and_validate_config(Path(f"configs/search/{args.problem}/{args.segment}/{args.version}.yaml"), cfg_type="search", env=args.env)
 
         model_cfg = add_config_hash(model_cfg)
 
-        logger.info("Using config: %s, environment: %s", model_cfg.meta.sources.get("main") if model_cfg.meta.sources else None, model_cfg.meta.env)
-
         key = model_cfg.algorithm.value.lower()
 
         searcher = get_searcher(key)
 
-        search_output = searcher.search(model_cfg, args.strict)
+        logger.info(f"Starting hyperparameter search for experiment {experiment_id}.")
+        search_output = searcher.search(
+            model_cfg, 
+            strict=args.strict,
+            failure_management_dir=failure_management_dir,
+        )
+        logger.info("Search completed. Persisting search run...")
 
         search_results = search_output.search_results
         feature_lineage = search_output.feature_lineage
@@ -130,15 +174,16 @@ def main() -> int:
             feature_lineage=feature_lineage, 
             pipeline_hash=pipeline_hash,
             scoring_method=scoring_method,
-            splits_info=splits_info
+            splits_info=splits_info,
+            overwrite_existing=args.overwrite_existing
         )
 
-        logger.info(
-            "Search completed | problem=%s segment=%s version=%s experiment_id=%s",
-            args.problem,
-            args.segment,
-            args.version,
-            experiment_id,
+        logger.info("Search run successfully persisted.")
+
+        delete_failure_management_folder(
+            folder_path=failure_management_dir, 
+            cleanup=args.clean_up_failure_management, 
+            stage="search"
         )
 
         return 0

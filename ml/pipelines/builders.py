@@ -60,7 +60,7 @@ def build_pipeline(
     # ---- build steps from config ----
     for step_name in pipeline_cfg.get("steps", []):
         if step_name == "Model":
-            logger.info("Skipping Model step; model should be injected later")
+            logger.debug("Skipping Model step; model should be injected later")
             continue
 
         if step_name not in PIPELINE_COMPONENTS:

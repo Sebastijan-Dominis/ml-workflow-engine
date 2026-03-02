@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
@@ -6,6 +7,7 @@ from sklearn.pipeline import Pipeline
 
 from ml.config.validation_schemas.model_cfg import TrainModelConfig
 from ml.exceptions import TrainingError
+from ml.utils.add_model_to_pipeline import add_model_to_pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +18,7 @@ def train_catboost_model(
     X_train: pd.DataFrame,
     y_train: pd.Series,
     X_val: pd.DataFrame,
-    y_val: pd.Series,
+    y_val: pd.Series
 ) -> tuple[CatBoostClassifier | CatBoostRegressor, Pipeline]:
     """Fit preprocessing steps and the CatBoost model, returning a Pipeline.
 
@@ -45,10 +47,18 @@ def train_catboost_model(
             "use_best_model": True
         }
 
+        fit_kwargs.update({
+            "save_snapshot": True,
+            "snapshot_file": "catboost_snapshot.bin",
+            "snapshot_interval": model_cfg.training.snapshot_interval_seconds,
+        })
+
         if model_cfg.training.early_stopping_rounds:
             X_val_processed = preprocessing_pipeline.transform(X_val)
             fit_kwargs["eval_set"] = (X_val_processed, y_val)
             fit_kwargs["early_stopping_rounds"] = model_cfg.training.early_stopping_rounds
+
+        logger.info("Training the model...")
 
         model.fit(
             X_train_processed,
@@ -56,9 +66,9 @@ def train_catboost_model(
             **fit_kwargs
         )
 
-        pipeline = Pipeline(steps=steps[:-1] + [("model", model)])
+        logger.info(f"Model trained successfully.")
 
-        logger.info(f"Model {model_cfg.problem}_{model_cfg.segment.name}_{model_cfg.version} trained successfully.")
+        pipeline = add_model_to_pipeline(preprocessing_pipeline, model)
 
         return model, pipeline
     except Exception as e:

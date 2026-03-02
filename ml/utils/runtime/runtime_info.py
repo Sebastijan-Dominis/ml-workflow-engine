@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def get_runtime_info() -> dict:
     try:
         ram_total_gb = round(psutil.virtual_memory().total / 1e9, 2)
-        return {
+        runtime_info = {
             "os": platform.system(),
             "os_release": platform.release(),
             "architecture": platform.machine(),
@@ -22,6 +22,8 @@ def get_runtime_info() -> dict:
             "python_impl": platform.python_implementation(),
             "python_build": platform.python_build(),
         }
+        logger.debug(f"Collected runtime info: {runtime_info}")
+        return runtime_info
     except Exception as e:
         msg = f"Failed to get runtime info: {e}"
         logger.error(msg)

@@ -1,21 +1,25 @@
 import logging
+from typing import Literal
+
 import numpy as np
 import pandas as pd
 from scipy.special import boxcox as scipy_boxcox
 from scipy.special import inv_boxcox
 
-from ml.exceptions import ConfigError
 from ml.config.validation_schemas.model_specs import TargetTransformConfig
+from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 
 
 def transform_target(
     y: pd.Series,
+    *,
     transform_config: TargetTransformConfig,
+    split_name: str
 ) -> pd.Series:
 
-    logger.debug("Running the transform_target function; y_min: %s, y_max: %s", y.min(), y.max())
+    logger.debug(f"Running the transform_target function for the '{split_name}' split; y_min: {y.min()}, y_max: {y.max()}")
     if not transform_config.enabled:
         logger.debug("No target transformation enabled, skipping transform.")
         return y
@@ -67,15 +71,17 @@ def transform_target(
         raise ConfigError(msg)
 
     transformed_series = pd.Series(transformed, index=y.index, name=y.name)
-    logger.debug("Completed target transformation '%s'. y_min: %s, y_max: %s", transform_config.type, transformed_series.min(), transformed_series.max())
+    logger.info("Completed target transformation %s for the %s split. y_min: %s, y_max: %s", transform_config.type, split_name, transformed_series.min(), transformed_series.max())
     return transformed_series
 
 def inverse_transform_target(
     y_transformed: np.ndarray,
+    *,
     transform_config: TargetTransformConfig,
+    split_name: str
 ) -> np.ndarray:
 
-    logger.debug("Running the inverse_transform_target function; y_transformed_min: %s, y_transformed_max: %s", y_transformed.min(), y_transformed.max())
+    logger.debug(f"Running the inverse_transform_target function for the '{split_name}' split; y_transformed_min: {y_transformed.min()}, y_transformed_max: {y_transformed.max()}")
     if not transform_config.enabled:
         logger.debug("No target transformation enabled, skipping inverse transform.")
         return y_transformed
@@ -102,5 +108,5 @@ def inverse_transform_target(
         logger.error(msg)
         raise ConfigError(msg)
     
-    logger.debug("Completed inverse target transformation '%s'. y_min: %s, y_max: %s", transform_config.type, result.min(), result.max())
+    logger.info("Completed inverse target transformation '%s' for the '%s' split. y_min: %s, y_max: %s", transform_config.type, split_name, result.min(), result.max())
     return result

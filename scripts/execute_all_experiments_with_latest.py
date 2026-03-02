@@ -10,8 +10,9 @@ from pathlib import Path
 from uuid import uuid4
 
 from ml.logging_config import setup_logging
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
 from ml.utils.scripts.logging import log_completion
+from ml.utils.formatting.str_2_bol import str2bool
 
 MODEL_SPECS_DIR = Path("configs/model_specs")
 
@@ -29,7 +30,7 @@ def parse_args():
 
     parser.add_argument(
         "--strict",
-        type=bool,
+        type=str2bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
@@ -49,10 +50,31 @@ def parse_args():
     )
 
     parser.add_argument(
+        "--clean-up-failure-management",
+        type=str2bool,
+        default=True,
+        help="Whether to clean up the failure management folders after each experiment (default: True). Setting this to False can be useful for debugging failures, but may lead to accumulation of failure management folders over time."
+    )
+
+    parser.add_argument(
+        "--overwrite-existing",
+        type=str2bool,
+        default=False,
+        help="Whether to overwrite existing metadata and runtime snapshot files if they already exist in the target directory (default: False). If set to False and such files already exist, the script will raise an error to prevent accidental overwriting. Set to True to allow overwriting existing files."
+    )
+
+    parser.add_argument(
         "--top-k",
         type=int,
         default=None,
         help="Number of top features to include in the explainability output (will programmatically default to settings-specific values if not provided, but can be overridden with this flag)"
+    )
+
+    parser.add_argument(
+        "--skip-if-existing",
+        type=str2bool,
+        default=False,
+        help="Whether to skip running an experiment if at least one experiment folder exists for the model (default: False)"
     )
 
     return parser.parse_args()
@@ -86,6 +108,11 @@ def run_model(
     start_time: float
 ):
     """Run the experiment script for a specific model."""
+    model_experiments_dir = Path("experiments") / problem / segment / version
+    existing_experiment_dirs = [d for d in model_experiments_dir.iterdir() if d.is_dir()] if model_experiments_dir.exists() else []
+    if existing_experiment_dirs and args.skip_if_existing:
+        logger.info(f"Skipping model {problem}/{segment}/{version} because experiment directories already exist, and skip-if-existing is set to True. Existing experiment directories: {[d.name for d in existing_experiment_dirs]}")
+        return 0
     cmd = [
         sys.executable,
         "-m", "scripts.execute_experiment_with_latest",
@@ -96,6 +123,8 @@ def run_model(
         "--strict", str(args.strict),
         "--logging-level", args.logging_level.upper(),
         "--owner", args.owner,
+        "--clean-up-failure-management", str(args.clean_up_failure_management),
+        "--overwrite-existing", str(args.overwrite_existing)
     ]
     if args.top_k is not None:
         cmd.extend(["--top-k", str(args.top_k)])

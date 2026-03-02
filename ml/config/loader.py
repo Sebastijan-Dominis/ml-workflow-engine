@@ -67,7 +67,7 @@ def load_config(
 
     cfg["_meta"]["validation_status"] = "missing"
 
-    logger.debug("Final merged config: %s", cfg)
+    logger.info("Final merged config: %s", cfg)
     
     return cfg
 

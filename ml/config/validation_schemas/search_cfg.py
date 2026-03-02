@@ -87,4 +87,4 @@ class SearchConfig(BaseModel):
         n_iter=0,
     ))
     hardware: HardwareConfig = Field(default_factory=HardwareConfig)
-    
+    error_score: Optional[str] = None

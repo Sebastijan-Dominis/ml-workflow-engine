@@ -8,7 +8,7 @@ from uuid import uuid4
 from ml.feature_freezing.utils.operators import generate_operator_hash
 from ml.logging_config import setup_logging
 from ml.registry.feature_operators import FEATURE_OPERATORS
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
 
 logger = logging.getLogger(__name__)
 

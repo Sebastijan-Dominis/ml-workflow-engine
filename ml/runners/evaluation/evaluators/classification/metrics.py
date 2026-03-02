@@ -146,6 +146,7 @@ def evaluate_split(
     y_prob = pd.Series(y_prob, index=y.index, name="y_prob")
 
     # Compute and return metrics
+    logger.info(f"Computing classification metrics for the {split_name} split...")
     metrics = compute_metrics(y, y_pred, y_prob, threshold=best_threshold)
 
     df_preds = pd.DataFrame({

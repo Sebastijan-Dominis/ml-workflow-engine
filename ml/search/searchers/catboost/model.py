@@ -12,7 +12,7 @@ def prepare_model(
     *,
     search_phase: SEARCH_PHASES, 
     cat_features: list, 
-    class_weights: dict
+    class_weights: dict | None
 ) -> CatBoostClassifier | CatBoostRegressor:
 
     search_phase_cfg = getattr(model_cfg.search, search_phase)
@@ -37,11 +37,6 @@ def prepare_model(
 
     model = MODEL_CLASS_REGISTRY[model_cfg.model_class](**model_kwargs)
 
-    logger.info(
-        f"Hardware settings for {search_phase} search of "
-        f"{model_cfg.problem} {model_cfg.segment.name} {model_cfg.version} | "
-        f"Task type: {model_cfg.search.hardware.task_type.value}, "
-        f"Devices: {model_cfg.search.hardware.devices}"
-    )
+    logger.info("Model set to use task_type: %s, devices: %s", model.get_params().get("task_type"), model.get_params().get("devices", "N/A"))
 
     return model

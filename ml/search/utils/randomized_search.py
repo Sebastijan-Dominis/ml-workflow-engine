@@ -3,13 +3,14 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.base import is_classifier
+from sklearn.model_selection import RandomizedSearchCV, check_cv
 from sklearn.pipeline import Pipeline
 
 from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.search.constants import SEARCH_PHASES
 from ml.utils.experiments.class_weights.constants import \
     SUPPORTED_SCORING_FUNCTIONS
-from ml.search.constants import SEARCH_PHASES
 
 logger = logging.getLogger(__name__)
 
@@ -26,15 +27,11 @@ def perform_randomized_search(
     search_phase_cfg = getattr(model_cfg.search, search_phase)
     n_iter = search_phase_cfg.n_iter
     cv = model_cfg.cv
-    scoring = scoring
     verbose = model_cfg.verbose if model_cfg.verbose is not None else 100
     hardware = model_cfg.search.hardware
     n_jobs = 1 if hardware and hardware.task_type.value == "GPU" else -1
     random_state = model_cfg.search.random_state
-    error_score = getattr(model_cfg.search, "error_score", np.nan)
-
-    logger.info("Using CV type: %s", cv if isinstance(cv, int) else cv.__class__.__name__)
-    logger.info("n_jobs set to: %d", n_jobs)
+    error_score = model_cfg.search.error_score if model_cfg.search.error_score is not None else np.nan
 
     search = RandomizedSearchCV(
         estimator=pipeline,
@@ -47,6 +44,32 @@ def perform_randomized_search(
         random_state=random_state,
         error_score=error_score
     )
+
+    # Ensuring accurate logging
+    resolved_cv = check_cv(
+        cv,
+        y_train,
+        classifier=is_classifier(pipeline)
+    )
+
+    cv_type = cv.__class__.__name__ if not isinstance(cv, int) and cv is not None else resolved_cv.__class__.__name__
+
+    n_splits = resolved_cv.get_n_splits(X_train, y_train)
+
+    logger.info(
+        "Randomized search using param_distributions: %s, n_iter: %d, cv_type: %s, n_splits: %d, scoring: %s, verbose: %d, n_jobs: %d, random_state: %s, error_score: %s",
+        param_distributions,
+        n_iter,
+        cv_type,
+        n_splits,
+        scoring,
+        verbose,
+        n_jobs,
+        random_state,
+        error_score
+    )
+
+    logger.info(f"Performing {search_phase} hyperparameter search...")
 
     search.fit(X_train, y_train)
 

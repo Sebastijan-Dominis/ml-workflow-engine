@@ -11,7 +11,7 @@ import yaml
 from ml.config.compute_config_hash import compute_config_hash
 from ml.data.utils.config.schemas.processed import ProcessedConfig
 from ml.registry.hash_registry import hash_data
-from ml.utils.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_col import iso_no_colon
 
 logger = logging.getLogger(__name__)
 

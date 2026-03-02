@@ -2,11 +2,14 @@ import logging
 
 import numpy as np
 
-from ml.exceptions import ConfigError, SearchError
+from ml.exceptions import ConfigError, SearchError, UserError
 from ml.search.searchers.catboost.model import prepare_model
 from ml.search.searchers.catboost.pipeline.context import SearchContext
+from ml.search.utils.failure_management.save_broad import save_broad
 from ml.search.utils.randomized_search import perform_randomized_search
-from ml.utils.catboost.build_pipeline_with_model import build_pipeline_with_model
+from ml.utils.catboost.build_pipeline_with_model import \
+    build_pipeline_with_model
+from ml.utils.loaders import load_json
 from ml.utils.pipeline_core.step import PipelineStep
 
 logger = logging.getLogger(__name__)
@@ -15,17 +18,31 @@ class BroadSearchStep(PipelineStep[SearchContext]):
     name = "broad_search"
 
     def before(self, ctx: SearchContext) -> None:
-        logger.debug("Starting broad search step.")
+        logger.info("Starting broad search step.")
         
     def after(self, ctx: SearchContext) -> None:
-        logger.debug("Completed broad search step.")
+        logger.info("Completed broad search step.")
 
     def run(self, ctx: SearchContext) -> SearchContext:
+        broad_info_path = ctx.failure_management_dir / "broad_info.json"
+        best_broad_info = load_json(broad_info_path, strict=False)
+        if best_broad_info:
+            logger.info(f"Found existing best broad info for experiment {ctx.failure_management_dir.name} at {broad_info_path}. Skipping broad search and using these params for narrow search.")
+            broad_result = best_broad_info.get("broad_result")
+            best_params_1 = best_broad_info.get("best_params_1")
+            if broad_result is None or best_params_1 is None:
+                msg = f"Broad info file {broad_info_path} is missing required keys. Expected keys: 'broad_result' and 'best_params_1'."
+                logger.error(msg)
+                raise UserError(msg)
+            ctx.broad_result = broad_result
+            ctx.best_params_1 = best_params_1
+            return ctx
+
         model_1 = prepare_model(
             ctx.model_cfg, 
             search_phase="broad",
             cat_features=ctx.require_cat_features, 
-            class_weights=ctx.require_class_weights
+            class_weights=ctx.class_weights
         )
 
         pipeline_1 = build_pipeline_with_model(
@@ -45,10 +62,7 @@ class BroadSearchStep(PipelineStep[SearchContext]):
 
         broad_param_distributions = broad_param_distributions_obj.to_flat_dict()
 
-        logger.info("Starting broad hyperparameter search | problem=%s segment=%s version=%s",
-            ctx.model_cfg.problem, ctx.model_cfg.segment.name, ctx.model_cfg.version)
-
-        logger.debug("Broad search param combinations: %d", np.prod([len(v) for v in broad_param_distributions.values()]))
+        logger.info("Broad search param combinations: %d", np.prod([len(v) for v in broad_param_distributions.values()]))
 
         try:
             broad_result = perform_randomized_search(
@@ -69,5 +83,11 @@ class BroadSearchStep(PipelineStep[SearchContext]):
 
         ctx.broad_result = broad_result
         ctx.best_params_1 = best_params_1
+
+        save_broad(
+            broad_result=broad_result,
+            best_params_1=best_params_1,
+            tgt_file=broad_info_path
+        )
 
         return ctx

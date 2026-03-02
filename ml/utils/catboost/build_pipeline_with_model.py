@@ -32,5 +32,4 @@ def build_pipeline_with_model(
         raise PipelineContractError(msg)
 
     pipeline = add_model_to_pipeline(pipeline, model)
-    logger.debug("Model added to pipeline successfully.")
     return pipeline
