@@ -7,7 +7,7 @@ import pandas as pd
 from ml.exceptions import DataError, UserError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import \
     TabularFeaturesConfig
-from ml.registry.feature_operators import FEATURE_OPERATORS
+from ml.registries.catalogs import FEATURE_OPERATORS
 
 logger = logging.getLogger(__name__)
 

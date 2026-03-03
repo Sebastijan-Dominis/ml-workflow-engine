@@ -3,7 +3,7 @@
 import logging
 
 from ml.exceptions import PipelineContractError
-from ml.registry.train_registry import TRAINERS
+from ml.registries.factories import TRAINERS
 from ml.runners.training.trainers.base import Trainer
 
 logger = logging.getLogger(__name__)

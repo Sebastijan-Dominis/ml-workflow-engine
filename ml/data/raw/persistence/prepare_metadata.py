@@ -8,7 +8,7 @@ import pandas as pd
 
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.exceptions import PersistenceError
-from ml.registry.hash_registry import hash_data
+from ml.utils.hashing.service import hash_data
 
 logger = logging.getLogger(__name__)
     

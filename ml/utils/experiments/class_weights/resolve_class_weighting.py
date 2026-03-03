@@ -5,7 +5,7 @@ import logging
 import numpy as np
 from sklearn.utils.class_weight import compute_class_weight
 
-from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+from ml.config.schemas.model_cfg import (SearchModelConfig,
                                                     TrainModelConfig)
 from ml.exceptions import ConfigError
 from ml.utils.experiments.class_weights.constants import SUPPORTED_LIBRARIES

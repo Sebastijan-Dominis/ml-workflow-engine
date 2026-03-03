@@ -7,9 +7,9 @@ from typing import Optional
 
 import pandas as pd
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.exceptions import RuntimeMLException
-from ml.registry.tabular_splits import AllSplitsInfo
+from ml.types.splits import AllSplitsInfo
 from ml.utils.experiments.class_weights.constants import \
     SUPPORTED_SCORING_FUNCTIONS
 

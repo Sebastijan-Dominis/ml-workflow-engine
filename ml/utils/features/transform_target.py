@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.special import boxcox as scipy_boxcox
 from scipy.special import inv_boxcox
 
-from ml.config.validation_schemas.model_specs import TargetTransformConfig
+from ml.config.schemas.model_specs import TargetTransformConfig
 from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)

@@ -6,7 +6,7 @@ import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
 from sklearn.pipeline import Pipeline
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import TrainingError
 from ml.utils.add_model_to_pipeline import add_model_to_pipeline
 

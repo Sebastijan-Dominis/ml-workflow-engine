@@ -25,10 +25,10 @@ from ml.data.utils.memory.compute_memory_change import compute_memory_change
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.data.utils.persistence.save_data import save_data
 from ml.logging_config import setup_logging
-from ml.registry.row_id_registry import ROW_ID_REQUIRED
+from ml.policies.data.row_id import ROW_ID_REQUIRED
 from ml.utils.data.get_data_suffix_and_format import get_data_suffix_and_format
 from ml.utils.data.validate_data import validate_data
-from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_colon import iso_no_colon
 from ml.utils.loaders import load_json, load_yaml, read_data
 from ml.utils.persistence.save_metadata import save_metadata
 from ml.utils.snapshots.snapshot_path import get_snapshot_path

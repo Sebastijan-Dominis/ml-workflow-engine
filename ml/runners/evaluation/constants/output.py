@@ -6,7 +6,7 @@ import pandas as pd
 
 
 @dataclass
-class EVALUATE_OUTPUT:
+class EvaluateOutput:
     """Evaluation metrics, prediction artifacts, and feature lineage payload."""
 
     metrics: dict[str, dict[str, float]]

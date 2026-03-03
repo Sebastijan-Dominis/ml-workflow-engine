@@ -16,7 +16,7 @@ from uuid import uuid4
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.exceptions import UserError
 from ml.logging_config import setup_logging
 from ml.search.persistence.persist_experiment import persist_experiment
@@ -25,8 +25,8 @@ from ml.search.searchers.output import SearchOutput
 from ml.search.utils.failure_management.delete_failure_management_folder import \
     delete_failure_management_folder
 from ml.search.utils.get_searcher import get_searcher
-from ml.utils.formatting.iso_no_col import iso_no_colon
-from ml.utils.formatting.str_2_bol import str2bool
+from ml.utils.formatting.iso_no_colon import iso_no_colon
+from ml.utils.formatting.str_to_bol import str2bool
 
 logger = logging.getLogger(__name__)
 

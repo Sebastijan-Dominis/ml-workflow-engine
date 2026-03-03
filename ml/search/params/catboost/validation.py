@@ -3,7 +3,7 @@
 import logging
 
 from ml.exceptions import ConfigError
-from ml.registry.param_constraints.catboost import CATBOOST_PARAM_CONSTRAINTS
+from ml.policies.model_params.catboost_constraints import CATBOOST_PARAM_CONSTRAINTS
 
 logger = logging.getLogger(__name__)
 

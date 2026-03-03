@@ -4,8 +4,8 @@ import logging
 
 from catboost import CatBoostClassifier, CatBoostRegressor
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
-from ml.registry.model_classes import MODEL_CLASS_REGISTRY
+from ml.config.schemas.model_cfg import SearchModelConfig
+from ml.registries.catalogs import MODEL_CLASS_REGISTRY
 from ml.search.constants import SEARCH_PHASES
 
 logger = logging.getLogger(__name__)

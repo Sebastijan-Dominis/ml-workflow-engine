@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+from ml.config.schemas.model_cfg import (SearchModelConfig,
                                                     TrainModelConfig)
 from ml.pipelines.constants.pipeline_features import PipelineFeatures
 

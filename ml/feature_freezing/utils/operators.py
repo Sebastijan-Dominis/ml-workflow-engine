@@ -10,7 +10,7 @@ import pandas as pd
 import sklearn
 
 from ml.exceptions import DataError, UserError
-from ml.registry.feature_operators import FEATURE_OPERATORS
+from ml.registries.catalogs import FEATURE_OPERATORS
 
 logger = logging.getLogger(__name__)
 

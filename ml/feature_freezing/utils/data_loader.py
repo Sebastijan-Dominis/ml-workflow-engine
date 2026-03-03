@@ -8,7 +8,7 @@ import pandas as pd
 from ml.exceptions import ConfigError, DataError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import \
     TabularFeaturesConfig
-from ml.registry.hash_registry import HASH_LOADER_REGISTRY
+from ml.utils.hashing.service import HASH_LOADER_REGISTRY
 from ml.utils.data.merge_dataset_into_main import merge_dataset_into_main
 from ml.utils.data.models import DataLineageEntry
 from ml.utils.loaders import read_data

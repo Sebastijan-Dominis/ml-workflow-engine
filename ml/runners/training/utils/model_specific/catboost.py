@@ -6,10 +6,10 @@ from typing import Any
 
 from catboost import CatBoostClassifier, CatBoostRegressor
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import UserError
-from ml.registry.model_classes import MODEL_CLASS_REGISTRY
-from ml.registry.regression_loss_functions import REGRESSION_LOSS_FUNCTIONS
+from ml.registries.catalogs import MODEL_CLASS_REGISTRY
+from ml.registries.catalogs import REGRESSION_LOSS_FUNCTIONS
 
 logger = logging.getLogger(__name__)
 

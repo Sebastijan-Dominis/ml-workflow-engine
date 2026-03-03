@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from ml.registry.tabular_splits import AllSplitsInfo
+from ml.types.splits import AllSplitsInfo
 
 
 @dataclass

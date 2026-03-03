@@ -3,10 +3,10 @@
 import logging
 from pathlib import Path
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PipelineContractError
 from ml.runners.evaluation.constants.data_splits import DataSplits
-from ml.runners.evaluation.constants.output import EVALUATE_OUTPUT
+from ml.runners.evaluation.constants.output import EvaluateOutput
 from ml.runners.evaluation.evaluators.base import Evaluator
 from ml.runners.evaluation.evaluators.regression.metrics import evaluate_model
 from ml.utils.experiments.loading.get_snapshot_binding_from_training_metadata import \
@@ -33,7 +33,7 @@ class EvaluateRegression(Evaluator):
         strict: bool,
         best_threshold: float | None,  # unused, kept for interface consistency
         train_dir: Path
-    ) -> EVALUATE_OUTPUT:
+    ) -> EvaluateOutput:
         """Load artifacts and data, run split-wise regression evaluation.
 
         Args:
@@ -120,7 +120,7 @@ class EvaluateRegression(Evaluator):
             transform_cfg=model_cfg.target.transform,
         )
 
-        output = EVALUATE_OUTPUT(
+        output = EvaluateOutput(
             metrics=metrics,
             prediction_dfs=prediction_dfs,
             lineage=feature_lineage,

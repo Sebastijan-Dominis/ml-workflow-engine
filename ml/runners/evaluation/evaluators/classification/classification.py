@@ -3,10 +3,10 @@
 import logging
 from pathlib import Path
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PipelineContractError
 from ml.runners.evaluation.constants.data_splits import DataSplits
-from ml.runners.evaluation.constants.output import EVALUATE_OUTPUT
+from ml.runners.evaluation.constants.output import EvaluateOutput
 from ml.runners.evaluation.evaluators.base import Evaluator
 from ml.runners.evaluation.evaluators.classification.metrics import \
     evaluate_model
@@ -23,10 +23,10 @@ from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
 
-class EvaluateClassification(Evaluator):
+class ClassificationEvaluator(Evaluator):
     """Evaluate binary classification models across train/val/test splits."""
 
-    def evaluate(self, *, model_cfg: TrainModelConfig, strict: bool, best_threshold: float | None, train_dir: Path) -> EVALUATE_OUTPUT:
+    def evaluate(self, *, model_cfg: TrainModelConfig, strict: bool, best_threshold: float | None, train_dir: Path) -> EvaluateOutput:
         """Load artifacts and data, run split-wise evaluation, return outputs.
 
         Args:
@@ -115,7 +115,7 @@ class EvaluateClassification(Evaluator):
             best_threshold=best_threshold
         )
 
-        output = EVALUATE_OUTPUT(
+        output = EvaluateOutput(
             metrics=metrics,
             prediction_dfs=prediction_dfs,
             lineage=feature_lineage

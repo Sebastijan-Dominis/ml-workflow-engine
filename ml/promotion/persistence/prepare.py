@@ -9,7 +9,7 @@ from ml.promotion.constants.constants import PreviousProductionRunIdentity
 from ml.promotion.getters.get import (get_artifacts, get_feature_lineage,
                                       get_pipeline_cfg_hash,
                                       get_training_conda_env_hash)
-from ml.registry.hash_registry import hash_thresholds
+from ml.utils.hashing.service import hash_thresholds
 from ml.utils.runtime.runtime_snapshot import (get_conda_env_export,
                                                hash_environment)
 

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 
 
 def prepare_metadata(

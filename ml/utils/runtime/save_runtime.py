@@ -4,7 +4,7 @@ import json
 import logging
 from pathlib import Path
 
-from ml.config.validation_schemas.hardware_cfg import HardwareConfig
+from ml.config.schemas.hardware_cfg import HardwareConfig
 from ml.exceptions import PersistenceError
 from ml.utils.runtime.runtime_snapshot import build_runtime_snapshot
 

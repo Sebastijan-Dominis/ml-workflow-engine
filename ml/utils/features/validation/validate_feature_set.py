@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from ml.exceptions import DataError
-from ml.registry.hash_registry import hash_file
+from ml.utils.hashing.service import hash_file
 from ml.utils.features.hashing.hash_dataframe_content import \
     hash_dataframe_content
 from ml.utils.features.hashing.hash_feature_schema import hash_feature_schema

@@ -2,7 +2,7 @@
 
 import logging
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)

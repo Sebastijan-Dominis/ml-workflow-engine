@@ -15,8 +15,8 @@ steps and the trained CatBoost model.
 from pathlib import Path
 
 from ml.config.hashing import compute_config_hash
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.runners.training.constants.output import TRAIN_OUTPUT
+from ml.config.schemas.model_cfg import TrainModelConfig
+from ml.runners.training.constants.output import TrainOutput
 from ml.runners.training.trainers.base import Trainer
 from ml.runners.training.trainers.catboost.train_catboost_model import \
     train_catboost_model
@@ -39,7 +39,7 @@ from ml.utils.features.validation.validate_contract import \
 from ml.utils.loaders import load_yaml
 
 
-class TrainCatboost(Trainer):
+class CatBoostTrainer(Trainer):
     """Concrete trainer for CatBoost models within project training flow."""
 
     def train(
@@ -48,7 +48,7 @@ class TrainCatboost(Trainer):
         *,
         strict: bool,
         failure_management_dir: Path
-    ) -> TRAIN_OUTPUT:
+    ) -> TrainOutput:
         """Execute end-to-end CatBoost training and return standardized output.
 
         Args:
@@ -152,7 +152,7 @@ class TrainCatboost(Trainer):
             y_val=y_val
         )
 
-        output = TRAIN_OUTPUT(
+        output = TrainOutput(
             model=model_trained,
             pipeline=pipeline_trained,
             lineage=lineage,

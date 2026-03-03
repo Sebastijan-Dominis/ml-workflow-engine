@@ -12,8 +12,8 @@ import yaml
 
 from ml.config.compute_config_hash import compute_config_hash
 from ml.data.config.schemas.interim import InterimConfig
-from ml.registry.hash_registry import hash_data
-from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.hashing.service import hash_data
+from ml.utils.formatting.iso_no_colon import iso_no_colon
 
 logger = logging.getLogger(__name__)
 

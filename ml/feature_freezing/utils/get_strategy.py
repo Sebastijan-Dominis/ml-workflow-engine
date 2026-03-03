@@ -4,7 +4,7 @@ import logging
 
 from ml.exceptions import UserError
 from ml.feature_freezing.freeze_strategies.base import FreezeStrategy
-from ml.registry.freeze_strategy_registry import STRATEGIES
+from ml.registries.factories import FREEZE_STRATEGIES
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ def get_strategy(data_type: str) -> FreezeStrategy:
         Instantiated freeze strategy matching ``data_type``.
     """
 
-    strategy_cls = STRATEGIES.get(data_type)
+    strategy_cls = FREEZE_STRATEGIES.get(data_type)
 
     if not strategy_cls:
         msg = f"No freeze strategy registered for data type {data_type}."

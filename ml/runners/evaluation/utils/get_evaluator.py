@@ -3,7 +3,7 @@
 import logging
 
 from ml.exceptions import PipelineContractError
-from ml.registry.evaluation_registry import EVALUATORS
+from ml.registries.factories import EVALUATORS
 from ml.runners.evaluation.evaluators.base import Evaluator
 
 logger = logging.getLogger(__name__)

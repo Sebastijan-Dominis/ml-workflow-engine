@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.registry.hash_registry import hash_artifact
+from ml.config.schemas.model_cfg import TrainModelConfig
+from ml.utils.hashing.service import hash_artifact
 from ml.runners.evaluation.persistence.prepare_metadata import prepare_metadata
 from ml.runners.evaluation.persistence.save_predictions import save_predictions
 from ml.utils.experiments.persistence.save_metrics import save_metrics

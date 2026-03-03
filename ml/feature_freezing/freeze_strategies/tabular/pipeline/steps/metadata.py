@@ -10,7 +10,7 @@ from ml.feature_freezing.freeze_strategies.tabular.persistence import \
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
     FreezeContext
 from ml.feature_freezing.persistence.get_deps import get_deps
-from ml.registry.hash_registry import hash_file
+from ml.utils.hashing.service import hash_file
 from ml.utils.features.hashing.hash_dataframe_content import \
     hash_dataframe_content
 from ml.utils.features.hashing.hash_feature_schema import hash_feature_schema

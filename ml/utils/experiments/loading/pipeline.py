@@ -8,7 +8,7 @@ import joblib
 from sklearn.pipeline import Pipeline
 
 from ml.exceptions import PipelineContractError
-from ml.registry.allowed_models_registry import AllowedModels
+from ml.types.models import AllowedModels
 
 logger = logging.getLogger(__name__)
 

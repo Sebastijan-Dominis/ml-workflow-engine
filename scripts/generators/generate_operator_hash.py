@@ -13,8 +13,8 @@ from uuid import uuid4
 
 from ml.feature_freezing.utils.operators import generate_operator_hash
 from ml.logging_config import setup_logging
-from ml.registry.feature_operators import FEATURE_OPERATORS
-from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.registries.catalogs import FEATURE_OPERATORS
+from ml.utils.formatting.iso_no_colon import iso_no_colon
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,8 @@ def main() -> int:
     
     try:
         operators_hash = generate_operator_hash(operator_names)
-        logger.info(f"Generated operators hash: {operators_hash}")
+        logger.info(f"Generated operators hash for operator names {operator_names}: {operators_hash}")
+        print(f"Generated operators hash for operator names {operator_names}: {operators_hash}")
         return 0
     
     except Exception as e:

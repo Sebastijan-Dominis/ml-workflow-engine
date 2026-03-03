@@ -4,9 +4,9 @@ import logging
 
 import pandas as pd
 
-from ml.config.validation_schemas.model_specs import SegmentationConfig
+from ml.config.schemas.model_specs import SegmentationConfig
 from ml.exceptions import DataError, UserError
-from ml.registry.op_map import OP_MAP
+from ml.registries.catalogs import OP_MAP
 
 logger = logging.getLogger(__name__)
 

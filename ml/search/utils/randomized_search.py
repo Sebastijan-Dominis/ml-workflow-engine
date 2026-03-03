@@ -9,7 +9,7 @@ from sklearn.base import is_classifier
 from sklearn.model_selection import RandomizedSearchCV, check_cv
 from sklearn.pipeline import Pipeline
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.search.constants import SEARCH_PHASES
 from ml.utils.experiments.class_weights.constants import \
     SUPPORTED_SCORING_FUNCTIONS

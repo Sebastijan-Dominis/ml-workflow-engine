@@ -9,7 +9,7 @@ import pandas as pd
 import yaml
 
 from ml.exceptions import ConfigError, DataError
-from ml.registry.format_registry import FORMAT_REGISTRY_READ
+from ml.registries.catalogs import FORMAT_REGISTRY_READ
 
 logger = logging.getLogger(__name__)
 

@@ -2,7 +2,7 @@
 
 import logging
 
-from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+from ml.config.schemas.model_cfg import (SearchModelConfig,
                                                     TrainModelConfig)
 from ml.exceptions import ConfigError
 from ml.utils.experiments.class_weights.constants import \

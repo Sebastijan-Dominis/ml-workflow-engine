@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+from ml.config.schemas.model_cfg import (SearchModelConfig,
                                                     TrainModelConfig)
 from ml.utils.experiments.lineage_integrity.validations.base import \
     validate_base_lineage_integrity

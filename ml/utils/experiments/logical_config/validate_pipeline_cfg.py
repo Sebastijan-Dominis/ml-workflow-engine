@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 
 from ml.config.hashing import compute_config_hash
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import ConfigError, PipelineContractError
 from ml.utils.loaders import load_json, load_yaml
 

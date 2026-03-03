@@ -4,8 +4,8 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import Protocol
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.runners.training.constants.output import TRAIN_OUTPUT
+from ml.config.schemas.model_cfg import TrainModelConfig
+from ml.runners.training.constants.output import TrainOutput
 
 
 class Trainer(Protocol):
@@ -18,7 +18,7 @@ class Trainer(Protocol):
         *,
         strict: bool,
         failure_management_dir: Path
-    ) -> TRAIN_OUTPUT:
+    ) -> TrainOutput:
         """Train model artifacts using provided configuration and runtime controls.
 
         Args:

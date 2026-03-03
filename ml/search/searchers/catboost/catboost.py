@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.search.searchers.base import Searcher
 from ml.search.searchers.catboost.pipeline.context import SearchContext
 from ml.search.searchers.catboost.pipeline.steps.broad_search import \
@@ -19,7 +19,7 @@ from ml.utils.pipeline_core.runner import PipelineRunner
 
 logger = logging.getLogger(__name__)
 
-class SearchCatboost(Searcher):
+class CatBoostSearcher(Searcher):
     """Run preparation, broad search, and optional narrow search phases."""
 
     def search(

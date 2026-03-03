@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, model_validator
 from ml.data.config.schemas.constants import BorderValue
 from ml.data.config.schemas.shared import DataInfo
 from ml.exceptions import ConfigError
-from ml.registry.interim_constraints import (ALLOWED_VALUES_CONSTRAINTS,
+from ml.policies.data.interim_constraints import (ALLOWED_VALUES_CONSTRAINTS,
                                              MAX_CONSTRAINTS, MIN_CONSTRAINTS)
 
 logger = logging.getLogger(__name__)

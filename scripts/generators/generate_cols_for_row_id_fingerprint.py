@@ -15,7 +15,7 @@ from ml.data.processed.processing.hotel_bookings.cols_for_row_id import \
 from ml.logging_config import setup_logging
 from ml.utils.data.compute_cols_for_row_id_fingerprint import \
     compute_cols_for_row_id_fingerprint
-from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_colon import iso_no_colon
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +43,8 @@ def main() -> int:
 
     try:
         fingerprint = compute_cols_for_row_id_fingerprint(cols_for_row_id)
-        logger.info(f"Fingerprint for cols_for_row_id: {fingerprint}")
+        logger.info(f"Fingerprint for cols_for_row_id: {fingerprint}\nDefinition: {cols_for_row_id}")
+        print(f"Fingerprint for cols_for_row_id: {fingerprint}\nDefinition: {cols_for_row_id}")
         return 0
     except Exception as e:
         logger.error(f"Failed to compute fingerprint: {e}")

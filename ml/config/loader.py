@@ -7,7 +7,7 @@ from typing import Any, Literal, overload
 from ml.config.best_params import MergeTarget, apply_best_params
 from ml.config.merge import apply_env_overlay, resolve_extends
 from ml.config.validation import validate_model_config
-from ml.config.validation_schemas.model_cfg import (SearchModelConfig,
+from ml.config.schemas.model_cfg import (SearchModelConfig,
                                                     TrainModelConfig)
 from ml.exceptions import ConfigError, UserError
 from ml.utils.loaders import load_yaml

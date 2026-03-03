@@ -9,7 +9,7 @@ from sklearn.metrics import (explained_variance_score, mean_absolute_error,
                              r2_score)
 from sklearn.pipeline import Pipeline
 
-from ml.config.validation_schemas.model_specs import TargetTransformConfig
+from ml.config.schemas.model_specs import TargetTransformConfig
 from ml.runners.evaluation.constants.data_splits import DataSplits
 from ml.runners.evaluation.utils.get_row_ids import get_row_ids
 from ml.utils.experiments.ensure_1d_array import ensure_1d_array

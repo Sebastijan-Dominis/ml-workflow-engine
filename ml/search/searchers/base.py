@@ -4,7 +4,7 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import Protocol
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
+from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.search.searchers.output import SearchOutput
 
 

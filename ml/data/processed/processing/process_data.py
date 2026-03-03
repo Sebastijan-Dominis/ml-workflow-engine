@@ -9,7 +9,7 @@ import pandas as pd
 
 from ml.data.config.schemas.processed import ProcessedConfig
 from ml.exceptions import DataError, UserError
-from ml.registry.row_id_registry import ROW_ID_FUNCTIONS
+from ml.policies.data.row_id import ROW_ID_FUNCTIONS
 
 logger = logging.getLogger(__name__)
 

@@ -10,7 +10,7 @@ import sys
 import time
 from pathlib import Path
 
-from ml.config.validation_schemas.hardware_cfg import HardwareConfig
+from ml.config.schemas.hardware_cfg import HardwareConfig
 from ml.exceptions import RuntimeMLException
 from ml.utils.git import get_git_commit
 from ml.utils.runtime.gpu_info import get_gpu_info

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from numpy.typing import NDArray
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import ConfigError, DataError, ExplainabilityError
 from ml.runners.explainability.explainers.tree_model.adapters.base import \
     TreeModelAdapter

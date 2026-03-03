@@ -9,7 +9,7 @@ from sklearn.pipeline import Pipeline
 SUPPORTED_MODELS = CatBoostClassifier | CatBoostRegressor
 
 @dataclass
-class TRAIN_OUTPUT:
+class TrainOutput:
     """Container for trained artifacts, lineage, metrics, and pipeline hash."""
 
     model: SUPPORTED_MODELS

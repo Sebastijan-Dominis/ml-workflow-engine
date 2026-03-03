@@ -4,9 +4,9 @@ import logging
 from dataclasses import asdict
 from pathlib import Path
 
-from ml.config.validation_schemas.model_cfg import SearchModelConfig
-from ml.registry.tabular_splits import AllSplitsInfo
-from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.config.schemas.model_cfg import SearchModelConfig
+from ml.types.splits import AllSplitsInfo
+from ml.utils.formatting.iso_no_colon import iso_no_colon
 from ml.utils.git import get_git_commit
 
 logger = logging.getLogger(__name__)

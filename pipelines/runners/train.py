@@ -29,12 +29,12 @@ from sklearn.pipeline import Pipeline
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PipelineContractError
 from ml.logging_config import add_file_handler, bootstrap_logging
-from ml.registry.allowed_models_registry import AllowedModels
-from ml.registry.hash_registry import hash_artifact
-from ml.runners.training.constants.output import TRAIN_OUTPUT
+from ml.types.models import AllowedModels
+from ml.utils.hashing.service import hash_artifact
+from ml.runners.training.constants.output import TrainOutput
 from ml.runners.training.persistence.artifacts.save_model import save_model
 from ml.runners.training.persistence.artifacts.save_pipeline import \
     save_pipeline
@@ -52,8 +52,8 @@ from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
     validate_pipeline_cfg
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
-from ml.utils.formatting.iso_no_col import iso_no_colon
-from ml.utils.formatting.str_2_bol import str2bool
+from ml.utils.formatting.iso_no_colon import iso_no_colon
+from ml.utils.formatting.str_to_bol import str2bool
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
@@ -158,7 +158,7 @@ def main() -> int:
     args: argparse.Namespace
     model_cfg: TrainModelConfig
     trainer: Trainer
-    output: TRAIN_OUTPUT
+    output: TrainOutput
     model: AllowedModels
     pipeline: Pipeline | None
     feature_lineage: list[dict]

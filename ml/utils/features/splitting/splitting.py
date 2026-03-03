@@ -5,9 +5,9 @@ import logging
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from ml.config.validation_schemas.model_specs import (DATA_TYPE, SplitConfig,
+from ml.config.schemas.model_specs import (DATA_TYPE, SplitConfig,
                                                       TaskConfig)
-from ml.registry.tabular_splits import AllSplitsInfo, SplitInfo, TabularSplits
+from ml.types.splits import AllSplitsInfo, SplitInfo, TabularSplits
 
 logger = logging.getLogger(__name__)
 

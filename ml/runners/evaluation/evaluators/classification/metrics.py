@@ -11,7 +11,7 @@ from sklearn.metrics import (accuracy_score, average_precision_score,
                              precision_score, recall_score, roc_auc_score)
 from sklearn.pipeline import Pipeline
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PipelineContractError, UserError
 from ml.runners.evaluation.constants.data_splits import DataSplits
 from ml.runners.evaluation.utils.get_row_ids import get_row_ids

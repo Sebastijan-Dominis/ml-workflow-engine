@@ -12,7 +12,7 @@ from ml.promotion.persister import PromotionPersister
 from ml.promotion.state_loader import PromotionStateLoader
 from ml.promotion.strategies.production import ProductionPromotionStrategy
 from ml.promotion.strategies.staging import StagingPromotionStrategy
-from ml.promotion.validations.validate import (
+from ml.promotion.validation.validate import (
     validate_explainability_artifacts, validate_run_dirs, validate_run_ids)
 
 logger = logging.getLogger(__name__)
@@ -69,8 +69,8 @@ class PromotionService:
         Args:
             context: Promotion execution context containing registry paths.
 
-        Returns:
-            Iterator[None]: Context manager yielding lock scope.
+        Yields:
+            None: Context manager yielding lock scope.
         """
 
         lock_path = str(context.paths.registry_path) + ".lock"

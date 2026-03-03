@@ -5,7 +5,7 @@ import logging
 import pandas as pd
 
 from ml.exceptions import ConfigError
-from ml.registry.target_strategies import TARGET_STRATEGIES
+from ml.registries.factories import TARGET_STRATEGIES
 
 logger = logging.getLogger(__name__)
 

@@ -29,8 +29,8 @@ from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
     validate_pipeline_cfg
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
-from ml.utils.formatting.iso_no_col import iso_no_colon
-from ml.utils.formatting.str_2_bol import str2bool
+from ml.utils.formatting.iso_no_colon import iso_no_colon
+from ml.utils.formatting.str_to_bol import str2bool
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)

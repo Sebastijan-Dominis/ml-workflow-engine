@@ -3,8 +3,8 @@
 import logging
 from pathlib import Path
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
-from ml.registry.tabular_splits import TabularSplits
+from ml.config.schemas.model_cfg import TrainModelConfig
+from ml.types.splits import TabularSplits
 from ml.runners.explainability.constants.explainability_metrics_class import \
     ExplainabilityMetrics
 from ml.runners.explainability.constants.output import ExplainabilityOutput
@@ -15,7 +15,7 @@ from ml.runners.explainability.explainers.tree_model.utils.calculators.feature_i
     get_feature_importances
 from ml.runners.explainability.explainers.tree_model.utils.calculators.shap_importances import \
     get_shap_importances
-from ml.runners.explainability.explainers.tree_model.utils.transformers.get_feature_names_and_transformed_X import \
+from ml.runners.explainability.explainers.tree_model.utils.transformers.get_feature_names_and_transformed_x import \
     get_feature_names_and_transformed_X
 from ml.utils.experiments.loading.get_snapshot_binding_from_training_metadata import \
     get_snapshot_binding_from_training_metadata

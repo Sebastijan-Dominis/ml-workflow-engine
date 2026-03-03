@@ -5,7 +5,7 @@ model. It validates the model configuration, dispatches to task-specific
 evaluators and persists evaluation results via updater functions.
 
 Typical usage example:
-    python -m ml.training.evaluation_scripts.evaluate \\
+    python -m pipelines.runners.evaluate \\
         --problem cancellation --segment global --version v1 \\
         --experiment-id 20260206_154343_2f5c2000 \\
         --train-id 20260206_162120_sdg42000 \
@@ -27,9 +27,9 @@ import pandas as pd
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.logging_config import add_file_handler, bootstrap_logging
-from ml.runners.evaluation.constants.output import EVALUATE_OUTPUT
+from ml.runners.evaluation.constants.output import EvaluateOutput
 from ml.runners.evaluation.evaluators.base import Evaluator
 from ml.runners.evaluation.persistence.persist_evaluation_run import \
     persist_evaluation_run
@@ -44,8 +44,8 @@ from ml.utils.experiments.logical_config.validate_threshold import \
     validate_threshold
 from ml.utils.experiments.reproducibility.validate_reproducibility import \
     validate_reproducibility
-from ml.utils.formatting.iso_no_col import iso_no_colon
-from ml.utils.formatting.str_2_bol import str2bool
+from ml.utils.formatting.iso_no_colon import iso_no_colon
+from ml.utils.formatting.str_to_bol import str2bool
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
@@ -139,7 +139,7 @@ def main() -> int:
     artifacts: dict[str, str]
     best_threshold: float | None
     evaluator: Evaluator
-    output: EVALUATE_OUTPUT
+    output: EvaluateOutput
     metrics: dict[str, dict[str, float]]
     prediction_dfs: dict[str, pd.DataFrame]
     feature_lineage: list[dict]

@@ -8,9 +8,9 @@ from sklearn.metrics import (mean_absolute_error, r2_score, roc_auc_score,
                              root_mean_squared_error)
 from sklearn.pipeline import Pipeline
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import UserError
-from ml.registry.tasks_supporting_thresholds import TASKS_SUPPORTING_THRESHOLDS
+from ml.policies.promotion.threshold_support import TASKS_SUPPORTING_THRESHOLDS
 from ml.runners.training.utils.metrics.best_f1 import get_best_f1_thresh
 from ml.utils.experiments.ensure_1d_array import ensure_1d_array
 from ml.utils.features.transform_target import inverse_transform_target

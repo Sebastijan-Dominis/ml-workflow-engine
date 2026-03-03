@@ -24,7 +24,7 @@ from ml.feature_freezing.freeze_strategies.tabular.config.models import \
 from ml.feature_freezing.utils.get_strategy import get_strategy
 from ml.feature_freezing.utils.get_strategy_type import get_strategy_type
 from ml.logging_config import add_file_handler, bootstrap_logging
-from ml.utils.formatting.iso_no_col import iso_no_colon
+from ml.utils.formatting.iso_no_colon import iso_no_colon
 from ml.utils.persistence.save_metadata import save_metadata
 
 logger = logging.getLogger(__name__)

@@ -7,7 +7,7 @@ from ml.promotion.constants.constants import PreviousProductionRunIdentity
 from ml.promotion.context import PromotionContext
 from ml.promotion.getters.get import extract_thresholds
 from ml.promotion.state import PromotionState
-from ml.promotion.validations.validate import validate_promotion_thresholds
+from ml.promotion.validation.validate import validate_promotion_thresholds
 from ml.utils.git import get_git_commit
 from ml.utils.loaders import load_json, load_yaml
 

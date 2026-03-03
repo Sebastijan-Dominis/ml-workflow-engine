@@ -7,7 +7,7 @@ import pandas as pd
 from numpy.typing import NDArray
 from sklearn.pipeline import Pipeline
 
-from ml.config.validation_schemas.model_cfg import TrainModelConfig
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import ExplainabilityError, PipelineContractError
 from ml.runners.explainability.explainers.tree_model.adapters.base import \
     TreeModelAdapter

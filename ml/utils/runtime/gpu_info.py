@@ -2,7 +2,7 @@
 
 import pynvml
 
-from ml.config.validation_schemas.hardware_cfg import HardwareConfig
+from ml.config.schemas.hardware_cfg import HardwareConfig
 
 
 def parse_cuda_driver_version(version_int: int) -> str:

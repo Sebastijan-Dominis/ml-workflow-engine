@@ -3,7 +3,7 @@
 import logging
 
 from ml.exceptions import PipelineContractError
-from ml.registry.explainability_registry import EXPLAINERS
+from ml.registries.factories import EXPLAINERS
 from ml.runners.explainability.explainers.base import Explainer
 
 logger = logging.getLogger(__name__)
