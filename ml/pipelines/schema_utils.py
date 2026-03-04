@@ -1,9 +1,7 @@
 """Schema-derived feature list utilities for pipeline assembly."""
 
 import pandas as pd
-
-from ml.config.schemas.model_cfg import (SearchModelConfig,
-                                                    TrainModelConfig)
+from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.pipelines.constants.pipeline_features import PipelineFeatures
 
 
@@ -21,7 +19,7 @@ def get_categorical_features(schema: pd.DataFrame) -> list[str]:
 def get_pipeline_features(
     model_cfg: SearchModelConfig | TrainModelConfig,
     *,
-    input_schema: pd.DataFrame, 
+    input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame
 ) -> PipelineFeatures:
     """Compute feature groups used by the training/inference pipeline.

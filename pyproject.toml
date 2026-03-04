@@ -1,0 +1,38 @@
+[tool.isort]
+profile = "black"
+line_length = 100
+py_version = 311
+src_paths = ["ml", "pipelines", "scripts"]
+skip = [".git", ".venv", "env", "__pycache__", ".pytest_cache"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["ml", "pipelines", "scripts"]
+exclude = [
+  ".git",
+  ".venv",
+  "env",
+  "__pycache__",
+  ".pytest_cache",
+  ".mypy_cache",
+  "notebooks",
+  "feature_store",
+  "data",
+  "experiments",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "B", "UP", "SIM", "N"]
+ignore = ["E501", "N803", "N805", "N806"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+ignore_missing_imports = true
+exclude = "(^notebooks/|^feature_store/|^data/|^experiments/)"

@@ -1,7 +1,6 @@
 """Runtime GPU information collection helpers backed by NVML."""
 
 import pynvml
-
 from ml.config.schemas.hardware_cfg import HardwareConfig
 
 

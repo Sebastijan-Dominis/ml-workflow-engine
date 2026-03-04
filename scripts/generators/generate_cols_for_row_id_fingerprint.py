@@ -10,12 +10,12 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
-from ml.data.processed.processing.hotel_bookings.cols_for_row_id import \
-    cols_for_row_id
+from ml.data.processed.processing.hotel_bookings.cols_for_row_id import cols_for_row_id
+from ml.data.processed.processing.hotel_bookings.compute_cols_for_row_id_fingerprint import (
+    compute_cols_for_row_id_fingerprint,
+)
+from ml.io.formatting.iso_no_colon import iso_no_colon
 from ml.logging_config import setup_logging
-from ml.utils.data.compute_cols_for_row_id_fingerprint import \
-    compute_cols_for_row_id_fingerprint
-from ml.utils.formatting.iso_no_colon import iso_no_colon
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +49,6 @@ def main() -> int:
     except Exception as e:
         logger.error(f"Failed to compute fingerprint: {e}")
         return 1
-    
+
 if __name__ == "__main__":
     sys.exit(main())

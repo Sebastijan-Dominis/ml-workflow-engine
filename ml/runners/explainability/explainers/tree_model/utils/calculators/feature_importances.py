@@ -4,24 +4,23 @@ import logging
 
 import numpy as np
 import pandas as pd
-from numpy.typing import NDArray
-from sklearn.pipeline import Pipeline
-
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import ExplainabilityError, PipelineContractError
-from ml.runners.explainability.explainers.tree_model.adapters.base import \
-    TreeModelAdapter
-from ml.runners.explainability.explainers.tree_model.utils.validators.validate_lengths import \
-    validate_lengths
+from ml.runners.explainability.explainers.tree_model.adapters.base import TreeModelAdapter
+from ml.runners.explainability.explainers.tree_model.utils.validators.validate_lengths import (
+    validate_lengths,
+)
+from numpy.typing import NDArray
+from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
 def get_feature_importances(
-    *, 
-    feature_names: NDArray[np.str_], 
+    *,
+    feature_names: NDArray[np.str_],
     adapter: TreeModelAdapter,
-    pipeline: Pipeline, 
-    model_cfg: TrainModelConfig, 
+    pipeline: Pipeline,
+    model_cfg: TrainModelConfig,
     top_k: int
 ) -> pd.DataFrame | None:
     """Compute top-k feature importances from configured explainability method.
@@ -47,15 +46,15 @@ def get_feature_importances(
             msg = "Feature importance method is not enabled in the configuration. Skipping feature importance computation."
             logger.warning(msg)
             return None
-        
+
     except AttributeError:
         msg = f"The final estimator in the pipeline does not have 'get_feature_importance' attribute. It is of type {type(model).__name__}. Ensure that the model supports feature importance computation."
         logger.error(msg)
-        raise PipelineContractError(msg)
-    except Exception:
+        raise PipelineContractError(msg) from None
+    except Exception as e:
         msg = f"Error retrieving feature importances from the model, using {type_param} method on a {type(model).__name__} model. Ensure that the model is properly trained and that the pipeline is correctly defined."
         logger.exception(msg)
-        raise ExplainabilityError(msg)
+        raise ExplainabilityError(msg) from e
 
     importances = np.asarray(importances)
     validate_lengths(feature_names, importances)

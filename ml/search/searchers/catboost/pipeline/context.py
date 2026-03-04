@@ -3,15 +3,13 @@
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
-
 from ml.config.schemas.model_cfg import SearchModelConfig
-from ml.exceptions import RuntimeMLException
-from ml.types.splits import AllSplitsInfo
-from ml.utils.experiments.class_weights.constants import \
-    SUPPORTED_SCORING_FUNCTIONS
+from ml.exceptions import RuntimeMLError
+from ml.modeling.class_weighting.constants import SUPPORTED_SCORING_FUNCTIONS
+from ml.modeling.models.feature_lineage import FeatureLineage
+from ml.types import AllSplitsInfo
 
 logger = logging.getLogger(__name__)
 
@@ -23,27 +21,27 @@ class SearchContext:
     strict: bool
     failure_management_dir: Path
 
-    X_train: Optional[pd.DataFrame] = None
-    y_train: Optional[pd.Series] = None
-    splits_info: Optional[AllSplitsInfo] = None
-    feature_lineage: Optional[list[dict]] = None
-    input_schema: Optional[pd.DataFrame] = None
-    derived_schema: Optional[pd.DataFrame] = None
-    pipeline_cfg: Optional[dict] = None
-    pipeline_hash: Optional[str] = None
-    cat_features: Optional[list[str]] = None
-    scoring: Optional[SUPPORTED_SCORING_FUNCTIONS] = None
-    class_weights: Optional[dict] = None
+    X_train: pd.DataFrame | None = None
+    y_train: pd.Series | None = None
+    splits_info: AllSplitsInfo | None = None
+    feature_lineage: list[FeatureLineage] | None = None
+    input_schema: pd.DataFrame | None = None
+    derived_schema: pd.DataFrame | None = None
+    pipeline_cfg: dict | None = None
+    pipeline_hash: str | None = None
+    cat_features: list[str] | None = None
+    scoring: SUPPORTED_SCORING_FUNCTIONS | None = None
+    class_weights: dict | None = None
 
-    best_params_1: Optional[dict] = None
-    broad_result: Optional[dict] = None
+    best_params_1: dict | None = None
+    broad_result: dict | None = None
 
-    narrow_disabled: Optional[bool] = None
-    best_params: Optional[dict] = None
-    narrow_result: Optional[dict] = None
+    narrow_disabled: bool | None = None
+    best_params: dict | None = None
+    narrow_result: dict | None = None
 
     @property
-    def require_X_train(self) -> pd.DataFrame:
+    def require_x_train(self) -> pd.DataFrame:
         """Return prepared training features or raise if unavailable.
 
         Returns:
@@ -53,9 +51,9 @@ class SearchContext:
         if self.X_train is None:
             msg = "X_train not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.X_train
-    
+
     @property
     def require_y_train(self) -> pd.Series:
         """Return prepared training target or raise if unavailable.
@@ -67,7 +65,7 @@ class SearchContext:
         if self.y_train is None:
             msg = "y_train not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.y_train
 
     @property
@@ -81,21 +79,21 @@ class SearchContext:
         if self.splits_info is None:
             msg = "Splits info not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.splits_info
 
     @property
-    def require_feature_lineage(self) -> list[dict]:
+    def require_feature_lineage(self) -> list[FeatureLineage]:
         """Return feature lineage or raise if not prepared.
 
         Returns:
-            list[dict]: Loaded feature lineage metadata.
+            list[FeatureLineage]: Loaded feature lineage metadata.
         """
 
         if self.feature_lineage is None:
             msg = "Feature lineage not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.feature_lineage
 
     @property
@@ -109,7 +107,7 @@ class SearchContext:
         if self.input_schema is None:
             msg = "Input schema not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.input_schema
 
     @property
@@ -123,7 +121,7 @@ class SearchContext:
         if self.derived_schema is None:
             msg = "Derived schema not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.derived_schema
 
     @property
@@ -137,9 +135,9 @@ class SearchContext:
         if self.pipeline_cfg is None:
             msg = "Pipeline config not loaded yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.pipeline_cfg
-    
+
     @property
     def require_pipeline_hash(self) -> str:
         """Return computed pipeline hash or raise if not set.
@@ -151,7 +149,7 @@ class SearchContext:
         if self.pipeline_hash is None:
             msg = "Pipeline hash not computed yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.pipeline_hash
 
     @property
@@ -165,9 +163,9 @@ class SearchContext:
         if self.cat_features is None:
             msg = "Categorical features not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.cat_features
-    
+
     @property
     def require_scoring(self) -> SUPPORTED_SCORING_FUNCTIONS:
         """Return resolved scoring function or raise if unset.
@@ -179,7 +177,7 @@ class SearchContext:
         if self.scoring is None:
             msg = "Scoring function not prepared yet. Ensure that the preparation step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.scoring
 
     @property
@@ -193,9 +191,9 @@ class SearchContext:
         if self.best_params_1 is None:
             msg = "Best parameters from broad search not available yet. Ensure that the broad search step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.best_params_1
-    
+
     @property
     def require_broad_result(self) -> dict:
         """Return broad-phase search result payload or raise if missing.
@@ -207,9 +205,9 @@ class SearchContext:
         if self.broad_result is None:
             msg = "Broad search result not available yet. Ensure that the broad search step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.broad_result
-    
+
     @property
     def require_narrow_disabled(self) -> bool:
         """Return narrow-enabled flag or raise if not decided yet.
@@ -221,7 +219,7 @@ class SearchContext:
         if self.narrow_disabled is None:
             msg = "Narrow search enabled/disabled flag not set yet. Ensure that the broad search step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.narrow_disabled
 
     @property
@@ -235,9 +233,9 @@ class SearchContext:
         if self.best_params is None:
             msg = "Best parameters from narrow search not available yet. Ensure that the narrow search step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.best_params
-    
+
     @property
     def require_narrow_result(self) -> dict:
         """Return narrow-phase result payload or raise if missing.
@@ -249,5 +247,5 @@ class SearchContext:
         if self.narrow_result is None:
             msg = "Narrow search result not available yet. Ensure that the narrow search step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.narrow_result

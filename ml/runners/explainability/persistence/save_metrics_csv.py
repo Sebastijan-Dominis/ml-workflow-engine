@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 def save_metrics_csv(
     metrics: pd.DataFrame,
-    *, 
-    target_file: Path, 
+    *,
+    target_file: Path,
     name: Literal["Feature importances", "SHAP importances"]
 ) -> None:
     """Persist explainability metric dataframe to CSV at target path.

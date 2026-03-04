@@ -4,16 +4,15 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-
-from ml.feature_freezing.freeze_strategies.tabular.config.models import \
-    TabularFeaturesConfig
+from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.metadata.validation.features.feature_freezing import validate_freeze_metadata
 from ml.registries.catalogs import FEATURE_OPERATORS
 
 logger = logging.getLogger(__name__)
 
 def freeze_parquet(
-    path: Path, 
-    *, 
+    path: Path,
+    *,
     features: pd.DataFrame,
     compression=None
 ) -> Path:
@@ -28,7 +27,7 @@ def freeze_parquet(
         Path: Path to persisted parquet file.
     """
     features.to_parquet(path / "features.parquet", index=False, compression=compression)
-    
+
     logger.info(f"Tabular features saved to {path}")
 
     data_path = path / "features.parquet"
@@ -36,7 +35,7 @@ def freeze_parquet(
     return data_path
 
 def persist_feature_snapshot(
-        config: TabularFeaturesConfig, 
+        config: TabularFeaturesConfig,
         *,
         features: pd.DataFrame,
         snapshot_id: str
@@ -62,7 +61,7 @@ def persist_feature_snapshot(
 
     freeze_func = FREEZE_FORMAT_REGISTRY[config.storage.format]
     data_path = freeze_func(
-        path, 
+        path,
         features=features,
         compression=config.storage.compression
     )
@@ -96,10 +95,10 @@ def save_input_schema(path: Path, features: pd.DataFrame):
     logger.info(f"Input schema saved to {schema_path}")
 
 def save_derived_schema(
-    path: Path, 
+    path: Path,
     *,
-    features: pd.DataFrame, 
-    operator_names: list[str], 
+    features: pd.DataFrame,
+    operator_names: list[str],
     mode: str
 ):
     """Persist derived schema CSV inferred from configured operators.
@@ -140,18 +139,18 @@ def save_derived_schema(
     logger.info(f"Derived schema saved to {schema_path}")
 
 def create_metadata(
-    *, 
-    timestamp: str, 
-    snapshot_path: Path, 
-    schema_path: Path, 
-    data_lineage: list[dict], 
-    in_memory_hash: str, 
-    file_hash: str, 
-    operators_hash: str, 
-    config_hash: str, 
-    feature_schema_hash: str, 
-    runtime: dict, 
-    features: pd.DataFrame, 
+    *,
+    timestamp: str,
+    snapshot_path: Path,
+    schema_path: Path,
+    data_lineage: list[dict],
+    in_memory_hash: str,
+    file_hash: str,
+    operator_hash: str,
+    config_hash: str,
+    feature_schema_hash: str,
+    runtime: dict,
+    features: pd.DataFrame,
     duration: float,
     owner: str
 ) -> dict:
@@ -164,7 +163,7 @@ def create_metadata(
         data_lineage: Data lineage entries backing the features.
         in_memory_hash: Hash of in-memory features frame.
         file_hash: Hash of persisted feature artifact.
-        operators_hash: Hash representing applied operators.
+        operator_hash: Hash representing applied operators.
         config_hash: Feature-freezing config hash.
         feature_schema_hash: Hash of feature schema representation.
         runtime: Runtime metadata payload.
@@ -176,7 +175,7 @@ def create_metadata(
         dict: Metadata payload ready for persistence.
     """
 
-    metadata = {
+    metadata_raw = {
         "created_by": "freeze.py",
         "created_at": timestamp,
         "owner": owner,
@@ -187,7 +186,7 @@ def create_metadata(
         "data_lineage": data_lineage,
         "in_memory_hash": in_memory_hash,
         "file_hash": file_hash,
-        "operators_hash": operators_hash,
+        "operator_hash": operator_hash,
         "config_hash": config_hash,
         "feature_schema_hash": feature_schema_hash,
         "runtime": runtime,
@@ -196,4 +195,7 @@ def create_metadata(
         "duration_seconds": duration
     }
 
-    return metadata
+    metadata = validate_freeze_metadata(metadata_raw)
+    logger.debug("Created metadata.")
+
+    return metadata.model_dump(exclude_none=True)

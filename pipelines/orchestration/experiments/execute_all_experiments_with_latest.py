@@ -6,7 +6,6 @@ Warning:
     several stages, which can produce surprising results in highly dynamic
     environments.
 """
-
 import argparse
 import logging
 import subprocess
@@ -16,16 +15,16 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
+from ml.io.formatting.iso_no_colon import iso_no_colon
+from ml.io.formatting.str_to_bool import str_to_bool
 from ml.logging_config import setup_logging
-from ml.utils.formatting.iso_no_colon import iso_no_colon
-from ml.utils.formatting.str_to_bol import str2bool
-from ml.utils.scripts.logging import log_completion
+from pipelines.orchestration.common.orchestration_logging import log_completion
 
 MODEL_SPECS_DIR = Path("configs/model_specs")
 
 logger = logging.getLogger(__name__)
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments for the bulk experiments runner.
 
     Returns:
@@ -35,21 +34,21 @@ def parse_args():
 
     parser.add_argument(
         "--env",
-        type=str,
+        choices = ["dev", "test", "prod", "default"],
         default="default",
         help="Environment to run the script in (dev/test/prod) (default: default) ~ none"
     )
 
     parser.add_argument(
         "--strict",
-        type=str2bool,
+        type=str_to_bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
 
     parser.add_argument(
         "--logging-level", 
-        type=str, 
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="INFO", 
         help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
     )
@@ -63,14 +62,14 @@ def parse_args():
 
     parser.add_argument(
         "--clean-up-failure-management",
-        type=str2bool,
+        type=str_to_bool,
         default=True,
         help="Whether to clean up the failure management folders after each experiment (default: True). Setting this to False can be useful for debugging failures, but may lead to accumulation of failure management folders over time."
     )
 
     parser.add_argument(
         "--overwrite-existing",
-        type=str2bool,
+        type=str_to_bool,
         default=False,
         help="Whether to overwrite existing metadata and runtime snapshot files if they already exist in the target directory (default: False). If set to False and such files already exist, the script will raise an error to prevent accidental overwriting. Set to True to allow overwriting existing files."
     )
@@ -84,7 +83,7 @@ def parse_args():
 
     parser.add_argument(
         "--skip-if-existing",
-        type=str2bool,
+        type=str_to_bool,
         default=True,
         help="Whether to skip running an experiment if at least one experiment folder exists for the model (default: True)"
     )
@@ -167,7 +166,7 @@ def run_model(
         log_completion(model_start_time, f"Experiment for model problem={problem}, segment={segment}, version={version} completed successfully")
     return result.returncode
 
-def main():
+def main() -> int:
     """Execute experiments for all discovered model specs.
 
     Returns:
@@ -230,4 +229,4 @@ def main():
         return 0
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

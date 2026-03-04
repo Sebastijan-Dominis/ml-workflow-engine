@@ -11,10 +11,10 @@ from ml.utils.runtime.runtime_snapshot import build_runtime_snapshot
 logger = logging.getLogger(__name__)
 
 def save_runtime_snapshot(
-    *, 
-    target_dir: Path, 
-    timestamp: str, 
-    hardware_info: HardwareConfig, 
+    *,
+    target_dir: Path,
+    timestamp: str,
+    hardware_info: HardwareConfig,
     start_time: float,
     overwrite_existing: bool = False
 ) -> None:

@@ -14,10 +14,10 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
+from ml.io.formatting.iso_no_colon import iso_no_colon
+from ml.io.formatting.str_to_bool import str_to_bool
 from ml.logging_config import setup_logging
-from ml.utils.formatting.iso_no_colon import iso_no_colon
-from ml.utils.formatting.str_to_bol import str2bool
-from ml.utils.scripts.logging import log_completion
+from pipelines.orchestration.common.orchestration_logging import log_completion
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ def run_cmd(cmd: list[str]) -> None:
     if result.stdout:
         logger.info(result.stdout)
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments for the preprocessing orchestrator.
 
     Returns:
@@ -46,9 +46,9 @@ def parse_args():
 
     parser.add_argument(
         "--skip-if-existing",
-        type=str2bool,
+        type=str_to_bool,
         default=True,
-        help="Whether to skip running a data preprocessing step if the expected output already exists (e.g., metadata.json for handle_raw) (default: True)"
+        help="Whether to skip running a data preprocessing step if the expected output already exists (e.g., metadata.json for register_raw_snapshot) (default: True)"
     )
 
     return parser.parse_args()
@@ -82,7 +82,7 @@ def main() -> int:
 
     logger.info(f"Starting the full data preprocessing run: {run_id}")
 
-    # handle_raw -> make_interim -> make_processed
+    # register_raw_snapshot -> build_interim_dataset -> build_processed_dataset
     try:
         raw_root = Path("data/raw")
 
@@ -109,7 +109,7 @@ def main() -> int:
 
                         if metadata_path.exists() and args.skip_if_existing:
                             logger.info(
-                                f"Skipping handle_raw for {data_name} v{data_version} "
+                                f"Skipping register_raw_snapshot for {data_name} v{data_version} "
                                 f"snapshot {snapshot_id} (metadata exists)"
                             )
                             continue
@@ -117,15 +117,15 @@ def main() -> int:
                         cmd = [
                             sys.executable,
                             "-m",
-                            "pipelines.data.handle_raw",
+                            "pipelines.data.register_raw_snapshot",
                             "--data", data_name,
                             "--version", data_version,
                             "--snapshot_id", snapshot_id,
                         ]
 
-                        logger.info(f"Starting handle_raw for {data_name} v{data_version} snapshot {snapshot_id}")
+                        logger.info(f"Starting register_raw_snapshot for {data_name} v{data_version} snapshot {snapshot_id}")
                         run_cmd(cmd)
-                        logger.info(f"Completed handle_raw for {data_name} v{data_version} snapshot {snapshot_id}")
+                        logger.info(f"Completed register_raw_snapshot for {data_name} v{data_version} snapshot {snapshot_id}")
 
         interim_config_root = Path("configs/data/interim")
 
@@ -149,7 +149,7 @@ def main() -> int:
 
                     if existing_runs and args.skip_if_existing:
                         logger.info(
-                            f"Skipping make_interim for {data_name} v{version} "
+                            f"Skipping build_interim_dataset for {data_name} v{version} "
                             f"(existing runs: {[d.name for d in existing_runs]})"
                         )
                         continue
@@ -157,14 +157,14 @@ def main() -> int:
                     cmd = [
                         sys.executable,
                         "-m",
-                        "pipelines.data.make_interim",
+                        "pipelines.data.build_interim_dataset",
                         "--data", data_name,
                         "--version", version,
                     ]
 
-                    logger.info(f"Starting make_interim for {data_name} v{version}")
+                    logger.info(f"Starting build_interim_dataset for {data_name} v{version}")
                     run_cmd(cmd)
-                    logger.info(f"Completed make_interim for {data_name} v{version}")
+                    logger.info(f"Completed build_interim_dataset for {data_name} v{version}")
 
         processed_config_root = Path("configs/data/processed")
 
@@ -188,7 +188,7 @@ def main() -> int:
 
                     if existing_runs and args.skip_if_existing:
                         logger.info(
-                            f"Skipping make_processed for {data_name} v{version} "
+                            f"Skipping build_processed_dataset for {data_name} v{version} "
                             f"(existing runs: {[d.name for d in existing_runs]})"
                         )
                         continue
@@ -196,14 +196,14 @@ def main() -> int:
                     cmd = [
                         sys.executable,
                         "-m",
-                        "pipelines.data.make_processed",
+                        "pipelines.data.build_processed_dataset",
                         "--data", data_name,
                         "--version", version,
                     ]
 
-                    logger.info(f"Starting make_processed for {data_name} v{version}")
+                    logger.info(f"Starting build_processed_dataset for {data_name} v{version}")
                     run_cmd(cmd)
-                    logger.info(f"Completed make_processed for {data_name} v{version}")
+                    logger.info(f"Completed build_processed_dataset for {data_name} v{version}")
 
         log_completion(start_time=start_time, message="Full data preprocessing run completed successfully.")
         return 0

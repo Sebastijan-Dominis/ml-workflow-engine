@@ -7,7 +7,7 @@ from sklearn.metrics import f1_score
 
 logger = logging.getLogger(__name__)
 
-def get_best_f1_thresh(pipeline, X, y_true):
+def get_best_f1_threshold(pipeline, X, y_true):
     """Find probability threshold in [0, 1] grid that maximizes F1 score.
 
     Args:

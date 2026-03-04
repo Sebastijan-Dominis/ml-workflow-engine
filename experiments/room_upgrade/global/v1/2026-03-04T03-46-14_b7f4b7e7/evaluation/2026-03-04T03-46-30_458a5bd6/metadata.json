@@ -1,0 +1,75 @@
+{
+  "run_identity": {
+    "train_run_id": "2026-03-04T03-46-23_62e469c8",
+    "snapshot_id": "2026-03-04T03-46-14_b7f4b7e7",
+    "status": "success",
+    "stage": "evaluation",
+    "eval_run_id": "2026-03-04T03-46-30_458a5bd6"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v4",
+        "snapshot_id": "2026-03-04T03-40-29_b01c89db",
+        "file_hash": "5ecca8f0e3626fb20ed7591871a06f13d0c3a5ed26d7efbc8f03aeaf50d153c3",
+        "in_memory_hash": "6f3a73ed79c1374df4ee655efbdcbbc3",
+        "feature_schema_hash": "096e46d1f94c5ffaf41184d25652f33be0e10a3c337c38fe206f4b45359de96a",
+        "operator_hash": "31f1dca28b012732a62682bae593dbb0",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-04T03-40-36_c769766b",
+        "file_hash": "0bf87e7f116f7a557a568eda42c9ff8ae17f06ce2b3e4a5d6bbf18f87ca473f9",
+        "in_memory_hash": "0eba66b8c9271eece84715ba09e1799e",
+        "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+        "operator_hash": "none",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-04T03-40-45_8d36b359",
+        "file_hash": "1c90063e286ae48dae44fe323277b6ec9c61169f8a2ea4239ef2a4d322b51016",
+        "in_memory_hash": "ef95af16d3c008b947e84e6f7453fe8a",
+        "feature_schema_hash": "6b0c759f033890e5d35918f660df23905c7f2dfa4a05bb6a4b2dca52f6b21736",
+        "operator_hash": "4db3c254fda8879906c810b872a1ec42",
+        "feature_type": "tabular"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-04T03-40-53_45d1abc9",
+        "file_hash": "9996a1cec03b4eba65fd9a14deee023406ad29cf179f5dca983d7729d662f12c",
+        "in_memory_hash": "95d7f2dfc1ab040cec4e5a189e7aa6da",
+        "feature_schema_hash": "835e18a0eb360678f20b0ed18d92bcbb822a6cdca959bc8926aebfe5e60035cb",
+        "operator_hash": "none",
+        "feature_type": "tabular"
+      }
+    ],
+    "target_column": "room_upgrade",
+    "problem": "room_upgrade",
+    "segment": "global",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "bd766954ce18502fd7b1e3282fecd64992167921f7412258a9fa672736d3b960",
+    "pipeline_cfg_hash": "1a7ca9f3aeec3a8e03e47fd820f49e6e4e90c6099f5f74efa0feeea73aab47d1"
+  },
+  "artifacts": {
+    "train_predictions_path": "experiments\\room_upgrade\\global\\v1\\2026-03-04T03-46-14_b7f4b7e7\\evaluation\\2026-03-04T03-46-30_458a5bd6\\predictions_train.parquet",
+    "val_predictions_path": "experiments\\room_upgrade\\global\\v1\\2026-03-04T03-46-14_b7f4b7e7\\evaluation\\2026-03-04T03-46-30_458a5bd6\\predictions_val.parquet",
+    "test_predictions_path": "experiments\\room_upgrade\\global\\v1\\2026-03-04T03-46-14_b7f4b7e7\\evaluation\\2026-03-04T03-46-30_458a5bd6\\predictions_test.parquet",
+    "train_predictions_hash": "acccd155db464e70877cd456977bc599bae2774e0820c31feda824ffe09b8ab5",
+    "val_predictions_hash": "e7bb0f7256ad6b5b90777c55964b43d9e2e96f45326e8d47748fbd83ed8a78ef",
+    "test_predictions_hash": "b2b8307ea07f884360c2d62fa7742837864f2f5625ee4c9989be0e3c47a8ddf0",
+    "model_hash": "6ca1667f233d1ed28c3b913a1f7f07736a459515462bbaa498a04c97b08547cc",
+    "model_path": "experiments\\room_upgrade\\global\\v1\\2026-03-04T03-46-14_b7f4b7e7\\training\\2026-03-04T03-46-23_62e469c8\\model.joblib",
+    "pipeline_path": "experiments\\room_upgrade\\global\\v1\\2026-03-04T03-46-14_b7f4b7e7\\training\\2026-03-04T03-46-23_62e469c8\\pipeline.joblib",
+    "pipeline_hash": "0326aad434b2c78ef037915d5929deeb24ace6bb072455830f567229d1c1d0d9",
+    "metrics_path": "experiments\\room_upgrade\\global\\v1\\2026-03-04T03-46-14_b7f4b7e7\\evaluation\\2026-03-04T03-46-30_458a5bd6\\metrics.json",
+    "metrics_hash": "d8120438f5bee95f5ddb5ab68a47ca896e3c39d07ce8444e6dcbe9bd3e22a103"
+  }
+}

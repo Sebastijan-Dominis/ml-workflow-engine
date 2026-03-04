@@ -16,21 +16,19 @@ from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
 from ml.exceptions import ConfigError
+from ml.io.formatting.iso_no_colon import iso_no_colon
+from ml.io.formatting.str_to_bool import str_to_bool
 from ml.logging_config import add_file_handler, bootstrap_logging
 from ml.runners.explainability.constants.output import ExplainabilityOutput
-from ml.runners.explainability.persistence.persist_explainability_run import \
-    persist_explainability_run
+from ml.runners.explainability.persistence.persist_explainability_run import (
+    persist_explainability_run,
+)
 from ml.runners.explainability.utils.get_explainer import get_explainer
-from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import \
-    validate_lineage_integrity
-from ml.utils.experiments.logical_config.validate_model_and_pipeline import \
-    validate_model_and_pipeline
-from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
-    validate_pipeline_cfg
-from ml.utils.experiments.reproducibility.validate_reproducibility import \
-    validate_reproducibility
-from ml.utils.formatting.iso_no_colon import iso_no_colon
-from ml.utils.formatting.str_to_bol import str2bool
+from ml.runners.shared.lineage.validate_lineage_integrity import validate_lineage_integrity
+from ml.runners.shared.logical_config.validate_model_and_pipeline import validate_model_and_pipeline
+from ml.runners.shared.logical_config.validate_pipeline_cfg import validate_pipeline_cfg
+from ml.runners.shared.reproducibility.validate_reproducibility import validate_reproducibility
+from ml.types import LatestSnapshot
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
 
 logger = logging.getLogger(__name__)
@@ -66,14 +64,14 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--env",
-        type=str,
+        choices=["dev", "test", "prod", "default"],
         default="default",
         help="Environment to run the script in (dev/test/prod) (default: default) ~ none"
     )
 
     parser.add_argument(
         "--strict",
-        type=str2bool,
+        type=str_to_bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
@@ -81,20 +79,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--experiment-id",
         type=str,
-        default="latest",
+        default=LatestSnapshot.LATEST.value,
         help="Experiment id (directory name under experiments/{problem}/{segment}/{version}); if not provided, defaults to 'latest' which picks the most recent experiment directory"
     )
 
     parser.add_argument(
         "--train-id",
         type=str,
-        default="latest",
+        default=LatestSnapshot.LATEST.value,
         help="Train id (directory name under experiments/{problem}/{segment}/{version}/{snapshot_id}/training); if not provided, defaults to 'latest' which picks the most recent training directory"
     )
 
     parser.add_argument(
         "--logging-level",
-        type=str,
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="INFO",
         help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
     )
@@ -169,7 +167,7 @@ def main() -> int:
             msg = "Explainability is not enabled in the model configuration. Please enable it to run the explainability pipeline."
             logger.error(msg)
             raise ConfigError(msg)
-        
+
         model_cfg = add_config_hash(model_cfg)
 
         validate_lineage_integrity(train_dir, model_cfg)
@@ -182,7 +180,7 @@ def main() -> int:
 
         top_k = args.top_k if args.top_k is not None else model_cfg.explainability.top_k
 
-        logger.info("Explaining the model using experiment_id = %s, train_id = %s, and top_k = %s.", experiment_dir.name, train_run_id, top_k)        
+        logger.info("Explaining the model using experiment_id = %s, train_id = %s, and top_k = %s.", experiment_dir.name, train_run_id, top_k)
         output = explainer.explain(model_cfg=model_cfg, train_dir=train_dir, top_k=top_k)
         logger.info("Explainability completed. Persisting explainability run...")
 

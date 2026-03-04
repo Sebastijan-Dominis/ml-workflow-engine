@@ -3,11 +3,9 @@
 import logging
 from typing import Any, Literal
 
-from pydantic_core import ValidationError
-
-from ml.config.schemas.model_cfg import (SearchModelConfig,
-                                                    TrainModelConfig)
+from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import ConfigError
+from pydantic_core import ValidationError
 
 logger = logging.getLogger(__name__)
 

@@ -2,12 +2,12 @@
 
 import logging
 
-from ml.feature_freezing.freeze_strategies.tabular.features import (
-    apply_operators, prepare_features)
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
-    FreezeContext
+from ml.feature_freezing.freeze_strategies.tabular.features import apply_operators, prepare_features
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.feature_freezing.freeze_strategies.tabular.validation import (
-    validate_constraints, validate_data_types)
+    validate_constraints,
+    validate_data_types,
+)
 from ml.utils.pipeline_core.step import PipelineStep
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class PreprocessingStep(PipelineStep[FreezeContext]):
             None: Emits logging side effect only.
         """
         logger.info("Starting data preprocessing step.")
-        
+
     def after(self, ctx: FreezeContext) -> None:
         """Emit post-step log message.
 

@@ -3,7 +3,6 @@
 import logging
 
 from catboost import CatBoostClassifier, CatBoostRegressor
-
 from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.registries.catalogs import MODEL_CLASS_REGISTRY
 from ml.search.constants import SEARCH_PHASES
@@ -11,10 +10,10 @@ from ml.search.constants import SEARCH_PHASES
 logger = logging.getLogger(__name__)
 
 def prepare_model(
-    model_cfg: SearchModelConfig, 
+    model_cfg: SearchModelConfig,
     *,
-    search_phase: SEARCH_PHASES, 
-    cat_features: list, 
+    search_phase: SEARCH_PHASES,
+    cat_features: list,
     class_weights: dict | None
 ) -> CatBoostClassifier | CatBoostRegressor:
     """Build CatBoost model configured for broad or narrow search phase.

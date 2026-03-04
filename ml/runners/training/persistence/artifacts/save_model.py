@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 
 import joblib
-
 from ml.exceptions import PersistenceError
 
 logger = logging.getLogger(__name__)

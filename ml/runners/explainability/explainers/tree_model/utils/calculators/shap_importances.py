@@ -4,22 +4,21 @@ import logging
 
 import numpy as np
 import pandas as pd
-from numpy.typing import NDArray
-
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import ConfigError, DataError, ExplainabilityError
-from ml.runners.explainability.explainers.tree_model.adapters.base import \
-    TreeModelAdapter
-from ml.runners.explainability.explainers.tree_model.utils.validators.validate_lengths import \
-    validate_lengths
+from ml.runners.explainability.explainers.tree_model.adapters.base import TreeModelAdapter
+from ml.runners.explainability.explainers.tree_model.utils.validators.validate_lengths import (
+    validate_lengths,
+)
+from numpy.typing import NDArray
 
 logger = logging.getLogger(__name__)
 
 def get_shap_importances(
-    *, 
-    feature_names: NDArray[np.str_], 
-    model_configs: TrainModelConfig, 
-    top_k: int, 
+    *,
+    feature_names: NDArray[np.str_],
+    model_configs: TrainModelConfig,
+    top_k: int,
     X_test_transformed: pd.DataFrame,
     adapter: TreeModelAdapter
     ) -> pd.DataFrame | None:
@@ -50,22 +49,22 @@ def get_shap_importances(
     if not hasattr(X_test_transformed, "iloc"):
         msg = "Transformed test data is not a pandas DataFrame. SHAP analysis requires the transformed data to be a DataFrame with column names."
         logger.error(msg)
-        raise DataError(msg)
-    
+        raise DataError(msg) from None
+
     X_test_sample = X_test_transformed.iloc[idx]
-    
+
     if shap_method == "tree":
         try:
             shap_values = adapter.compute_shap_values(X_test_sample)
-        except Exception:
+        except Exception as e:
             msg = "Error calculating SHAP values using model adapter. Ensure that the model is compatible with Tree SHAP and that the input data is correctly preprocessed."
             logger.exception(msg)
-            raise ExplainabilityError(msg)
+            raise ExplainabilityError(msg) from e
 
     else:
         msg = f"Unsupported SHAP method: {shap_method}. Currently, only 'tree' is supported for CatBoost models."
         logger.error(msg)
-        raise ConfigError(msg)
+        raise ConfigError(msg) from None
 
     if isinstance(shap_values, list):
         shap_values = np.mean([np.abs(sv) for sv in shap_values], axis=0)

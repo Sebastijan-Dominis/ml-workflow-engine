@@ -4,16 +4,29 @@ This module centralizes translation of domain-specific exceptions into stable
 process exit codes so command-line entrypoints can fail consistently.
 """
 
-from ml.cli.exit_codes import (EXIT_CONFIG_ERROR, EXIT_DATA_ERROR,
-                               EXIT_EVALUATION_ERROR,
-                               EXIT_EXPLAINABILITY_ERROR,
-                               EXIT_PERSISTENCE_ERROR, EXIT_PIPELINE_ERROR,
-                               EXIT_SEARCH_ERROR, EXIT_TRAINING_ERROR,
-                               EXIT_UNEXPECTED_ERROR)
-from ml.exceptions import (ConfigError, DataError, EvaluationError,
-                           ExplainabilityError, PersistenceError,
-                           PipelineContractError, RuntimeMLException,
-                           SearchError, TrainingError, UserError)
+from ml.cli.exit_codes import (
+    EXIT_CONFIG_ERROR,
+    EXIT_DATA_ERROR,
+    EXIT_EVALUATION_ERROR,
+    EXIT_EXPLAINABILITY_ERROR,
+    EXIT_PERSISTENCE_ERROR,
+    EXIT_PIPELINE_ERROR,
+    EXIT_SEARCH_ERROR,
+    EXIT_TRAINING_ERROR,
+    EXIT_UNEXPECTED_ERROR,
+)
+from ml.exceptions import (
+    ConfigError,
+    DataError,
+    EvaluationError,
+    ExplainabilityError,
+    PersistenceError,
+    PipelineContractError,
+    RuntimeMLError,
+    SearchError,
+    TrainingError,
+    UserError,
+)
 
 EXCEPTION_EXIT_CODE_MAP = {
     ConfigError: EXIT_CONFIG_ERROR,
@@ -32,7 +45,7 @@ def resolve_exit_code(exc: Exception) -> int:
     Resolution order:
         1. Exact/derived matches from ``EXCEPTION_EXIT_CODE_MAP``.
         2. ``UserError`` fallback to configuration error exit code.
-        3. ``RuntimeMLException`` fallback to unexpected error exit code.
+        3. ``RuntimeMLError`` fallback to unexpected error exit code.
         4. Default unexpected error exit code for all other exceptions.
 
     Args:
@@ -46,6 +59,6 @@ def resolve_exit_code(exc: Exception) -> int:
             return code
     if isinstance(exc, UserError):
         return EXIT_CONFIG_ERROR
-    if isinstance(exc, RuntimeMLException):
+    if isinstance(exc, RuntimeMLError):
         return EXIT_UNEXPECTED_ERROR
     return EXIT_UNEXPECTED_ERROR

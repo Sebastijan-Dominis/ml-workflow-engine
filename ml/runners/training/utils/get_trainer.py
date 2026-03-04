@@ -24,7 +24,7 @@ def get_trainer(key: str) -> Trainer:
         msg = f"No trainer found for algorithm '{key}'."
         logger.error(msg)
         raise PipelineContractError(msg)
-    
+
     trainer = trainer_cls()
 
     logger.debug(

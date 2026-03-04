@@ -1,9 +1,7 @@
 """Narrow-search parameter refinement helpers for CatBoost searches."""
 
-from ml.search.params.refiners import (refine_border_count, refine_float_mult,
-                                       refine_int)
-from ml.search.params.utils import (get_default_float_params,
-                                    get_default_int_params)
+from ml.search.params.refiners import refine_border_count, refine_float_mult, refine_int
+from ml.search.params.utils import get_default_float_params, get_default_int_params
 
 
 def prepare_narrow_params(best_params: dict, narrow_params_cfg, task_type: str) -> dict:
@@ -64,7 +62,7 @@ def prepare_narrow_params(best_params: dict, narrow_params_cfg, task_type: str) 
             high=high,
             decimals=decimals
         )
-    
+
     # L2 regularization
     l2_leaf_reg_cfg = narrow_params_cfg.model.l2_leaf_reg if narrow_params_cfg.model else None
     if "Model__l2_leaf_reg" in best_params and l2_leaf_reg_cfg and l2_leaf_reg_cfg.include:

@@ -10,9 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 def save_broad(
-    *, 
-    broad_result: dict, 
-    best_params_1: dict, 
+    *,
+    broad_result: dict,
+    best_params_1: dict,
     tgt_file: Path
 ) -> None:
     """Persist broad search result and best params to JSON marker file."""

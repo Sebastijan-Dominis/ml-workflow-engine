@@ -4,9 +4,10 @@ import logging
 from pathlib import Path
 
 from ml.config.schemas.model_cfg import SearchModelConfig
-from ml.types.splits import AllSplitsInfo
+from ml.io.persistence.save_metadata import save_metadata
+from ml.modeling.models.feature_lineage import FeatureLineage
 from ml.search.persistence.prepare_metadata import prepare_metadata
-from ml.utils.persistence.save_metadata import save_metadata
+from ml.types import AllSplitsInfo
 from ml.utils.runtime.save_runtime import save_runtime_snapshot
 
 logger = logging.getLogger(__name__)
@@ -15,15 +16,15 @@ EXPERIMENTS_DIR = Path("experiments")
 EXPERIMENTS_DIR.mkdir(exist_ok=True)
 
 def persist_experiment(
-    model_cfg: SearchModelConfig, 
-    *, 
-    search_results: dict, 
-    owner: str, 
-    experiment_id: str, 
-    search_dir: Path, 
-    timestamp: str, 
-    start_time: float, 
-    feature_lineage: list[dict], 
+    model_cfg: SearchModelConfig,
+    *,
+    search_results: dict,
+    owner: str,
+    experiment_id: str,
+    search_dir: Path,
+    timestamp: str,
+    start_time: float,
+    feature_lineage: list[FeatureLineage],
     pipeline_hash: str,
     scoring_method: str,
     splits_info: AllSplitsInfo,
@@ -48,14 +49,14 @@ def persist_experiment(
     Returns:
         None.
     """
-    
+
     metadata = prepare_metadata(
-        model_cfg, 
-        search_results=search_results, 
-        owner=owner, 
-        experiment_id=experiment_id, 
-        timestamp=timestamp, 
-        feature_lineage=feature_lineage, 
+        model_cfg,
+        search_results=search_results,
+        owner=owner,
+        experiment_id=experiment_id,
+        timestamp=timestamp,
+        feature_lineage=feature_lineage,
         pipeline_hash=pipeline_hash,
         scoring_method=scoring_method,
         splits_info=splits_info
@@ -64,15 +65,15 @@ def persist_experiment(
     logger.debug(f"Persisting experiment with overwrite_existing={overwrite_existing}.")
 
     save_metadata(
-        metadata=metadata, 
+        metadata=metadata,
         target_dir=search_dir,
         overwrite_existing=overwrite_existing
     )
 
     save_runtime_snapshot(
-        target_dir=search_dir, 
-        timestamp=timestamp, 
-        hardware_info=model_cfg.search.hardware, 
+        target_dir=search_dir,
+        timestamp=timestamp,
+        hardware_info=model_cfg.search.hardware,
         start_time=start_time,
         overwrite_existing=overwrite_existing
     )

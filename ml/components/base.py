@@ -17,7 +17,7 @@ class PipelineComponent(BaseEstimator, TransformerMixin):
             PipelineComponent: Fitted component instance.
         """
         return self
-    
+
 class SklearnFeatureMixin:
     """Mixin for transformers that must expose n_features_in_."""
 

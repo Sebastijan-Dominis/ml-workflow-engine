@@ -8,7 +8,6 @@ import sys
 
 import pandas as pd
 import sklearn
-
 from ml.exceptions import DataError, UserError
 from ml.registries.catalogs import FEATURE_OPERATORS
 
@@ -41,9 +40,9 @@ def generate_operator_hash(operator_names):
         "sklearn": sklearn.__version__,
     }
 
-    operators_hash = hashlib.md5(json.dumps(payload, sort_keys=True).encode('utf-8')).hexdigest()
+    operator_hash = hashlib.md5(json.dumps(payload, sort_keys=True).encode('utf-8')).hexdigest()
 
-    return operators_hash
+    return operator_hash
 
 def validate_operators(operators: list, operator_hash: str):
     """Validate operator names and verify computed hash matches expected hash.

@@ -3,10 +3,8 @@
 import logging
 
 import pandas as pd
-
 from ml.exceptions import DataError, UserError
-from ml.feature_freezing.freeze_strategies.tabular.config.models import \
-    TabularFeaturesConfig
+from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.registries.catalogs import FEATURE_OPERATORS
 
 logger = logging.getLogger(__name__)
@@ -51,7 +49,7 @@ def apply_operators(X: pd.DataFrame, operator_names: list[str], required_feature
     """
 
     missing = set()
-    for name, features in required_features.items():
+    for features in required_features.values():
         missing.update(set(features) - set(X.columns))
     if missing:
         msg = f"Missing required features for operators: {missing}"

@@ -4,28 +4,31 @@ import logging
 from pathlib import Path
 
 from ml.config.schemas.model_cfg import TrainModelConfig
-from ml.types.splits import TabularSplits
-from ml.runners.explainability.constants.explainability_metrics_class import \
-    ExplainabilityMetrics
+from ml.features.loading.features_and_target import load_features_and_target
+from ml.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
+from ml.features.splitting.splitting import get_splits
+from ml.features.validation.validate_snapshot_ids import validate_snapshot_ids
+from ml.metadata.validation.runners.training import validate_training_metadata
+from ml.runners.explainability.constants.explainability_metrics_class import ExplainabilityMetrics
 from ml.runners.explainability.constants.output import ExplainabilityOutput
 from ml.runners.explainability.explainers.base import Explainer
-from ml.runners.explainability.explainers.tree_model.utils.adapter.get_adapter import \
-    get_tree_model_adapter
-from ml.runners.explainability.explainers.tree_model.utils.calculators.feature_importances import \
-    get_feature_importances
-from ml.runners.explainability.explainers.tree_model.utils.calculators.shap_importances import \
-    get_shap_importances
-from ml.runners.explainability.explainers.tree_model.utils.transformers.get_feature_names_and_transformed_x import \
-    get_feature_names_and_transformed_X
-from ml.utils.experiments.loading.get_snapshot_binding_from_training_metadata import \
-    get_snapshot_binding_from_training_metadata
-from ml.utils.experiments.loading.pipeline import load_model_or_pipeline
-from ml.utils.features.loading.resolve_feature_snapshots import \
-    resolve_feature_snapshots
-from ml.utils.features.loading.X_and_y import load_X_and_y
-from ml.utils.features.splitting.splitting import get_splits
-from ml.utils.features.validation.validate_snapshot_ids import \
-    validate_snapshot_ids
+from ml.runners.explainability.explainers.tree_model.utils.adapter.get_adapter import (
+    get_tree_model_adapter,
+)
+from ml.runners.explainability.explainers.tree_model.utils.calculators.feature_importances import (
+    get_feature_importances,
+)
+from ml.runners.explainability.explainers.tree_model.utils.calculators.shap_importances import (
+    get_shap_importances,
+)
+from ml.runners.explainability.explainers.tree_model.utils.transformers.get_feature_names_and_transformed_x import (
+    get_feature_names_and_transformed_x,
+)
+from ml.runners.shared.loading.get_snapshot_binding_from_training_metadata import (
+    get_snapshot_binding_from_training_metadata,
+)
+from ml.runners.shared.loading.pipeline import load_model_or_pipeline
+from ml.types import TabularSplits
 from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
@@ -59,21 +62,26 @@ class ExplainTreeModel(Explainer):
 
         splits: TabularSplits
 
-        train_metadata_file = train_dir / "metadata.json"
-        train_metadata = load_json(train_metadata_file)
+        training_metadata_file = train_dir / "metadata.json"
+        training_metadata_raw = load_json(training_metadata_file)
+        training_metadata = validate_training_metadata(training_metadata_raw)
 
-        pipeline_file = Path(train_metadata.get("artifacts", {}).get("pipeline_path"))
+        if not training_metadata.artifacts.pipeline_path:
+            msg = "Training metadata is missing the path to the trained pipeline artifact. Cannot proceed with explainability without the pipeline."
+            logger.error(msg)
+            raise ValueError(msg)
+        pipeline_file = Path(training_metadata.artifacts.pipeline_path)
         pipeline = load_model_or_pipeline(pipeline_file, "pipeline")
 
-        snapshot_binding = get_snapshot_binding_from_training_metadata(train_metadata)
-        
+        snapshot_binding = get_snapshot_binding_from_training_metadata(training_metadata)
+
         snapshot_selection = resolve_feature_snapshots(
             feature_store_path=Path(model_cfg.feature_store.path),
             feature_sets=model_cfg.feature_store.feature_sets,
             snapshot_binding=snapshot_binding
         )
 
-        X, y, feature_lineage = load_X_and_y(model_cfg, snapshot_selection=snapshot_selection, strict=True)
+        X, y, feature_lineage = load_features_and_target(model_cfg, snapshot_selection=snapshot_selection, strict=True)
         splits, splits_info = get_splits(
             X=X,
             y=y,
@@ -81,27 +89,27 @@ class ExplainTreeModel(Explainer):
             data_type=model_cfg.data_type,
             task_cfg=model_cfg.task
         )
-  
+
         validate_snapshot_ids(feature_lineage, snapshot_selection)
 
         X_test = splits.X_test
 
-        feature_names, X_test_transformed = get_feature_names_and_transformed_X(pipeline, X_test)
+        feature_names, X_test_transformed = get_feature_names_and_transformed_x(pipeline, X_test)
 
         adapter = get_tree_model_adapter(pipeline[-1])
 
         top_k_feature_importances = get_feature_importances(
-            feature_names=feature_names, 
-            pipeline=pipeline, 
-            model_cfg=model_cfg, 
+            feature_names=feature_names,
+            pipeline=pipeline,
+            model_cfg=model_cfg,
             top_k=top_k,
             adapter=adapter
         )
 
         top_k_shap_importances = get_shap_importances(
-            feature_names=feature_names, 
-            model_configs=model_cfg, 
-            top_k=top_k, 
+            feature_names=feature_names,
+            model_configs=model_cfg,
+            top_k=top_k,
             X_test_transformed=X_test_transformed,
             adapter=adapter
         )

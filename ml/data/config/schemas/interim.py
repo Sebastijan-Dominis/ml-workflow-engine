@@ -164,7 +164,7 @@ class Invariants(BaseModel):
         Returns:
             dict: Invariants payload with defaults assigned.
         """
-        for field_name in DataSchema.model_fields.keys():
+        for field_name in DataSchema.model_fields:
             if field_name not in values:
                 values[field_name] = Invariant(
                     min=MIN_CONSTRAINTS.get(field_name),

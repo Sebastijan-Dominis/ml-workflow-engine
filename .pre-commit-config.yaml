@@ -1,0 +1,29 @@
+repos:
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        entry: isort
+        language: system
+        types: [python]
+        args: ["--profile=black", "--line-length=100"]
+
+      - id: ruff
+        name: ruff check
+        entry: ruff
+        language: system
+        types: [python]
+        args: ["check"]
+
+      - id: mypy
+        name: mypy (ml + pipelines)
+        entry: mypy
+        language: system
+        pass_filenames: false
+        args: ["ml", "pipelines"]
+
+      - id: import-layers
+        name: import layer guardrails
+        entry: python scripts/quality/check_import_layers.py
+        language: system
+        pass_filenames: false

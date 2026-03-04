@@ -3,21 +3,18 @@
 import logging
 from pathlib import Path
 
-from ml.config.hashing import compute_config_hash
+from ml.config.hashing import compute_model_config_hash
+from ml.features.extraction.cat_features import get_cat_features
+from ml.features.loading.features_and_target import load_features_and_target
+from ml.features.loading.schemas import load_schemas
+from ml.features.splitting.splitting import get_splits
+from ml.features.transforms.transform_target import transform_target
+from ml.features.validation.validate_contract import validate_model_feature_pipeline_contract
+from ml.modeling.class_weighting.models import DataStats
+from ml.modeling.class_weighting.resolve_class_weighting import resolve_class_weighting
+from ml.modeling.class_weighting.resolve_metric import resolve_metric
+from ml.modeling.class_weighting.stats_resolver import compute_data_stats
 from ml.search.searchers.catboost.pipeline.context import SearchContext
-from ml.utils.experiments.class_weights.models import DataStats
-from ml.utils.experiments.class_weights.resolve_class_weighting import \
-    resolve_class_weighting
-from ml.utils.experiments.class_weights.resolve_metric import resolve_metric
-from ml.utils.experiments.class_weights.stats_resolver import \
-    compute_data_stats
-from ml.utils.features.cat_features import get_cat_features
-from ml.utils.features.loading.schemas import load_schemas
-from ml.utils.features.loading.X_and_y import load_X_and_y
-from ml.utils.features.splitting.splitting import get_splits
-from ml.utils.features.transform_target import transform_target
-from ml.utils.features.validation.validate_contract import \
-    validate_model_feature_pipeline_contract
 from ml.utils.loaders import load_yaml
 from ml.utils.pipeline_core.step import PipelineStep
 
@@ -51,7 +48,7 @@ class PreparationStep(PipelineStep[SearchContext]):
             None: Emits logging side effect only.
         """
         logger.info("Completed preparation step.")
-    
+
     def run(self, ctx: SearchContext) -> SearchContext:
         """Prepare training inputs/config artifacts required by search phases.
 
@@ -74,9 +71,9 @@ class PreparationStep(PipelineStep[SearchContext]):
             Reads data/config files from disk and mutates multiple context fields
             required by downstream search steps.
         """
-        X, y, lineage = load_X_and_y(
-            ctx.model_cfg, 
-            snapshot_selection=None, 
+        X, y, lineage = load_features_and_target(
+            ctx.model_cfg,
+            snapshot_selection=None,
             strict=ctx.strict
         )
         splits, splits_info = get_splits(
@@ -90,7 +87,7 @@ class PreparationStep(PipelineStep[SearchContext]):
 
         pipeline_path = Path(f"{ctx.model_cfg.pipeline.path}").resolve()
         pipeline_cfg = load_yaml(pipeline_path)
-        pipeline_hash = compute_config_hash(pipeline_cfg)
+        pipeline_hash = compute_model_config_hash(pipeline_cfg)
 
         cat_features = get_cat_features(ctx.model_cfg, input_schema, derived_schema)
 
@@ -103,16 +100,16 @@ class PreparationStep(PipelineStep[SearchContext]):
         stats = None
         if ctx.model_cfg.task.type == "classification":
             stats = compute_data_stats(splits.y_train)
-        
+
         scoring = resolve_metric(ctx.model_cfg, stats)
         ctx.scoring = scoring
-        
+
         if stats is not None:
             class_weights = resolve_class_weighting(ctx.model_cfg, stats, library="catboost")
             ctx.class_weights = class_weights
 
         y_train = transform_target(
-            splits.y_train, 
+            splits.y_train,
             transform_config=ctx.model_cfg.target.transform,
             split_name="train"
         )

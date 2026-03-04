@@ -4,13 +4,11 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-
+from ml.data.merge.merge_dataset_into_main import merge_dataset_into_main
 from ml.exceptions import ConfigError, DataError
-from ml.feature_freezing.freeze_strategies.tabular.config.models import \
-    TabularFeaturesConfig
+from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.types import DataLineageEntry
 from ml.utils.hashing.service import HASH_LOADER_REGISTRY
-from ml.utils.data.merge_dataset_into_main import merge_dataset_into_main
-from ml.utils.data.models import DataLineageEntry
 from ml.utils.loaders import read_data
 from ml.utils.snapshots.latest_snapshot import get_latest_snapshot_path
 
@@ -34,7 +32,7 @@ def load_data_with_lineage(config: TabularFeaturesConfig) -> tuple[pd.DataFrame,
         msg = "No datasets specified in the configuration."
         logger.error(msg)
         raise ConfigError(msg)
-    
+
     for dataset in config.data:
         dataset_path = Path(dataset.ref) / dataset.name / dataset.version
         dataset_snapshot_path = get_latest_snapshot_path(dataset_path)
@@ -43,7 +41,7 @@ def load_data_with_lineage(config: TabularFeaturesConfig) -> tuple[pd.DataFrame,
             msg = f"Unsupported data format for loading and hashing: {dataset.format}"
             logger.error(msg)
             raise ConfigError(msg)
-        
+
         dataset_path = dataset_snapshot_path / dataset.path_suffix.format(format=dataset.format)
         if not dataset_path.exists():
             msg = f"Dataset file not found at expected path: {dataset_path}"
@@ -63,8 +61,8 @@ def load_data_with_lineage(config: TabularFeaturesConfig) -> tuple[pd.DataFrame,
         )
 
         loader_validation_hash = HASH_LOADER_REGISTRY[dataset.format](dataset_path)
-        
-        entry = DataLineageEntry(**{ 
+
+        entry = DataLineageEntry(**{
             "ref": dataset.ref,
             "name": dataset.name,
             "version": dataset.version,

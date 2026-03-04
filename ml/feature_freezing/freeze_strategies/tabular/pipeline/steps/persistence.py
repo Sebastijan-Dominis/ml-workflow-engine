@@ -4,9 +4,11 @@ import logging
 
 from ml.exceptions import PersistenceError
 from ml.feature_freezing.freeze_strategies.tabular.persistence import (
-    persist_feature_snapshot, save_derived_schema, save_input_schema)
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
-    FreezeContext
+    persist_feature_snapshot,
+    save_derived_schema,
+    save_input_schema,
+)
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.utils.pipeline_core.step import PipelineStep
 
 logger = logging.getLogger(__name__)
@@ -26,7 +28,7 @@ class PersistenceStep(PipelineStep[FreezeContext]):
             None: Emits logging side effect only.
         """
         logger.info("Starting data persistence step.")
-        
+
     def after(self, ctx: FreezeContext) -> None:
         """Emit post-step log message.
 

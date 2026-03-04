@@ -4,7 +4,14 @@ import logging
 
 from ml.exceptions import UserError
 from ml.feature_freezing.freeze_strategies.base import FreezeStrategy
-from ml.registries.factories import FREEZE_STRATEGIES
+from ml.feature_freezing.freeze_strategies.tabular.strategy import FreezeTabular
+from ml.feature_freezing.freeze_strategies.time_series import FreezeTimeSeries
+
+"""Registry mapping feature data types to freeze strategy implementations."""
+FREEZE_STRATEGIES = {
+    "tabular": FreezeTabular,
+    "time_series": FreezeTimeSeries,
+}
 
 logger = logging.getLogger(__name__)
 

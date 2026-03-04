@@ -25,5 +25,5 @@ def validate_training_behavior_consistency(model_cfg: TrainModelConfig) -> None:
         msg = "A random seed must be specified for training to ensure reproducibility."
         logger.error(msg)
         raise ConfigError(msg)
-    
+
     logger.debug("Training behavior consistency validation passed.")

@@ -6,11 +6,14 @@ import pandas as pd
 
 from ml.data.processed.processing.add_row_id_base import AddRowIDBase
 from ml.data.processed.processing.hotel_bookings.cols_for_row_id import (
-    COLS_FOR_ROW_ID_FINGERPRINT, cols_for_row_id)
+    COLS_FOR_ROW_ID_FINGERPRINT,
+    cols_for_row_id,
+)
+from ml.data.processed.processing.hotel_bookings.compute_cols_for_row_id_fingerprint import (
+    compute_cols_for_row_id_fingerprint,
+)
+from ml.data.validation.validate_row_id import validate_row_id
 from ml.exceptions import DataError, UserError
-from ml.utils.data.compute_cols_for_row_id_fingerprint import \
-    compute_cols_for_row_id_fingerprint
-from ml.utils.data.validate_row_id import validate_row_id
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +76,7 @@ class AddRowIDToHotelBookings(AddRowIDBase):
         except Exception as e:
             msg = f"Failed to generate row_id: {e}"
             logger.error(msg)
-            raise DataError(msg)
+            raise DataError(msg) from e
 
         validate_row_id(df)
 

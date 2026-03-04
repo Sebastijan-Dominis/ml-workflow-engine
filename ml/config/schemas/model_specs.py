@@ -6,15 +6,12 @@ both search and training configuration entrypoints.
 
 import logging
 from datetime import datetime
-from enum import Enum
-from typing import Any, Literal, Optional
-
-from pydantic import (BaseModel, ConfigDict, Field, field_validator,
-                      model_validator)
+from enum import StrEnum
+from typing import Any, Literal
 
 from ml.exceptions import ConfigError
-from ml.utils.experiments.class_weights.constants import \
-    SUPPORTED_SCORING_FUNCTIONS
+from ml.modeling.class_weighting.constants import SUPPORTED_SCORING_FUNCTIONS
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +19,9 @@ class SegmentConfig(BaseModel):
     """Model segment identifier and optional description."""
 
     name: str
-    description: Optional[str] = None
+    description: str | None = None
 
-class TaskType(str, Enum):
+class TaskType(StrEnum):
     """Supported high-level ML task categories."""
 
     classification = "classification"
@@ -36,7 +33,7 @@ class TaskConfig(BaseModel):
     """Task type metadata for model execution and validation logic."""
 
     type: TaskType
-    subtype: Optional[str] = None
+    subtype: str | None = None
 
     @field_validator("type", mode="before")
     def normalize_task_type(cls, v):
@@ -63,15 +60,15 @@ class ClassesConfig(BaseModel):
 class TargetConstraintsConfig(BaseModel):
     """Numeric constraints applicable to target values."""
 
-    min_value: Optional[float] = None
-    max_value: Optional[float] = None
+    min_value: float | None = None
+    max_value: float | None = None
 
 class TargetTransformConfig(BaseModel):
     """Optional target transformation settings."""
 
     enabled: bool = False
     type: Literal["log1p", "sqrt"] | None = None
-    lambda_value: Optional[float] = None  # Only used for Box-Cox transform
+    lambda_value: float | None = None  # Only used for Box-Cox transform
 
     # Validate that if type is boxcox, then lambda_value must be provided, and if type is not boxcox, then lambda_value must be None
     @field_validator("lambda_value", mode="after")
@@ -103,7 +100,7 @@ class TargetConfig(BaseModel):
     name: str
     version: str
     allowed_dtypes: list[str]
-    classes: Optional[ClassesConfig] = None
+    classes: ClassesConfig | None = None
     constraints: TargetConstraintsConfig = Field(default_factory=TargetConstraintsConfig)
     transform: TargetTransformConfig = Field(default_factory=TargetTransformConfig)
 
@@ -163,7 +160,7 @@ class SegmentationConfig(BaseModel):
             logger.error(msg)
             raise ConfigError(msg)
         return v
-    
+
     @field_validator("include_in_model", mode="after")
     @classmethod
     def validate_include_in_model_based_on_enabled(cls, v, info):
@@ -203,12 +200,12 @@ class SplitConfig(BaseModel):
     """Train/validation/test split strategy settings."""
 
     strategy: Literal["random"]
-    stratify_by: Optional[str] = None
+    stratify_by: str | None = None
     test_size: float = Field(gt=0.0, lt=1.0)
     val_size: float = Field(gt=0.0, lt=1.0)
     random_state: int
 
-class AlgorithmConfig(str, Enum):
+class AlgorithmConfig(StrEnum):
     """Supported algorithm families."""
 
     catboost = "catboost"
@@ -235,8 +232,8 @@ class ScoringConfig(BaseModel):
     """Metric-scoring policy and optional thresholds."""
 
     policy: Literal["fixed", "adaptive_binary", "regression_default"] = "fixed"
-    fixed_metric: Optional[SUPPORTED_SCORING_FUNCTIONS] = None
-    pr_auc_threshold: Optional[float] = None
+    fixed_metric: SUPPORTED_SCORING_FUNCTIONS | None = None
+    pr_auc_threshold: float | None = None
 
     # Ensure that pr_auc_threshold is set if policy is adaptive_binary, and fixed_metric is set if policy is fixed
     @field_validator("fixed_metric", mode="after")
@@ -273,7 +270,7 @@ class ScoringConfig(BaseModel):
             msg = "pr_auc_threshold must be specified if scoring policy is 'adaptive_binary'."
             logger.error(msg)
             raise ConfigError(msg)
-        return v    
+        return v
 
 ClassImbalancePolicy = Literal[
     "off",          # never apply weighting
@@ -285,14 +282,14 @@ class ClassWeightingConfig(BaseModel):
     """Class-weighting policy for classification imbalance handling."""
 
     policy: ClassImbalancePolicy = "off"
-    imbalance_threshold: Optional[float] = None
-    strategy: Optional[Literal["ratio", "balanced"]] = None
+    imbalance_threshold: float | None = None
+    strategy: Literal["ratio", "balanced"] | None = None
 
 class FeatureImportanceMethodConfig(BaseModel):
     """Configuration for feature-importance explainability method."""
 
     enabled: bool = False
-    type: Optional[Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"]] = None
+    type: Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"] | None = None
 
     @field_validator("type", mode="after")
     def validate_type_if_enabled(cls, v, info):
@@ -316,7 +313,7 @@ class SHAPMethodConfig(BaseModel):
     """Configuration for SHAP-based explainability method."""
 
     enabled: bool = False
-    approximate: Optional[Literal["tree", "linear", "kernel"]] = None
+    approximate: Literal["tree", "linear", "kernel"] | None = None
 
     @field_validator("approximate", mode="after")
     def validate_approximate_if_enabled(cls, v, info):
@@ -361,12 +358,12 @@ class MetaConfig(BaseModel):
     """Runtime metadata attached during config loading/validation."""
 
     model_config = ConfigDict(extra="allow")
-    sources: Optional[dict[str, Any]] = None
-    env: Optional[str] = None
-    best_params_path: Optional[str] = None
-    validation_status: Optional[str] = None
-    validation_errors: Optional[list[Any]] = None
-    config_hash: Optional[str] = None
+    sources: dict[str, Any] | None = None
+    env: str | None = None
+    best_params_path: str | None = None
+    validation_status: str | None = None
+    validation_errors: list[Any] | None = None
+    config_hash: str | None = None
 
 class ModelSpecs(BaseModel):
     """Canonical model specification shared by search and training schemas."""
@@ -426,7 +423,7 @@ class ModelSpecs(BaseModel):
                 raise ConfigError(msg)
 
         return self
-    
+
     # Validate that target.transform.enabled is False and target.transform.type is None for non-regression tasks, while for regression tasks, if target.transform.enabled is True, then target.transform.type must be specified
     @model_validator(mode="after")
     def validate_target_transform_consistency(cls, v):
@@ -454,7 +451,7 @@ class ModelSpecs(BaseModel):
                 logger.error(msg)
                 raise ConfigError(msg)
         return v
-    
+
     # validate that class_weighting is off for non-classification tasks
     @model_validator(mode="after")
     def validate_class_weighting_consistency(cls, v):

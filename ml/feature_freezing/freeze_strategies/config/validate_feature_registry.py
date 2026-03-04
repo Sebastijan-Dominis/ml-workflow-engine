@@ -3,8 +3,7 @@
 import logging
 
 from ml.exceptions import UserError
-from ml.feature_freezing.freeze_strategies.tabular.config.models import \
-    TabularFeaturesConfig
+from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +30,6 @@ def validate_feature_registry(raw_config: dict, data_type: str) -> TabularFeatur
         config = SCHEMAS[data_type](**raw_config)
         return config
     except UserError as e:
-        msg = f"Feature registry validation failed."
+        msg = "Feature registry validation failed."
         logger.error(msg)
         raise UserError(msg) from e

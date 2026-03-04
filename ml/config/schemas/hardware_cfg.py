@@ -1,13 +1,12 @@
 """Hardware execution configuration schemas for model workflows."""
 
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
-from pydantic import BaseModel, field_validator, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 # === Hardware TaskType enum ===
-class HardwareTaskType(str, Enum):
+class HardwareTaskType(StrEnum):
     """Supported compute backends for model execution."""
 
     CPU = "CPU"
@@ -19,8 +18,8 @@ class HardwareConfig(BaseModel):
 
     task_type: HardwareTaskType = Field(..., description="Compute backend to use for model execution.")
     devices: list[int] = Field(default_factory=list, description="List of device IDs to utilize (e.g., GPU indices).")
-    memory_limit_gb: Optional[float] = None
-    allow_growth: Optional[bool] = False
+    memory_limit_gb: float | None = None
+    allow_growth: bool | None = False
 
     @field_validator("task_type", mode="before")
     def normalize_task_type(cls, v):

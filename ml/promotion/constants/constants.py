@@ -4,6 +4,9 @@ import logging
 from dataclasses import dataclass
 from typing import Literal
 
+from ml.metadata.schemas.runners.evaluation import EvaluationMetadata
+from ml.metadata.schemas.runners.explainability import ExplainabilityMetadata
+from ml.metadata.schemas.runners.training import TrainingMetadata
 from ml.promotion.config.models import Direction, MetricName, MetricSet
 
 logger = logging.getLogger(__name__)
@@ -11,15 +14,15 @@ logger = logging.getLogger(__name__)
 Stage = Literal["staging", "production"]
 
 @dataclass
-class RunnersMetadata():
+class RunnersMetadata:
     """Metadata payloads loaded from train/eval/explain run directories."""
 
-    train_metadata: dict
-    eval_metadata: dict
-    explain_metadata: dict
+    training_metadata: TrainingMetadata
+    evaluation_metadata: EvaluationMetadata
+    explainability_metadata: ExplainabilityMetadata
 
 @dataclass
-class ThresholdComparisonResult():
+class ThresholdComparisonResult:
     """Outcome of comparing evaluation metrics against promotion thresholds."""
 
     meets_thresholds: bool
@@ -29,7 +32,7 @@ class ThresholdComparisonResult():
     directions: dict[MetricName, Direction]
 
 @dataclass
-class ProductionComparisonResult():
+class ProductionComparisonResult:
     """Outcome of comparing candidate model metrics against production."""
 
     beats_previous: bool
@@ -37,7 +40,7 @@ class ProductionComparisonResult():
     previous_production_metrics: dict | None
 
 @dataclass
-class PreviousProductionRunIdentity():
+class PreviousProductionRunIdentity:
     """Identifiers for the currently registered production model run."""
 
     experiment_id: str | None

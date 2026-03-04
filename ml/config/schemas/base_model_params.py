@@ -1,6 +1,5 @@
 """Shared base parameter schemas for train/search model configurations."""
 
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -8,15 +7,15 @@ from pydantic import BaseModel
 class BaseModelParams(BaseModel):
     """Core model hyperparameters shared across workflows."""
 
-    depth: Optional[int] = None
-    learning_rate: Optional[float] = None
-    l2_leaf_reg: Optional[float] = None
-    random_strength: Optional[float] = None
-    min_data_in_leaf: Optional[int] = None
-    border_count: Optional[int] = None
+    depth: int | None = None
+    learning_rate: float | None = None
+    l2_leaf_reg: float | None = None
+    random_strength: float | None = None
+    min_data_in_leaf: int | None = None
+    border_count: int | None = None
 
 class BaseEnsembleParams(BaseModel):
     """Ensemble-related hyperparameters shared across workflows."""
 
-    bagging_temperature: Optional[float] = None
-    colsample_bylevel: Optional[float] = None
+    bagging_temperature: float | None = None
+    colsample_bylevel: float | None = None

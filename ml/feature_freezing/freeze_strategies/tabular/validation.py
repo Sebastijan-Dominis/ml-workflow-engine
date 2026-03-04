@@ -3,14 +3,12 @@
 import logging
 
 import pandas as pd
-
 from ml.exceptions import DataError
-from ml.feature_freezing.freeze_strategies.tabular.config.models import \
-    TabularFeaturesConfig
-from ml.utils.features.validation.normalize_dtype import normalize_dtype
+from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.features.validation.normalize_dtype import normalize_dtype
 
 logger = logging.getLogger(__name__)
-        
+
 def validate_input_no_nulls(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
     """Validate configured no-null constraints on selected feature columns.
 
@@ -30,7 +28,7 @@ def validate_input_no_nulls(X: pd.DataFrame | pd.Series, config: TabularFeatures
                 logger.error(msg)
                 raise DataError(msg)
     logger.debug("Null value validation passed for all features.")
-        
+
 def validate_max_cardinality(X: pd.DataFrame | pd.Series, config: TabularFeaturesConfig):
     """Validate categorical cardinality does not exceed configured limits.
 
@@ -94,7 +92,7 @@ def validate_data_types(X: pd.DataFrame | pd.Series, config: TabularFeaturesConf
                 msg = f"Categorical feature {col} has invalid dtype {X[col].dtype}"
                 logger.error(msg)
                 raise DataError(msg)
-        
+
     for col in numerical_features:
         if col in X.columns:
             actual_dtype = normalize_dtype(X[col].dtype)
@@ -102,7 +100,7 @@ def validate_data_types(X: pd.DataFrame | pd.Series, config: TabularFeaturesConf
                 msg = f"Numerical feature {col} has invalid dtype {X[col].dtype}"
                 logger.error(msg)
                 raise DataError(msg)
-        
+
     for col in datetime_features:
         if col in X.columns:
             actual_dtype = normalize_dtype(X[col].dtype)
@@ -110,5 +108,5 @@ def validate_data_types(X: pd.DataFrame | pd.Series, config: TabularFeaturesConf
                 msg = f"Datetime feature {col} has invalid dtype {X[col].dtype}"
                 logger.error(msg)
                 raise DataError(msg)
-            
+
     logger.debug("Data type validation passed for all features.")

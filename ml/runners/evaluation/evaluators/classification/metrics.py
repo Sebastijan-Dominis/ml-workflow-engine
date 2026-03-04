@@ -1,20 +1,27 @@
 """Metric computation and split evaluation helpers for classification tasks."""
 
 import logging
-from typing import Optional
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import (accuracy_score, average_precision_score,
-                             balanced_accuracy_score, brier_score_loss,
-                             confusion_matrix, f1_score, log_loss,
-                             precision_score, recall_score, roc_auc_score)
-from sklearn.pipeline import Pipeline
-
 from ml.config.schemas.model_cfg import TrainModelConfig
-from ml.exceptions import PipelineContractError, UserError
+from ml.exceptions import EvaluationError, PipelineContractError, UserError
 from ml.runners.evaluation.constants.data_splits import DataSplits
+from ml.runners.evaluation.models.predictions import PredictionArtifacts
 from ml.runners.evaluation.utils.get_row_ids import get_row_ids
+from sklearn.metrics import (
+    accuracy_score,
+    average_precision_score,
+    balanced_accuracy_score,
+    brier_score_loss,
+    confusion_matrix,
+    f1_score,
+    log_loss,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
+from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +64,7 @@ def expected_calibration_error(
 def compute_metrics(
     y_true: pd.Series,
     y_pred: pd.Series,
-    y_prob: Optional[pd.Series] = None,
+    y_prob: pd.Series | None = None,
     *,
     threshold: float | None = None,
 ) -> dict[str, float]:
@@ -141,12 +148,12 @@ def compute_metrics(
     return metrics
 
 def evaluate_split(
-    pipeline: Pipeline, 
-    X: pd.DataFrame, 
-    y: pd.Series, 
-    *, 
+    pipeline: Pipeline,
+    X: pd.DataFrame,
+    y: pd.Series,
+    *,
     split_row_ids: pd.Series,
-    split_name: str, 
+    split_name: str,
     best_threshold: float | None
 ) -> tuple[dict[str, float], pd.DataFrame]: # default threshold=0.5
     """Evaluate a single split and return metrics plus prediction dataframe.
@@ -191,16 +198,16 @@ def evaluate_split(
         "y_pred": y_pred,
         "y_proba": y_prob,
     })
-    
+
     return metrics, df_preds
 
 def evaluate_model(
-    model_cfg: TrainModelConfig, 
-    *, 
-    pipeline: Pipeline, 
-    data_splits: DataSplits, 
+    model_cfg: TrainModelConfig,
+    *,
+    pipeline: Pipeline,
+    data_splits: DataSplits,
     best_threshold: float | None
-) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
+) -> tuple[dict[str, dict[str, float]], PredictionArtifacts]:
     """Evaluate all configured splits and aggregate metrics/prediction frames.
 
     Args:
@@ -210,12 +217,12 @@ def evaluate_model(
         best_threshold: Decision threshold for positive-class prediction.
 
     Returns:
-        tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]: Metrics and predictions by split.
+        tuple[dict[str, dict[str, float]], PredictionArtifacts]: Metrics and predictions by split.
     """
 
     # Create a dictionary to hold evaluation results
     evaluation_metrics = {}
-    prediction_dfs = {}
+    prediction_dfs_raw = {}
 
     # Evaluate each data split
     for split_name, (X, y) in data_splits.__dict__.items():
@@ -225,15 +232,15 @@ def evaluate_model(
                 X = X.drop(columns=["row_id"])
             logger.debug(f"Evaluating split '{split_name}' with best_threshold={best_threshold} and {len(y)} samples.")
             metrics, df_preds = evaluate_split(
-                pipeline=pipeline, 
-                X=X, 
-                y=y, 
-                split_row_ids=split_row_ids, 
-                split_name=split_name, 
+                pipeline=pipeline,
+                X=X,
+                y=y,
+                split_row_ids=split_row_ids,
+                split_name=split_name,
                 best_threshold=best_threshold
             )
             evaluation_metrics[split_name] = metrics
-            prediction_dfs[split_name] = df_preds
+            prediction_dfs_raw[split_name] = df_preds
         elif model_cfg.task.subtype and model_cfg.task.subtype.lower() == "multiclass":
             msg = f"Multiclass classification evaluation is not yet implemented for task '{model_cfg.task.type}' with subtype '{model_cfg.task.subtype}'."
             logger.error(msg)
@@ -242,6 +249,13 @@ def evaluate_model(
             msg = f"Unsupported task subtype '{model_cfg.task.subtype}' for evaluation."
             logger.error(msg)
             raise PipelineContractError(msg)
+
+    try:
+        prediction_dfs = PredictionArtifacts(**prediction_dfs_raw)
+    except Exception as e:
+        msg = "Failed to construct PredictionArtifacts from raw prediction dataframes."
+        logger.exception(msg)
+        raise EvaluationError(msg) from e
 
     #  Return evaluation results
     return evaluation_metrics, prediction_dfs

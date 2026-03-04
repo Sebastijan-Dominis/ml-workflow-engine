@@ -1,7 +1,6 @@
 """Typed explainability metric containers produced by explainers."""
 
 from dataclasses import dataclass
-from typing import Optional
 
 import pandas as pd
 
@@ -10,5 +9,5 @@ import pandas as pd
 class ExplainabilityMetrics:
     """Top-k explainability tables for model-level interpretation outputs."""
 
-    top_k_feature_importances: Optional[pd.DataFrame] = None
-    top_k_shap_importances: Optional[pd.DataFrame] = None
+    top_k_feature_importances: pd.DataFrame | None = None
+    top_k_shap_importances: pd.DataFrame | None = None

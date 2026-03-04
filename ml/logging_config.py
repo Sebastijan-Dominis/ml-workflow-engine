@@ -51,7 +51,7 @@ def add_file_handler(
     logging.getLogger().addHandler(handler)
     return handler
 
-def bootstrap_logging(level=logging.INFO):
+def bootstrap_logging(level=logging.INFO) -> None:
     """Initialize console/root logging without a file destination.
 
     This is useful for early-stage CLI startup before run-specific output

@@ -1,10 +1,8 @@
 """Validation schema for model training-stage configuration."""
 
-from pydantic import BaseModel, Field
-
-from ml.config.schemas.base_model_params import (BaseEnsembleParams,
-                                                 BaseModelParams)
+from ml.config.schemas.base_model_params import BaseEnsembleParams, BaseModelParams
 from ml.config.schemas.hardware_cfg import HardwareConfig, HardwareTaskType
+from pydantic import BaseModel, Field
 
 
 class TrainConfig(BaseModel):

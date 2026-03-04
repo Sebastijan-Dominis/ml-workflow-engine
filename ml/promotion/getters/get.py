@@ -4,6 +4,10 @@ import logging
 from pathlib import Path
 
 from ml.exceptions import PersistenceError, UserError
+from ml.metadata.schemas.runners.training import TrainingMetadata
+from ml.metadata.validation.runners.evaluation import validate_evaluation_metadata
+from ml.metadata.validation.runners.explainability import validate_explainability_metadata
+from ml.metadata.validation.runners.training import validate_training_metadata
 from ml.promotion.constants.constants import RunnersMetadata
 from ml.utils.loaders import load_json
 
@@ -21,10 +25,16 @@ def get_runners_metadata(train_run_dir: Path, eval_run_dir: Path, explain_run_di
         RunnersMetadata: Wrapper containing loaded metadata payloads.
     """
 
-    train_metadata = load_json(train_run_dir / "metadata.json")
-    eval_metadata = load_json(eval_run_dir / "metadata.json")
-    explain_metadata = load_json(explain_run_dir / "metadata.json")
-    return RunnersMetadata(train_metadata, eval_metadata, explain_metadata)
+    training_metadata_raw = load_json(train_run_dir / "metadata.json")
+    training_metadata = validate_training_metadata(training_metadata_raw)
+
+    evaluation_metadata_raw = load_json(eval_run_dir / "metadata.json")
+    evaluation_metadata = validate_evaluation_metadata(evaluation_metadata_raw)
+
+    explainability_metadata_raw = load_json(explain_run_dir / "metadata.json")
+    explainability_metadata = validate_explainability_metadata(explainability_metadata_raw)
+
+    return RunnersMetadata(training_metadata, evaluation_metadata, explainability_metadata)
 
 
 
@@ -45,46 +55,10 @@ def extract_thresholds(promotion_thresholds: dict, problem: str, segment: str) -
         msg = f"No promotion thresholds found for problem={problem} segment={segment}"
         logger.error(msg)
         raise UserError(msg)
-    
+
     return promotion_thresholds
 
-def get_artifacts(explain_metadata: dict) -> dict:
-    """Return required model artifact references from explainability metadata.
-
-    Args:
-        explain_metadata: Explainability metadata payload.
-
-    Returns:
-        dict: Required artifact metadata for promotion.
-    """
-
-    artifacts = explain_metadata.get("artifacts", {})
-
-    if not artifacts or artifacts.get("model_hash") is None or artifacts.get("model_path") is None:
-        msg = f"Explainability metadata is missing required artifact information. Artifacts found: {artifacts}"
-        logger.error(msg)
-        raise PersistenceError(msg)
-    
-    return artifacts
-
-def get_feature_lineage(training_metadata: dict) -> list[str]:
-    """Extract feature lineage information from training metadata.
-
-    Args:
-        training_metadata: Training metadata payload.
-
-    Returns:
-        list[str]: Feature lineage entries.
-    """
-
-    feature_lineage = training_metadata.get("lineage", {}).get("feature_lineage")
-    if not feature_lineage:
-        msg = "Training metadata is missing feature lineage information."
-        logger.error(msg)
-        raise PersistenceError(msg)
-    return feature_lineage
-
-def get_pipeline_cfg_hash(training_metadata: dict) -> str:
+def get_pipeline_cfg_hash(training_metadata: TrainingMetadata) -> str:
     """Extract pipeline config hash from training metadata.
 
     Args:
@@ -94,7 +68,7 @@ def get_pipeline_cfg_hash(training_metadata: dict) -> str:
         str: Pipeline configuration hash.
     """
 
-    pipeline_cfg_hash = training_metadata.get("config_fingerprint", {}).get("pipeline_cfg_hash")
+    pipeline_cfg_hash = training_metadata.config_fingerprint.pipeline_cfg_hash
     if not pipeline_cfg_hash:
         msg = "Training metadata is missing pipeline configuration hash information."
         logger.error(msg)

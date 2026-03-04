@@ -13,8 +13,8 @@ class Searcher(Protocol):
 
     @abstractmethod
     def search(
-        self, 
-        model_cfg: SearchModelConfig, 
+        self,
+        model_cfg: SearchModelConfig,
         *,
         strict: bool,
         failure_management_dir: Path

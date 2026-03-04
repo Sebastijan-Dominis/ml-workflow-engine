@@ -2,7 +2,7 @@
 
 import logging
 
-from ml.exceptions import RuntimeMLException
+from ml.exceptions import RuntimeMLError
 from ml.promotion.constants.constants import RunnersMetadata
 from ml.promotion.persistence.prepare import prepare_run_information
 from ml.promotion.result import PromotionResult
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class StagingPromotionStrategy(PromotionStrategy):
     """Apply threshold-only checks for staging promotion decisions."""
 
-    def execute(self, context, state):
+    def execute(self, context, state) -> PromotionResult:
         """Execute staging promotion decision logic.
 
         Args:
@@ -26,7 +26,7 @@ class StagingPromotionStrategy(PromotionStrategy):
         if not isinstance(context.runners_metadata, RunnersMetadata):
             msg = "Runners metadata is required for staging promotion strategy but was not found in context."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
 
         promotion_decision = state.threshold_comparison.meets_thresholds
 
@@ -41,8 +41,8 @@ class StagingPromotionStrategy(PromotionStrategy):
                 explain_run_id=context.args.explain_run_id,
                 run_id=context.run_id,
                 timestamp=context.timestamp,
-                explain_metadata=context.runners_metadata.explain_metadata,
-                training_metadata=context.runners_metadata.train_metadata,
+                explainability_metadata=context.runners_metadata.explainability_metadata,
+                training_metadata=context.runners_metadata.training_metadata,
                 metrics=state.evaluation_metrics,
                 git_commit=state.git_commit
             )

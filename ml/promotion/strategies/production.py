@@ -2,9 +2,8 @@
 
 import logging
 
-from ml.exceptions import RuntimeMLException
-from ml.promotion.comparisons.production import \
-    compare_against_production_model
+from ml.exceptions import RuntimeMLError
+from ml.promotion.comparisons.production import compare_against_production_model
 from ml.promotion.constants.constants import RunnersMetadata
 from ml.promotion.persistence.prepare import prepare_run_information
 from ml.promotion.result import PromotionResult
@@ -15,7 +14,7 @@ logger = logging.getLogger(__name__)
 class ProductionPromotionStrategy(PromotionStrategy):
     """Apply thresholds and production-baseline checks for promotion."""
 
-    def execute(self, context, state):
+    def execute(self, context, state) -> PromotionResult:
         """Execute production promotion decision logic.
 
         Args:
@@ -26,7 +25,7 @@ class ProductionPromotionStrategy(PromotionStrategy):
             Promotion decision result for the production strategy.
 
         Raises:
-            RuntimeMLException: If required runner metadata is missing from
+            RuntimeMLError: If required runner metadata is missing from
                 promotion context.
 
         Notes:
@@ -40,7 +39,7 @@ class ProductionPromotionStrategy(PromotionStrategy):
         if not isinstance(context.runners_metadata, RunnersMetadata):
             msg = "Runners metadata is required for production promotion strategy but was not found in context."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
 
         threshold_comparison = state.threshold_comparison
 
@@ -68,8 +67,8 @@ class ProductionPromotionStrategy(PromotionStrategy):
                 explain_run_id=context.args.explain_run_id,
                 run_id=context.run_id,
                 timestamp=context.timestamp,
-                explain_metadata=context.runners_metadata.explain_metadata,
-                training_metadata=context.runners_metadata.train_metadata,
+                explainability_metadata=context.runners_metadata.explainability_metadata,
+                training_metadata=context.runners_metadata.training_metadata,
                 metrics=state.evaluation_metrics,
                 git_commit=state.git_commit
             )

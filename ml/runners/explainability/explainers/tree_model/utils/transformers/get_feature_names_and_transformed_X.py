@@ -4,14 +4,13 @@ import logging
 
 import numpy as np
 import pandas as pd
+from ml.exceptions import DataError, PipelineContractError
 from numpy.typing import NDArray
 from sklearn.pipeline import Pipeline
 
-from ml.exceptions import DataError, PipelineContractError
-
 logger = logging.getLogger(__name__)
 
-def get_feature_names_and_transformed_X(pipeline: Pipeline, X: pd.DataFrame) -> tuple[NDArray[np.str_], pd.DataFrame]:
+def get_feature_names_and_transformed_x(pipeline: Pipeline, X: pd.DataFrame) -> tuple[NDArray[np.str_], pd.DataFrame]:
     """Transform features with pipeline preprocessors and return feature names.
 
     Args:

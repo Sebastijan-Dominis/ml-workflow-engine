@@ -10,8 +10,8 @@ DIRS_OK_TO_DELETE = ["learn", "test", "tmp"]
 
 def delete_failure_management_folder(
     *,
-    folder_path: Path, 
-    cleanup: bool, 
+    folder_path: Path,
+    cleanup: bool,
     stage: Literal["search", "train"]
 ) -> None:
     """Safely remove failure-management directories when cleanup is enabled."""
@@ -20,7 +20,7 @@ def delete_failure_management_folder(
     if not cleanup:
         logger.info(f"Skipping cleanup of failure management folder for experiment {folder_path.name}.")
         return
-    
+
     if folder_path.exists() and folder_path.is_dir():
         entries = list(folder_path.iterdir())
 
@@ -55,7 +55,7 @@ def delete_failure_management_folder(
             subdir.rmdir()
 
         folder_path.rmdir()
-        
+
         run_name = "experiment" if stage == "search" else "training"
         logger.info(f"Successfully deleted failure management folder for {run_name} {folder_path.name} at {folder_path}.")
     if stage == "search":
@@ -73,7 +73,7 @@ def delete_failure_management_folder(
         if experiment_failure_management_dir.exists() and experiment_failure_management_dir.is_dir() and not any(experiment_failure_management_dir.iterdir()):
             experiment_failure_management_dir.rmdir()
             logger.info(f"Deleted the experiment failure management directory, as it is now empty: {experiment_failure_management_dir.name}.")
-            
+
         main_failure_management_dir = experiment_failure_management_dir.parent
         if main_failure_management_dir.exists() and main_failure_management_dir.is_dir() and not any(main_failure_management_dir.iterdir()):
             main_failure_management_dir.rmdir()

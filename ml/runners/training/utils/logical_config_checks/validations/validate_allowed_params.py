@@ -29,5 +29,5 @@ def validate_allowed_params(model_cfg: TrainModelConfig, search_dir: Path) -> No
         msg = f"The following parameters are not allowed for algorithm {model_cfg.algorithm.value}: {unknown}"
         logger.error(msg)
         raise ConfigError(msg)
-    
+
     logger.debug(f"All parameters in best_model_params are allowed for algorithm {model_cfg.algorithm.value}.")

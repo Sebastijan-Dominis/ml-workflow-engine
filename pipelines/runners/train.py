@@ -24,37 +24,34 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
-from sklearn.pipeline import Pipeline
-
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PipelineContractError
+from ml.io.formatting.iso_no_colon import iso_no_colon
+from ml.io.formatting.str_to_bool import str_to_bool
 from ml.logging_config import add_file_handler, bootstrap_logging
-from ml.types.models import AllowedModels
-from ml.utils.hashing.service import hash_artifact
+from ml.modeling.models.feature_lineage import FeatureLineage
+from ml.runners.shared.lineage.validate_lineage_integrity import validate_lineage_integrity
+from ml.runners.shared.logical_config.validate_pipeline_cfg import validate_pipeline_cfg
+from ml.runners.shared.reproducibility.validate_reproducibility import validate_reproducibility
 from ml.runners.training.constants.output import TrainOutput
 from ml.runners.training.persistence.artifacts.save_model import save_model
-from ml.runners.training.persistence.artifacts.save_pipeline import \
-    save_pipeline
-from ml.runners.training.persistence.run_info.persist_training_run import \
-    persist_training_run
+from ml.runners.training.persistence.artifacts.save_pipeline import save_pipeline
+from ml.runners.training.persistence.run_info.persist_training_run import persist_training_run
 from ml.runners.training.trainers.base import Trainer
 from ml.runners.training.utils.get_trainer import get_trainer
-from ml.runners.training.utils.logical_config_checks.validate_logical_config import \
-    validate_logical_config
-from ml.search.utils.failure_management.delete_failure_management_folder import \
-    delete_failure_management_folder
-from ml.utils.experiments.lineage_integrity.validate_lineage_integrity import \
-    validate_lineage_integrity
-from ml.utils.experiments.logical_config.validate_pipeline_cfg import \
-    validate_pipeline_cfg
-from ml.utils.experiments.reproducibility.validate_reproducibility import \
-    validate_reproducibility
-from ml.utils.formatting.iso_no_colon import iso_no_colon
-from ml.utils.formatting.str_to_bol import str2bool
+from ml.runners.training.utils.logical_config_checks.validate_logical_config import (
+    validate_logical_config,
+)
+from ml.search.utils.failure_management.delete_failure_management_folder import (
+    delete_failure_management_folder,
+)
+from ml.types import AllowedModels, LatestSnapshot
+from ml.utils.hashing.service import hash_artifact
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
+from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -96,14 +93,14 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--env",
-        type=str,
+        choices=["dev", "test", "prod", "default"],
         default="default",
         help="Environment to run the script in (dev/test/prod) (default: default) ~ none"
     )
 
     parser.add_argument(
         "--strict",
-        type=str2bool,
+        type=str_to_bool,
         default=True,
         help="Whether to run in strict mode, which includes strict validation that may be computationally expensive (default: True)"
     )
@@ -111,27 +108,27 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--experiment-id",
         type=str,
-        default="latest",
+        default=LatestSnapshot.LATEST.value,
         help="Experiment id (directory name under experiments/{problem}/{segment}/{version}); if not provided, defaults to 'latest' which picks the most recent experiment directory"
     )
 
     parser.add_argument(
         "--logging-level",
-        type=str,
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
         default="INFO",
         help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
     )
 
     parser.add_argument(
         "--clean_up-failure-management",
-        type=str2bool,
+        type=str_to_bool,
         default=True,
         help="Whether to clean up failure management folder after successful run (default: True)"
     )
 
     parser.add_argument(
         "--overwrite-existing",
-        type=str2bool,
+        type=str_to_bool,
         default=False,
         help="Whether to overwrite existing train run data if the train run ID already exists (default: False). If False and files (other than train.log) already exist within the train run, the script will raise an error to prevent accidental data loss."
     )
@@ -161,7 +158,7 @@ def main() -> int:
     output: TrainOutput
     model: AllowedModels
     pipeline: Pipeline | None
-    feature_lineage: list[dict]
+    feature_lineage: list[FeatureLineage]
     metrics: dict[str, float]
     pipeline_cfg_hash: str | None
     model_path: Path
@@ -192,9 +189,9 @@ def main() -> int:
         msg = f"Train run directory {train_run_dir} does not exist for provided train run ID {args.train_run_id}."
         logger.error(msg)
         return 1
-    
+
     if train_run_dir.exists():
-        add_file_handler(train_run_dir / f"train.log", level=log_level)
+        add_file_handler(train_run_dir / "train.log", level=log_level)
         existing_files = [f.name for f in train_run_dir.iterdir() if f.is_file() and f.name != "train.log"]
         if existing_files and not args.overwrite_existing:
             msg = f"Train run directory {train_run_dir} already exists and contains files: {', '.join(existing_files)}. To prevent accidental data loss, the script will not overwrite existing train run data. To run training with this train run ID, please delete the existing files (if deemed appropriate), or set --overwrite-existing to True (if you want to overwrite the existing data)."
@@ -202,7 +199,7 @@ def main() -> int:
             return 1
     else:
         train_run_dir.mkdir(parents=True, exist_ok=False)
-        add_file_handler(train_run_dir / f"train.log", level=log_level)
+        add_file_handler(train_run_dir / "train.log", level=log_level)
 
     failure_management_dir = Path("failure_management") / experiment_dir.name / "training" / train_run_id
     failure_management_dir.mkdir(parents=True, exist_ok=True)
@@ -228,7 +225,7 @@ def main() -> int:
 
         logger.info(f"Starting training using experiment_id = {experiment_dir.name}.")
         output = trainer.train(
-            model_cfg, 
+            model_cfg,
             strict=args.strict,
             failure_management_dir=failure_management_dir,
         )
@@ -247,37 +244,37 @@ def main() -> int:
                 msg = "Pipeline config hash is missing in the trainer output, but a pipeline object is present. This is unexpected as the pipeline config hash is needed for reproducibility tracking. Please ensure that the trainer implementation returns a pipeline config hash when a pipeline is returned."
                 logger.error(msg)
                 raise PipelineContractError(msg)
-            
+
             pipeline = output.pipeline
             pipeline_path = save_pipeline(pipeline, train_run_dir)
             pipeline_hash = hash_artifact(pipeline_path)
             pipeline_cfg_hash = output.pipeline_cfg_hash
-        
+
 
         feature_lineage = output.lineage
         metrics = output.metrics
 
         persist_training_run(
-            model_cfg, 
-            feature_lineage=feature_lineage, 
-            start_time=start_time, 
-            train_run_id=train_run_id, 
-            experiment_dir=experiment_dir, 
-            train_run_dir=train_run_dir, 
-            metrics=metrics, 
-            model_hash=model_hash, 
-            pipeline_hash=pipeline_hash, 
-            model_path=model_path, 
-            pipeline_path=pipeline_path, 
-            pipeline_cfg_hash=pipeline_cfg_hash, 
+            model_cfg,
+            feature_lineage=feature_lineage,
+            start_time=start_time,
+            train_run_id=train_run_id,
+            experiment_dir=experiment_dir,
+            train_run_dir=train_run_dir,
+            metrics=metrics,
+            model_hash=model_hash,
+            pipeline_hash=pipeline_hash,
+            model_path=model_path,
+            pipeline_path=pipeline_path,
+            pipeline_cfg_hash=pipeline_cfg_hash,
             timestamp=timestamp
         )
 
         logger.info("Training run successfully persisted.")
 
         delete_failure_management_folder(
-            folder_path=failure_management_dir, 
-            cleanup=args.clean_up_failure_management, 
+            folder_path=failure_management_dir,
+            cleanup=args.clean_up_failure_management,
             stage="train"
         )
 

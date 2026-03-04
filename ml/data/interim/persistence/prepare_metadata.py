@@ -10,10 +10,12 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from ml.config.compute_config_hash import compute_config_hash
+from ml.config.compute_data_config_hash import compute_data_config_hash
 from ml.data.config.schemas.interim import InterimConfig
+from ml.io.formatting.iso_no_colon import iso_no_colon
+from ml.metadata.schemas.data.interim import InterimDatasetMetadata
+from ml.metadata.validation.data.interim import validate_interim_dataset_metadata
 from ml.utils.hashing.service import hash_data
-from ml.utils.formatting.iso_no_colon import iso_no_colon
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +30,7 @@ def prepare_metadata(
     owner: str, 
     memory_info: dict,
     interim_run_id: str
-) -> dict:
+) -> InterimDatasetMetadata:
     """Build metadata payload describing an interim data run.
 
     Args:
@@ -43,18 +45,18 @@ def prepare_metadata(
         interim_run_id: Unique interim run identifier.
 
     Returns:
-        dict: Serializable metadata dictionary.
+        InterimDatasetMetadata: The validated metadata object.
     """
 
     data_hash = hash_data(data_path)
          
-    config_hash = compute_config_hash(config)
+    config_hash = compute_data_config_hash(config)
     
     timestamp = iso_no_colon(datetime.now())
 
     duration = time.perf_counter() - start_time
 
-    metadata = {
+    metadata_raw = {
         "interim_run_id": interim_run_id,
         "source_data": {
             "name": config.data.name,
@@ -82,7 +84,7 @@ def prepare_metadata(
         },
         "config_hash": config_hash,
         "created_at": timestamp,
-        "created_by": "make_interim.py",
+        "created_by": "build_interim_dataset.py",
         "owner": owner,
         "duration": duration,
         "runtime_info": {
@@ -92,6 +94,8 @@ def prepare_metadata(
             "python_version": platform.python_version(),
         }
     }
-    logger.debug(f"Prepared metadata: {metadata}")
+
+    metadata = validate_interim_dataset_metadata(metadata_raw)
+    logger.debug(f"Prepared metadata.")
 
     return metadata

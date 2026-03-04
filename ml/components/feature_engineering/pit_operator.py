@@ -2,8 +2,7 @@
 
 import pandas as pd
 
-from ml.components.feature_engineering.base import (FeatureOperator,
-                                                    SklearnFeatureMixin)
+from ml.components.feature_engineering.base import FeatureOperator, SklearnFeatureMixin
 
 
 # Currently not used. Optimize better if needed in the future.
@@ -40,7 +39,7 @@ class PITOperator(FeatureOperator, SklearnFeatureMixin):
         """
         if not hasattr(self, "n_features_in_"):
             self.fit(X)
-        
+
         X = X.sort_values(self.groupby_cols + ['arrival_datetime'])
         X[self.feature_name] = (
             X.groupby(self.groupby_cols)[self.agg_col]

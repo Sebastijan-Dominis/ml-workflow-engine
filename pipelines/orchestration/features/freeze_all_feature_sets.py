@@ -14,14 +14,14 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
+from ml.io.formatting.iso_no_colon import iso_no_colon
+from ml.io.formatting.str_to_bool import str_to_bool
 from ml.logging_config import setup_logging
-from ml.utils.formatting.iso_no_colon import iso_no_colon
-from ml.utils.formatting.str_to_bol import str2bool
 from ml.utils.loaders import load_yaml
 
 logger = logging.getLogger(__name__)
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse command-line arguments for bulk feature freezing.
 
     Returns:
@@ -30,9 +30,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Freeze features.")
 
     parser.add_argument(
-        "--logging-level", 
-        type=str, 
-        default="INFO", 
+        "--logging-level",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="INFO",
         help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
     )
 
@@ -45,7 +45,7 @@ def parse_args():
 
     parser.add_argument(
         "--skip-if-existing",
-        type=str2bool,
+        type=str_to_bool,
         default=True,
         help="Skip freezing if at least one freeze folder already exists for the feature set (default: True)"
     )
@@ -97,15 +97,15 @@ def main() -> int:
 
     try:
         feature_registry = load_yaml(Path("configs/feature_registry/features.yaml"))
-    except Exception as e:
+    except Exception:
         logger.exception("Failed to load feature registry.")
         return 1
-    
+
     features_root = Path("feature_store")
 
-    for feature_set_name in feature_registry.keys():
-        for feature_set_version in feature_registry[feature_set_name].keys():
-            
+    for feature_set_name in feature_registry:
+        for feature_set_version in feature_registry[feature_set_name]:
+
             freeze_dir = features_root / feature_set_name / feature_set_version
 
             existing_freezes = (
@@ -143,6 +143,6 @@ def main() -> int:
 
     log_completion(start_time, f"Script completed successfully after freezing {successes_count} feature sets")
     return 0
-    
+
 if __name__ == "__main__":
     sys.exit(main())

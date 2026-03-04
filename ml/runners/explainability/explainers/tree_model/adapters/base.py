@@ -1,7 +1,7 @@
 """Abstract adapter interface for tree-model explainability backends."""
 
 from abc import ABC, abstractmethod
-from typing import Literal, Optional
+from typing import Literal
 
 import numpy as np
 import pandas as pd
@@ -35,7 +35,7 @@ class TreeModelAdapter(ABC):
         pass
 
     @abstractmethod
-    def compute_feature_importances(self, importance_type: Optional[Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"]]) -> np.ndarray:
+    def compute_feature_importances(self, importance_type: Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"] | None) -> np.ndarray:
         """Compute model feature-importance vector for requested importance type.
 
         Args:

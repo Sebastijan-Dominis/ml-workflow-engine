@@ -1,0 +1,44 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-activate-base: true
+          channels: conda-forge
+          channel-priority: strict
+
+      - name: Install tooling (conda-forge only)
+        shell: bash -l {0}
+        run: |
+          conda install -y -c conda-forge ruff isort mypy
+
+      - name: isort check
+        shell: bash -l {0}
+        run: isort --profile=black --line-length=100 --check-only ml pipelines scripts
+
+      - name: ruff check
+        shell: bash -l {0}
+        run: ruff check .
+
+      - name: mypy
+        shell: bash -l {0}
+        run: mypy ml pipelines
+
+      - name: import layer guardrails
+        shell: bash -l {0}
+        run: python scripts/quality/check_import_layers.py
+
+      - name: check naming conventions
+        shell: bash -l {0}
+        run: python scripts/quality/check_naming_conventions.py

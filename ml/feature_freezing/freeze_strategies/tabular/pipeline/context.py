@@ -3,14 +3,11 @@
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
-
-from ml.exceptions import RuntimeMLException
-from ml.feature_freezing.freeze_strategies.tabular.config.models import \
-    TabularFeaturesConfig
-from ml.utils.data.models import DataLineageEntry
+from ml.exceptions import RuntimeMLError
+from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.types import DataLineageEntry
 
 logger = logging.getLogger(__name__)
 
@@ -24,17 +21,17 @@ class FreezeContext:
     start_time: float
     owner: str
 
-    data: Optional[pd.DataFrame] = None
-    data_lineage: Optional[list[DataLineageEntry]] = None
+    data: pd.DataFrame | None = None
+    data_lineage: list[DataLineageEntry] | None = None
 
-    features: Optional[pd.DataFrame] = None
+    features: pd.DataFrame | None = None
 
-    snapshot_path: Optional[Path] = None
-    schema_path: Optional[Path] = None
-    data_path: Optional[Path] = None
+    snapshot_path: Path | None = None
+    schema_path: Path | None = None
+    data_path: Path | None = None
 
-    metadata: Optional[dict] = None
-    config_hash: Optional[str] = None
+    metadata: dict | None = None
+    config_hash: str | None = None
 
     @property
     def require_data(self) -> pd.DataFrame:
@@ -46,7 +43,7 @@ class FreezeContext:
         if self.data is None:
             msg = "Data not loaded yet. Ensure that the ingestion step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.data
 
     @property
@@ -59,7 +56,7 @@ class FreezeContext:
         if self.data_lineage is None:
             msg = "Data lineage not computed yet. Ensure that the ingestion step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.data_lineage
 
     @property
@@ -72,9 +69,9 @@ class FreezeContext:
         if self.features is None:
             msg = "Features not prepared yet. Ensure that the preprocessing step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.features
-    
+
     @property
     def require_snapshot_path(self) -> Path:
         """Return persisted snapshot path or raise if persistence not run.
@@ -85,9 +82,9 @@ class FreezeContext:
         if self.snapshot_path is None:
             msg = "Snapshot not persisted yet. Ensure that the persistence step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.snapshot_path
-    
+
     @property
     def require_schema_path(self) -> Path:
         """Return schema path or raise if persistence not run.
@@ -98,9 +95,9 @@ class FreezeContext:
         if self.schema_path is None:
             msg = "Schema not persisted yet. Ensure that the persistence step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.schema_path
-    
+
     @property
     def require_data_path(self) -> Path:
         """Return persisted feature data path or raise if unset.
@@ -111,9 +108,9 @@ class FreezeContext:
         if self.data_path is None:
             msg = "Data path not set. Ensure that the persistence step has been run and data path is set in the context."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.data_path
-    
+
     @property
     def require_config_hash(self) -> str:
         """Return computed config hash or raise if metadata step not run.
@@ -124,9 +121,9 @@ class FreezeContext:
         if self.config_hash is None:
             msg = "Config hash not computed yet. Ensure that the metadata step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.config_hash
-    
+
     @property
     def require_metadata(self) -> dict:
         """Return assembled metadata payload or raise if missing.
@@ -137,5 +134,5 @@ class FreezeContext:
         if self.metadata is None:
             msg = "Metadata not created yet. Ensure that the metadata step has been run."
             logger.error(msg)
-            raise RuntimeMLException(msg)
+            raise RuntimeMLError(msg)
         return self.metadata

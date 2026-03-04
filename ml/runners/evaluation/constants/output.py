@@ -2,7 +2,8 @@
 
 from dataclasses import dataclass
 
-import pandas as pd
+from ml.modeling.models.feature_lineage import FeatureLineage
+from ml.runners.evaluation.models.predictions import PredictionArtifacts
 
 
 @dataclass
@@ -10,5 +11,5 @@ class EvaluateOutput:
     """Evaluation metrics, prediction artifacts, and feature lineage payload."""
 
     metrics: dict[str, dict[str, float]]
-    prediction_dfs: dict[str, pd.DataFrame]
-    lineage: list[dict]
+    prediction_dfs: PredictionArtifacts
+    lineage: list[FeatureLineage]

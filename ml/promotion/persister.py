@@ -2,14 +2,13 @@
 
 import logging
 
-from ml.exceptions import RuntimeMLException
+from ml.exceptions import RuntimeMLError
+from ml.io.persistence.save_metadata import save_metadata
 from ml.promotion.context import PromotionContext
 from ml.promotion.persistence.prepare import prepare_metadata
-from ml.promotion.persistence.registry import (persist_registry_diff,
-                                               update_registry_and_archive)
+from ml.promotion.persistence.registry import persist_registry_diff, update_registry_and_archive
 from ml.promotion.result import PromotionResult
 from ml.promotion.state import PromotionState
-from ml.utils.persistence.save_metadata import save_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -37,17 +36,17 @@ class PromotionPersister:
                 )
                 log_msg = f"Model promoted and previous production model with promotion_id {previous_id} archived successfully."
                 return reason, log_msg
-            
+
             elif context.args.stage == "staging":
                 reason = "Model beats the thresholds. No comparison against production model for staging promotion."
                 log_msg = "Model promoted to staging successfully."
                 return reason, log_msg
-            
+
             else:
                 msg = f"Invalid stage '{context.args.stage}' in promotion context. Expected 'production' or 'staging'."
                 logger.error(msg)
-                raise RuntimeMLException(msg)
-            
+                raise RuntimeMLError(msg)
+
         else:
             if context.args.stage == "production":
                 threshold_comparison = state.threshold_comparison
@@ -55,7 +54,7 @@ class PromotionPersister:
                 if not result.production_comparison:
                     msg = "Production comparison result is missing in the promotion result. This should not happen for production stage."
                     logger.error(msg)
-                    raise RuntimeMLException(msg)
+                    raise RuntimeMLError(msg)
 
                 reasons = []
                 if not threshold_comparison.meets_thresholds:
@@ -70,11 +69,11 @@ class PromotionPersister:
                 reason = state.threshold_comparison.message
                 log_msg = f"Model staging criteria not met. Reasoning: {reason}"
                 return reason, log_msg
-            
+
             else:
                 msg = f"Invalid stage '{context.args.stage}' in promotion context. Expected 'production' or 'staging'."
                 logger.error(msg)
-                raise RuntimeMLException(msg)
+                raise RuntimeMLError(msg)
 
     def persist(
         self,
@@ -99,7 +98,7 @@ class PromotionPersister:
             if not result.run_info:
                 msg = "Promotion decision is True but run_info is missing in the result. This should not happen."
                 logger.error(msg)
-                raise RuntimeMLException(msg)
+                raise RuntimeMLError(msg)
 
             updated_registry = update_registry_and_archive(
                 model_registry=state.model_registry,

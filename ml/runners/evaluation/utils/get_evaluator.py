@@ -24,7 +24,7 @@ def get_evaluator(key: str) -> Evaluator:
         msg = f"No evaluator found for algorithm '{key}'."
         logger.error(msg)
         raise PipelineContractError(msg)
-    
+
     evaluator = evaluator_cls()
 
     logger.debug(

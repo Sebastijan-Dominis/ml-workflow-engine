@@ -19,7 +19,7 @@ def get_latest_snapshot_path(snapshot_dir: Path) -> Path:
     """
 
     snapshots = []
-    
+
     for s in snapshot_dir.iterdir():
         if not s.is_dir():
             continue
@@ -32,7 +32,7 @@ def get_latest_snapshot_path(snapshot_dir: Path) -> Path:
             logger.warning(f"Ignoring folder with invalid timestamp: {s.name}")
             continue
         snapshots.append(s)
-    
+
     if not snapshots:
         msg = f"No valid snapshots found in {snapshot_dir}"
         logger.error(msg)

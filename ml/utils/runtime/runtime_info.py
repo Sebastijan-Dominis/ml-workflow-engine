@@ -4,8 +4,7 @@ import logging
 import platform
 
 import psutil
-
-from ml.exceptions import RuntimeMLException
+from ml.exceptions import RuntimeMLError
 
 logger = logging.getLogger(__name__)
 
@@ -38,4 +37,4 @@ def get_runtime_info() -> dict:
     except Exception as e:
         msg = f"Failed to get runtime info: {e}"
         logger.error(msg)
-        raise RuntimeMLException(msg)
+        raise RuntimeMLError(msg) from e

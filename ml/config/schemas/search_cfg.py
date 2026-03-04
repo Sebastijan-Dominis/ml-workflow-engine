@@ -1,28 +1,26 @@
 """Validation schemas for broad/narrow hyperparameter search settings."""
 
-from typing import Optional
-
-from pydantic import BaseModel, Field
 
 from ml.config.schemas.hardware_cfg import HardwareConfig, HardwareTaskType
+from pydantic import BaseModel, Field
 
 
 # === Broad search model/ensemble params ===
 class BroadModelParams(BaseModel):
     """Broad-search parameter candidates for model-level hyperparameters."""
 
-    depth: Optional[list[int]] = None
-    learning_rate: Optional[list[float]] = None
-    l2_leaf_reg: Optional[list[float]] = None
-    colsample_bylevel: Optional[list[float]] = None
-    random_strength: Optional[list[float]] = None
-    min_data_in_leaf: Optional[list[int]] = None
-    border_count: Optional[list[int]] = None
+    depth: list[int] | None = None
+    learning_rate: list[float] | None = None
+    l2_leaf_reg: list[float] | None = None
+    colsample_bylevel: list[float] | None = None
+    random_strength: list[float] | None = None
+    min_data_in_leaf: list[int] | None = None
+    border_count: list[int] | None = None
 
 class BroadEnsembleParams(BaseModel):
     """Broad-search parameter candidates for ensemble-level hyperparameters."""
 
-    bagging_temperature: Optional[list[float]] = None
+    bagging_temperature: list[float] | None = None
 
 class BroadParamDistributions(BaseModel):
     """Container for broad-search parameter distributions."""
@@ -55,34 +53,34 @@ class NarrowIntParam(BaseModel):
     """Narrow-search configuration for integer-valued parameters."""
 
     include: bool
-    offsets: Optional[list[int]] = None
-    low: Optional[int] = None
-    high: Optional[int] = None
+    offsets: list[int] | None = None
+    low: int | None = None
+    high: int | None = None
 
 class NarrowFloatParam(BaseModel):
     """Narrow-search configuration for float-valued parameters."""
 
     include: bool
-    factors: Optional[list[float]] = None
-    low: Optional[float] = None
-    high: Optional[float] = None
-    decimals: Optional[int] = None
+    factors: list[float] | None = None
+    low: float | None = None
+    high: float | None = None
+    decimals: int | None = None
 
 class NarrowModelParams(BaseModel):
     """Narrow-search parameter rules for model-level hyperparameters."""
 
-    depth: Optional[NarrowIntParam] = None
-    learning_rate: Optional[NarrowFloatParam] = None
-    l2_leaf_reg: Optional[NarrowFloatParam] = None
-    colsample_bylevel: Optional[NarrowFloatParam] = None
-    random_strength: Optional[NarrowFloatParam] = None
-    min_data_in_leaf: Optional[NarrowIntParam] = None
-    border_count: Optional[NarrowIntParam] = None
+    depth: NarrowIntParam | None = None
+    learning_rate: NarrowFloatParam | None = None
+    l2_leaf_reg: NarrowFloatParam | None = None
+    colsample_bylevel: NarrowFloatParam | None = None
+    random_strength: NarrowFloatParam | None = None
+    min_data_in_leaf: NarrowIntParam | None = None
+    border_count: NarrowIntParam | None = None
 
 class NarrowEnsembleParams(BaseModel):
     """Narrow-search parameter rules for ensemble hyperparameters."""
 
-    bagging_temperature: Optional[NarrowFloatParam] = None
+    bagging_temperature: NarrowFloatParam | None = None
 
 class NarrowParamConfig(BaseModel):
     """Container for narrow-search parameter configuration blocks."""
@@ -118,4 +116,4 @@ class SearchConfig(BaseModel):
         n_iter=0,
     ))
     hardware: HardwareConfig = Field(default_factory=lambda: HardwareConfig(task_type=HardwareTaskType.GPU))
-    error_score: Optional[str] = None
+    error_score: str | None = None

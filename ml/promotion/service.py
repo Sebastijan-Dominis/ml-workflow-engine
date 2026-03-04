@@ -4,7 +4,6 @@ import logging
 from contextlib import contextmanager
 
 from filelock import FileLock
-
 from ml.exceptions import UserError
 from ml.promotion.context import PromotionContext
 from ml.promotion.getters.get import get_runners_metadata
@@ -13,7 +12,10 @@ from ml.promotion.state_loader import PromotionStateLoader
 from ml.promotion.strategies.production import ProductionPromotionStrategy
 from ml.promotion.strategies.staging import StagingPromotionStrategy
 from ml.promotion.validation.validate import (
-    validate_explainability_artifacts, validate_run_dirs, validate_run_ids)
+    validate_explainability_artifacts_consistency,
+    validate_run_dirs,
+    validate_run_ids,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -58,10 +60,10 @@ class PromotionService:
         validate_run_dirs(context.paths.train_run_dir, context.paths.eval_run_dir, context.paths.explain_run_dir)
         runners_metadata = get_runners_metadata(context.paths.train_run_dir, context.paths.eval_run_dir, context.paths.explain_run_dir)
         validate_run_ids(args=context.args, runners_metadata=runners_metadata)
-        validate_explainability_artifacts(runners_metadata=runners_metadata, args=context.args)
+        validate_explainability_artifacts_consistency(runners_metadata=runners_metadata, args=context.args)
         context.runners_metadata = runners_metadata
         return context
-    
+
     @contextmanager
     def _registry_lock(self, context: PromotionContext):
         """Acquire file lock around registry mutations to avoid concurrent writes.
@@ -77,7 +79,7 @@ class PromotionService:
         lock = FileLock(lock_path, timeout=300)
         with lock:
             yield
-    
+
     def _get_strategy(self, stage: str):
         """Resolve stage-specific promotion strategy implementation.
 
@@ -96,4 +98,3 @@ class PromotionService:
             msg = f"Unknown stage specified: {stage}. Supported stages are 'production' and 'staging'."
             logger.error(msg)
             raise UserError(msg)
-    

@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 
 import yaml
-
 from ml.exceptions import PersistenceError
 from ml.promotion.constants.constants import Stage
 
@@ -14,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def update_registry_and_archive(
     *,
-    model_registry: dict, 
+    model_registry: dict,
     archive_registry: dict,
     stage: Stage,
     run_info: dict,
@@ -40,7 +39,7 @@ def update_registry_and_archive(
     """
 
     new_registry = copy.deepcopy(model_registry, {})
-    
+
     new_registry.setdefault(problem, {})
     new_registry[problem].setdefault(segment, {})
     new_archive = None
@@ -56,7 +55,7 @@ def update_registry_and_archive(
             new_archive = copy.deepcopy(archive_registry, {})
             new_archive.setdefault(problem, {}).setdefault(segment, {})
             new_archive[problem][segment][promotion_id] = current_prod_model_info
-        
+
         new_registry[problem][segment]["production"] = run_info
     else:
         # Only one staging model is allowed per problem/segment, so we can directly set it without archiving
@@ -79,7 +78,7 @@ def update_registry_and_archive(
         msg = f"Failed to update model registry and archive. Run info: {run_info}"
         logger.exception(msg)
         raise PersistenceError(msg) from e
-    
+
 def persist_registry_diff(
     *,
     previous_registry: dict,

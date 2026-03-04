@@ -4,16 +4,21 @@ import logging
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import (explained_variance_score, mean_absolute_error,
-                             mean_squared_error, median_absolute_error,
-                             r2_score)
-from sklearn.pipeline import Pipeline
-
 from ml.config.schemas.model_specs import TargetTransformConfig
+from ml.exceptions import EvaluationError
+from ml.features.transforms.transform_target import inverse_transform_target
 from ml.runners.evaluation.constants.data_splits import DataSplits
+from ml.runners.evaluation.models.predictions import PredictionArtifacts
 from ml.runners.evaluation.utils.get_row_ids import get_row_ids
-from ml.utils.experiments.ensure_1d_array import ensure_1d_array
-from ml.utils.features.transform_target import inverse_transform_target
+from ml.runners.shared.formatting.ensure_1d_array import ensure_1d_array
+from sklearn.metrics import (
+    explained_variance_score,
+    mean_absolute_error,
+    mean_squared_error,
+    median_absolute_error,
+    r2_score,
+)
+from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -81,8 +86,8 @@ def evaluate_split(
     y_pred = ensure_1d_array(y_pred)
 
     y_pred = inverse_transform_target(
-        y_pred, 
-        transform_config=transform_cfg, 
+        y_pred,
+        transform_config=transform_cfg,
         split_name=split_name
     )
 
@@ -109,7 +114,7 @@ def evaluate_model(
     pipeline: Pipeline,
     data_splits: DataSplits,
     transform_cfg: TargetTransformConfig,
-) -> tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]:
+) -> tuple[dict[str, dict[str, float]], PredictionArtifacts]:
     """Evaluate all splits and aggregate regression metrics/predictions.
 
     Args:
@@ -118,11 +123,11 @@ def evaluate_model(
         transform_cfg: Target-transform configuration for inverse transform.
 
     Returns:
-        tuple[dict[str, dict[str, float]], dict[str, pd.DataFrame]]: Metrics and predictions by split.
+        tuple[dict[str, dict[str, float]], PredictionArtifacts]: Metrics and predictions by split.
     """
 
     evaluation_metrics: dict[str, dict[str, float]] = {}
-    prediction_dfs: dict[str, pd.DataFrame] = {}
+    prediction_dfs_raw: dict[str, pd.DataFrame] = {}
 
     for split_name, (X, y) in data_splits.__dict__.items():
 
@@ -145,6 +150,13 @@ def evaluate_model(
         )
 
         evaluation_metrics[split_name] = metrics
-        prediction_dfs[split_name] = df_preds
+        prediction_dfs_raw[split_name] = df_preds
+
+    try:
+        prediction_dfs = PredictionArtifacts(**prediction_dfs_raw)
+    except TypeError as e:
+        msg = f"Error constructing PredictionArtifacts with prediction dataframes: {prediction_dfs_raw}."
+        logger.exception(msg)
+        raise EvaluationError(msg) from e
 
     return evaluation_metrics, prediction_dfs

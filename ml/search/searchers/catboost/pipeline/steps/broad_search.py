@@ -3,14 +3,12 @@
 import logging
 
 import numpy as np
-
 from ml.exceptions import ConfigError, SearchError, UserError
+from ml.modeling.catboost.build_pipeline_with_model import build_pipeline_with_model
 from ml.search.searchers.catboost.model import prepare_model
 from ml.search.searchers.catboost.pipeline.context import SearchContext
 from ml.search.utils.failure_management.save_broad import save_broad
 from ml.search.utils.randomized_search import perform_randomized_search
-from ml.utils.catboost.build_pipeline_with_model import \
-    build_pipeline_with_model
 from ml.utils.loaders import load_json
 from ml.utils.pipeline_core.step import PipelineStep
 
@@ -31,7 +29,7 @@ class BroadSearchStep(PipelineStep[SearchContext]):
             None: Emits logging side effect only.
         """
         logger.info("Starting broad search step.")
-        
+
     def after(self, ctx: SearchContext) -> None:
         """Emit post-step log message.
 
@@ -67,9 +65,9 @@ class BroadSearchStep(PipelineStep[SearchContext]):
             return ctx
 
         model_1 = prepare_model(
-            ctx.model_cfg, 
+            ctx.model_cfg,
             search_phase="broad",
-            cat_features=ctx.require_cat_features, 
+            cat_features=ctx.require_cat_features,
             class_weights=ctx.class_weights
         )
 
@@ -95,7 +93,7 @@ class BroadSearchStep(PipelineStep[SearchContext]):
         try:
             broad_result = perform_randomized_search(
                 pipeline_1,
-                X_train=ctx.require_X_train,
+                X_train=ctx.require_x_train,
                 y_train=ctx.require_y_train,
                 param_distributions=broad_param_distributions,
                 model_cfg=ctx.model_cfg,

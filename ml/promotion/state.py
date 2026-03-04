@@ -1,11 +1,12 @@
 """State model containing promotion inputs loaded from persisted artifacts."""
 
 from dataclasses import dataclass
-from typing import Optional
 
 from ml.promotion.config.models import PromotionThresholds
-from ml.promotion.constants.constants import (PreviousProductionRunIdentity,
-                                              ThresholdComparisonResult)
+from ml.promotion.constants.constants import (
+    PreviousProductionRunIdentity,
+    ThresholdComparisonResult,
+)
 
 
 @dataclass
@@ -16,7 +17,7 @@ class PromotionState:
     archive_registry: dict
     evaluation_metrics: dict
     promotion_thresholds: PromotionThresholds
-    current_prod_model_info: Optional[dict]
+    current_prod_model_info: dict | None
     previous_production_run_identity: PreviousProductionRunIdentity
     git_commit: str
     threshold_comparison: ThresholdComparisonResult

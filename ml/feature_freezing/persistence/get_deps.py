@@ -3,7 +3,7 @@
 import logging
 from importlib.metadata import version
 
-from ml.exceptions import RuntimeMLException
+from ml.exceptions import RuntimeMLError
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ def get_deps():
         deps = {
             "numpy": get_pkg_version("numpy"),
             "pandas": get_pkg_version("pandas"),
-            "scikit-learn": get_pkg_version("scikit-learn"),
+            "scikit_learn": get_pkg_version("scikit-learn"),
             "pyarrow": get_pkg_version("pyarrow"),
             "pydantic": get_pkg_version("pydantic"),
             "PyYAML": get_pkg_version("PyYAML"),
@@ -38,7 +38,7 @@ def get_deps():
     except Exception as e:
         msg = f"Failed to get package versions: {e}"
         logger.error(msg)
-        raise RuntimeMLException(msg)
+        raise RuntimeMLError(msg) from e
 
     logger.debug(f"Collected dependencies: {deps}")
     return deps

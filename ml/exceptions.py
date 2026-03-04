@@ -4,13 +4,13 @@ The hierarchy separates user-actionable issues from internal runtime failures,
 enabling consistent error handling, logging, and CLI exit-code mapping.
 """
 
-class MLException(Exception):
+class MLBaseError(Exception):
     """Base class for all ML pipeline errors."""
 
-class UserError(MLException):
+class UserError(MLBaseError):
     """Errors caused by user configuration or misuse."""
 
-class RuntimeMLException(MLException):
+class RuntimeMLError(MLBaseError):
     """Errors caused by internal failures."""
 
 class ConfigError(UserError):
@@ -25,17 +25,17 @@ class PipelineContractError(UserError):
     lineage inconsistencies, incorrect stage ordering, or execution under
     an unrelated or incompatible experiment context."""
 
-class SearchError(RuntimeMLException):
+class SearchError(RuntimeMLError):
     """Hyperparameter search failure."""
 
-class TrainingError(RuntimeMLException):
+class TrainingError(RuntimeMLError):
     """Model training failure."""
 
-class EvaluationError(RuntimeMLException):
+class EvaluationError(RuntimeMLError):
     """Evaluation or metric computation failure."""
 
-class ExplainabilityError(RuntimeMLException):
+class ExplainabilityError(RuntimeMLError):
     """Explainability or interpretation stage failure."""
 
-class PersistenceError(RuntimeMLException):
+class PersistenceError(RuntimeMLError):
     """Experiment or artifact saving failure."""

@@ -6,8 +6,8 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
+from ml.io.formatting.iso_no_colon import iso_no_colon
 from ml.promotion.constants.constants import RunnersMetadata
-from ml.utils.formatting.iso_no_colon import iso_no_colon
 
 
 @dataclass

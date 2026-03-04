@@ -5,16 +5,13 @@ import sys
 import time
 from pathlib import Path
 
-from ml.feature_freezing.freeze_strategies.tabular.persistence import \
-    create_metadata
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
-    FreezeContext
+from ml.feature_freezing.freeze_strategies.tabular.persistence import create_metadata
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.feature_freezing.persistence.get_deps import get_deps
-from ml.utils.hashing.service import hash_file
-from ml.utils.features.hashing.hash_dataframe_content import \
-    hash_dataframe_content
-from ml.utils.features.hashing.hash_feature_schema import hash_feature_schema
+from ml.features.hashing.hash_dataframe_content import hash_dataframe_content
+from ml.features.hashing.hash_feature_schema import hash_feature_schema
 from ml.utils.git import get_git_commit
+from ml.utils.hashing.service import hash_file
 from ml.utils.pipeline_core.step import PipelineStep
 from ml.utils.runtime.runtime_info import get_runtime_info
 
@@ -90,13 +87,13 @@ class MetadataStep(PipelineStep[FreezeContext]):
             "python_executable": sys.executable
         }
 
-        operators_hash = (
+        operator_hash = (
             ctx.config.operators.hash
             if ctx.config.operators else "none"
         )
 
         duration = round(time.perf_counter() - ctx.start_time, 3)
-        
+
         metadata = create_metadata(
             timestamp = ctx.timestamp,
             snapshot_path = ctx.require_snapshot_path,
@@ -104,7 +101,7 @@ class MetadataStep(PipelineStep[FreezeContext]):
             data_lineage = [e.__dict__ for e in ctx.require_data_lineage],
             in_memory_hash = in_memory_hash,
             file_hash = file_hash,
-            operators_hash = operators_hash,
+            operator_hash = operator_hash,
             config_hash = ctx.require_config_hash,
             feature_schema_hash = feature_schema_hash,
             runtime = runtime,
@@ -114,5 +111,5 @@ class MetadataStep(PipelineStep[FreezeContext]):
         )
 
         ctx.metadata = metadata
-        
+
         return ctx

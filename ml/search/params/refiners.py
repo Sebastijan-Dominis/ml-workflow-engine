@@ -48,7 +48,7 @@ def refine_float_mult(center, factors, low, high, decimals=5):
         msg = f"Expected numeric center value, got {center} of type {type(center)}"
         logger.error(msg)
         raise ConfigError(msg)
-    
+
     values = set()
     for f in factors:
         v = round(center * f, decimals)

@@ -2,7 +2,6 @@
 
 from .catalogs import (
     FEATURE_OPERATORS,
-    FORMAT_REGISTRY_READ,
     MODEL_CLASS_REGISTRY,
     MODEL_PARAM_REGISTRY,
     OP_MAP,
@@ -12,15 +11,12 @@ from .catalogs import (
 from .factories import (
     EVALUATORS,
     EXPLAINERS,
-    FREEZE_STRATEGIES,
     SEARCHERS,
-    TARGET_STRATEGIES,
     TRAINERS,
 )
 
 __all__ = [
     "FEATURE_OPERATORS",
-    "FORMAT_REGISTRY_READ",
     "MODEL_CLASS_REGISTRY",
     "MODEL_PARAM_REGISTRY",
     "OP_MAP",
@@ -28,8 +24,6 @@ __all__ = [
     "REGRESSION_LOSS_FUNCTIONS",
     "EVALUATORS",
     "EXPLAINERS",
-    "FREEZE_STRATEGIES",
     "SEARCHERS",
-    "TARGET_STRATEGIES",
     "TRAINERS",
 ]

@@ -13,8 +13,8 @@ class Trainer(Protocol):
 
     @abstractmethod
     def train(
-        self, 
-        model_cfg: TrainModelConfig, 
+        self,
+        model_cfg: TrainModelConfig,
         *,
         strict: bool,
         failure_management_dir: Path

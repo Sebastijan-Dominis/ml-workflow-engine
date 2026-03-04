@@ -7,9 +7,14 @@ from typing import Any
 
 import pandas as pd
 import yaml
-
 from ml.exceptions import ConfigError, DataError
-from ml.registries.catalogs import FORMAT_REGISTRY_READ
+
+FORMAT_REGISTRY_READ = {
+    "parquet": pd.read_parquet,
+    "csv": pd.read_csv,
+    "json": pd.read_json,
+    "arrow": lambda p: pd.read_feather(p),
+}
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +58,7 @@ def load_json(path: Path, strict = True) -> dict[str, Any]:
         if strict:
             msg = f"File not found: {path}"
             logger.error(msg)
-            raise ConfigError(msg)
+            raise ConfigError(msg) from None
         else:
             # No logger warning, since non-strict loading is used in some cases where the file may not exist on first run (e.g. loading best broad params before they are saved). Log warnings separately if needed.
             return {}
@@ -64,12 +69,12 @@ def load_json(path: Path, strict = True) -> dict[str, Any]:
         except json.JSONDecodeError as e:
             msg = f"Invalid JSON in file {path}: {e}"
             logger.error(msg)
-            raise ConfigError(msg)
+            raise ConfigError(msg) from None
 
     if not isinstance(tgt_json, dict):
         msg = f"Content at {path} must be a JSON object"
         logger.error(msg)
-        raise ConfigError(msg)
+        raise ConfigError(msg) from None
 
     return tgt_json
 
@@ -88,8 +93,8 @@ def read_data(format: str, path: Path) -> pd.DataFrame:
     if not reader:
         msg = f"Unsupported data format: {format}"
         logger.error(msg)
-        raise ConfigError(msg)
-    
+        raise ConfigError(msg) from None
+
     try:
         if format == "csv":
             df = reader(path, na_values=['', 'NA', 'nan'], keep_default_na=True)
@@ -98,6 +103,6 @@ def read_data(format: str, path: Path) -> pd.DataFrame:
         logger.debug(f"Successfully read data in format '{format}' from {path}.")
         return df
     except Exception as e:
-        msg = f"Error reading data in format '{format}' from {path}. Details: {str(e)}"
-        logger.error(msg)
+        msg = f"Error reading data in format '{format}' from {path}."
+        logger.exception(msg)
         raise DataError(msg) from e

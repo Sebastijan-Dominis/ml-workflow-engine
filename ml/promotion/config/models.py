@@ -2,29 +2,28 @@
 
 import logging
 from datetime import datetime
-from enum import Enum
-
-from pydantic import BaseModel, Field, field_validator, model_validator
+from enum import StrEnum
 
 from ml.exceptions import ConfigError
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 logger = logging.getLogger(__name__)
 
-class MetricSet(str, Enum):
+class MetricSet(StrEnum):
     """Supported metric split sets for promotion evaluation."""
 
     TEST = "test"
     VAL = "val"
     TRAIN = "train"
 
-class MetricName(str, Enum):
+class MetricName(StrEnum):
     """Supported metric names used in promotion criteria."""
 
     ACCURACY = "accuracy"
     F1 = "f1"
     ROC_AUC = "roc_auc"
 
-class Direction(str, Enum):
+class Direction(StrEnum):
     """Optimization direction per promotion metric."""
 
     MAXIMIZE = "maximize"

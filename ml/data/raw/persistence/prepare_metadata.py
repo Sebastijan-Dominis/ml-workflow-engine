@@ -8,6 +8,8 @@ import pandas as pd
 
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.exceptions import PersistenceError
+from ml.metadata.schemas.data.raw import RawSnapshotMetadata
+from ml.metadata.validation.data.raw import validate_raw_snapshot_metadata
 from ml.utils.hashing.service import hash_data
 
 logger = logging.getLogger(__name__)
@@ -20,7 +22,7 @@ def prepare_metadata(
     raw_run_id: str,
     data_format: str,
     data_suffix: str
-) -> dict:
+) -> RawSnapshotMetadata:
     """Build metadata payload for a raw data snapshot.
 
     Args:
@@ -32,7 +34,7 @@ def prepare_metadata(
         data_suffix: Raw data file name or suffix.
 
     Returns:
-        dict: Serializable metadata dictionary.
+        RawSnapshotMetadata: The validated metadata object.
     """
 
     data_hash = hash_data(data_path)
@@ -40,7 +42,7 @@ def prepare_metadata(
     timestamp = datetime.now().isoformat()
 
     try:
-        metadata = {
+        metadata_raw = {
             "data": {
                 "name": args.data,
                 "version": args.version,
@@ -55,11 +57,14 @@ def prepare_metadata(
                 "dtypes": df.dtypes.astype(str).to_dict()
             },
             "created_at": timestamp,
-            "created_by": "handle_raw.py",
+            "created_by": "register_raw_snapshot.py",
             "owner": args.owner,
             "memory_usage_mb": get_memory_usage(df),
             "raw_run_id": raw_run_id
         }
+
+        metadata = validate_raw_snapshot_metadata(metadata_raw)
+        logger.debug(f"Prepared metadata.")
 
         return metadata
     except Exception as e:

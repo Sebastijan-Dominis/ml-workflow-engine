@@ -69,7 +69,7 @@ class PromotionStateLoader:
             promotion_thresholds=promotion_thresholds,
         )
 
-        return PromotionState(
+        promotion_state = PromotionState(
             model_registry=model_registry,
             archive_registry=archive_registry,
             evaluation_metrics=evaluation_metrics,
@@ -77,5 +77,7 @@ class PromotionStateLoader:
             current_prod_model_info=current_prod_model_info,
             previous_production_run_identity=previous_identity,
             git_commit=git_commit,
-            threshold_comparison=threshold_comparison,
+            threshold_comparison=threshold_comparison
         )
+
+        return promotion_state

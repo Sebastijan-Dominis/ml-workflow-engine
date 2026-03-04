@@ -6,14 +6,10 @@ from pathlib import Path
 from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.search.searchers.base import Searcher
 from ml.search.searchers.catboost.pipeline.context import SearchContext
-from ml.search.searchers.catboost.pipeline.steps.broad_search import \
-    BroadSearchStep
-from ml.search.searchers.catboost.pipeline.steps.narrow_search import \
-    NarrowSearchStep
-from ml.search.searchers.catboost.pipeline.steps.preparation import \
-    PreparationStep
-from ml.search.searchers.catboost.search_results_creator import \
-    create_search_results
+from ml.search.searchers.catboost.pipeline.steps.broad_search import BroadSearchStep
+from ml.search.searchers.catboost.pipeline.steps.narrow_search import NarrowSearchStep
+from ml.search.searchers.catboost.pipeline.steps.preparation import PreparationStep
+from ml.search.searchers.catboost.search_results_creator import create_search_results
 from ml.search.searchers.output import SearchOutput
 from ml.utils.pipeline_core.runner import PipelineRunner
 
@@ -23,10 +19,10 @@ class CatBoostSearcher(Searcher):
     """Run preparation, broad search, and optional narrow search phases."""
 
     def search(
-        self, 
-        model_cfg: SearchModelConfig, 
+        self,
+        model_cfg: SearchModelConfig,
         *,
-        strict: bool, 
+        strict: bool,
         failure_management_dir: Path,
     ) -> SearchOutput:
         """Execute CatBoost hyperparameter search and return structured output.
@@ -40,7 +36,7 @@ class CatBoostSearcher(Searcher):
             Search output containing search results, lineage, and run metadata.
         """
         ctx = SearchContext(
-            model_cfg=model_cfg, 
+            model_cfg=model_cfg,
             strict=strict,
             failure_management_dir=failure_management_dir
         )

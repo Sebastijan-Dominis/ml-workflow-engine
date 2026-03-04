@@ -5,20 +5,22 @@ from dataclasses import asdict
 from pathlib import Path
 
 from ml.config.schemas.model_cfg import SearchModelConfig
-from ml.types.splits import AllSplitsInfo
-from ml.utils.formatting.iso_no_colon import iso_no_colon
+from ml.io.formatting.iso_no_colon import iso_no_colon
+from ml.metadata.validation.search.search import validate_search_record
+from ml.modeling.models.feature_lineage import FeatureLineage
+from ml.types import AllSplitsInfo
 from ml.utils.git import get_git_commit
 
 logger = logging.getLogger(__name__)
 
 def prepare_metadata(
-    model_cfg: SearchModelConfig, 
-    *, 
-    search_results: dict, 
-    owner: str, 
-    experiment_id: str, 
-    timestamp: str, 
-    feature_lineage: list[dict], 
+    model_cfg: SearchModelConfig,
+    *,
+    search_results: dict,
+    owner: str,
+    experiment_id: str,
+    timestamp: str,
+    feature_lineage: list[FeatureLineage],
     pipeline_hash: str,
     scoring_method: str,
     splits_info: AllSplitsInfo
@@ -60,11 +62,7 @@ def prepare_metadata(
 
     algorithm = model_cfg.algorithm.value if getattr(model_cfg, "algorithm", None) else None
     seed = model_cfg.seed or "none"
-    hardware = (
-        model_cfg.search.hardware.model_dump()
-        if getattr(model_cfg.search, "hardware", None)
-        else {}
-    )
+    hardware = model_cfg.search.hardware
 
     meta = model_cfg.meta
     sources = meta.sources or {}
@@ -78,7 +76,7 @@ def prepare_metadata(
     validation_status = meta.validation_status or "unknown"
     splits_info_dict = asdict(splits_info)
 
-    record = {
+    record_raw = {
         "metadata": {
             "problem": problem,
             "segment": segment,
@@ -92,7 +90,7 @@ def prepare_metadata(
             "created_by": "search.py",
             "created_at": timestamp,
             "owner": owner,
-            "feature_lineage": feature_lineage,
+            "feature_lineage": [f.model_dump() for f in feature_lineage],
             "seed": seed,
             "hardware": hardware,
             "git_commit": git_commit,
@@ -110,13 +108,15 @@ def prepare_metadata(
 
     if task_type == "regression":
         transform = model_cfg.target.transform
-        record["metadata"]["target_transform"] = {
+        record_raw["metadata"]["target_transform"] = {
             "enabled": transform.enabled,
             **({"type": transform.type} if transform.type is not None else {}),
             **({"lambda": transform.lambda_value} if transform.lambda_value is not None else {}),
         }
 
     elif task_type == "classification":
-        record["metadata"]["class_weighting"] = model_cfg.class_weighting.model_dump()
+        record_raw["metadata"]["class_weighting"] = model_cfg.class_weighting.model_dump()
 
-    return record
+    record = validate_search_record(record_raw)
+
+    return record.model_dump(exclude_none=True)

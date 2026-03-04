@@ -6,13 +6,12 @@ import logging
 from copy import deepcopy
 from typing import Any, overload
 
-from ml.config.schemas.model_cfg import (SearchModelConfig,
-                                                    TrainModelConfig)
+from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 
-def compute_config_hash(cfg: dict[str, Any]) -> str:
+def compute_model_config_hash(cfg: dict[str, Any]) -> str:
     """Compute SHA-256 hash for a config dictionary excluding ``_meta``.
 
     Args:
@@ -67,7 +66,7 @@ def add_config_hash(cfg: SearchModelConfig | TrainModelConfig) -> SearchModelCon
     """
 
     runtime_dict = cfg.model_dump(exclude={"_meta"}, by_alias=True)
-    config_hash = compute_config_hash(runtime_dict)
+    config_hash = compute_model_config_hash(runtime_dict)
 
     cfg.meta.config_hash = config_hash
     return cfg

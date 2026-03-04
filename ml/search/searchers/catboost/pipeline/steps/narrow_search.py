@@ -3,16 +3,14 @@
 import logging
 
 import numpy as np
-
 from ml.exceptions import ConfigError, SearchError, UserError
+from ml.modeling.catboost.build_pipeline_with_model import build_pipeline_with_model
 from ml.search.params.catboost.refinement import prepare_narrow_params
 from ml.search.params.catboost.validation import validate_param_value
 from ml.search.searchers.catboost.model import prepare_model
 from ml.search.searchers.catboost.pipeline.context import SearchContext
 from ml.search.utils.failure_management.save_narrow import save_narrow
 from ml.search.utils.randomized_search import perform_randomized_search
-from ml.utils.catboost.build_pipeline_with_model import \
-    build_pipeline_with_model
 from ml.utils.loaders import load_json
 from ml.utils.pipeline_core.step import PipelineStep
 
@@ -87,7 +85,7 @@ class NarrowSearchStep(PipelineStep[SearchContext]):
                 ctx.model_cfg.problem, ctx.model_cfg.segment.name, ctx.model_cfg.version)
             ctx.narrow_disabled = True
             return ctx
-        
+
         ctx.narrow_disabled = False
 
         narrow_param_cfg = ctx.model_cfg.search.narrow.param_configurations
@@ -97,8 +95,8 @@ class NarrowSearchStep(PipelineStep[SearchContext]):
             raise ConfigError(msg)
 
         narrow_param_distributions = prepare_narrow_params(
-            best_params=ctx.require_best_params_1, 
-            narrow_params_cfg=narrow_param_cfg, 
+            best_params=ctx.require_best_params_1,
+            narrow_params_cfg=narrow_param_cfg,
             task_type=ctx.model_cfg.search.hardware.task_type.value
         )
 
@@ -108,9 +106,9 @@ class NarrowSearchStep(PipelineStep[SearchContext]):
                 validate_param_value(base_param_name, v, str(ctx.model_cfg.search.hardware.task_type.value).upper())
 
         model_2 = prepare_model(
-            ctx.model_cfg, 
+            ctx.model_cfg,
             search_phase="narrow",
-            cat_features=ctx.require_cat_features, 
+            cat_features=ctx.require_cat_features,
             class_weights=ctx.class_weights
         )
 
@@ -127,7 +125,7 @@ class NarrowSearchStep(PipelineStep[SearchContext]):
         try:
             narrow_result = perform_randomized_search(
                 pipeline_2,
-                X_train=ctx.require_X_train,
+                X_train=ctx.require_x_train,
                 y_train=ctx.require_y_train,
                 param_distributions=narrow_param_distributions,
                 model_cfg=ctx.model_cfg,

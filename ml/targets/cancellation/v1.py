@@ -1,7 +1,6 @@
 """Version 1 cancellation target strategy."""
 
 import pandas as pd
-
 from ml.targets.base import TargetStrategy
 
 

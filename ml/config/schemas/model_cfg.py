@@ -1,13 +1,12 @@
 """Top-level validated schemas for search and train model configurations."""
 
 from datetime import datetime
-from typing import Any, Optional
-
-from pydantic import BaseModel, Field
+from typing import Any
 
 from ml.config.schemas.model_specs import ModelSpecs
 from ml.config.schemas.search_cfg import SearchConfig
 from ml.config.schemas.train_cfg import TrainConfig
+from pydantic import BaseModel, Field
 
 
 class SearchLineageConfig(BaseModel):
@@ -29,9 +28,9 @@ class SearchModelConfig(ModelSpecs):
     search: SearchConfig
     seed: int
     cv: int
-    verbose: Optional[int] = 100
+    verbose: int | None = 100
     search_lineage: SearchLineageConfig
-    training: Optional[dict[str, Any]] = None  # inherited from shared defaults, unused
+    training: dict[str, Any] | None = None  # inherited from shared defaults, unused
 
     class Config:
         """Pydantic options for strict schema validation behavior."""
@@ -45,9 +44,9 @@ class TrainModelConfig(ModelSpecs):
     training: TrainConfig
     seed: int
     cv: int
-    verbose: Optional[int] = 100
+    verbose: int | None = 100
     training_lineage: TrainingLineageConfig
-    search: Optional[dict[str, Any]] = None  # inherited from shared defaults, unused
+    search: dict[str, Any] | None = None  # inherited from shared defaults, unused
 
     class Config:
         """Pydantic options for strict schema validation behavior."""

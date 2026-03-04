@@ -6,9 +6,8 @@ from typing import Any, Literal, overload
 
 from ml.config.best_params import MergeTarget, apply_best_params
 from ml.config.merge import apply_env_overlay, resolve_extends
+from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.config.validation import validate_model_config
-from ml.config.schemas.model_cfg import (SearchModelConfig,
-                                                    TrainModelConfig)
 from ml.exceptions import ConfigError, UserError
 from ml.utils.loaders import load_yaml
 
@@ -72,9 +71,9 @@ def load_config(
             msg = "search_dir must be provided for training configs"
             logger.error(msg)
             raise UserError(msg)
-        
+
         best_params_path = search_dir / "metadata.json"
-        
+
         cfg = apply_best_params(cfg, best_params_path, merge_target=merge_target, strict=True)
 
         cfg["_meta"]["best_params_path"] = (
@@ -84,7 +83,7 @@ def load_config(
     cfg["_meta"]["validation_status"] = "missing"
 
     logger.info("Final merged config: %s", cfg)
-    
+
     return cfg
 
 @overload

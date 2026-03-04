@@ -45,12 +45,12 @@ def validate_param_value(param_name: str, value, task_type: str):
         msg = f"{param_name}={value} > max allowed {constraints.max_value}"
         logger.error(msg)
         raise ConfigError(msg)
-    
+
     if param_name == "border_count" and task_type == "GPU" and value not in [32, 64, 128, 254]:
         msg = f"{param_name} has to be one of [32, 64, 128, 254] for GPU task type, got {value}"
         logger.error(msg)
         raise ConfigError(msg)
-    
+
     if param_name == "colsample_bylevel" and task_type == "GPU" and value != 1.0:
         msg = f"{param_name} has to be 1.0 for GPU task type, got {value}"
         logger.error(msg)

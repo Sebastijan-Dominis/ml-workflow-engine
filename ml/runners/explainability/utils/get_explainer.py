@@ -24,7 +24,7 @@ def get_explainer(key: str) -> Explainer:
         msg = f"No explainer found for algorithm '{key}'."
         logger.error(msg)
         raise PipelineContractError(msg)
-    
+
     evaluator = explainer_cls()
 
     logger.debug(

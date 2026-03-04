@@ -4,26 +4,28 @@ import logging
 from pathlib import Path
 
 from ml.config.schemas.model_cfg import TrainModelConfig
-from ml.utils.experiments.persistence.save_metrics import save_metrics
-from ml.utils.persistence.save_metadata import save_metadata
+from ml.io.persistence.save_metadata import save_metadata
+from ml.metadata.validation.runners.training import validate_training_metadata
+from ml.modeling.models.feature_lineage import FeatureLineage
+from ml.runners.shared.persistence.save_metrics import save_metrics
 from ml.utils.runtime.save_runtime import save_runtime_snapshot
 
 logger = logging.getLogger(__name__)
 
 def persist_training_run(
-    model_cfg: TrainModelConfig, 
-    *, 
-    train_run_id: str, 
-    experiment_dir: Path, 
-    train_run_dir: Path, 
-    start_time: float, 
-    timestamp: str, 
-    feature_lineage: list[dict], 
-    metrics: dict[str, float], 
-    model_hash: str, 
-    pipeline_hash: str | None, 
-    model_path: Path, 
-    pipeline_path: Path | None, 
+    model_cfg: TrainModelConfig,
+    *,
+    train_run_id: str,
+    experiment_dir: Path,
+    train_run_dir: Path,
+    start_time: float,
+    timestamp: str,
+    feature_lineage: list[FeatureLineage],
+    metrics: dict[str, float],
+    model_hash: str,
+    pipeline_hash: str | None,
+    model_path: Path,
+    pipeline_path: Path | None,
     pipeline_cfg_hash: str | None
 ) -> None:
     """Persist training metadata, metrics artifact, and runtime snapshot.
@@ -47,7 +49,7 @@ def persist_training_run(
         None.
     """
 
-    metadata = {
+    metadata_raw = {
         "run_identity": {
             "stage": "training",
             "train_run_id": train_run_id,
@@ -55,7 +57,7 @@ def persist_training_run(
             "status": "success",
         },
         "lineage": {
-            "feature_lineage": feature_lineage,
+            "feature_lineage": [f.model_dump() for f in feature_lineage],
             "target_column": model_cfg.target.name,
             "problem": model_cfg.problem,
             "segment": model_cfg.segment.name,
@@ -71,23 +73,25 @@ def persist_training_run(
     }
 
     if pipeline_cfg_hash and pipeline_path and pipeline_hash:
-        metadata["config_fingerprint"]["pipeline_cfg_hash"] = pipeline_cfg_hash
-        metadata["artifacts"]["pipeline_path"] = str(pipeline_path)
-        metadata["artifacts"]["pipeline_hash"] = pipeline_hash
+        metadata_raw["config_fingerprint"]["pipeline_cfg_hash"] = pipeline_cfg_hash
+        metadata_raw["artifacts"]["pipeline_path"] = str(pipeline_path)
+        metadata_raw["artifacts"]["pipeline_hash"] = pipeline_hash
 
-    save_metadata(metadata, target_dir=train_run_dir)
+    metadata = validate_training_metadata(metadata_raw)
+
+    save_metadata(metadata.model_dump(exclude_none=True), target_dir=train_run_dir)
 
     save_metrics(
-        metrics, 
-        model_cfg=model_cfg, 
-        target_run_id=train_run_id, 
-        experiment_dir=experiment_dir, 
+        metrics,
+        model_cfg=model_cfg,
+        target_run_id=train_run_id,
+        experiment_dir=experiment_dir,
         stage="training"
     )
 
     save_runtime_snapshot(
-        target_dir=train_run_dir, 
-        timestamp=timestamp, 
-        hardware_info=model_cfg.training.hardware, 
+        target_dir=train_run_dir,
+        timestamp=timestamp,
+        hardware_info=model_cfg.training.hardware,
         start_time=start_time
     )

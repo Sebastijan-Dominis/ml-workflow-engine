@@ -5,11 +5,9 @@ from pathlib import Path
 from typing import Any
 
 from catboost import CatBoostClassifier, CatBoostRegressor
-
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import UserError
-from ml.registries.catalogs import MODEL_CLASS_REGISTRY
-from ml.registries.catalogs import REGRESSION_LOSS_FUNCTIONS
+from ml.registries.catalogs import MODEL_CLASS_REGISTRY, REGRESSION_LOSS_FUNCTIONS
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +44,7 @@ def extract_catboost_params(model_cfg: TrainModelConfig) -> dict[str, Any]:
     return params
 
 def prepare_model(
-    model_cfg: TrainModelConfig, 
+    model_cfg: TrainModelConfig,
     *,
     cat_features: list,
     class_weights: dict,
@@ -92,7 +90,7 @@ def prepare_model(
         loss_function = None
         if model_cfg.scoring.policy == "regression_default":
             loss_function = "RMSE"
-            logger.debug(f"Using default regression metric RMSE.")
+            logger.debug("Using default regression metric RMSE.")
         elif model_cfg.scoring.policy == "fixed":
             if model_cfg.scoring.fixed_metric in REGRESSION_LOSS_FUNCTIONS:
                 loss_function = REGRESSION_LOSS_FUNCTIONS[model_cfg.scoring.fixed_metric]

@@ -4,11 +4,10 @@ import logging
 
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
-from sklearn.pipeline import Pipeline
-
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import TrainingError
-from ml.utils.add_model_to_pipeline import add_model_to_pipeline
+from ml.pipelines.composition.add_model_to_pipeline import add_model_to_pipeline
+from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +66,7 @@ def train_catboost_model(
             **fit_kwargs
         )
 
-        logger.info(f"Model trained successfully.")
+        logger.info("Model trained successfully.")
 
         pipeline = add_model_to_pipeline(preprocessing_pipeline, model)
 

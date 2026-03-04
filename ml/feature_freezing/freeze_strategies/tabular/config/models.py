@@ -3,11 +3,10 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Literal, Optional
-
-from pydantic import BaseModel, Field, field_validator, model_validator
+from typing import Literal
 
 from ml.exceptions import ConfigError
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +45,7 @@ class StorageConfig(BaseModel):
     """Snapshot storage format and compression settings."""
 
     format: Literal["parquet"]
-    compression: Optional[str] = "snappy"
+    compression: str | None = "snappy"
 
 class LineageConfig(BaseModel):
     """Lineage metadata for feature registry config provenance."""
@@ -64,7 +63,7 @@ class TabularFeaturesConfig(BaseModel):
     feature_store_path: Path
     columns: list[str]
     feature_roles: FeatureRolesConfig
-    operators: Optional[OperatorsConfig] = None
+    operators: OperatorsConfig | None = None
     constraints: ConstraintsConfig
     storage: StorageConfig
     lineage: LineageConfig
@@ -94,7 +93,7 @@ class TabularFeaturesConfig(BaseModel):
             logger.error(msg)
             raise ConfigError(msg)
         return v
-    
+
     @model_validator(mode="after")
     def validate_feature_roles_match_columns(cls, config):
         """Ensure feature role assignments exactly match included columns.
@@ -115,7 +114,7 @@ class TabularFeaturesConfig(BaseModel):
             logger.error(msg)
             raise ConfigError(msg)
         return config
-    
+
     @model_validator(mode="after")
     def validate_constraints_match_columns(cls, config):
         """Ensure constraint-referenced columns exist in included columns.
@@ -141,7 +140,7 @@ class TabularFeaturesConfig(BaseModel):
             logger.error(msg)
             raise ConfigError(msg)
         return config
-    
+
     # validate that all of the required features for operators are included in columns
     @model_validator(mode="after")
     def validate_required_features_for_operators(cls, config):

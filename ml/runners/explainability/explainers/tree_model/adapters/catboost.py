@@ -1,15 +1,13 @@
 """CatBoost-specific implementation of the tree-model adapter interface."""
 
 import logging
-from typing import Literal, Optional
+from typing import Literal
 
 import numpy as np
 import pandas as pd
 from catboost import Pool
-
 from ml.exceptions import ExplainabilityError
-from ml.runners.explainability.explainers.tree_model.adapters.base import \
-    TreeModelAdapter
+from ml.runners.explainability.explainers.tree_model.adapters.base import TreeModelAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -40,8 +38,8 @@ class CatBoostAdapter(TreeModelAdapter):
             raise ExplainabilityError(msg) from e
 
         return shap_values[:, :-1]
-    
-    def compute_feature_importances(self, importance_type: Optional[Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"]]) -> np.ndarray:
+
+    def compute_feature_importances(self, importance_type: Literal["PredictionValuesChange", "LossFunctionChange", "FeatureImportance", "TotalGain"] | None) -> np.ndarray:
         """Compute CatBoost feature importances for the requested type.
 
         Args:

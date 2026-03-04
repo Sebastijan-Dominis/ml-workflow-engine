@@ -2,12 +2,11 @@
 
 import logging
 
-from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import \
-    FreezeContext
+from ml.data.validation.validate_min_rows import validate_min_rows
+from ml.data.validation.validate_row_id import validate_row_id
+from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.feature_freezing.utils.data_loader import load_data_with_lineage
 from ml.feature_freezing.utils.operators import validate_operators
-from ml.utils.data.validate_min_rows import validate_min_rows
-from ml.utils.data.validate_row_id import validate_row_id
 from ml.utils.pipeline_core.step import PipelineStep
 
 logger = logging.getLogger(__name__)
@@ -38,7 +37,7 @@ class IngestionStep(PipelineStep[FreezeContext]):
             None: Emits logging side effect only.
         """
         logger.info("Completed data ingestion step.")
-    
+
     def run(self, ctx: FreezeContext) -> FreezeContext:
         """Execute ingestion workflow and update context with data and lineage.
 

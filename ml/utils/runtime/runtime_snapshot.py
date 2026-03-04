@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 
 from ml.config.schemas.hardware_cfg import HardwareConfig
-from ml.exceptions import RuntimeMLException
+from ml.exceptions import RuntimeMLError
 from ml.utils.git import get_git_commit
 from ml.utils.runtime.gpu_info import get_gpu_info
 from ml.utils.runtime.runtime_info import get_runtime_info
@@ -37,7 +37,7 @@ def find_conda_executable():
         if candidate.exists():
             return str(candidate)
 
-    raise RuntimeMLException("Could not locate conda executable.")
+    raise RuntimeMLError("Could not locate conda executable.")
 
 def _run_command(cmd: list[str]) -> str:
     """Execute command and return stdout, raising structured runtime errors.
@@ -60,7 +60,7 @@ def _run_command(cmd: list[str]) -> str:
     except Exception as e:
         msg = f"Command failed: {' '.join(cmd)} | {e}\nstdout: {getattr(e, 'stdout', '')}\nstderr: {getattr(e, 'stderr', '')}"
         logger.error(msg)
-        raise RuntimeMLException(msg)
+        raise RuntimeMLError(msg) from e
 
 
 def get_conda_env_export() -> str:
@@ -76,7 +76,7 @@ def get_conda_env_export() -> str:
     except Exception as e:
         msg = f"Failed to export conda environment: {e}"
         logger.error(msg)
-        raise RuntimeMLException(msg)
+        raise RuntimeMLError(msg) from e
 
 
 def hash_environment(env_export: str) -> str:
@@ -138,4 +138,4 @@ def build_runtime_snapshot(timestamp: str, hardware_info: HardwareConfig, start_
     except Exception as e:
         msg = f"Failed to build runtime snapshot: {e}"
         logger.error(msg)
-        raise RuntimeMLException(msg)
+        raise RuntimeMLError(msg) from e

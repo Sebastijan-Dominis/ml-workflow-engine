@@ -34,7 +34,7 @@ def validate_run_dirs(train_run_dir: Path, eval_run_dir: Path, explain_run_dir: 
         msg = f"Explain run directory does not exist: {explain_run_dir}"
         logger.error(msg)
         raise UserError(msg)
-    
+
 def validate_run_ids(
     *,
     args: argparse.Namespace,
@@ -50,21 +50,21 @@ def validate_run_ids(
         None: Raises on validation failure.
     """
 
-    train_metadata = runners_metadata.train_metadata
-    eval_metadata = runners_metadata.eval_metadata
-    explain_metadata = runners_metadata.explain_metadata
+    training_metadata = runners_metadata.training_metadata
+    evaluation_metadata = runners_metadata.evaluation_metadata
+    explainability_metadata = runners_metadata.explainability_metadata
 
-    if eval_metadata.get("run_identity", {}).get("train_run_id") != train_metadata.get("run_identity", {}).get("train_run_id"):
+    if evaluation_metadata.run_identity.train_run_id != training_metadata.run_identity.train_run_id:
         msg = f"Evaluation run {args.eval_run_id} is not linked to train run {args.train_run_id}"
         logger.error(msg)
         raise UserError(msg)
-    
-    if explain_metadata.get("run_identity", {}).get("train_run_id") != train_metadata.get("run_identity", {}).get("train_run_id"):
+
+    if explainability_metadata.run_identity.train_run_id != training_metadata.run_identity.train_run_id:
         msg = f"Explain run {args.explain_run_id} is not linked to train run {args.train_run_id}"
         logger.error(msg)
         raise UserError(msg)
 
-def validate_explainability_artifacts(runners_metadata: RunnersMetadata, args: argparse.Namespace) -> None:
+def validate_explainability_artifacts_consistency(runners_metadata: RunnersMetadata, args: argparse.Namespace) -> None:
     """Validate explainability run success and artifact hash consistency.
 
     Args:
@@ -75,33 +75,29 @@ def validate_explainability_artifacts(runners_metadata: RunnersMetadata, args: a
         None: Raises on validation failure.
     """
 
-    explain_status = runners_metadata.explain_metadata.get("run_identity", {}).get("status")
+    explain_status = runners_metadata.explainability_metadata.run_identity.status
     if explain_status != "success":
         msg = f"Explain run {args.explain_run_id} did not complete successfully. Status: {explain_status}"
         logger.error(msg)
         raise UserError(msg)
 
-    train_artifacts = runners_metadata.train_metadata.get("artifacts", {})
-    explain_artifacts = runners_metadata.explain_metadata.get("artifacts", {})
+    train_artifacts = runners_metadata.training_metadata.artifacts
+    explain_artifacts = runners_metadata.explainability_metadata.artifacts
 
-    if explain_artifacts.get("model_hash") is None:
-        msg = f"Explain run {args.explain_run_id} is missing model hash artifact."
-        logger.error(msg)
-        raise UserError(msg)
-    if explain_artifacts.get("model_hash") != train_artifacts.get("model_hash"):
+    if explain_artifacts.model_hash != train_artifacts.model_hash:
         msg = f"Model hash in explain run {args.explain_run_id} does not match model hash in train run {args.train_run_id}."
         logger.error(msg)
         raise UserError(msg)
-    
-    if explain_artifacts.get("pipeline_hash") is None:
+
+    if not explain_artifacts.pipeline_hash:
         msg = f"Explain run {args.explain_run_id} is missing pipeline hash artifact."
         logger.error(msg)
         raise UserError(msg)
-    if explain_artifacts.get("pipeline_hash") != train_artifacts.get("pipeline_hash"):
+    if explain_artifacts.pipeline_hash != train_artifacts.pipeline_hash:
         msg = f"Pipeline hash in explain run {args.explain_run_id} does not match pipeline hash in train run {args.train_run_id}."
         logger.error(msg)
         raise UserError(msg)
-    
+
 def validate_promotion_thresholds(promotion_thresholds: dict) -> PromotionThresholds:
     """Validate raw promotion thresholds payload into typed schema.
 

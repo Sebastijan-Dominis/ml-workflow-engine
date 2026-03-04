@@ -4,29 +4,28 @@ import argparse
 import logging
 from pathlib import Path
 
+from ml.metadata.schemas.runners.explainability import ExplainabilityMetadata
+from ml.metadata.schemas.runners.training import TrainingMetadata
 from ml.promotion.config.models import PromotionThresholds
 from ml.promotion.constants.constants import PreviousProductionRunIdentity
-from ml.promotion.getters.get import (get_artifacts, get_feature_lineage,
-                                      get_pipeline_cfg_hash,
-                                      get_training_conda_env_hash)
+from ml.promotion.getters.get import get_pipeline_cfg_hash, get_training_conda_env_hash
 from ml.utils.hashing.service import hash_thresholds
-from ml.utils.runtime.runtime_snapshot import (get_conda_env_export,
-                                               hash_environment)
+from ml.utils.runtime.runtime_snapshot import get_conda_env_export, hash_environment
 
 logger = logging.getLogger(__name__)
 
 def prepare_run_information(
     *,
     args: argparse.Namespace,
-    experiment_id: str, 
-    train_run_id: str, 
-    eval_run_id: str, 
-    explain_run_id: str, 
+    experiment_id: str,
+    train_run_id: str,
+    eval_run_id: str,
+    explain_run_id: str,
     run_id: str | None,
     timestamp: str,
-    training_metadata: dict,
-    explain_metadata: dict,
-    metrics: dict, 
+    training_metadata: TrainingMetadata,
+    explainability_metadata: ExplainabilityMetadata,
+    metrics: dict,
     git_commit: str,
 ) -> dict:
     """Build run-info payload to be written into model registry entries.
@@ -40,7 +39,7 @@ def prepare_run_information(
         run_id: Promotion/staging run identifier.
         timestamp: Current timestamp string.
         training_metadata: Training metadata payload.
-        explain_metadata: Explainability metadata payload.
+        explainability_metadata: Explainability metadata payload.
         metrics: Evaluation metrics payload.
         git_commit: Git commit hash.
 
@@ -48,9 +47,9 @@ def prepare_run_information(
         dict: Registry-ready run information payload.
     """
 
-    artifacts = get_artifacts(explain_metadata)
+    artifacts = explainability_metadata.artifacts
 
-    feature_lineage = get_feature_lineage(training_metadata)
+    feature_lineage = training_metadata.lineage.feature_lineage
 
     pipeline_cfg_hash = get_pipeline_cfg_hash(training_metadata)
 
@@ -62,9 +61,9 @@ def prepare_run_information(
         "model_version": args.version,
         "pipeline_cfg_hash": pipeline_cfg_hash,
 
-        "artifacts": artifacts,
+        "artifacts": artifacts.model_dump(),
 
-        "feature_lineage": feature_lineage,
+        "feature_lineage": [f.model_dump() for f in feature_lineage],
 
         "metrics": metrics,
 
@@ -73,11 +72,11 @@ def prepare_run_information(
 
     if args.stage == "production":
         run_info["promotion_id"] = run_id
-        run_info["promoted_at"] = timestamp    
+        run_info["promoted_at"] = timestamp
     elif args.stage == "staging":
         run_info["staging_id"] = run_id
         run_info["staged_at"] = timestamp
-    
+
     return run_info
 
 def prepare_metadata(
@@ -86,7 +85,7 @@ def prepare_metadata(
     args: argparse.Namespace,
     metrics: dict,
     previous_production_metrics: dict | None,
-    promotion_thresholds: PromotionThresholds, 
+    promotion_thresholds: PromotionThresholds,
     promoted: bool,
     beats_previous: bool,
     reason: str,

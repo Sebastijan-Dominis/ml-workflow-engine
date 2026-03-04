@@ -1,11 +1,4 @@
 {
-  "data": {
-    "name": "hotel_bookings",
-    "version": "v1",
-    "path_suffix": "data.csv",
-    "format": "csv",
-    "hash": "72e8a75c0a3d5c083c7d769f1b77d8565f99442d6da4c0af655ced51ee8adee0"
-  },
   "rows": 119390,
   "columns": {
     "count": 36,
@@ -86,9 +79,16 @@
       "credit_card": "object"
     }
   },
-  "created_at": "2026-03-03T02:24:12.611973",
-  "created_by": "handle_raw.py",
+  "created_at": "2026-03-04T03:40:15.684978",
+  "created_by": "register_raw_snapshot.py",
   "owner": "Sebastijan",
+  "data": {
+    "name": "hotel_bookings",
+    "version": "v1",
+    "format": "csv",
+    "path_suffix": "data.csv",
+    "hash": "72e8a75c0a3d5c083c7d769f1b77d8565f99442d6da4c0af655ced51ee8adee0"
+  },
   "memory_usage_mb": 138.0193214416504,
   "raw_run_id": "2026-02-25T22-43-23_732dfdb7"
 }
