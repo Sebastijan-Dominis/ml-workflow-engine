@@ -3,6 +3,7 @@
 import importlib
 import sys
 import types
+from typing import Any, cast
 
 import pytest
 from ml.exceptions import DataError, UserError
@@ -10,7 +11,7 @@ from ml.exceptions import DataError, UserError
 # Avoid importing the full registries stack in unit tests. This prevents unrelated
 # optional-runtime import failures (e.g., NumPy alias removals in downstream modules).
 if "ml.registries.catalogs" not in sys.modules:
-    catalogs_stub = types.ModuleType("ml.registries.catalogs")
+    catalogs_stub = cast(Any, types.ModuleType("ml.registries.catalogs"))
     catalogs_stub.FEATURE_OPERATORS = {}
     sys.modules["ml.registries.catalogs"] = catalogs_stub
 
