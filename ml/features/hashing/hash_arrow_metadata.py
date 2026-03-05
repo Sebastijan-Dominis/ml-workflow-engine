@@ -21,7 +21,7 @@ def hash_arrow_metadata(path: Path) -> str:
     """
 
     try:
-        with pa.memory_map(path, 'r') as source:
+        with pa.memory_map(str(path), 'r') as source:
             reader = pa.ipc.open_file(source)
             schema = reader.schema
 
