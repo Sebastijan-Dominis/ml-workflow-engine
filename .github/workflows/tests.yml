@@ -21,9 +21,7 @@ jobs:
           use-mamba: true
 
       - name: Show environment
-        run: |
-          conda list
-          python --version
+        run: conda run -n hotel_management conda list
 
       - name: Run tests
-        run: pytest -v --maxfail=1 --disable-warnings
+        run: conda run -n hotel_management pytest -v --maxfail=1 --disable-warnings
