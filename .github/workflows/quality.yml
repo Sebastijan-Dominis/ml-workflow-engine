@@ -24,7 +24,7 @@ jobs:
 
       - name: Install tooling on Linux/macOS
         if: runner.os != 'Windows'
-        shell: bash -l
+        shell: bash
         run: |
           conda install -y -c conda-forge ruff mypy types-pyyaml numpy-stubs
 
@@ -36,7 +36,7 @@ jobs:
 
       - name: ruff check
         run: ruff check .
-        shell: bash -l  # works on Linux/macOS
+        shell: bash  # works on Linux/macOS
         if: runner.os != 'Windows'
 
       - name: ruff check on Windows
@@ -46,7 +46,7 @@ jobs:
 
       - name: mypy
         run: mypy ml pipelines
-        shell: bash -l
+        shell: bash
         if: runner.os != 'Windows'
 
       - name: mypy on Windows
@@ -56,7 +56,7 @@ jobs:
 
       - name: import layer guardrails
         run: python scripts/quality/check_import_layers.py
-        shell: bash -l
+        shell: bash
         if: runner.os != 'Windows'
 
       - name: import layer guardrails on Windows
@@ -66,7 +66,7 @@ jobs:
 
       - name: check naming conventions
         run: python scripts/quality/check_naming_conventions.py
-        shell: bash -l
+        shell: bash
         if: runner.os != 'Windows'
 
       - name: check naming conventions on Windows
