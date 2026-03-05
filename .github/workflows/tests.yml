@@ -19,6 +19,7 @@ jobs:
           environment-file: environment.yml
           activate-environment: hotel_management
           use-mamba: true
+          auto-activate-base: false
 
       - name: Show environment
         run: conda run -n hotel_management conda list
