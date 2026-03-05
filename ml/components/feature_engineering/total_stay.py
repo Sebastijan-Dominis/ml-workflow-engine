@@ -19,7 +19,7 @@ class TotalStay(FeatureOperator, SklearnFeatureMixin):
             DataFrame with an added ``total_stay`` feature.
         """
         if not hasattr(self, "n_features_in_"):
-            self.fit(X)
+            SklearnFeatureMixin.fit(self, X)
 
         X = X.copy()
         X["total_stay"] = (

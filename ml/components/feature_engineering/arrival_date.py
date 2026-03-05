@@ -26,7 +26,7 @@ class ArrivalDate(FeatureOperator, SklearnFeatureMixin):
             DataFrame with an added ``arrival_date`` datetime column.
         """
         if not hasattr(self, "n_features_in_"):
-            self.fit(X)
+            SklearnFeatureMixin.fit(self, X)
 
         month_series = X["arrival_date_month"].map(month_map)
         X = X.copy()

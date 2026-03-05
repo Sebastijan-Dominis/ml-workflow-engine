@@ -20,7 +20,7 @@ class ArrivalSeason(FeatureOperator, SklearnFeatureMixin):
         """
 
         if not hasattr(self, "n_features_in_"):
-            self.fit(X)
+            SklearnFeatureMixin.fit(self, X)
 
         def week_to_season(w):
             """Map ISO week number to seasonal bucket label.

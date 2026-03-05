@@ -20,7 +20,7 @@ class AdrPerPerson(FeatureOperator, SklearnFeatureMixin):
             DataFrame with an added ``adr_per_person`` feature.
         """
         if not hasattr(self, "n_features_in_"):
-            self.fit(X)
+            SklearnFeatureMixin.fit(self, X)
 
         denom = (
             X["adults"] + X["children"] + X["babies"]
