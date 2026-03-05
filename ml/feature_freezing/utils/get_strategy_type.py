@@ -20,4 +20,8 @@ def get_strategy_type(cfg_raw: dict) -> str:
         msg = "Missing 'type' field in feature registry config."
         logger.error(msg)
         raise ConfigError(msg)
+    if not isinstance(cfg_raw["type"], str):
+        msg = "Expected 'type' field to be a string in feature registry config."
+        logger.error(msg)
+        raise ConfigError(msg)
     return cfg_raw["type"]

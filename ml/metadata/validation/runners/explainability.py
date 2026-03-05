@@ -18,7 +18,7 @@ def validate_explainability_metadata(explainability_metadata: dict[str, Any]) ->
     """
 
     try:
-        validated_metadata = ExplainabilityMetadata(**explainability_metadata)
+        validated_metadata = ExplainabilityMetadata.model_validate(explainability_metadata)
         logger.debug("Explainability metadata validation successful.")
         return validated_metadata
     except Exception as e:

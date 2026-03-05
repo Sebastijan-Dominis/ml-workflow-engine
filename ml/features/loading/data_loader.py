@@ -59,7 +59,7 @@ def load_and_validate_data(input_lineage: Iterable[DataLineageEntry]) -> pd.Data
 
     input_lineage = list(input_lineage)
     data = pd.DataFrame()
-    data_lineage = []
+    data_lineage: list[DataLineageEntry] = []
 
     if not input_lineage:
         msg = "No datasets specified in the input lineage."
@@ -92,20 +92,20 @@ def load_and_validate_data(input_lineage: Iterable[DataLineageEntry]) -> pd.Data
 
         loader_validation_hash = HASH_LOADER_REGISTRY[dataset.format](dataset_path)
 
-        data_lineage.append(DataLineageEntry(**{
-            "ref": dataset.ref,
-            "name": dataset.name,
-            "version": dataset.version,
-            "format": dataset.format,
-            "path_suffix": dataset.path_suffix.format(format=dataset.format),
-            "merge_key": dataset.merge_key,
-            "snapshot_id": dataset.snapshot_id,
-            "path": str(dataset_path),
-            "loader_validation_hash": loader_validation_hash,
-            "data_hash": data_hash,
-            "row_count": len(df),
-            "column_count": len(df.columns),
-        }))
+        data_lineage.append(DataLineageEntry(
+            ref=dataset.ref,
+            name=dataset.name,
+            version=dataset.version,
+            format=dataset.format,
+            path_suffix=dataset.path_suffix.format(format=dataset.format),
+            merge_key=dataset.merge_key,
+            snapshot_id=dataset.snapshot_id,
+            path=str(dataset_path),
+            loader_validation_hash=loader_validation_hash,
+            data_hash=data_hash,
+            row_count=len(df),
+            column_count=len(df.columns),
+        ))
 
         logger.debug(f"Loaded dataset {dataset.name} {dataset.version} snapshot {dataset.snapshot_id} "
              f"file {dataset_path} loader hash {loader_validation_hash}")

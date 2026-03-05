@@ -19,7 +19,7 @@ def validate_evaluation_metadata(metadata_dict: dict[str, Any]) -> EvaluationMet
     """
 
     try:
-        evaluation_metadata = EvaluationMetadata(**metadata_dict)
+        evaluation_metadata = EvaluationMetadata.model_validate(metadata_dict)
         logger.debug("Evaluation metadata validation successful.")
         return evaluation_metadata
     except Exception as e:

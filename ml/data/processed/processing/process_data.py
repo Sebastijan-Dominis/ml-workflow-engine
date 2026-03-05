@@ -6,8 +6,8 @@ Includes column removal and dataset-specific row-id generation dispatch.
 import logging
 
 import pandas as pd
-
 from ml.data.config.schemas.processed import ProcessedConfig
+from ml.data.processed.processing.add_row_id_base import RowIDMetadata
 from ml.exceptions import DataError, UserError
 from ml.policies.data.row_id import ROW_ID_FUNCTIONS
 
@@ -29,10 +29,10 @@ def remove_columns(df: pd.DataFrame, columns_to_remove: list) -> pd.DataFrame:
         msg = f"Cannot remove columns {missing_cols} because they are not present in the DataFrame."
         logger.error(msg)
         raise DataError(msg)
-    
+
     return df.drop(columns=columns_to_remove)
 
-def add_row_id(df: pd.DataFrame, cfg: ProcessedConfig) -> tuple[pd.DataFrame, dict]:
+def add_row_id(df: pd.DataFrame, cfg: ProcessedConfig) -> tuple[pd.DataFrame, RowIDMetadata]:
     """Apply registered row-id generation function for configured dataset.
 
     Args:
@@ -40,7 +40,7 @@ def add_row_id(df: pd.DataFrame, cfg: ProcessedConfig) -> tuple[pd.DataFrame, di
         cfg: Processed-data configuration.
 
     Returns:
-        tuple[pd.DataFrame, dict]: Dataframe with row IDs and row-id metadata.
+        tuple[pd.DataFrame, RowIDMetadata]: Dataframe with row IDs and row-id metadata.
     """
 
     row_id_fn = ROW_ID_FUNCTIONS.get(cfg.data.name)

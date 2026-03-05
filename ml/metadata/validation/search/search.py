@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def validate_search_record(record_raw: dict) -> SearchRecord:
     try:
-        record = SearchRecord(**record_raw)
+        record = SearchRecord.model_validate(record_raw)
         logger.debug("Validated search record.")
         return record
     except Exception as e:

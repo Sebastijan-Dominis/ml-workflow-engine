@@ -1,19 +1,12 @@
 repos:
   - repo: local
     hooks:
-      - id: isort
-        name: isort
-        entry: isort
-        language: system
-        types: [python]
-        args: ["--profile=black", "--line-length=100"]
-
       - id: ruff
         name: ruff check
         entry: ruff
         language: system
         types: [python]
-        args: ["check"]
+        args: ["check", "--fix"]
 
       - id: mypy
         name: mypy (ml + pipelines)

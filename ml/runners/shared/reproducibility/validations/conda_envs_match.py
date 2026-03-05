@@ -2,7 +2,7 @@
 
 import logging
 
-from ml.runners.shared.models.runtime_info import RuntimeInfo
+from ml.modeling.models.runtime_info import RuntimeInfo
 from ml.utils.runtime.runtime_snapshot import get_conda_env_export, hash_environment
 
 logger = logging.getLogger(__name__)

@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from ml.config.schemas.model_specs import TargetTransformConfig
 from ml.exceptions import ConfigError
+from numpy.typing import NDArray
 from scipy.special import boxcox as scipy_boxcox
 from scipy.special import inv_boxcox
 
@@ -91,7 +92,7 @@ def inverse_transform_target(
     *,
     transform_config: TargetTransformConfig,
     split_name: str
-) -> np.ndarray:
+) -> NDArray[np.floating]:
     """Apply inverse transformation to transformed target predictions or values.
 
     Args:
@@ -100,8 +101,9 @@ def inverse_transform_target(
         split_name: Human-readable split label for logging.
 
     Returns:
-        np.ndarray: Values mapped back to the original target scale.
+        NDArray[np.floating]: Values mapped back to the original target scale.
     """
+    result: NDArray[np.floating]
 
     logger.debug(f"Running the inverse_transform_target function for the '{split_name}' split; y_transformed_min: {y_transformed.min()}, y_transformed_max: {y_transformed.max()}")
     if not transform_config.enabled:
@@ -110,11 +112,11 @@ def inverse_transform_target(
 
     if transform_config.type == "log1p":
         logger.debug("Applying inverse log1p transformation to target.")
-        result = np.expm1(y_transformed)
+        result = np.expm1(y_transformed).astype(float)
 
     elif transform_config.type == "sqrt":
         logger.debug("Applying inverse sqrt transformation to target.")
-        result = np.square(y_transformed)
+        result= np.square(y_transformed).astype(float)
 
     elif transform_config.type == "boxcox":
         if transform_config.lambda_value is None:
@@ -123,7 +125,7 @@ def inverse_transform_target(
             raise ConfigError(msg) from None
 
         logger.debug("Applying inverse Box-Cox transformation to target with lambda=%.4f", transform_config.lambda_value)
-        result = inv_boxcox(y_transformed, transform_config.lambda_value)
+        result = np.array(inv_boxcox(y_transformed, transform_config.lambda_value), dtype=float)
 
     else:
         msg = f"Unsupported target transformation type: {transform_config.type}"

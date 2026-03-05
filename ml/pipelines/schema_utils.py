@@ -14,7 +14,8 @@ def get_categorical_features(schema: pd.DataFrame) -> list[str]:
     Returns:
         List of feature names with categorical-compatible dtypes.
     """
-    return schema.loc[schema["dtype"].isin(["object", "string", "category"]), "feature"].tolist()
+    categorical_features: list[str] = schema.loc[schema["dtype"].isin(["object", "string", "category"]), "feature"].tolist()
+    return categorical_features
 
 def get_pipeline_features(
     model_cfg: SearchModelConfig | TrainModelConfig,

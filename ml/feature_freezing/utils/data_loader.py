@@ -62,20 +62,20 @@ def load_data_with_lineage(config: TabularFeaturesConfig) -> tuple[pd.DataFrame,
 
         loader_validation_hash = HASH_LOADER_REGISTRY[dataset.format](dataset_path)
 
-        entry = DataLineageEntry(**{
-            "ref": dataset.ref,
-            "name": dataset.name,
-            "version": dataset.version,
-            "format": dataset.format,
-            "path_suffix": dataset.path_suffix,
-            "merge_key": dataset.merge_key,
-            "snapshot_id": dataset_snapshot_path.name,
-            "path": str(dataset_path),
-            "loader_validation_hash": loader_validation_hash,
-            "data_hash": data_hash,
-            "row_count": len(df),
-            "column_count": len(df.columns),
-        })
+        entry = DataLineageEntry(
+            ref=dataset.ref,
+            name=dataset.name,
+            version=dataset.version,
+            format=dataset.format,
+            path_suffix=dataset.path_suffix,
+            merge_key=dataset.merge_key,
+            snapshot_id=dataset_snapshot_path.name,
+            path=str(dataset_path),
+            loader_validation_hash=loader_validation_hash,
+            data_hash=data_hash,
+            row_count=len(df),
+            column_count=len(df.columns),
+        )
 
         data_lineage.append(entry)
 

@@ -33,7 +33,7 @@ def resolve_metric(config: SearchModelConfig | TrainModelConfig, stats: DataStat
     if policy == "regression_default":
         scoring = "neg_root_mean_squared_error" # == RMSE but works with sklearn's RandomizedSearchCV
         logger.info(f"Using default regression metric: {scoring}")
-        return scoring
+        return "neg_root_mean_squared_error"
 
     if stats is None:
         msg = f"Stats must be provided for non-fixed scoring policies. Got None for policy {policy}."
@@ -48,10 +48,10 @@ def resolve_metric(config: SearchModelConfig | TrainModelConfig, stats: DataStat
         if stats.minority_ratio < config.scoring.pr_auc_threshold:
             scoring = "average_precision" # average_precision is basically the same as pr_auc, but it uses a different method to calculate the area under the curve. It calculates the area using a step function. The terms are used interchangeably in this project.
             logger.info(f"Minority ratio {stats.minority_ratio:.4f} is below threshold {config.scoring.pr_auc_threshold:.4f}, using PR-AUC.")
-            return scoring
+            return "average_precision"
         scoring = "roc_auc"
         logger.info(f"Minority ratio {stats.minority_ratio:.4f} is above threshold {config.scoring.pr_auc_threshold:.4f}, using ROC-AUC.")
-        return scoring
+        return "roc_auc"
 
     msg = f"Unsupported scoring policy: {policy}"
     logger.error(msg)

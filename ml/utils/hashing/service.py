@@ -6,6 +6,7 @@ They keep call sites domain-explicit while preserving a single hashing
 mechanism.
 """
 
+from collections.abc import Callable
 from pathlib import Path
 
 from ml.features.hashing.hash_arrow_metadata import hash_arrow_metadata
@@ -13,7 +14,7 @@ from ml.features.hashing.hash_parquet_metadata import hash_parquet_metadata
 from ml.utils.hashing.hash_dict import hash_dict
 from ml.utils.hashing.hash_streaming import hash_streaming
 
-HASH_LOADER_REGISTRY = {
+HASH_LOADER_REGISTRY: dict[str, Callable[[Path], str]] = {
     "parquet": hash_parquet_metadata,
     "arrow": hash_arrow_metadata,
     "csv": hash_streaming,

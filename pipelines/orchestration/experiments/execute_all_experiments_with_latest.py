@@ -47,9 +47,9 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--logging-level", 
+        "--logging-level",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        default="INFO", 
+        default="INFO",
         help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
     )
 
@@ -90,14 +90,14 @@ def parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
-def discover_models():
+def discover_models() -> list[tuple[str, str, str]]:
     """Discover model tuples from the model specs directory structure.
 
     Returns:
         list[tuple[str, str, str]]: ``(problem, segment, version)`` tuples for
         all discoverable model specs.
     """
-    models = []
+    models: list[tuple[str, str, str]] = []
     if not MODEL_SPECS_DIR.exists():
         logger.error(f"Model specs directory does not exist: {MODEL_SPECS_DIR}")
         return models
@@ -116,10 +116,10 @@ def discover_models():
     return models
 
 def run_model(
-    problem: str, 
-    segment: str, 
+    problem: str,
+    segment: str,
     version: str,
-    *, 
+    *,
     args: argparse.Namespace,
     start_time: float
 ):
@@ -136,7 +136,7 @@ def run_model(
         int: Return code from the delegated subprocess.
     """
     model_experiments_dir = Path("experiments") / problem / segment / version
-    existing_experiment_dirs = [d for d in model_experiments_dir.iterdir() if d.is_dir()] if model_experiments_dir.exists() else []
+    existing_experiment_dirs: list[Path] = [d for d in model_experiments_dir.iterdir() if d.is_dir()] if model_experiments_dir.exists() else []
     if existing_experiment_dirs and args.skip_if_existing:
         logger.info(f"Skipping model {problem}/{segment}/{version} because experiment directories already exist, and skip-if-existing is set to True. Existing experiment directories: {[d.name for d in existing_experiment_dirs]}")
         return 0
@@ -162,7 +162,7 @@ def run_model(
     result = subprocess.run(cmd, text=True, capture_output=True, encoding="utf-8")
     if result.returncode != 0:
         log_completion(start_time, f"Experiments run failed with model problem={problem}, segment={segment}, version={version} with return code {result.returncode}")
-    else:        
+    else:
         log_completion(model_start_time, f"Experiment for model problem={problem}, segment={segment}, version={version} completed successfully")
     return result.returncode
 
@@ -205,9 +205,9 @@ def main() -> int:
     return_codes = []
     for problem, segment, version in models:
         ret = run_model(
-            problem, 
-            segment, 
-            version, 
+            problem,
+            segment,
+            version,
             args=args,
             start_time=start_time
         )
@@ -215,7 +215,7 @@ def main() -> int:
         if ret != 0:
             logger.warning(f"Continuing to next model despite failure in {problem}/{segment}/{version}")
 
-    failed_models = [(p, s, v) for (p, s, v), code in zip(models, return_codes) if code != 0]
+    failed_models = [(p, s, v) for (p, s, v), code in zip(models, return_codes, strict=True) if code != 0]
     if failed_models:
         logger.warning("Failed models:")
         for problem, segment, version in failed_models:

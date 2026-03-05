@@ -130,10 +130,10 @@ class EvaluateRegression(Evaluator):
             transform_cfg=model_cfg.target.transform,
         )
 
-        output = EvaluateOutput(**{
-            "metrics": metrics,
-            "prediction_dfs": prediction_dfs,
-            "lineage": feature_lineage,
-        })
+        output = EvaluateOutput(
+            metrics=metrics,
+            prediction_dfs=prediction_dfs,
+            lineage=feature_lineage,
+        )
 
         return output

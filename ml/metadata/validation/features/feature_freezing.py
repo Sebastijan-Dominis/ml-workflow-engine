@@ -20,7 +20,7 @@ def validate_freeze_metadata(metadata_dict: dict[str, Any]) -> FreezeMetadata:
     """
 
     try:
-        freeze_metadata = FreezeMetadata(**metadata_dict)
+        freeze_metadata = FreezeMetadata.model_validate(metadata_dict)
         logger.debug("Freeze metadata validation successful.")
         return freeze_metadata
     except Exception as e:

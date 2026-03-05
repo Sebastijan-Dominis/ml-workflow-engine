@@ -79,7 +79,7 @@ def load_feature_registry(feature_set: str, version: str) -> dict:
     path = Path("configs/feature_registry/features.yaml")
     with open(path, encoding="utf-8") as f:
         registry = yaml.safe_load(f)
-    return registry[feature_set][version]
+    return dict(registry[feature_set][version])
 
 def main() -> int:
     """Execute the feature freeze workflow.

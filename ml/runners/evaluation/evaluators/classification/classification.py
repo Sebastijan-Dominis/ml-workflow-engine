@@ -131,9 +131,9 @@ class ClassificationEvaluator(Evaluator):
             best_threshold=best_threshold
         )
 
-        output = EvaluateOutput(**{
-            "metrics": metrics,
-            "prediction_dfs": prediction_dfs,
-            "lineage": feature_lineage
-        })
+        output = EvaluateOutput(
+            metrics=metrics,
+            prediction_dfs=prediction_dfs,
+            lineage=feature_lineage
+        )
         return output

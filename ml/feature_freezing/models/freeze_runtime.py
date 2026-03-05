@@ -1,5 +1,5 @@
 """Schemas for the feature freezing process, including dependency versions and runtime information."""
-from ml.runners.shared.models.runtime_info import Runtime
+from ml.modeling.models.runtime_info import Runtime
 from pydantic import BaseModel
 
 

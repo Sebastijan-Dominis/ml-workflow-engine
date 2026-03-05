@@ -9,9 +9,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
-
 from ml.config.compute_data_config_hash import compute_data_config_hash
 from ml.data.config.schemas.processed import ProcessedConfig
+from ml.data.processed.processing.add_row_id_base import RowIDMetadata
 from ml.io.formatting.iso_no_colon import iso_no_colon
 from ml.metadata.schemas.data.processed import ProcessedDatasetMetadata
 from ml.metadata.validation.data.processed import validate_processed_dataset_metadata
@@ -20,18 +20,18 @@ from ml.utils.hashing.service import hash_data
 logger = logging.getLogger(__name__)
 
 def prepare_metadata(
-    df: pd.DataFrame, 
-    *, 
-    config: ProcessedConfig, 
-    start_time: float, 
-    data_path: Path, 
+    df: pd.DataFrame,
+    *,
+    config: ProcessedConfig,
+    start_time: float,
+    data_path: Path,
     source_data_path: Path,
     source_data_format: str,
     source_data_version: str,
-    owner: str, 
+    owner: str,
     memory_info: dict,
     processed_run_id: str,
-    row_id_info: dict | None = None
+    row_id_info: RowIDMetadata | None = None
 ) -> ProcessedDatasetMetadata:
     """Build metadata payload describing a processed data run.
 
@@ -53,9 +53,9 @@ def prepare_metadata(
     """
 
     data_hash = hash_data(data_path)
-         
+
     config_hash = compute_data_config_hash(config)
-    
+
     timestamp = iso_no_colon(datetime.now())
 
     duration = time.perf_counter() - start_time
@@ -104,6 +104,6 @@ def prepare_metadata(
         metadata_raw["row_id_info"] = row_id_info
 
     metadata = validate_processed_dataset_metadata(metadata_raw)
-    logger.debug(f"Prepared metadata.")
+    logger.debug("Prepared metadata.")
 
     return metadata

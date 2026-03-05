@@ -24,6 +24,7 @@ def validate_model_config(cfg_raw: dict[str, Any], cfg_type: Literal["search", "
     """
     cfg_raw.setdefault("_meta", {})
     try:
+        validated_cfg: SearchModelConfig | TrainModelConfig
         if cfg_type == "search":
             validated_cfg = SearchModelConfig(**cfg_raw)
         elif cfg_type == "train":

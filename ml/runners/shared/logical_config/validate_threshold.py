@@ -33,6 +33,11 @@ def validate_threshold(task: TaskConfig, metrics_path: Path) -> float | None:
         logger.warning("No threshold value found in metrics. Defaulting to 0.5.")
         return 0.5
 
+    if not isinstance(threshold, (int, float)):
+        msg = f"Threshold value must be a number. Found type {type(threshold).__name__}."
+        logger.error(msg)
+        raise ConfigError(msg)
+
     if threshold > 1.0 or threshold < 0.0:
         msg = f"Invalid threshold value: {threshold}. It must be between 0 and 1."
         logger.error(msg)
@@ -40,4 +45,4 @@ def validate_threshold(task: TaskConfig, metrics_path: Path) -> float | None:
 
     logger.debug(f"Threshold value {threshold} is valid.")
 
-    return threshold
+    return float(threshold)

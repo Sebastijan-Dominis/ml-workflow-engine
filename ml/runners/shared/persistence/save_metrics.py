@@ -7,6 +7,8 @@ from typing import Literal
 
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PersistenceError
+from ml.modeling.models.metrics import EvaluationMetrics, TrainingMetrics
+from ml.modeling.validation.metrics import validate_evaluation_metrics, validate_training_metrics
 
 logger = logging.getLogger(__name__)
 
@@ -35,8 +37,13 @@ def save_metrics(metrics: dict[str, float] | dict[str, dict[str, float]], *, mod
     }
 
     try:
+        validated_metrics: TrainingMetrics | EvaluationMetrics
+        if stage == "training":
+            validated_metrics = validate_training_metrics(metrics_json)
+        elif stage == "evaluation":
+            validated_metrics = validate_evaluation_metrics(metrics_json)
         with open(metrics_file, "w") as f:
-            json.dump(metrics_json, f, indent=2)
+            json.dump(validated_metrics.model_dump(exclude_none=True), f, indent=2)
         logger.info(f"Metrics successfully saved to {metrics_file}.")
         return str(metrics_file)
     except Exception as e:

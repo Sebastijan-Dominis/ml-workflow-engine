@@ -8,6 +8,7 @@ from ml.metadata.schemas.runners.training import TrainingMetadata
 from ml.metadata.validation.runners.evaluation import validate_evaluation_metadata
 from ml.metadata.validation.runners.explainability import validate_explainability_metadata
 from ml.metadata.validation.runners.training import validate_training_metadata
+from ml.modeling.validation.runtime_info import validate_runtime_info
 from ml.promotion.constants.constants import RunnersMetadata
 from ml.utils.loaders import load_json
 
@@ -86,8 +87,9 @@ def get_training_conda_env_hash(train_run_dir: Path) -> str:
     """
 
     training_runtime_file = train_run_dir / "runtime.json"
-    training_runtime = load_json(training_runtime_file)
-    training_conda_env_hash = training_runtime.get("environment", {}).get("conda_env_hash")
+    training_runtime_raw = load_json(training_runtime_file)
+    training_runtime = validate_runtime_info(training_runtime_raw)
+    training_conda_env_hash = training_runtime.environment.conda_env_hash
     if not training_conda_env_hash:
         msg = f"Training runtime information is missing conda environment hash. Runtime file: {training_runtime_file}"
         logger.error(msg)

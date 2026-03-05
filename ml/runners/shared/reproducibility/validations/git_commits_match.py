@@ -2,7 +2,7 @@
 
 import logging
 
-from ml.runners.shared.models.runtime_info import RuntimeInfo
+from ml.modeling.models.runtime_info import RuntimeInfo
 from ml.utils.git import get_git_commit, is_descendant_commit
 
 logger = logging.getLogger(__name__)

@@ -6,8 +6,13 @@ exploration in notebooks.
 
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import (ConfusionMatrixDisplay, RocCurveDisplay,
-                             classification_report, f1_score, roc_auc_score)
+from sklearn.metrics import (
+    ConfusionMatrixDisplay,
+    RocCurveDisplay,
+    classification_report,
+    f1_score,
+    roc_auc_score,
+)
 
 
 def evaluate_binary_classifier(pipeline, X_train, y_train, X_test, y_test, positive_label, negative_label):
@@ -48,10 +53,10 @@ def evaluate_binary_classifier(pipeline, X_train, y_train, X_test, y_test, posit
         normalize=None
     )
     disp_train.ax_.set_title("Training Set Confusion Matrix")
-    plt.show();
+    plt.show()
 
     print(classification_report(y_train, y_pred_train, target_names=[negative_label, positive_label]))
-    
+
     disp_test = ConfusionMatrixDisplay.from_predictions(
         y_test, y_pred_test,
         display_labels=[negative_label, positive_label],
@@ -59,7 +64,7 @@ def evaluate_binary_classifier(pipeline, X_train, y_train, X_test, y_test, posit
         normalize=None
     )
     disp_test.ax_.set_title("Test Set Confusion Matrix")
-    plt.show();
+    plt.show()
 
     print(classification_report(y_test, y_pred_test, target_names=[negative_label, positive_label]))
 
@@ -68,14 +73,14 @@ def evaluate_binary_classifier(pipeline, X_train, y_train, X_test, y_test, posit
     print(f"Training Set ROC AUC: {auc_train}")
 
     RocCurveDisplay.from_predictions(y_train, y_train_probs)
-    plt.show();
+    plt.show()
 
     y_probs_test = pipeline.predict_proba(X_test)[:, 1]
     auc_test = roc_auc_score(y_test, y_probs_test)
     print(f"Test Set ROC AUC: {auc_test}")
 
     RocCurveDisplay.from_predictions(y_test, y_probs_test)
-    plt.show();
+    plt.show()
 
 def optimal_f1_search(pipeline, X, y_true):
     """Search for the probability threshold that maximizes F1 score.
@@ -92,7 +97,7 @@ def optimal_f1_search(pipeline, X, y_true):
     Returns:
         float: Threshold that yields the maximum F1 score on the provided data.
     """
-    
+
     y_probs = pipeline.predict_proba(X)[:, 1]
 
     thresholds = np.linspace(0,1,101)

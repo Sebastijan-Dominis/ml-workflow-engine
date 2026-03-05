@@ -23,4 +23,4 @@ cols_for_row_id = [
     'agent',
 ]
 
-COLS_FOR_ROW_ID_FINGERPRINT = "456cb2413ef2d2871406ae1e763ce4306e4fb1aad834a29e145cddb0f39bfbda"
+COLS_FOR_ROW_ID_FINGERPRINT: str = "456cb2413ef2d2871406ae1e763ce4306e4fb1aad834a29e145cddb0f39bfbda"

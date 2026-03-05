@@ -4,10 +4,13 @@ import argparse
 import logging
 from pathlib import Path
 
+from ml.exceptions import UserError
 from ml.metadata.schemas.runners.explainability import ExplainabilityMetadata
 from ml.metadata.schemas.runners.training import TrainingMetadata
+from ml.metadata.validation.promotion.promote import validate_promotion_metadata
 from ml.promotion.config.models import PromotionThresholds
 from ml.promotion.constants.constants import PreviousProductionRunIdentity
+from ml.promotion.constants.promotion_metadata_dict import PromotionMetadataDict
 from ml.promotion.getters.get import get_pipeline_cfg_hash, get_training_conda_env_hash
 from ml.utils.hashing.service import hash_thresholds
 from ml.utils.runtime.runtime_snapshot import get_conda_env_export, hash_environment
@@ -81,7 +84,7 @@ def prepare_run_information(
 
 def prepare_metadata(
     *,
-    run_id: str | None,
+    run_id: str,
     args: argparse.Namespace,
     metrics: dict,
     previous_production_metrics: dict | None,
@@ -133,7 +136,7 @@ def prepare_metadata(
 
     thresholds_hash = hash_thresholds(promotion_thresholds.model_dump())
 
-    metadata = {
+    metadata: PromotionMetadataDict = {
         "run_identity": {
             "experiment_id": args.experiment_id,
             "train_run_id": args.train_run_id,
@@ -173,7 +176,13 @@ def prepare_metadata(
     if args.stage == "production":
         metadata["run_identity"]["promotion_id"] = run_id
         metadata["decision"]["beats_previous"] = beats_previous
+        validated_metadata = validate_promotion_metadata(metadata, "production")
     elif args.stage == "staging":
         metadata["run_identity"]["staging_id"] = run_id
+        validated_metadata = validate_promotion_metadata(metadata, "staging")
+    else:
+        msg = f"Invalid stage '{args.stage}' in promotion arguments. Stage must be either 'staging' or 'production'."
+        logger.error(msg)
+        raise UserError(msg)
 
-    return metadata
+    return validated_metadata.model_dump(exclude_none=True)

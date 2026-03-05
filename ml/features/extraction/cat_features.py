@@ -8,7 +8,7 @@ def get_cat_features(
     model_cfg: SearchModelConfig | TrainModelConfig,
     input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame
-) -> list:
+) -> list[str]:
     """Return categorical feature names from input/derived schemas with segmentation rules.
 
     Args:
@@ -36,4 +36,5 @@ def get_cat_features(
         seg_columns = [f.column for f in model_cfg.segmentation.filters]
         input_categoricals = [f for f in input_categoricals if f not in seg_columns]
 
-    return input_categoricals + derived_categoricals
+    categorical_features: list[str] = input_categoricals + derived_categoricals
+    return categorical_features

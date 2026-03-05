@@ -49,7 +49,7 @@ def persist_training_run(
         None.
     """
 
-    metadata_raw = {
+    metadata_raw: dict[str, dict[str, str | int | list | None]] = {
         "run_identity": {
             "stage": "training",
             "train_run_id": train_run_id,

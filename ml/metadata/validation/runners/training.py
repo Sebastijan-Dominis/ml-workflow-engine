@@ -18,7 +18,7 @@ def validate_training_metadata(training_metadata: dict[str, Any]) -> TrainingMet
     """
 
     try:
-        validated_metadata = TrainingMetadata(**training_metadata)
+        validated_metadata = TrainingMetadata.model_validate(training_metadata)
         logger.debug("Training metadata validation successful.")
         return validated_metadata
     except Exception as e:

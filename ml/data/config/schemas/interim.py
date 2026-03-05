@@ -2,15 +2,16 @@
 
 import logging
 from datetime import datetime
-from typing import Optional
-
-from pydantic import BaseModel, Field, model_validator
 
 from ml.data.config.schemas.constants import BorderValue
 from ml.data.config.schemas.shared import DataInfo
 from ml.exceptions import ConfigError
-from ml.policies.data.interim_constraints import (ALLOWED_VALUES_CONSTRAINTS,
-                                             MAX_CONSTRAINTS, MIN_CONSTRAINTS)
+from ml.policies.data.interim_constraints import (
+    ALLOWED_VALUES_CONSTRAINTS,
+    MAX_CONSTRAINTS,
+    MIN_CONSTRAINTS,
+)
+from pydantic import BaseModel, Field, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -67,49 +68,49 @@ class Cleaning(BaseModel):
 class Invariant(BaseModel):
     """Validation and filtering rules for a single column."""
 
-    min: Optional[BorderValue] = Field(None, description="Minimum allowed value for the column.")
-    max: Optional[BorderValue] = Field(None, description="Maximum allowed value for the column.")
-    allowed_values: Optional[list] = Field(None, description="List of allowed values for the column.")
+    min: BorderValue | None = Field(None, description="Minimum allowed value for the column.")
+    max: BorderValue | None = Field(None, description="Maximum allowed value for the column.")
+    allowed_values: list | None = Field(None, description="List of allowed values for the column.")
 
 class Invariants(BaseModel):
     """Column-level invariant rules covering the interim dataset schema."""
 
-    hotel: Optional[Invariant] = None
-    is_canceled: Optional[Invariant] = None
-    lead_time: Optional[Invariant] = None
-    arrival_date_year: Optional[Invariant] = None
-    arrival_date_month: Optional[Invariant] = None
-    arrival_date_week_number: Optional[Invariant] = None
-    arrival_date_day_of_month: Optional[Invariant] = None
-    stays_in_weekend_nights: Optional[Invariant] = None
-    stays_in_week_nights: Optional[Invariant] = None
-    adults: Optional[Invariant] = None
-    children: Optional[Invariant] = None
-    babies: Optional[Invariant] = None
-    meal: Optional[Invariant] = None
-    country: Optional[Invariant] = None
-    market_segment: Optional[Invariant] = None
-    distribution_channel: Optional[Invariant] = None
-    is_repeated_guest: Optional[Invariant] = None
-    previous_cancellations: Optional[Invariant] = None
-    previous_bookings_not_canceled: Optional[Invariant] = None
-    reserved_room_type: Optional[Invariant] = None
-    assigned_room_type: Optional[Invariant] = None
-    booking_changes: Optional[Invariant] = None
-    deposit_type: Optional[Invariant] = None
-    agent: Optional[Invariant] = None
-    company: Optional[Invariant] = None
-    days_in_waiting_list: Optional[Invariant] = None
-    customer_type: Optional[Invariant] = None
-    adr: Optional[Invariant] = None
-    required_car_parking_spaces: Optional[Invariant] = None
-    total_of_special_requests: Optional[Invariant] = None
-    reservation_status: Optional[Invariant] = None
-    reservation_status_date: Optional[Invariant] = None
-    name: Optional[Invariant] = None
-    email: Optional[Invariant] = None
-    phone_number: Optional[Invariant] = None
-    credit_card: Optional[Invariant] = None
+    hotel: Invariant | None = None
+    is_canceled: Invariant | None = None
+    lead_time: Invariant | None = None
+    arrival_date_year: Invariant | None = None
+    arrival_date_month: Invariant | None = None
+    arrival_date_week_number: Invariant | None = None
+    arrival_date_day_of_month: Invariant | None = None
+    stays_in_weekend_nights: Invariant | None = None
+    stays_in_week_nights: Invariant | None = None
+    adults: Invariant | None = None
+    children: Invariant | None = None
+    babies: Invariant | None = None
+    meal: Invariant | None = None
+    country: Invariant | None = None
+    market_segment: Invariant | None = None
+    distribution_channel: Invariant | None = None
+    is_repeated_guest: Invariant | None = None
+    previous_cancellations: Invariant | None = None
+    previous_bookings_not_canceled: Invariant | None = None
+    reserved_room_type: Invariant | None = None
+    assigned_room_type: Invariant | None = None
+    booking_changes: Invariant | None = None
+    deposit_type: Invariant | None = None
+    agent: Invariant | None = None
+    company: Invariant | None = None
+    days_in_waiting_list: Invariant | None = None
+    customer_type: Invariant | None = None
+    adr: Invariant | None = None
+    required_car_parking_spaces: Invariant | None = None
+    total_of_special_requests: Invariant | None = None
+    reservation_status: Invariant | None = None
+    reservation_status_date: Invariant | None = None
+    name: Invariant | None = None
+    email: Invariant | None = None
+    phone_number: Invariant | None = None
+    credit_card: Invariant | None = None
 
     @model_validator(mode="after")
     # validate that the invariants specified in the config do not violate the predefined constraints
@@ -152,7 +153,7 @@ class Invariants(BaseModel):
                     raise ConfigError(msg)
 
         return self
-    
+
     @model_validator(mode="before")
     # assign default invariants for columns that are not specified in the config
     def assign_default_invariants(cls, values):

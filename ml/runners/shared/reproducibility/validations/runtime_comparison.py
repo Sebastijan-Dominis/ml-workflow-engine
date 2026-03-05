@@ -3,7 +3,7 @@
 import logging
 import platform
 
-from ml.runners.shared.models.runtime_info import RuntimeInfo
+from ml.modeling.models.runtime_info import RuntimeInfo
 
 logger = logging.getLogger(__name__)
 

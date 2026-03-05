@@ -1,12 +1,13 @@
 """Typed output contract for training runner implementations."""
 
 from dataclasses import dataclass
+from typing import TypeAlias
 
 from catboost import CatBoostClassifier, CatBoostRegressor
 from ml.modeling.models.feature_lineage import FeatureLineage
 from sklearn.pipeline import Pipeline
 
-SUPPORTED_MODELS = CatBoostClassifier | CatBoostRegressor
+SUPPORTED_MODELS: TypeAlias = CatBoostClassifier | CatBoostRegressor
 
 @dataclass
 class TrainOutput:

@@ -2,21 +2,32 @@
 
 import logging
 
+from ml.feature_freezing.constants.output import FreezeOutput
+from ml.feature_freezing.freeze_strategies.base import FreezeStrategy
+
 logger = logging.getLogger(__name__)
 
-class FreezeTimeSeries:
+class FreezeTimeSeries(FreezeStrategy):
     """Stub strategy for time-series feature freezing workflows."""
 
-    def freeze(self, config, *, snapshot_id=None, timestamp=None, start_time=None):
+    def freeze(
+        self,
+        config,
+        *,
+        snapshot_id: str,
+        timestamp: str,
+        start_time: float,
+        owner: str
+    ) -> FreezeOutput:
         """Execute time-series freeze workflow (not yet implemented).
 
         Args:
             config: Time-series feature-freezing configuration.
-            snapshot_id: Optional snapshot identifier.
-            timestamp: Optional run timestamp.
-            start_time: Optional run start time.
-
+            timestamp: Run timestamp string used for metadata and paths.
+            snapshot_id: Unique snapshot identifier.
+            start_time: Process start time used for runtime metadata.
+            owner: Owner identifier stored in snapshot metadata.
         Returns:
-            None.
+            Freeze output containing persisted snapshot path and metadata.
         """
-        pass # To be implemented in the future
+        raise NotImplementedError("Time-series freeze not implemented yet") # To be implemented in the future

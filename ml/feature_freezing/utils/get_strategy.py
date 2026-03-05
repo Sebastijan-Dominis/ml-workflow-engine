@@ -8,7 +8,7 @@ from ml.feature_freezing.freeze_strategies.tabular.strategy import FreezeTabular
 from ml.feature_freezing.freeze_strategies.time_series import FreezeTimeSeries
 
 """Registry mapping feature data types to freeze strategy implementations."""
-FREEZE_STRATEGIES = {
+FREEZE_STRATEGIES: dict[str, type[FreezeStrategy]] = {
     "tabular": FreezeTabular,
     "time_series": FreezeTimeSeries,
 }
@@ -26,18 +26,15 @@ def get_strategy(data_type: str) -> FreezeStrategy:
     """
 
     strategy_cls = FREEZE_STRATEGIES.get(data_type)
-
-    if not strategy_cls:
+    if strategy_cls is None:
         msg = f"No freeze strategy registered for data type {data_type}."
         logger.error(msg)
         raise UserError(msg)
 
-    strategy = strategy_cls()
-
+    strategy = strategy_cls()  # type-safe instantiation
     logger.debug(
         "Using freeze strategy %s for data type=%s",
         strategy.__class__.__name__,
         data_type,
     )
-
     return strategy

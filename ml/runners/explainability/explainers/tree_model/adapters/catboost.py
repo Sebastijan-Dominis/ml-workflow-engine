@@ -28,10 +28,10 @@ class CatBoostAdapter(TreeModelAdapter):
                 data=X,
                 cat_features=self.model.get_cat_feature_indices()
             )
-            shap_values = self.model.get_feature_importance(
+            shap_values = np.asarray(self.model.get_feature_importance(
                 data=pool,
                 type="ShapValues"
-            )
+            ))
         except Exception as e:
             msg = "Error computing SHAP values for CatBoost model. Ensure that the input data is in the correct format and that the model supports SHAP value computation."
             logger.exception(msg)
@@ -49,7 +49,7 @@ class CatBoostAdapter(TreeModelAdapter):
             np.ndarray: Feature importance values.
         """
         try:
-            return self.model.get_feature_importance(type=importance_type)
+            return np.asarray(self.model.get_feature_importance(type=importance_type))
         except Exception as e:
             msg = f"Error computing CatBoost feature importances with type '{importance_type}'. Ensure that the importance type is valid and supported by CatBoost."
             logger.exception(msg)
