@@ -68,6 +68,47 @@ def test_validate_git_commits_match_logs_descendant_warning(monkeypatch: pytest.
     assert "is a descendant of expected" in caplog.text
 
 
+def test_validate_git_commits_match_descendant_path_checks_ancestry_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Call ancestry check once when descendant condition is satisfied on first evaluation."""
+    runtime_info = _runtime_info_stub(git_commit="base-commit")
+    monkeypatch.setattr("ml.runners.shared.reproducibility.validations.git_commits_match.get_git_commit", lambda: "head-commit")
+
+    calls: list[tuple[str, str]] = []
+
+    def _is_descendant(a: str, b: str) -> bool:
+        calls.append((a, b))
+        return True
+
+    monkeypatch.setattr("ml.runners.shared.reproducibility.validations.git_commits_match.is_descendant_commit", _is_descendant)
+
+    validate_git_commits_match(runtime_info)
+
+    assert calls == [("head-commit", "base-commit")]
+
+
+def test_validate_git_commits_match_logs_nothing_when_expected_is_descendant_of_current(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Emit no warnings when expected commit is descendant of current commit (reachable ancestry)."""
+    caplog.set_level(logging.WARNING)
+    runtime_info = _runtime_info_stub(git_commit="expected")
+    monkeypatch.setattr("ml.runners.shared.reproducibility.validations.git_commits_match.get_git_commit", lambda: "current")
+
+    calls: list[tuple[str, str]] = []
+
+    def _is_descendant(a: str, b: str) -> bool:
+        calls.append((a, b))
+        return (a, b) == ("expected", "current")
+
+    monkeypatch.setattr("ml.runners.shared.reproducibility.validations.git_commits_match.is_descendant_commit", _is_descendant)
+
+    validate_git_commits_match(runtime_info)
+
+    assert calls == [("current", "expected"), ("expected", "current")]
+    assert caplog.text == ""
+
+
 def test_validate_git_commits_match_logs_branch_divergence_warning(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:
     """Warn strongly when neither commit is ancestor/descendant of the other."""
     runtime_info = _runtime_info_stub(git_commit="expected")
@@ -108,6 +149,19 @@ def test_validate_conda_envs_match_logs_warning_when_hash_differs(monkeypatch: p
     validate_conda_envs_match(runtime_info)
 
     assert "does not match expected" in caplog.text
+
+
+def test_validate_conda_envs_match_propagates_env_export_failures(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Propagate failures from environment export collection without swallowing exceptions."""
+    runtime_info = _runtime_info_stub(conda_env_hash="expected-hash")
+
+    def _failing_export() -> str:
+        raise RuntimeError("conda export failed")
+
+    monkeypatch.setattr("ml.runners.shared.reproducibility.validations.conda_envs_match.get_conda_env_export", _failing_export)
+
+    with pytest.raises(RuntimeError, match="conda export failed"):
+        validate_conda_envs_match(runtime_info)
 
 
 def test_validate_runtime_matches_logs_debug_when_all_runtime_fields_match(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:
