@@ -11,77 +11,28 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Conda
-        uses: conda-incubator/setup-miniconda@v3
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          auto-activate-base: false
-          channels: conda-forge
-          channel-priority: strict
-          python-version: 3.11.14
+          python-version: "3.11.14"
 
-      - name: Install tooling on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash
+      - name: Install tooling
         run: |
-          conda create -y -n quality python=3.11 --solver=libmamba --quiet
-          conda install -y -n quality -c conda-forge ruff mypy types-pyyaml --solver=libmamba --quiet
-          pip install --quiet --prefix $CONDA_PREFIX numpy-stubs
+          python -m pip install --upgrade pip
+          pip install ruff mypy types-pyyaml numpy-stubs
 
-      - name: Install tooling on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          conda create -y -n quality python=3.11 --solver=libmamba --quiet
-          conda install -y -n quality -c conda-forge ruff mypy types-pyyaml --solver=libmamba --quiet
-          pip install --quiet --prefix $Env:CONDA_PREFIX numpy-stubs
+      - name: ruff check
+        run: ruff check .
 
-      - name: ruff check on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          $CONDA_PREFIX/envs/quality/bin/ruff check .
+      - name: mypy
+        run: mypy ml pipelines
 
-      - name: ruff check on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          $Env:CONDA_PREFIX\envs\quality\Scripts\ruff.exe check .
+      - name: import layer guardrails
+        run: python scripts/quality/check_import_layers.py
 
-      - name: mypy on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          $CONDA_PREFIX/envs/quality/bin/mypy ml pipelines
-
-      - name: mypy on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          $Env:CONDA_PREFIX\envs\quality\Scripts\mypy.exe ml pipelines
-
-      - name: import layer guardrails on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          $CONDA_PREFIX/envs/quality/bin/python scripts/quality/check_import_layers.py
-
-      - name: import layer guardrails on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          $Env:CONDA_PREFIX\envs\quality\Scripts\python.exe scripts/quality/check_import_layers.py
-
-      - name: check naming conventions on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash
-        run: |
-          $CONDA_PREFIX/envs/quality/bin/python scripts/quality/check_naming_conventions.py
-
-      - name: check naming conventions on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          $Env:CONDA_PREFIX\envs\quality\Scripts\python.exe scripts/quality/check_naming_conventions.py
+      - name: check naming conventions
+        run: python scripts/quality/check_naming_conventions.py
