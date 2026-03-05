@@ -22,6 +22,7 @@ class _AppendStep(PipelineStep[dict]):
 
         Args:
             ctx: Pipeline context dictionary with an 'events' list.
+
         Returns:
             None: Modifies context in place.
         """

@@ -55,11 +55,7 @@ def test_hash_environment_is_deterministic() -> None:
 
 
 def test_build_runtime_snapshot_success_path(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that build_runtime_snapshot successfully builds a snapshot with expected fields when all helper functions work correctly. The test uses monkeypatch to replace the helper functions (get_git_commit, get_runtime_info, get_gpu_info, get_conda_env_export) with fake functions that return specific expected values, then calls build_runtime_snapshot with a sample timestamp, hardware info, and start time, and asserts that the resulting snapshot contains the expected values in the execution, runtime, and environment sections. This validates that build_runtime_snapshot correctly integrates the outputs of the helper functions into the final snapshot structure.
-
-    Args:
-    monkeypatch (pytest.MonkeyPatch): The pytest monkeypatch fixture used to replace the helper functions with fake implementations that return controlled outputs for testing.
-    """
+    """Test that build_runtime_snapshot successfully builds a snapshot with expected fields when all helper functions work correctly. The test uses monkeypatch to replace the helper functions (get_git_commit, get_runtime_info, get_gpu_info, get_conda_env_export) with fake functions that return specific expected values, then calls build_runtime_snapshot with a sample timestamp, hardware info, and start time, and asserts that the resulting snapshot contains the expected values in the execution, runtime, and environment sections. This validates that build_runtime_snapshot correctly integrates the outputs of the helper functions into the final snapshot structure."""
     monkeypatch.setattr("ml.utils.runtime.runtime_snapshot.get_git_commit", lambda _: "abc123")
     monkeypatch.setattr("ml.utils.runtime.runtime_snapshot.get_runtime_info", lambda: {"os": "Linux"})
     monkeypatch.setattr(
@@ -87,11 +83,7 @@ def test_build_runtime_snapshot_success_path(monkeypatch: pytest.MonkeyPatch) ->
 
 
 def test_build_runtime_snapshot_falls_back_when_conda_export_fails(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that if get_conda_env_export raises an exception when trying to export the conda environment, build_runtime_snapshot catches this and sets the conda_env_export and conda_env_hash fields in the environment section of the snapshot to "Unavailable", while still successfully building the rest of the snapshot with expected values from the other helper functions. The test uses monkeypatch to replace get_conda_env_export with a fake function that raises a RuntimeMLError, then calls build_runtime_snapshot and asserts that the resulting snapshot has "Unavailable" for both conda_env_export and conda_env_hash, while other fields are populated as expected.
-
-    Args:
-        monkeypatch (pytest.MonkeyPatch): The pytest monkeypatch fixture used to replace get_conda_env_export with a fake function that raises an exception, simulating a failure in exporting the conda environment.
-    """
+    """Test that if get_conda_env_export raises an exception when trying to export the conda environment, build_runtime_snapshot catches this and sets the conda_env_export and conda_env_hash fields in the environment section of the snapshot to "Unavailable", while still successfully building the rest of the snapshot with expected values from the other helper functions. The test uses monkeypatch to replace get_conda_env_export with a fake function that raises a RuntimeMLError, then calls build_runtime_snapshot and asserts that the resulting snapshot has "Unavailable" for both conda_env_export and conda_env_hash, while other fields are populated as expected."""
     monkeypatch.setattr("ml.utils.runtime.runtime_snapshot.get_git_commit", lambda _: "abc123")
     monkeypatch.setattr("ml.utils.runtime.runtime_snapshot.get_runtime_info", lambda: {"os": "Linux"})
     monkeypatch.setattr("ml.utils.runtime.runtime_snapshot.get_gpu_info", lambda hardware_info: {"gpu_count": 0})
@@ -120,11 +112,7 @@ def test_build_runtime_snapshot_falls_back_when_conda_export_fails(monkeypatch: 
 
 
 def test_build_runtime_snapshot_wraps_unexpected_failures(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that if get_runtime_info raises an unexpected exception when trying to collect runtime information, build_runtime_snapshot catches this and raises a RuntimeMLError with an appropriate error message that includes the original exception message, indicating a failure to build the runtime snapshot. The test uses monkeypatch to replace get_runtime_info with a fake function that raises a ValueError, then calls build_runtime_snapshot and asserts that a RuntimeMLError is raised with a message indicating a failure to build the runtime snapshot and that the original ValueError message is included.
-
-    Args:
-        monkeypatch (pytest.MonkeyPatch): The pytest monkeypatch fixture used to replace get_runtime_info with a fake function.
-    """
+    """Test that if get_runtime_info raises an unexpected exception when trying to collect runtime information, build_runtime_snapshot catches this and raises a RuntimeMLError with an appropriate error message that includes the original exception message, indicating a failure to build the runtime snapshot. The test uses monkeypatch to replace get_runtime_info with a fake function that raises a ValueError, then calls build_runtime_snapshot and asserts that a RuntimeMLError is raised with a message indicating a failure to build the runtime snapshot and that the original ValueError message is included."""
     def _raise() -> dict:
         """Fake function to simulate an unexpected failure in collecting runtime information by raising a ValueError."""
         raise ValueError("runtime info failed")
@@ -140,12 +128,7 @@ def test_build_runtime_snapshot_wraps_unexpected_failures(monkeypatch: pytest.Mo
 
 
 def test_save_runtime_snapshot_writes_runtime_json(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that save_runtime_snapshot successfully writes the runtime snapshot to a runtime.json file in the target directory. The test uses monkeypatch to replace build_runtime_snapshot with a fake function that returns a specific expected snapshot dictionary, then calls save_runtime_snapshot with a sample timestamp, hardware info, and start time, and asserts that a runtime.json file is created in the target directory with contents that match the expected snapshot dictionary. This validates that save_runtime_snapshot correctly calls build_runtime_snapshot and writes the resulting snapshot to a JSON file in the specified location.
-
-    Args:
-        tmp_path (Path): The pytest fixture that provides a temporary directory for the test to create files in. The test uses this as the target directory for saving the runtime snapshot, and checks that a runtime.json file is created with the expected contents.
-        monkeypatch (pytest.MonkeyPatch): The pytest monkeypatch fixture used to replace build_runtime
-    """
+    """Test that save_runtime_snapshot successfully writes the runtime snapshot to a runtime.json file in the target directory. The test uses monkeypatch to replace build_runtime_snapshot with a fake function that returns a specific expected snapshot dictionary, then calls save_runtime_snapshot with a sample timestamp, hardware info, and start time, and asserts that a runtime.json file is created in the target directory with contents that match the expected snapshot dictionary. This validates that save_runtime_snapshot correctly calls build_runtime_snapshot and writes the resulting snapshot to a JSON file in the specified location."""
     expected_snapshot = {"execution": {"created_at": "2026-03-05T12:00:00"}}
     monkeypatch.setattr("ml.utils.runtime.save_runtime.build_runtime_snapshot", lambda *args, **kwargs: expected_snapshot)
 
@@ -161,12 +144,7 @@ def test_save_runtime_snapshot_writes_runtime_json(tmp_path: Path, monkeypatch: 
 
 
 def test_save_runtime_snapshot_rejects_overwrite_when_disabled(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that save_runtime_snapshot raises a PersistenceError when trying to save a runtime snapshot to a target directory that already contains a runtime.json file, and overwrite_existing is set to False. The test first creates a runtime.json file in the temporary directory to simulate an existing snapshot, then calls save_runtime_snapshot with overwrite_existing set to False, and asserts that a PersistenceError is raised with a message indicating that a snapshot already exists at the target location. This validates that save_runtime_snapshot correctly checks for existing snapshots and respects the overwrite_existing flag.
-
-    Args:
-        tmp_path (Path): The pytest fixture that provides a temporary directory for the test to create files in. The test uses this to create an existing runtime.json file to simulate a pre-existing snapshot, and then checks that save_runtime_snapshot raises an error when trying to overwrite it with overwrite_existing set to False.
-        monkeypatch (pytest.MonkeyPatch): The pytest monkeypatch fixture used to replace build_runtime
-    """
+    """Test that save_runtime_snapshot raises a PersistenceError when trying to save a runtime snapshot to a target directory that already contains a runtime.json file, and overwrite_existing is set to False. The test first creates a runtime.json file in the temporary directory to simulate an existing snapshot, then calls save_runtime_snapshot with overwrite_existing set to False, and asserts that a PersistenceError is raised with a message indicating that a snapshot already exists at the target location. This validates that save_runtime_snapshot correctly checks for existing snapshots and respects the overwrite_existing flag."""
     (tmp_path / "runtime.json").write_text("{}", encoding="utf-8")
     monkeypatch.setattr("ml.utils.runtime.save_runtime.build_runtime_snapshot", lambda *args, **kwargs: {"x": 1})
 
@@ -181,11 +159,7 @@ def test_save_runtime_snapshot_rejects_overwrite_when_disabled(tmp_path: Path, m
 
 
 def test_save_runtime_snapshot_overwrites_when_enabled(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that save_runtime_snapshot successfully overwrites an existing runtime.json file in the target directory when overwrite_existing is set to True. The test first creates a runtime.json file in the temporary directory with specific contents, then uses monkeypatch to replace build_runtime_snapshot with a fake function that returns a different expected snapshot dictionary. It then calls save_runtime_snapshot with overwrite_existing set to True, and asserts that the runtime.json file in the target directory is overwritten with the new contents from the expected snapshot dictionary. This validates that save_runtime_snapshot correctly overwrites existing snapshots when allowed.
-
-    Args:
-        tmp_path (Path): The pytest fixture that provides a temporary directory for the test to create
-    """
+    """Test that save_runtime_snapshot successfully overwrites an existing runtime.json file in the target directory when overwrite_existing is set to True. The test first creates a runtime.json file in the temporary directory with specific contents, then uses monkeypatch to replace build_runtime_snapshot with a fake function that returns a different expected snapshot dictionary. It then calls save_runtime_snapshot with overwrite_existing set to True, and asserts that the runtime.json file in the target directory is overwritten with the new contents from the expected snapshot dictionary. This validates that save_runtime_snapshot correctly overwrites existing snapshots when allowed."""
     (tmp_path / "runtime.json").write_text("{\"old\": 1}", encoding="utf-8")
     monkeypatch.setattr("ml.utils.runtime.save_runtime.build_runtime_snapshot", lambda *args, **kwargs: {"new": 2})
 
