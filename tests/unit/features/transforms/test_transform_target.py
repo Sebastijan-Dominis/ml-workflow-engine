@@ -12,14 +12,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_transform_target_returns_original_series_when_disabled() -> None:
-    """Test that when the target transformation is disabled, the original Series is returned unchanged.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
+    """Test that when the target transformation is disabled, the original Series is returned unchanged."""
     y = pd.Series([1.0, 2.0, 3.0], name="target")
     config = TargetTransformConfig(enabled=False, type=None, lambda_value=None)
 
@@ -29,14 +22,7 @@ def test_transform_target_returns_original_series_when_disabled() -> None:
 
 
 def test_transform_target_log1p_preserves_index_and_name() -> None:
-    """Test that the log1p transformation is applied correctly and that the index and name of the Series are preserved.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
+    """Test that the log1p transformation is applied correctly and that the index and name of the Series are preserved."""
     y = pd.Series([0.0, 1.0, 3.0], index=[10, 11, 12], name="adr")
     config = TargetTransformConfig(enabled=True, type="log1p", lambda_value=None)
 
@@ -48,14 +34,7 @@ def test_transform_target_log1p_preserves_index_and_name() -> None:
 
 
 def test_transform_target_sqrt_rejects_negative_values() -> None:
-    """Test that the sqrt transformation raises a ConfigError when the target contains negative values.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
+    """Test that the sqrt transformation raises a ConfigError when the target contains negative values."""
     y = pd.Series([1.0, -0.5, 2.0], name="target")
     config = TargetTransformConfig(enabled=True, type="sqrt", lambda_value=None)
 
@@ -64,14 +43,7 @@ def test_transform_target_sqrt_rejects_negative_values() -> None:
 
 
 def test_inverse_transform_target_round_trip_for_log1p() -> None:
-    """Test that applying the log1p transformation and then the inverse transformation returns the original values.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
+    """Test that applying the log1p transformation and then the inverse transformation returns the original values."""
     y = pd.Series([0.0, 4.0, 9.0], name="target")
     config = TargetTransformConfig(enabled=True, type="log1p", lambda_value=None)
 
@@ -82,14 +54,7 @@ def test_inverse_transform_target_round_trip_for_log1p() -> None:
 
 
 def test_inverse_transform_target_returns_original_array_when_disabled() -> None:
-    """Test that when the target transformation is disabled, the original array is returned unchanged.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
+    """Test that when the target transformation is disabled, the original array is returned unchanged."""
     arr = np.array([0.1, 0.2, 0.3], dtype=float)
     config = TargetTransformConfig(enabled=False, type=None, lambda_value=None)
 
@@ -99,14 +64,7 @@ def test_inverse_transform_target_returns_original_array_when_disabled() -> None
 
 
 def test_inverse_transform_target_raises_on_unsupported_type() -> None:
-    """Test that the inverse_transform_target function raises a ConfigError when an unsupported transformation type is specified.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
+    """Test that the inverse_transform_target function raises a ConfigError when an unsupported transformation type is specified."""
     arr = np.array([0.1, 0.2], dtype=float)
     config = cast(TargetTransformConfig, type("Cfg", (), {"enabled": True, "type": "unsupported", "lambda_value": None})())
 
