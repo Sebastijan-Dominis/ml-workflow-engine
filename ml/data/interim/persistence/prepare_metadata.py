@@ -9,7 +9,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import yaml
-
 from ml.config.compute_data_config_hash import compute_data_config_hash
 from ml.data.config.schemas.interim import InterimConfig
 from ml.io.formatting.iso_no_colon import iso_no_colon
@@ -20,14 +19,14 @@ from ml.utils.hashing.service import hash_data
 logger = logging.getLogger(__name__)
 
 def prepare_metadata(
-    df: pd.DataFrame, 
-    *, 
-    config: InterimConfig, 
-    start_time: float, 
+    df: pd.DataFrame,
+    *,
+    config: InterimConfig,
+    start_time: float,
     data_path: Path,
-    source_data_path: Path, 
+    source_data_path: Path,
     source_data_format: str,
-    owner: str, 
+    owner: str,
     memory_info: dict,
     interim_run_id: str
 ) -> InterimDatasetMetadata:
@@ -49,9 +48,9 @@ def prepare_metadata(
     """
 
     data_hash = hash_data(data_path)
-         
+
     config_hash = compute_data_config_hash(config)
-    
+
     timestamp = iso_no_colon(datetime.now())
 
     duration = time.perf_counter() - start_time
@@ -96,6 +95,6 @@ def prepare_metadata(
     }
 
     metadata = validate_interim_dataset_metadata(metadata_raw)
-    logger.debug(f"Prepared metadata.")
+    logger.debug("Prepared metadata.")
 
     return metadata

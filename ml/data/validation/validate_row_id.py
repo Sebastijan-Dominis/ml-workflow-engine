@@ -3,7 +3,6 @@
 import logging
 
 import pandas as pd
-
 from ml.exceptions import DataError
 
 logger = logging.getLogger(__name__)
@@ -28,5 +27,5 @@ def validate_row_id(df: pd.DataFrame) -> None:
         msg = f"row_id must be unique within each feature set. Found duplicates: {list(dupes)}."
         logger.error(msg)
         raise DataError(msg)
-    
+
     logger.debug("Successfully validated that row_id column is present and contains unique values.")

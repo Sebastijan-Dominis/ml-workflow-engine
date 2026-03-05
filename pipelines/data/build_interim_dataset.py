@@ -13,7 +13,6 @@ from pathlib import Path
 from uuid import uuid4
 
 import pandas as pd
-
 from ml.cli.error_handling import resolve_exit_code
 from ml.data.config.schemas.interim import InterimConfig
 from ml.data.config.validate_config import validate_config
@@ -118,7 +117,7 @@ def main() -> int:
 
     timestamp = iso_no_colon(datetime.now())
     interim_id = f"{timestamp}_{uuid4().hex[:8]}"
-    
+
     data_dir = Path("data/interim") / args.data / args.version / interim_id
     data_dir.mkdir(parents=True, exist_ok=False)
 
@@ -136,7 +135,7 @@ def main() -> int:
         raw_metadata = load_json(raw_data_snapshot_path / "metadata.json")
 
         raw_data_suffix, raw_data_format = get_data_suffix_and_format(raw_metadata, location="data")
-        
+
         raw_data_path = raw_data_snapshot_path / raw_data_suffix
         validate_data(data_path=raw_data_path, metadata=raw_metadata)
         logger.debug(f"Validated raw data at {raw_data_path} with metadata: {raw_metadata}")
@@ -149,10 +148,10 @@ def main() -> int:
 
         df = enforce_schema(df, schema=config.data_schema, drop_missing_ints=config.drop_missing_ints)
         logger.debug(f"Enforced schema. DataFrame now has columns: {df.columns.tolist()} with dtypes: {df.dtypes.astype(str).to_dict()}.")
-        
+
         df = clean_data(df, config.invariants)
         logger.debug(f"Cleaned data using invariants. DataFrame now has {len(df)} rows and {len(df.columns)} columns.")
-        
+
         validate_min_rows(df, config.min_rows)
 
         if config.drop_duplicates:
@@ -167,8 +166,8 @@ def main() -> int:
         memory_info = compute_memory_change(target_metadata=raw_metadata, new_memory_usage=memory_usage, stage="interim")
 
         metadata = prepare_metadata(
-            df, 
-            config=config, 
+            df,
+            config=config,
             start_time=start_time,
             data_path=data_path,
             source_data_path=raw_data_path,
@@ -181,7 +180,7 @@ def main() -> int:
         save_metadata(metadata.model_dump(exclude_none=True), target_dir=data_dir)
 
         return 0
-    
+
     except Exception as e:
         exit_code = resolve_exit_code(e)
         return exit_code

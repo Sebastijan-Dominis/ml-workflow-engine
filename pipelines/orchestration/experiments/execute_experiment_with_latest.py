@@ -66,9 +66,9 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--logging-level", 
+        "--logging-level",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        default="INFO", 
+        default="INFO",
         help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
     )
 
@@ -141,7 +141,7 @@ def main() -> int:
     try:
         # Run search.py
         search_cmd = [
-            sys.executable, 
+            sys.executable,
             "-m", "pipelines.search.search",
             "--problem", args.problem,
             "--segment", args.segment,
@@ -160,7 +160,7 @@ def main() -> int:
 
         # Run train.py
         train_cmd = [
-            sys.executable, 
+            sys.executable,
             "-m", "pipelines.runners.train",
             "--problem", args.problem,
             "--segment", args.segment,
@@ -175,7 +175,7 @@ def main() -> int:
 
         # Run evaluate.py
         evaluate_cmd = [
-            sys.executable, 
+            sys.executable,
             "-m", "pipelines.runners.evaluate",
             "--problem", args.problem,
             "--segment", args.segment,
@@ -190,7 +190,7 @@ def main() -> int:
 
         # Run explain.py
         explain_cmd = [
-            sys.executable, 
+            sys.executable,
             "-m", "pipelines.runners.explain",
             "--problem", args.problem,
             "--segment", args.segment,

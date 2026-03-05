@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-
 from ml.data.config.schemas.interim import InterimConfig
 from ml.data.config.schemas.processed import ProcessedConfig
 from ml.exceptions import ConfigError, PersistenceError
@@ -28,7 +27,7 @@ def save_data(df: pd.DataFrame, *, config: InterimConfig | ProcessedConfig, data
         Path: Absolute path to the written data file.
     """
 
-    if not config.data.output.format in SAVE_FORMAT:
+    if config.data.output.format not in SAVE_FORMAT:
         msg = f"Unsupported output format: {config.data.output.format}"
         logger.error(msg)
         raise ConfigError(msg)
@@ -43,5 +42,5 @@ def save_data(df: pd.DataFrame, *, config: InterimConfig | ProcessedConfig, data
         return data_path
     except Exception as e:
         msg = f"Error saving data to {data_path} with format {config.data.output.format} and compression {compression}. "
-        logger.error(msg + f"Details: {str(e)}")        
+        logger.error(msg + f"Details: {str(e)}")
         raise PersistenceError(msg) from e

@@ -1,5 +1,5 @@
 """Schemas for raw snapshot metadata."""
-from ml.metadata.schemas.data.shared import Columns, DataBasic, MetadataBase
+from ml.metadata.schemas.data.shared import DataBasic, MetadataBase
 
 
 class RawData(DataBasic):

@@ -32,6 +32,12 @@ def check_ast(file: Path):
     for node in ast.walk(tree):
         # Function definitions (including async)
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            # Skip _private, __init__, __all__
+            if (
+                node.name.startswith("_") or node.name in ("__init__", "__all__")
+            ):
+                continue
+
             if not SNAKE_CASE_RE.match(node.name):
                 violations.append(
                     f"{file.as_posix()}:{node.lineno} "
@@ -44,7 +50,6 @@ def check_ast(file: Path):
                 f"{file.as_posix()}:{node.lineno} "
                 f"-> class name '{node.name}' should be in PascalCase"
             )
-
 
 def main():
     for root in ROOTS:

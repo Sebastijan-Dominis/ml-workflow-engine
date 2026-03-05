@@ -23,12 +23,12 @@ def validate_data(*, data_path: Path, metadata: dict) -> str:
     if expected_hash is None:
         logger.warning("No data hash found in metadata. Skipping data integrity check.")
         return ""
-    
+
     actual_hash = hash_data(data_path)
 
     if expected_hash != actual_hash:
         msg = f"Data hash mismatch. Expected: {expected_hash}, Actual: {actual_hash}"
         logger.error(msg)
         raise UserError(msg)
-    
+
     return actual_hash

@@ -7,7 +7,6 @@ filtering used by the interim data pipeline.
 import logging
 
 import pandas as pd
-
 from ml.data.config.schemas.interim import Cleaning, DataSchema, Invariants
 from ml.exceptions import DataError
 from ml.registries.catalogs import OP_MAP
@@ -66,7 +65,7 @@ def enforce_schema(df: pd.DataFrame, *, schema: DataSchema, drop_missing_ints: b
             msg = f"Dataframe is missing columns required by the schema: {missing_cols}"
             logger.error(msg)
             raise DataError(msg)
-        
+
         extra_cols = set(df.columns) - set(schema_cols)
         if extra_cols:
             logger.warning(f"Dataframe has extra columns not defined in the schema: {extra_cols}. These columns will be dropped.")
@@ -88,7 +87,7 @@ def enforce_schema(df: pd.DataFrame, *, schema: DataSchema, drop_missing_ints: b
                     df[col] = df[col].astype(dtype)
         return df
     except Exception as e:
-        msg = f"Error enforcing data schema on dataframe. "
+        msg = "Error enforcing data schema on dataframe. "
         logger.error(msg + f"Details: {str(e)}")
         raise DataError(msg) from e
 
@@ -144,6 +143,6 @@ def clean_data(df: pd.DataFrame, invariants: Invariants):
                 df = df[mask]
         return df
     except Exception as e:
-        msg = f"Error cleaning data according to invariants. "
+        msg = "Error cleaning data according to invariants. "
         logger.error(msg + f"Details: {str(e)}")
         raise DataError(msg) from e

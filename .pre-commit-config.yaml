@@ -20,3 +20,9 @@ repos:
         entry: python scripts/quality/check_import_layers.py
         language: system
         pass_filenames: false
+
+      - id: naming-conventions
+        name: check naming conventions
+        entry: python scripts/quality/check_naming_conventions.py
+        language: system
+        pass_filenames: false

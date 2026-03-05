@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-
 from ml.cli.error_handling import resolve_exit_code
 from ml.data.raw.persistence.prepare_metadata import prepare_metadata
 from ml.exceptions import UserError
@@ -123,9 +122,9 @@ def main() -> int:
         df = read_data(data_format, data_path)
 
         metadata = prepare_metadata(
-            df, 
-            args=args, 
-            data_path=data_path, 
+            df,
+            args=args,
+            data_path=data_path,
             raw_run_id=data_dir.name,
             data_format=data_format,
             data_suffix=data_suffix
@@ -134,10 +133,10 @@ def main() -> int:
         save_metadata(metadata.model_dump(exclude_none=True), target_dir=data_dir)
 
         return 0
-    
+
     except Exception as e:
         exit_code = resolve_exit_code(e)
         return exit_code
-    
+
 if __name__ == "__main__":
     sys.exit(main())

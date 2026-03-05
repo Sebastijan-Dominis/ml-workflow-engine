@@ -32,6 +32,6 @@ def compute_memory_change(*, target_metadata: dict, new_memory_usage: float, sta
             "change_percentage": (change / old_memory_usage * 100) if old_memory_usage > 0 else 0
         }
     except KeyError as e:
-        msg = f"Target metadata is missing the key required to compute memory improvement."
+        msg = "Target metadata is missing the key required to compute memory improvement."
         logger.error(msg)
         raise DataError(msg) from e

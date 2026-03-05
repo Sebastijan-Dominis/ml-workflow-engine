@@ -1,7 +1,6 @@
 """Schemas for processed dataset metadata."""
-from pydantic import BaseModel
-
 from ml.metadata.schemas.data.shared import SharedInterimProcessedMetadata
+from pydantic import BaseModel
 
 
 class RowIdInfo(BaseModel):

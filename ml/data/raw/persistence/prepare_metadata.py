@@ -5,7 +5,6 @@ from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-
 from ml.data.utils.memory.get_memory_usage import get_memory_usage
 from ml.exceptions import PersistenceError
 from ml.metadata.schemas.data.raw import RawSnapshotMetadata
@@ -13,11 +12,11 @@ from ml.metadata.validation.data.raw import validate_raw_snapshot_metadata
 from ml.utils.hashing.service import hash_data
 
 logger = logging.getLogger(__name__)
-    
+
 def prepare_metadata(
-    df: pd.DataFrame, 
-    *, 
-    args, 
+    df: pd.DataFrame,
+    *,
+    args,
     data_path: Path,
     raw_run_id: str,
     data_format: str,
@@ -38,7 +37,7 @@ def prepare_metadata(
     """
 
     data_hash = hash_data(data_path)
-        
+
     timestamp = datetime.now().isoformat()
 
     try:
@@ -64,7 +63,7 @@ def prepare_metadata(
         }
 
         metadata = validate_raw_snapshot_metadata(metadata_raw)
-        logger.debug(f"Prepared metadata.")
+        logger.debug("Prepared metadata.")
 
         return metadata
     except Exception as e:

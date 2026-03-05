@@ -14,7 +14,6 @@ from pathlib import Path
 from uuid import uuid4
 
 import pandas as pd
-
 from ml.cli.error_handling import resolve_exit_code
 from ml.data.config.schemas.processed import ProcessedConfig
 from ml.data.config.validate_config import validate_config
@@ -115,7 +114,7 @@ def main() -> int:
 
     timestamp = iso_no_colon(datetime.now())
     processed_id = f"{timestamp}_{uuid4().hex[:8]}"
-    
+
     data_dir = Path("data/processed") / args.data / args.version / processed_id
     data_dir.mkdir(parents=True, exist_ok=False)
 
@@ -155,17 +154,17 @@ def main() -> int:
         memory_usage = get_memory_usage(df)
 
         memory_info = compute_memory_change(target_metadata=interim_metadata, new_memory_usage=memory_usage, stage="processed")
-        
+
         metadata = prepare_metadata(
-            df, 
-            config=config, 
-            start_time=start_time, 
-            data_path=data_path, 
+            df,
+            config=config,
+            start_time=start_time,
+            data_path=data_path,
             source_data_path=interim_data_path,
             source_data_format=interim_data_format,
             source_data_version=config.interim_data_version,
-            owner=args.owner, 
-            memory_info=memory_info, 
+            owner=args.owner,
+            memory_info=memory_info,
             processed_run_id=processed_id,
             row_id_info=row_id_info if config.data.name in ROW_ID_REQUIRED else None
         )
@@ -173,7 +172,7 @@ def main() -> int:
         save_metadata(metadata.model_dump(exclude_none=True), target_dir=data_dir)
 
         return 0
-    
+
     except Exception as e:
         exit_code = resolve_exit_code(e)
         return exit_code

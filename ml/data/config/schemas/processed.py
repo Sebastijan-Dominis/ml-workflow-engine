@@ -3,10 +3,9 @@
 import logging
 from datetime import datetime
 
-from pydantic import BaseModel, Field, model_validator
-
 from ml.data.config.schemas.shared import DataInfo
 from ml.exceptions import ConfigError
+from pydantic import BaseModel, Field, model_validator
 
 logger = logging.getLogger(__name__)
 

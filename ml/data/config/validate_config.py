@@ -55,6 +55,6 @@ def validate_config(config: dict, type: Literal["interim", "processed"]) -> Inte
             logger.error(msg)
             raise ConfigError(msg)
     except Exception as e:
-        msg = f"Configuration validation error. "
+        msg = "Configuration validation error. "
         logger.error(msg + f"Details: {str(e)}")
         raise ConfigError(msg) from e

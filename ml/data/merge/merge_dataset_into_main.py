@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-
 from ml.data.validation.validate_data import validate_data
 from ml.exceptions import DataError
 from ml.utils.loaders import load_json
