@@ -113,9 +113,11 @@ class Invariants(BaseModel):
     credit_card: Invariant | None = None
 
     @model_validator(mode="after")
-    # validate that the invariants specified in the config do not violate the predefined constraints
     def validate_constraints(self):
         """Ensure configured invariants stay within registry-defined limits.
+
+        Args:
+            self: Candidate invariants instance.
 
         Returns:
             Invariants: Validated invariants object.
@@ -193,19 +195,21 @@ class InterimConfig(BaseModel):
     min_rows: int = Field(0, description="Minimum number of rows required after cleaning (default: 0).")
     lineage: LineageConfig
 
-    # ensure that the raw_data_version is not empty and follows a specific format (e.g., v1, v2, etc.)
     @model_validator(mode="after")
-    def validate_raw_data_version(cls, config):
+    def validate_raw_data_version(self):
         """Validate that ``raw_data_version`` follows the ``v{number}`` format.
 
         Args:
-            config: Candidate interim configuration object.
+            self: Candidate interim config instance.
 
         Returns:
-            InterimConfig: Validated interim configuration object.
+            The validated interim config instance.
         """
-        if not config.raw_data_version.startswith("v") or not config.raw_data_version[1:].isdigit():
-            msg = f"Invalid raw_data_version '{config.raw_data_version}'. It must start with 'v' followed by a number (e.g., v1, v2)."
+        if not self.raw_data_version.startswith("v") or not self.raw_data_version[1:].isdigit():
+            msg = (
+                f"Invalid raw_data_version '{self.raw_data_version}'. "
+                "It must start with 'v' followed by a number (e.g., v1, v2)."
+            )
             logger.error(msg)
             raise ConfigError(msg)
-        return config
+        return self

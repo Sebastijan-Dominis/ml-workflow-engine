@@ -1,19 +1,46 @@
+"""Check naming conventions across the codebase."""
 import ast
 import re
 import sys
 from pathlib import Path
 
+# Directories to check
 ROOTS = [Path("ml"), Path("pipelines"), Path("scripts")]
 
+# Regex patterns
 SNAKE_CASE_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 PASCAL_CASE_RE = re.compile(r"^[A-Z][a-zA-Z0-9]*$")
 MODULE_RE = re.compile(r"^[a-z][a-z0-9_]*\.py$")
 
+# Where violations will be stored
 violations: list[str] = []
+
+# Folder to ignore
+IGNORE_FOLDERS = [Path("tests")]
+
+
+def is_ignored(file: Path) -> bool:
+    """Check if a file is inside an ignored folder.
+
+    Args:
+        file (Path): The path to the file to check.
+
+    Returns:
+        bool: True if the file is in an ignored folder, False otherwise.
+    """
+    return any(ignored in file.parents for ignored in IGNORE_FOLDERS)
 
 
 def check_module_name(file: Path):
-    if file.name == "__init__.py":
+    """Check if the module name (filename) follows snake_case convention.
+
+    Args:
+        file (Path): The path to the Python file to check.
+
+    Returns:
+        None: This function does not return a value but appends any naming violations to the global 'violations' list.
+    """
+    if file.name == "__init__.py" or is_ignored(file):
         return
 
     if not MODULE_RE.match(file.name):
@@ -23,6 +50,17 @@ def check_module_name(file: Path):
 
 
 def check_ast(file: Path):
+    """Parse the file and check function and class naming conventions.
+
+    Args:
+        file (Path): The path to the Python file to check.
+
+    Returns:
+        None: This function does not return a value but appends any naming violations to the global 'violations' list.
+    """
+    if is_ignored(file):
+        return
+
     try:
         tree = ast.parse(file.read_text(encoding="utf-8"))
     except SyntaxError as e:
@@ -33,9 +71,7 @@ def check_ast(file: Path):
         # Function definitions (including async)
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             # Skip _private, __init__, __all__
-            if (
-                node.name.startswith("_") or node.name in ("__init__", "__all__")
-            ):
+            if node.name.startswith("_") or node.name in ("__init__", "__all__"):
                 continue
 
             if not SNAKE_CASE_RE.match(node.name):
@@ -45,13 +81,30 @@ def check_ast(file: Path):
                 )
 
         # Class definitions
-        elif isinstance(node, ast.ClassDef) and not PASCAL_CASE_RE.match(node.name):
-            violations.append(
-                f"{file.as_posix()}:{node.lineno} "
-                f"-> class name '{node.name}' should be in PascalCase"
-            )
+        elif isinstance(node, ast.ClassDef):
+            # Skip _private classes (common in tests)
+            if node.name.startswith("_"):
+                continue
+
+            if not PASCAL_CASE_RE.match(node.name):
+                violations.append(
+                    f"{file.as_posix()}:{node.lineno} "
+                    f"-> class name '{node.name}' should be in PascalCase"
+                )
+
 
 def main():
+    """Main function to check naming conventions across the codebase.
+
+    This script checks that:
+    - Python module filenames are in snake_case.
+    - Function names are in snake_case (with exceptions for private and special methods).
+    - Class names are in PascalCase (with exceptions for private classes).
+    It traverses the specified directories, parses Python files, and collects any naming violations.
+    Finally, it reports all violations and exits with an appropriate status code.
+
+    Returns:
+        None: This function does not return a value but exits the program with a status code."""
     files_to_check: list[Path] = []
 
     if len(sys.argv) > 1:

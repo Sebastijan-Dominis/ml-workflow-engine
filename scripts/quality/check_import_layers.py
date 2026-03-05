@@ -1,3 +1,18 @@
+"""Check import layers and dependencies across the codebase to enforce architectural boundaries.
+
+Rules:
+1) ml is reusable business/domain logic only, should not depend on pipelines
+2) registries package internals should be imported via package exports only
+   Allowed:
+    # from ml.registries.catalogs import X
+    # from ml.registries.factories import Y
+    # from ml.registries import Z
+Disallowed deep imports:
+    # from ml.registries.catalogs.some_module import X
+    # from ml.registries.factories.some_module import Y
+3) catalogs and factories should stay independent (no cross-imports)
+4) configs is declarative yaml only, should not import any code (including other configs), no executable code allowed - only yaml files
+"""
 from __future__ import annotations
 
 import re

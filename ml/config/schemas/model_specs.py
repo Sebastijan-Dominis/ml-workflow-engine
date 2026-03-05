@@ -426,46 +426,54 @@ class ModelSpecs(BaseModel):
 
     # Validate that target.transform.enabled is False and target.transform.type is None for non-regression tasks, while for regression tasks, if target.transform.enabled is True, then target.transform.type must be specified
     @model_validator(mode="after")
-    def validate_target_transform_consistency(cls, v):
+    def validate_target_transform_consistency(self):
         """Validate target transformation compatibility with task type.
 
         Args:
-            v: Candidate model specs instance.
+            self: Candidate model specs instance.
 
         Returns:
-            ModelSpecs: Validated model specs instance.
-        """
+            ModelSpecs: Validated model specs instance."""
 
-        if v.task.type != TaskType.regression:
-            if v.target.transform.enabled:
-                msg = f"Target transformation is only applicable for regression tasks. Found enabled for task type '{v.task.type}'."
+        if self.task.type != TaskType.regression:
+            if self.target.transform.enabled:
+                msg = (
+                    f"Target transformation is only applicable for regression tasks. "
+                    f"Found enabled for task type '{self.task.type}'."
+                )
                 logger.error(msg)
                 raise ConfigError(msg)
-            if v.target.transform.type is not None:
-                msg = f"Target transformation type should be None for non-regression tasks. Found '{v.target.transform.type}' for task type '{v.task.type}'."
+            if self.target.transform.type is not None:
+                msg = (
+                    f"Target transformation type should be None for non-regression tasks. "
+                    f"Found '{self.target.transform.type}' for task type '{self.task.type}'."
+                )
                 logger.error(msg)
                 raise ConfigError(msg)
         else:
-            if v.target.transform.enabled and v.target.transform.type is None:
-                msg = "Target transformation type must be specified when target transformation is enabled for regression tasks."
+            if self.target.transform.enabled and self.target.transform.type is None:
+                msg = (
+                    "Target transformation type must be specified when target transformation "
+                    "is enabled for regression tasks."
+                )
                 logger.error(msg)
                 raise ConfigError(msg)
-        return v
 
-    # validate that class_weighting is off for non-classification tasks
+        return self
+
     @model_validator(mode="after")
-    def validate_class_weighting_consistency(cls, v):
+    def validate_class_weighting_consistency(self):
         """Ensure class weighting is only enabled for classification tasks.
 
         Args:
-            v: Candidate model specs instance.
+            self: Candidate model specs instance.
 
         Returns:
             ModelSpecs: Validated model specs instance.
         """
 
-        if v.task.type != TaskType.classification and v.class_weighting.policy != "off":
-            msg = f"Class weighting is only applicable for classification tasks. Found policy '{v.class_weighting.policy}' for task type '{v.task.type}'."
+        if self.task.type != TaskType.classification and self.class_weighting.policy != "off":
+            msg = f"Class weighting is only applicable for classification tasks. Found policy '{self.class_weighting.policy}' for task type '{self.task.type}'."
             logger.error(msg)
             raise ConfigError(msg)
-        return v
+        return self

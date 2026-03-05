@@ -79,6 +79,9 @@ class PromotionThresholds(BaseModel):
     def validate_consistency(self):
         """Validate metric sets/metrics align with provided threshold blocks.
 
+        Args:
+            self: Candidate promotion thresholds instance.
+
         Returns:
             PromotionThresholds: Validated promotion-threshold object.
         """

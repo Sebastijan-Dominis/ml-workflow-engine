@@ -25,18 +25,22 @@ class ProcessedConfig(BaseModel):
 
     # ensure that the interim_data_version is not empty and follows a specific format (e.g., v1, v2, etc.)
     @model_validator(mode="after")
-    def validate_interim_data_version(cls, config):
-        """Validate that ``interim_data_version`` follows the ``v{number}`` format.
+    def validate_interim_data_version(self):
+        """
+        Validate that ``interim_data_version`` follows the ``v{number}`` format.
 
         Args:
-            cls: Pydantic model class invoking the validator.
-            config: Parsed ``ProcessedConfig`` instance being validated.
-
+            values: The validated values of the model.
         Returns:
-            The validated ``ProcessedConfig`` instance.
+            The validated model instance.
+        Raises:
+            ConfigError: If the ``interim_data_version`` does not follow the required format.
         """
-        if not config.interim_data_version.startswith("v") or not config.interim_data_version[1:].isdigit():
-            msg = f"Invalid interim_data_version '{config.interim_data_version}'. It must start with 'v' followed by a number (e.g., v1, v2)."
+        if not self.interim_data_version.startswith("v") or not self.interim_data_version[1:].isdigit():
+            msg = (
+                f"Invalid interim_data_version '{self.interim_data_version}'. "
+                "It must start with 'v' followed by a number (e.g., v1, v2)."
+            )
             logger.error(msg)
             raise ConfigError(msg)
-        return config
+        return self

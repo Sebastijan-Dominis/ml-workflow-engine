@@ -6,7 +6,7 @@ from typing import Any
 from ml.config.schemas.model_specs import ModelSpecs
 from ml.config.schemas.search_cfg import SearchConfig
 from ml.config.schemas.train_cfg import TrainConfig
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class SearchLineageConfig(BaseModel):
@@ -32,10 +32,7 @@ class SearchModelConfig(ModelSpecs):
     search_lineage: SearchLineageConfig
     training: dict[str, Any] | None = None  # inherited from shared defaults, unused
 
-    class Config:
-        """Pydantic options for strict schema validation behavior."""
-
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")  # Pydantic options for strict schema validation behavior
 
 class TrainModelConfig(ModelSpecs):
     """Validated model specification used by model training stage."""
@@ -48,7 +45,4 @@ class TrainModelConfig(ModelSpecs):
     training_lineage: TrainingLineageConfig
     search: dict[str, Any] | None = None  # inherited from shared defaults, unused
 
-    class Config:
-        """Pydantic options for strict schema validation behavior."""
-
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")  # Pydantic options for strict schema validation behavior

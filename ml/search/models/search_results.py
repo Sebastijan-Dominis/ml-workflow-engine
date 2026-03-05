@@ -1,5 +1,5 @@
 """Defines data models for representing search results and related metadata in a structured format."""
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Phases(BaseModel):
@@ -7,8 +7,7 @@ class Phases(BaseModel):
     broad: dict
     narrow: dict | None = None
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")  # Pydantic options for strict schema validation behavior
 
 class SearchResults(BaseModel):
     """Structured representation of search results, including best parameters and phase details."""

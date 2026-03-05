@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Literal
 
 from ml.exceptions import ConfigError
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -68,10 +68,7 @@ class TabularFeaturesConfig(BaseModel):
     storage: StorageConfig
     lineage: LineageConfig
     ...
-    class Config:
-        """Pydantic options for strict schema validation behavior."""
-
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")  # Pydantic options for strict schema validation behavior
 
     @field_validator("operators", mode="before")
     def required_features_must_equal_operator_names(cls, v):
@@ -95,71 +92,77 @@ class TabularFeaturesConfig(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def validate_feature_roles_match_columns(cls, config):
+    def validate_feature_roles_match_columns(self):
         """Ensure feature role assignments exactly match included columns.
 
         Args:
-            config: Candidate tabular feature config.
+            self: Candidate tabular features config.
 
         Returns:
             TabularFeaturesConfig: Validated config.
         """
-
-        columns = set(config.columns)
-        roles = set(config.feature_roles.categorical + config.feature_roles.numerical + config.feature_roles.datetime)
+        columns = set(self.columns)
+        roles = set(self.feature_roles.categorical + self.feature_roles.numerical + self.feature_roles.datetime)
         if columns != roles:
             missing_in_roles = columns - roles
             extra_in_roles = roles - columns
-            msg = f"Feature roles do not match included columns. Missing in roles: {missing_in_roles}, extra in roles: {extra_in_roles}."
+            msg = (
+                f"Feature roles do not match included columns. "
+                f"Missing in roles: {missing_in_roles}, extra in roles: {extra_in_roles}."
+            )
             logger.error(msg)
             raise ConfigError(msg)
-        return config
+        return self
 
     @model_validator(mode="after")
-    def validate_constraints_match_columns(cls, config):
+    def validate_constraints_match_columns(self):
         """Ensure constraint-referenced columns exist in included columns.
 
         Args:
-            config: Candidate tabular feature config.
+            self: Candidate tabular features config.
 
         Returns:
-            TabularFeaturesConfig: Validated config.
-        """
+            TabularFeaturesConfig: Validated config."""
+        columns = set(self.columns)
+        forbidden_nulls = set(self.constraints.forbid_nulls)
+        max_cardinality_cols = set(self.constraints.max_cardinality.keys())
 
-        columns = set(config.columns)
-        forbidden_nulls = set(config.constraints.forbid_nulls)
-        max_cardinality_cols = set(config.constraints.max_cardinality.keys())
         if not forbidden_nulls.issubset(columns):
             missing = forbidden_nulls - columns
             msg = f"Forbidden nulls {missing} are not in included columns {columns}"
             logger.error(msg)
             raise ConfigError(msg)
+
         if not max_cardinality_cols.issubset(columns):
             missing = max_cardinality_cols - columns
             msg = f"Max cardinality columns {missing} are not in included columns {columns}"
             logger.error(msg)
             raise ConfigError(msg)
-        return config
 
-    # validate that all of the required features for operators are included in columns
+        return self
+
     @model_validator(mode="after")
-    def validate_required_features_for_operators(cls, config):
+    def validate_required_features_for_operators(self):
         """Ensure all operator required features are present in included columns.
 
         Args:
-            config: Candidate tabular feature config.
+            self: Candidate tabular features config.
 
         Returns:
             TabularFeaturesConfig: Validated config.
         """
+        if self.operators is None:
+            return self
 
-        if config.operators is None:
-            return config
-        columns = set(config.columns)
-        for op_name, req_feats in config.operators.required_features.items():
+        columns = set(self.columns)
+        for op_name, req_feats in self.operators.required_features.items():
             missing = set(req_feats) - columns
             if missing:
-                msg = f"Required features {missing} for operator {op_name} are not in included columns {columns}"
+                msg = (
+                    f"Required features {missing} for operator {op_name} "
+                    f"are not in included columns {columns}"
+                )
                 logger.error(msg)
                 raise ConfigError(msg)
-        return config
+
+        return self
