@@ -46,6 +46,20 @@ def test_load_model_or_pipeline_wraps_joblib_errors(monkeypatch: pytest.MonkeyPa
         load_model_or_pipeline(file_path, "pipeline")
 
 
+def test_load_model_or_pipeline_wraps_file_open_errors(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Wrap file open failures as PipelineContractError before deserialization begins."""
+    file_path = tmp_path / "artifact.joblib"
+    file_path.write_bytes(b"placeholder")
+
+    def _failing_open(*args: Any, **kwargs: Any) -> Any:
+        raise PermissionError("access denied")
+
+    monkeypatch.setattr("builtins.open", _failing_open)
+
+    with pytest.raises(PipelineContractError, match="Error loading from"):
+        load_model_or_pipeline(file_path, "model")
+
+
 def test_load_model_or_pipeline_returns_pipeline_when_type_matches(tmp_path: Path) -> None:
     """Return deserialized Pipeline object when loading pipeline artifact."""
     file_path = tmp_path / "pipeline.joblib"
@@ -115,3 +129,15 @@ def test_get_snapshot_binding_from_training_metadata_raises_when_binding_missing
 
     with pytest.raises(DataError, match="No snapshot binding found"):
         get_snapshot_binding_from_training_metadata(training_metadata)
+
+
+def test_get_snapshot_binding_from_training_metadata_returns_empty_binding_list() -> None:
+    """Return empty list as a valid snapshot binding when lineage is present but empty."""
+    training_metadata = cast(
+        Any,
+        SimpleNamespace(lineage=SimpleNamespace(feature_lineage=[])),
+    )
+
+    snapshot_binding = get_snapshot_binding_from_training_metadata(training_metadata)
+
+    assert snapshot_binding == []
