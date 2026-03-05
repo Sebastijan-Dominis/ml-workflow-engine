@@ -22,6 +22,7 @@ jobs:
           environment-file: environment.yml
           activate-environment: hotel_management
           use-mamba: true
+          retry: 3
 
       - name: Show environment
         run: |
@@ -29,4 +30,4 @@ jobs:
           python --version
 
       - name: Run tests
-        run: pytest -v
+        run: pytest -v --maxfail=1 --disable-warnings
