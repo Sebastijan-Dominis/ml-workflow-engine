@@ -26,13 +26,13 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          conda install -y -c conda-forge ruff mypy types-pyyaml numpy-stubs
+          conda install -y -c conda-forge ruff mypy types-pyyaml numpy-stubs --solver=libmamba --quiet
 
       - name: Install tooling on Windows
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          conda install -y -c conda-forge ruff mypy types-pyyaml numpy-stubs
+          conda install -y -c conda-forge ruff mypy types-pyyaml numpy-stubs --solver=libmamba --quiet
 
       - name: ruff check
         run: ruff check .
