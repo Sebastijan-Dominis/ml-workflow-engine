@@ -49,6 +49,41 @@ def test_arrival_date_builds_datetime_column_without_mutating_input() -> None:
     assert "arrival_date" not in df.columns
 
 
+def test_arrival_date_maps_unrecognized_month_name_to_nat() -> None:
+    """Produce `NaT` when month names are outside the hard-coded month mapping."""
+    df = pd.DataFrame(
+        {
+            "arrival_date_year": [2024],
+            "arrival_date_month": ["Feb"],
+            "arrival_date_day_of_month": [10],
+        }
+    )
+
+    transformed = ArrivalDate().transform(df)
+
+    assert transformed["arrival_date"].isna().tolist() == [True]
+    assert "arrival_date" not in df.columns
+
+
+def test_arrival_date_sets_n_features_in_when_transform_called_before_fit() -> None:
+    """Populate sklearn metadata when transform is called before explicit fit."""
+    df = pd.DataFrame(
+        {
+            "arrival_date_year": [2024],
+            "arrival_date_month": ["January"],
+            "arrival_date_day_of_month": [1],
+            "extra": [99],
+        }
+    )
+    op = ArrivalDate()
+
+    assert not hasattr(op, "n_features_in_")
+
+    op.transform(df)
+
+    assert op.n_features_in_ == 4
+
+
 def test_adr_per_person_replaces_zero_party_size_denominator_with_one() -> None:
     """Avoid division-by-zero by coercing zero total guests to denominator one."""
     df = pd.DataFrame(

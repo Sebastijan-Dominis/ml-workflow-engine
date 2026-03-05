@@ -38,16 +38,12 @@ class PITOperator(FeatureOperator, SklearnFeatureMixin):
             pd.DataFrame: Dataframe with derived PIT-safe feature column.
         """
         if not hasattr(self, "n_features_in_"):
-            self.fit(X)
+            SklearnFeatureMixin.fit(self, X)
 
-        X = X.sort_values(self.groupby_cols + ['arrival_datetime'])
-        X[self.feature_name] = (
-            X.groupby(self.groupby_cols)[self.agg_col]
-             .expanding()
-             .agg(self.agg_func)
-             .shift(1)
-             .reset_index(level=0, drop=True)
-        )
+        X = X.sort_values(self.groupby_cols + ["arrival_datetime"]).copy()
+        X[self.feature_name] = X.groupby(self.groupby_cols, group_keys=False)[
+            self.agg_col
+        ].apply(lambda s: s.expanding().agg(self.agg_func).shift(1))
 
         # Fill NaNs for first rows (no history)
         if X[self.feature_name].isnull().any():
