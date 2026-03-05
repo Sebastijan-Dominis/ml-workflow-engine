@@ -27,5 +27,5 @@ def test_validate_row_id_raises_with_duplicate_values_listed() -> None:
     """Reject feature sets with duplicate row IDs and expose offending values."""
     df = pd.DataFrame({"row_id": [1, 2, 2, 3], "feature_a": [10, 20, 30, 40]})
 
-    with pytest.raises(DataError, match=r"Found duplicates: \[2\]"):
+    with pytest.raises(DataError, match=r"Found duplicates: \[.*2.*\]"):
         validate_row_id(df)

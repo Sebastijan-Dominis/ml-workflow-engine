@@ -1,11 +1,22 @@
 """Unit tests for operator hashing and validation in feature freezing."""
 
+import importlib
+import sys
+import types
+
 import pytest
 from ml.exceptions import DataError, UserError
-from ml.feature_freezing.utils.operators import (
-    generate_operator_hash,
-    validate_operators,
-)
+
+# Avoid importing the full registries stack in unit tests. This prevents unrelated
+# optional-runtime import failures (e.g., NumPy alias removals in downstream modules).
+if "ml.registries.catalogs" not in sys.modules:
+    catalogs_stub = types.ModuleType("ml.registries.catalogs")
+    catalogs_stub.FEATURE_OPERATORS = {}
+    sys.modules["ml.registries.catalogs"] = catalogs_stub
+
+operators_module = importlib.import_module("ml.feature_freezing.utils.operators")
+generate_operator_hash = operators_module.generate_operator_hash
+validate_operators = operators_module.validate_operators
 
 pytestmark = pytest.mark.unit
 
