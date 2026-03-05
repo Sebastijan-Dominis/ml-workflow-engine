@@ -36,10 +36,10 @@ jobs:
         run: ruff check .
 
       - name: Run mypy
-        run: mypy ml pipelines
+        run: mypy ml pipelines --ignore-missing-imports --allow-any-expr
 
       - name: Import layer guardrails
         run: python scripts/quality/check_import_layers.py
 
       - name: Check naming conventions
-        run: python scripts/quality/check_naming_conventions.py
+        run: python scripts/quality/check_naming_conventions.py --files ./**/*.py

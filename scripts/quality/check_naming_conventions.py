@@ -52,13 +52,18 @@ def check_ast(file: Path):
             )
 
 def main():
-    for root in ROOTS:
-        if not root.exists():
-            continue
+    files_to_check: list[Path] = []
 
-        for file in root.rglob("*.py"):
-            check_module_name(file)
-            check_ast(file)
+    if len(sys.argv) > 1:
+        files_to_check = [Path(f) for f in sys.argv[1:]]
+    else:
+        for root in ROOTS:
+            if root.exists():
+                files_to_check.extend(root.rglob("*.py"))
+
+    for file in files_to_check:
+        check_module_name(file)
+        check_ast(file)
 
     if violations:
         print("\n".join(violations))

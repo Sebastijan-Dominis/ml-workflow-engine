@@ -25,4 +25,5 @@ repos:
         name: check naming conventions
         entry: python scripts/quality/check_naming_conventions.py
         language: system
-        pass_filenames: false
+        pass_filenames: true
+        types: [python]

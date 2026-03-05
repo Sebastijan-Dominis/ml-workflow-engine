@@ -21,8 +21,8 @@ from ml.runners.explainability.explainers.tree_model.utils.calculators.feature_i
 from ml.runners.explainability.explainers.tree_model.utils.calculators.shap_importances import (
     get_shap_importances,
 )
-from ml.runners.explainability.explainers.tree_model.utils.transformers.get_feature_names_and_transformed_x import (
-    get_feature_names_and_transformed_x,
+from ml.runners.explainability.explainers.tree_model.utils.transformers.get_feature_names_and_transformed_features import (
+    get_feature_names_and_transformed_features,
 )
 from ml.runners.shared.loading.get_snapshot_binding_from_training_metadata import (
     get_snapshot_binding_from_training_metadata,
@@ -94,7 +94,7 @@ class ExplainTreeModel(Explainer):
 
         X_test = splits.X_test
 
-        feature_names, X_test_transformed = get_feature_names_and_transformed_x(pipeline, X_test)
+        feature_names, X_test_transformed = get_feature_names_and_transformed_features(pipeline, X_test)
 
         adapter = get_tree_model_adapter(pipeline[-1])
 
