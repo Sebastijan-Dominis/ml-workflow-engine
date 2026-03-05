@@ -1,0 +1,31 @@
+name: Run Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          environment-file: environment.yml
+          activate-environment: hotel_management
+          use-mamba: true
+
+      - name: Show environment
+        run: |
+          conda list
+          python --version
+
+      - name: Run tests
+        run: pytest -v

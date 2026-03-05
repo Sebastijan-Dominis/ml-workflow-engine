@@ -40,6 +40,3 @@ jobs:
 
       - name: Check naming conventions
         run: python scripts/quality/check_naming_conventions.py
-
-      - name: Run tests
-        run: pytest -v
