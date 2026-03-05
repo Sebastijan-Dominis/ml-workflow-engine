@@ -1,10 +1,13 @@
 from types import SimpleNamespace
+from typing import cast
 
 import numpy as np
 import pandas as pd
 import pytest
+from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import UserError
 from ml.runners.training.utils.metrics.compute_metrics import compute_metrics
+from sklearn.pipeline import Pipeline
 
 pytestmark = pytest.mark.unit
 
@@ -59,8 +62,8 @@ def test_compute_metrics_classification_includes_auc_and_threshold(monkeypatch: 
 
     metrics = compute_metrics(
         model=_ClassificationModel(),
-        pipeline=_ClassificationPipeline(),
-        model_cfg=_base_cfg("classification", "binary"),
+        pipeline=cast(Pipeline, _ClassificationPipeline()),
+        model_cfg=cast(TrainModelConfig, _base_cfg("classification", "binary")),
         X_train=pd.DataFrame({"x": [1, 2, 3, 4]}),
         y_train=pd.Series([0, 1, 0, 1]),
         X_val=pd.DataFrame({"x": [10, 11, 12, 13]}),
@@ -75,8 +78,8 @@ def test_compute_metrics_classification_includes_auc_and_threshold(monkeypatch: 
 def test_compute_metrics_regression_returns_expected_metric_keys() -> None:
     metrics = compute_metrics(
         model=object(),
-        pipeline=_RegressionPipeline(),
-        model_cfg=_base_cfg("regression"),
+        pipeline=cast(Pipeline, _RegressionPipeline()),
+        model_cfg=cast(TrainModelConfig, _base_cfg("regression")),
         X_train=pd.DataFrame({"x": [1, 2, 3]}),
         y_train=pd.Series([100.0, 110.0, 90.0]),
         X_val=pd.DataFrame({"x": [10, 11]}),
@@ -99,8 +102,8 @@ def test_compute_metrics_raises_for_unsupported_task_type() -> None:
     with pytest.raises(UserError, match="Task type ranking not supported"):
         compute_metrics(
             model=object(),
-            pipeline=object(),
-            model_cfg=_base_cfg("ranking"),
+            pipeline=cast(Pipeline, object()),
+            model_cfg=cast(TrainModelConfig, _base_cfg("ranking")),
             X_train=pd.DataFrame({"x": [1]}),
             y_train=pd.Series([1]),
             X_val=pd.DataFrame({"x": [2]}),
