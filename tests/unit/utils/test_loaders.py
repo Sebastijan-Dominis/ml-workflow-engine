@@ -11,7 +11,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_load_yaml_reads_mapping_payload(tmp_path: Path) -> None:
-    """Test that load_yaml correctly reads a YAML file containing a mapping and returns the expected dictionary."""
+    """Verify that `load_yaml` returns a mapping payload."""
     file_path = tmp_path / "config.yaml"
     file_path.write_text("a: 1\nb: two\n", encoding="utf-8")
 
@@ -21,7 +21,7 @@ def test_load_yaml_reads_mapping_payload(tmp_path: Path) -> None:
 
 
 def test_load_yaml_rejects_non_mapping_payload(tmp_path: Path) -> None:
-    """Test that load_yaml raises a ConfigError when the YAML file does not contain a mapping at the top level."""
+    """Verify that `load_yaml` rejects non-mapping YAML payloads."""
     file_path = tmp_path / "config.yaml"
     file_path.write_text("- a\n- b\n", encoding="utf-8")
 
@@ -30,20 +30,20 @@ def test_load_yaml_rejects_non_mapping_payload(tmp_path: Path) -> None:
 
 
 def test_load_json_non_strict_missing_file_returns_empty_dict(tmp_path: Path) -> None:
-    """Test that load_json returns an empty dictionary when the specified file does not exist and strict mode is disabled. The test constructs a file path that does not exist, calls load_json with strict=False, and asserts that the result is an empty dictionary."""
+    """Verify that non-strict `load_json` returns an empty dict for missing files."""
     result = load_json(tmp_path / "missing.json", strict=False)
 
     assert result == {}
 
 
 def test_load_json_strict_missing_file_raises_config_error(tmp_path: Path) -> None:
-    """Test that load_json raises a ConfigError when the specified file does not exist and strict mode is enabled."""
+    """Verify that strict `load_json` raises `ConfigError` for missing files."""
     with pytest.raises(ConfigError, match="File not found"):
         load_json(tmp_path / "missing.json", strict=True)
 
 
 def test_load_json_rejects_non_object_payload(tmp_path: Path) -> None:
-    """Test that load_json raises a ConfigError when the JSON file does not contain an object at the top level. The test creates a temporary JSON file with a non-object payload (e.g., an array), calls load_json on that file, and asserts that a ConfigError is raised with an appropriate error message."""
+    """Verify that `load_json` rejects non-object JSON payloads."""
     file_path = tmp_path / "config.json"
     file_path.write_text("[1, 2, 3]", encoding="utf-8")
 
@@ -52,13 +52,13 @@ def test_load_json_rejects_non_object_payload(tmp_path: Path) -> None:
 
 
 def test_read_data_rejects_unsupported_format(tmp_path: Path) -> None:
-    """Test that read_data raises a ConfigError when the specified format is not supported."""
+    """Verify that `read_data` rejects unsupported formats."""
     with pytest.raises(ConfigError, match="Unsupported data format"):
         read_data("xlsx", tmp_path / "data.xlsx")
 
 
 def test_read_data_csv_applies_na_defaults(tmp_path: Path) -> None:
-    """Test that read_data correctly applies default NA values when reading a CSV file. The test creates a temporary CSV file with specific contents that include empty strings and "NA" as values, then calls read_data with format "csv" on that file and asserts that the resulting DataFrame has the expected shape and that the appropriate values are interpreted as NA (i.e., NaN in the DataFrame). This validates that the default NA handling for CSV files is working as intended."""
+    """Verify that CSV reads apply default NA handling."""
     csv_path = tmp_path / "data.csv"
     csv_path.write_text("a,b\n1,NA\n2,\n", encoding="utf-8")
 
@@ -71,7 +71,7 @@ def test_read_data_csv_applies_na_defaults(tmp_path: Path) -> None:
 
 
 def test_read_data_wraps_reader_errors_as_data_error(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that if the underlying reader function for a specific format raises an exception, read_data catches this and raises a DataError with an appropriate error message that includes the original exception message. The test uses monkeypatch to replace the reader function for "csv" format with a fake function that raises a ValueError, then calls read_data with format "csv" and asserts that a DataError is raised with a message indicating an error reading data in format 'csv' and that the original ValueError message is included."""
+    """Verify that reader failures are wrapped as `DataError`."""
     def _failing_reader(path: Path) -> pd.DataFrame:
         raise ValueError("reader failed")
 

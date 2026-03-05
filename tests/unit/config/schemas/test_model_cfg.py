@@ -8,11 +8,7 @@ pytestmark = pytest.mark.unit
 
 
 def _base_common_payload() -> dict:
-    """Helper function to create a valid base payload for testing the SearchModelConfig and TrainModelConfig schemas. This payload includes all the required fields for both schemas, allowing individual tests to modify or extend it as needed without having to redefine the common structure.
-
-    Returns:
-        dict: A valid base payload dictionary for testing the SearchModelConfig and TrainModelConfig schemas
-    """
+    """Return a valid shared payload for model-config schema tests."""
     return {
         "problem": "cancellation",
         "segment": {"name": "city_hotel_online_ta"},
@@ -71,11 +67,7 @@ def _base_common_payload() -> dict:
 
 
 def _search_payload() -> dict:
-    """Helper function to create a valid payload for testing the SearchModelConfig schema. This payload extends the base common payload with additional fields specific to the search configuration, such as search parameters and lineage information for the search process.
-
-    Returns:
-        dict: A valid payload dictionary for testing the SearchModelConfig schema.
-    """
+    """Return a valid payload for `SearchModelConfig` tests."""
     payload = _base_common_payload()
     payload.update(
         {
@@ -92,11 +84,7 @@ def _search_payload() -> dict:
 
 
 def _train_payload() -> dict:
-    """Helper function to create a valid payload for testing the TrainModelConfig schema. This payload extends the base common payload with additional fields specific to the training configuration, such as training parameters and lineage information for the training process.
-
-    Returns:
-        dict: A valid payload dictionary for testing the TrainModelConfig schema.
-    """
+    """Return a valid payload for `TrainModelConfig` tests."""
     payload = _base_common_payload()
     payload.update(
         {
@@ -110,7 +98,7 @@ def _train_payload() -> dict:
 
 
 def test_search_model_config_accepts_valid_payload_and_defaults() -> None:
-    """Test that the SearchModelConfig schema accepts a valid payload and correctly assigns default values for optional fields."""
+    """Verify valid search payload parsing and default assignment."""
     cfg = SearchModelConfig.model_validate(_search_payload())
 
     assert cfg.seed == 42
@@ -121,7 +109,7 @@ def test_search_model_config_accepts_valid_payload_and_defaults() -> None:
 
 
 def test_train_model_config_accepts_valid_payload_and_defaults() -> None:
-    """Test that the TrainModelConfig schema accepts a valid payload and correctly assigns default values for optional fields."""
+    """Verify valid training payload parsing and default assignment."""
     cfg = TrainModelConfig.model_validate(_train_payload())
 
     assert cfg.seed == 42
@@ -132,7 +120,7 @@ def test_train_model_config_accepts_valid_payload_and_defaults() -> None:
 
 
 def test_search_model_config_forbids_unknown_top_level_fields() -> None:
-    """Test that the SearchModelConfig schema raises a ValidationError when the payload contains unknown top-level fields that are not defined in the schema."""
+    """Verify that unknown top-level fields are rejected for search config."""
     payload = _search_payload()
     payload["unexpected_field"] = "not-allowed"
 
@@ -141,7 +129,7 @@ def test_search_model_config_forbids_unknown_top_level_fields() -> None:
 
 
 def test_train_model_config_forbids_unknown_top_level_fields() -> None:
-    """Test that the TrainModelConfig schema raises a ValidationError when the payload contains unknown top-level fields that are not defined in the schema."""
+    """Verify that unknown top-level fields are rejected for train config."""
     payload = _train_payload()
     payload["unexpected_field"] = "not-allowed"
 
@@ -150,7 +138,7 @@ def test_train_model_config_forbids_unknown_top_level_fields() -> None:
 
 
 def test_search_model_config_allows_optional_training_stub_field() -> None:
-    """Test that the SearchModelConfig schema allows an optional training field in the payload, which can be used as a stub for training configuration when the search configuration is being validated independently. The test adds a training field to the search payload and verifies that it is accepted without causing validation errors."""
+    """Verify that search config accepts an optional training stub field."""
     payload = _search_payload()
     payload["training"] = {"inherited": "from-defaults"}
 
@@ -160,7 +148,7 @@ def test_search_model_config_allows_optional_training_stub_field() -> None:
 
 
 def test_train_model_config_allows_optional_search_stub_field() -> None:
-    """Test that the TrainModelConfig schema allows an optional search field in the payload, which can be used as a stub for search configuration when the training configuration is being validated independently. The test adds a search field to the training payload and verifies that it is accepted without causing validation errors."""
+    """Verify that train config accepts an optional search stub field."""
     payload = _train_payload()
     payload["search"] = {"inherited": "from-defaults"}
 

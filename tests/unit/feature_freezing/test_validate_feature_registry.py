@@ -1,4 +1,4 @@
-"""Unit tests for the validate_feature_registry function in ml.feature_freezing.freeze_strategies.config.validate_feature_registry. The tests verify that the function correctly validates raw configurations for feature registries, returns properly typed configuration objects, and raises appropriate errors for unsupported data types. The tests use helper functions to create valid raw configurations for tabular features to facilitate testing of the validation logic."""
+"""Unit tests for feature registry validation."""
 import pytest
 from ml.exceptions import UserError
 from ml.feature_freezing.freeze_strategies.config.validate_feature_registry import (
@@ -42,7 +42,7 @@ def _valid_tabular_raw_config() -> dict:
 
 
 def test_validate_feature_registry_returns_typed_tabular_config() -> None:
-    """Test that the validate_feature_registry function returns a properly typed TabularFeaturesConfig when given a valid raw configuration for tabular features."""
+    """Verify successful validation returns `TabularFeaturesConfig`."""
     config = validate_feature_registry(
         raw_config=_valid_tabular_raw_config(),
         data_type="tabular",
@@ -54,8 +54,7 @@ def test_validate_feature_registry_returns_typed_tabular_config() -> None:
 
 
 def test_validate_feature_registry_wraps_error_for_unsupported_data_type() -> None:
-    """Test that the validate_feature_registry function raises a UserError with an appropriate message when given an unsupported data type, and that the original error is preserved as the cause.
-    """
+    """Verify unsupported data types raise wrapped `UserError` exceptions."""
     with pytest.raises(UserError, match="Feature registry validation failed") as error:
         validate_feature_registry(raw_config={}, data_type="image")
 

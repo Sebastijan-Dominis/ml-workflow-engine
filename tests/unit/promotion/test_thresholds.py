@@ -1,4 +1,4 @@
-"""Unit tests for the compare_against_thresholds function in ml.promotion.comparisons.thresholds. The tests verify that the function correctly identifies when evaluation metrics meet or do not meet specified promotion thresholds, and that it raises appropriate errors when required metrics are missing from the evaluation metrics. A helper function is included to create PromotionThresholds instances with specified threshold values for testing purposes."""
+"""Unit tests for promotion threshold comparisons."""
 import pytest
 from ml.exceptions import UserError
 from ml.promotion.comparisons.thresholds import compare_against_thresholds
@@ -8,14 +8,7 @@ pytestmark = pytest.mark.unit
 
 
 def _build_thresholds(*, threshold_value: float = 0.70) -> PromotionThresholds:
-    """Helper function to build a PromotionThresholds instance with a specified threshold value for testing.
-
-    Args:
-        threshold_value (float): The threshold value to set for the 'f1' metric in the 'val' set. Defaults to 0.70.
-
-    Returns:
-        PromotionThresholds: An instance of PromotionThresholds with the specified threshold value.
-    """
+    """Build `PromotionThresholds` with a configurable validation F1 threshold."""
     return PromotionThresholds.model_validate(
         {
             "promotion_metrics": {
@@ -35,7 +28,7 @@ def _build_thresholds(*, threshold_value: float = 0.70) -> PromotionThresholds:
 
 
 def test_compare_against_thresholds_returns_failure_result_when_threshold_not_met() -> None:
-    """Test that compare_against_thresholds returns a result indicating failure when the evaluation metric does not meet the specified promotion threshold."""
+    """Verify failure result when evaluation metrics do not meet thresholds."""
     thresholds = _build_thresholds(threshold_value=0.80)
 
     result = compare_against_thresholds(
@@ -50,7 +43,7 @@ def test_compare_against_thresholds_returns_failure_result_when_threshold_not_me
 
 
 def test_compare_against_thresholds_raises_user_error_when_metric_is_missing() -> None:
-    """Test that compare_against_thresholds raises a UserError when the evaluation metrics do not include a metric that is specified in the promotion thresholds."""
+    """Verify error handling for missing required evaluation metrics."""
     thresholds = _build_thresholds(threshold_value=0.70)
 
     with pytest.raises(UserError, match="Evaluation metric 'f1' is not available"):

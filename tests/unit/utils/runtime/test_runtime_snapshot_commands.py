@@ -32,7 +32,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_find_conda_executable_prefers_shutil_which(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that find_conda_executable returns the path from shutil.which if it is found. The test uses monkeypatch to replace shutil.which with a fake function that returns a specific path (e.g., "/usr/bin/conda"), then calls find_conda_executable and asserts that the returned path matches the expected value from the fake shutil.which, confirming that find_conda_executable correctly uses shutil.which to locate the conda executable when it is available."""
+    """Verify that `find_conda_executable` prefers `shutil.which` results."""
     monkeypatch.setattr("ml.utils.runtime.runtime_snapshot.shutil.which", lambda _: "/usr/bin/conda")
 
     result = find_conda_executable()
@@ -43,7 +43,7 @@ def test_find_conda_executable_prefers_shutil_which(monkeypatch: pytest.MonkeyPa
 def test_find_conda_executable_resolves_from_conda_prefix_on_linux(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Test that find_conda_executable correctly constructs the path to the conda executable based on the CONDA_PREFIX environment variable when running on Linux and shutil.which does not find conda. The test sets up a fake CONDA_PREFIX path that simulates a typical conda environment structure, uses monkeypatch to replace shutil.which with a function that returns None (indicating conda is not found in PATH) and platform.system with a function that returns "Linux", then calls find_conda_executable and asserts that the returned path matches the expected path constructed from CONDA_PREFIX, confirming that find_conda_executable correctly falls back to constructing the path from CONDA_PREFIX on Linux when conda is not found in PATH."""
+    """Verify Linux fallback resolution from `CONDA_PREFIX` when not on `PATH`."""
     # /tmp/.../conda_root/envs/dev -> base resolves to /tmp/.../conda_root
     conda_prefix = tmp_path / "conda_root" / "envs" / "dev"
     candidate = tmp_path / "conda_root" / "bin" / "conda"
@@ -60,7 +60,7 @@ def test_find_conda_executable_resolves_from_conda_prefix_on_linux(
 
 
 def test_find_conda_executable_raises_when_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that find_conda_executable raises a RuntimeMLError when the conda executable cannot be found by either shutil.which or by resolving from CONDA_PREFIX. The test uses monkeypatch to replace shutil.which with a function that returns None (indicating conda is not found in PATH) and deletes the CONDA_PREFIX environment variable, then calls find_conda_executable and asserts that a RuntimeMLError is raised with a message indicating that the conda executable could not be located, confirming that find_conda_executable correctly handles the case where conda cannot be found and raises an appropriate error."""
+    """Verify that `RuntimeMLError` is raised when conda cannot be located."""
     monkeypatch.setattr("ml.utils.runtime.runtime_snapshot.shutil.which", lambda _: None)
     monkeypatch.delenv("CONDA_PREFIX", raising=False)
 
@@ -69,7 +69,7 @@ def test_find_conda_executable_raises_when_not_found(monkeypatch: pytest.MonkeyP
 
 
 def test_run_command_returns_stdout(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that _run_command executes the given command and returns its standard output. The test uses monkeypatch to replace subprocess.run with a fake function that returns an object with a stdout attribute containing a specific string (e.g., "ok\n"), then calls _run_command with a sample command and asserts that the returned value matches the expected stdout string, confirming that _run_command correctly captures and returns the standard output of the executed command."""
+    """Verify that `_run_command` returns captured standard output."""
     class _Result:
         stdout = "ok\n"
 
@@ -81,7 +81,7 @@ def test_run_command_returns_stdout(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_run_command_wraps_failures_in_runtime_ml_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that if the subprocess call within _run_command raises a CalledProcessError, _run_command catches this and raises a RuntimeMLError with an appropriate error message that includes the original exception message. The test uses monkeypatch to replace subprocess.run with a fake function that raises a CalledProcessError, then calls _run_command and asserts that a RuntimeMLError is raised with a message indicating that the command failed and that the original CalledProcessError message is included, confirming that _run_command correctly handles errors from subprocess calls and raises an appropriate RuntimeMLError."""
+    """Verify that subprocess failures are wrapped as `RuntimeMLError`."""
     def _raise(*args, **kwargs):
         raise subprocess.CalledProcessError(returncode=1, cmd=["conda"], output="out", stderr="err")
 
@@ -92,7 +92,7 @@ def test_run_command_wraps_failures_in_runtime_ml_error(monkeypatch: pytest.Monk
 
 
 def test_get_conda_env_export_calls_conda_export_command(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that get_conda_env_export calls the conda command to export the environment and returns its output. The test uses monkeypatch to replace find_conda_executable with a function that returns a specific path to the conda executable, and replaces _run_command with a function that captures the command it is called with and returns a specific string (e.g., "name: test\n"), then calls get_conda_env_export and asserts that the returned value matches the expected output string and that _run_command was called with the expected command to export the conda environment, confirming that get_conda_env_export correctly constructs and executes the conda command to export the environment and returns its output."""
+    """Verify that `get_conda_env_export` executes the expected conda export command."""
     monkeypatch.setattr("ml.utils.runtime.runtime_snapshot.find_conda_executable", lambda: "/usr/bin/conda")
 
     calls: list[list[str]] = []
@@ -110,7 +110,7 @@ def test_get_conda_env_export_calls_conda_export_command(monkeypatch: pytest.Mon
 
 
 def test_get_conda_env_export_wraps_internal_failures(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test that if find_conda_executable raises a RuntimeMLError when get_conda_env_export tries to locate the conda executable, get_conda_env_export catches this and raises a RuntimeMLError with an appropriate error message that includes the original exception message. The test uses monkeypatch to replace find_conda_executable with a function that raises a RuntimeMLError, then calls get_conda_env_export and asserts that a RuntimeMLError is raised with a message indicating a failure to export the conda environment and that the original RuntimeMLError message is included, confirming that get_conda_env_export correctly handles errors from find_conda_executable and raises an appropriate RuntimeMLError."""
+    """Verify that internal export failures are wrapped as `RuntimeMLError`."""
     def _raise() -> str:
         raise RuntimeMLError("conda missing")
 
