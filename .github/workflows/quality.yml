@@ -20,53 +20,56 @@ jobs:
           auto-activate-base: true
           channels: conda-forge
           channel-priority: strict
+          python-version: 3.11.14  # pin Python version for consistency
 
       - name: Install tooling on Linux/macOS
         if: runner.os != 'Windows'
         shell: bash -l {0}
-        run: conda install -y -c conda-forge ruff mypy
+        run: |
+          conda install -y -c conda-forge ruff mypy types-pyyaml numpy-stubs
 
       - name: Install tooling on Windows
         if: runner.os == 'Windows'
         shell: powershell
-        run: conda install -y -c conda-forge ruff mypy
+        run: |
+          conda install -y -c conda-forge ruff mypy types-pyyaml numpy-stubs
 
-      - name: ruff check on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash -l {0}
+      - name: ruff check
         run: ruff check .
+        shell: bash -l {0}  # works on Linux/macOS
+        if: runner.os != 'Windows'
 
       - name: ruff check on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
         run: ruff check .
+        shell: powershell
+        if: runner.os == 'Windows'
 
-      - name: mypy on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash -l {0}
+      - name: mypy
         run: mypy ml pipelines
+        shell: bash -l {0}
+        if: runner.os != 'Windows'
 
       - name: mypy on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
         run: mypy ml pipelines
+        shell: powershell
+        if: runner.os == 'Windows'
 
-      - name: import layer guardrails on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash -l {0}
+      - name: import layer guardrails
         run: python scripts/quality/check_import_layers.py
+        shell: bash -l {0}
+        if: runner.os != 'Windows'
 
       - name: import layer guardrails on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
         run: python scripts/quality/check_import_layers.py
+        shell: powershell
+        if: runner.os == 'Windows'
 
-      - name: check naming conventions on Linux/macOS
-        if: runner.os != 'Windows'
-        shell: bash -l {0}
+      - name: check naming conventions
         run: python scripts/quality/check_naming_conventions.py
+        shell: bash -l {0}
+        if: runner.os != 'Windows'
 
       - name: check naming conventions on Windows
-        if: runner.os == 'Windows'
-        shell: powershell
         run: python scripts/quality/check_naming_conventions.py
+        shell: powershell
+        if: runner.os == 'Windows'
