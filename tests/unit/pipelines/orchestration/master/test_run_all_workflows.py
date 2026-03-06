@@ -65,6 +65,25 @@ def test_run_step_returns_error_code_when_subprocess_fails(
     assert code == 9
 
 
+def test_run_step_returns_zero_when_subprocess_succeeds(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Return success code and pass `text=True` when subprocess step exits cleanly."""
+    seen: dict[str, object] = {}
+
+    def _run(cmd: list[str], *, text: bool) -> SimpleNamespace:
+        seen["cmd"] = cmd
+        seen["text"] = text
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(run_all_workflows.subprocess, "run", _run)
+
+    code = run_all_workflows.run_step(["python", "-m", "dummy"], "Dummy Step")
+
+    assert code == 0
+    assert seen == {"cmd": ["python", "-m", "dummy"], "text": True}
+
+
 def test_main_stops_at_first_failed_step_and_reports_failure(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

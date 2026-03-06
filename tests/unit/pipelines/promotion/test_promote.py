@@ -52,6 +52,35 @@ def test_parse_args_parses_required_and_optional_flags(monkeypatch: pytest.Monke
     assert args.logging_level == "INFO"
 
 
+def test_parse_args_rejects_unknown_stage_choice(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Reject stage values outside argparse choice set with SystemExit from parser."""
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "promote.py",
+            "--problem",
+            "no_show",
+            "--segment",
+            "global",
+            "--version",
+            "v1",
+            "--experiment-id",
+            "exp-1",
+            "--train-run-id",
+            "train-1",
+            "--eval-run-id",
+            "eval-1",
+            "--explain-run-id",
+            "explain-1",
+            "--stage",
+            "shadow",
+        ],
+    )
+
+    with pytest.raises(SystemExit):
+        module.parse_args()
+
+
 def test_main_returns_zero_and_runs_service_when_promotion_succeeds(monkeypatch: pytest.MonkeyPatch) -> None:
     """Build context, initialize logging, and return success exit code on normal run."""
     args = argparse.Namespace(
@@ -133,3 +162,39 @@ def test_main_maps_errors_to_exit_codes_via_resolver(monkeypatch: pytest.MonkeyP
 
     assert result == 27
     assert isinstance(seen["error"], _ExpectedError)
+
+
+def test_main_falls_back_to_info_when_logging_level_is_unrecognized(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Use INFO level fallback when provided logging level is not recognized by ``logging``."""
+    args = argparse.Namespace(
+        problem="no_show",
+        segment="global",
+        version="v1",
+        experiment_id="exp-1",
+        train_run_id="train-1",
+        eval_run_id="eval-1",
+        explain_run_id="explain-1",
+        stage="production",
+        logging_level="not-a-level",
+    )
+    context = SimpleNamespace(paths=SimpleNamespace(run_dir=Path("runs") / "promotion" / "run-fallback"))
+
+    captured: dict[str, Any] = {}
+
+    class _Service:
+        def run(self, run_context: Any) -> None:
+            captured["run_context"] = run_context
+
+    monkeypatch.setattr(module, "parse_args", lambda: args)
+    monkeypatch.setattr(module, "build_context", lambda _args: context)
+    monkeypatch.setattr(module, "PromotionService", _Service)
+    monkeypatch.setattr(
+        module,
+        "setup_logging",
+        lambda _log_file, log_level: captured.update({"log_level": log_level}),
+    )
+
+    result = module.main()
+
+    assert result == 0
+    assert captured["log_level"] == logging.INFO
