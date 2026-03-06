@@ -29,6 +29,12 @@ def test_load_yaml_rejects_non_mapping_payload(tmp_path: Path) -> None:
         load_yaml(file_path)
 
 
+def test_load_yaml_missing_file_raises_config_error(tmp_path: Path) -> None:
+    """Verify that `load_yaml` raises `ConfigError` when file is missing."""
+    with pytest.raises(ConfigError, match="Config file not found"):
+        load_yaml(tmp_path / "missing.yaml")
+
+
 def test_load_json_non_strict_missing_file_returns_empty_dict(tmp_path: Path) -> None:
     """Verify that non-strict `load_json` returns an empty dict for missing files."""
     result = load_json(tmp_path / "missing.json", strict=False)
@@ -48,6 +54,15 @@ def test_load_json_rejects_non_object_payload(tmp_path: Path) -> None:
     file_path.write_text("[1, 2, 3]", encoding="utf-8")
 
     with pytest.raises(ConfigError, match="must be a JSON object"):
+        load_json(file_path)
+
+
+def test_load_json_rejects_invalid_json_content(tmp_path: Path) -> None:
+    """Verify that malformed JSON content is wrapped as `ConfigError`."""
+    file_path = tmp_path / "broken.json"
+    file_path.write_text('{"a": 1, }', encoding="utf-8")
+
+    with pytest.raises(ConfigError, match="Invalid JSON in file"):
         load_json(file_path)
 
 
@@ -79,3 +94,26 @@ def test_read_data_wraps_reader_errors_as_data_error(tmp_path: Path, monkeypatch
 
     with pytest.raises(DataError, match="Error reading data in format 'csv'"):
         read_data("csv", tmp_path / "data.csv")
+
+
+def test_read_data_non_csv_reader_called_with_path_only(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verify non-CSV readers are called with path only (no CSV-specific kwargs)."""
+    called: dict[str, Path] = {}
+
+    def _json_reader(path: Path) -> pd.DataFrame:
+        called["path"] = path
+        return pd.DataFrame({"a": [1]})
+
+    monkeypatch.setitem(
+        __import__("ml.utils.loaders", fromlist=["FORMAT_REGISTRY_READ"]).FORMAT_REGISTRY_READ,
+        "json",
+        _json_reader,
+    )
+
+    result = read_data("json", tmp_path / "data.json")
+
+    assert called["path"] == tmp_path / "data.json"
+    assert result.equals(pd.DataFrame({"a": [1]}))
