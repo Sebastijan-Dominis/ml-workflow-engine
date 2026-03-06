@@ -47,6 +47,20 @@ def test_discover_models_collects_problem_segment_version_tuples(tmp_path: Path)
     assert result == [("cancellation", "city_hotel", "v1")]
 
 
+def test_discover_models_returns_empty_when_specs_directory_missing(tmp_path: Path) -> None:
+    """Return no models when specs root is absent instead of raising filesystem errors."""
+    missing_specs_root = tmp_path / "does_not_exist"
+
+    original_dir = module.MODEL_SPECS_DIR
+    module.MODEL_SPECS_DIR = missing_specs_root
+    try:
+        result = module.discover_models()
+    finally:
+        module.MODEL_SPECS_DIR = original_dir
+
+    assert result == []
+
+
 def test_run_model_skips_when_existing_experiments_and_skip_enabled(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -132,6 +146,45 @@ def test_run_model_builds_command_and_passes_top_k_when_provided(
     assert cmd[cmd.index("--top-k") + 1] == "20"
 
 
+def test_run_model_logs_failure_completion_and_returns_subprocess_code(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Log shared-run failure completion message and return delegated non-zero code."""
+    monkeypatch.chdir(tmp_path)
+
+    completion_messages: list[str] = []
+
+    monkeypatch.setattr(
+        module.subprocess,
+        "run",
+        lambda _cmd, **_kwargs: SimpleNamespace(returncode=31, stdout="", stderr="boom"),
+    )
+    monkeypatch.setattr(module, "log_completion", lambda _start, message: completion_messages.append(message))
+
+    code = module.run_model(
+        "adr",
+        "city_hotel",
+        "v9",
+        args=Namespace(
+            env="dev",
+            strict=True,
+            logging_level="INFO",
+            owner="owner",
+            clean_up_failure_management=True,
+            overwrite_existing=False,
+            top_k=None,
+            skip_if_existing=False,
+        ),
+        start_time=12.34,
+    )
+
+    assert code == 31
+    assert completion_messages == [
+        "Experiments run failed with model problem=adr, segment=city_hotel, version=v9 with return code 31"
+    ]
+
+
 def test_main_returns_zero_when_no_models_discovered(monkeypatch: pytest.MonkeyPatch) -> None:
     """Complete successfully when no model specs are present for execution."""
     completion_messages: list[str] = []
@@ -215,3 +268,51 @@ def test_main_continues_after_failures_and_returns_one(monkeypatch: pytest.Monke
     assert code == 1
     assert run_calls == models
     assert completion_messages == ["Experiment execution completed with some failures"]
+
+
+def test_main_returns_zero_when_all_models_succeed(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Return zero and report successful completion when every delegated model run succeeds."""
+    completion_messages: list[str] = []
+    run_calls: list[tuple[str, str, str]] = []
+
+    monkeypatch.setattr(
+        module,
+        "parse_args",
+        lambda: Namespace(
+            env="prod",
+            strict=False,
+            logging_level="WARNING",
+            owner="owner",
+            clean_up_failure_management=False,
+            overwrite_existing=True,
+            top_k=15,
+            skip_if_existing=False,
+        ),
+    )
+    monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260306T133000")
+    monkeypatch.setattr(module, "uuid4", lambda: SimpleNamespace(hex="cafebabedeadbeef"))
+    monkeypatch.setattr(module, "setup_logging", lambda **kwargs: None)
+
+    models = [("adr", "city_hotel", "v1"), ("no_show", "global", "v2")]
+    monkeypatch.setattr(module, "discover_models", lambda: models)
+
+    def _fake_run_model(
+        problem: str,
+        segment: str,
+        version: str,
+        *,
+        args: Namespace,
+        start_time: float,
+    ) -> int:
+        _ = args, start_time
+        run_calls.append((problem, segment, version))
+        return 0
+
+    monkeypatch.setattr(module, "run_model", _fake_run_model)
+    monkeypatch.setattr(module, "log_completion", lambda _start, message: completion_messages.append(message))
+
+    code = module.main()
+
+    assert code == 0
+    assert run_calls == models
+    assert completion_messages == ["Experiment execution completed successfully"]
