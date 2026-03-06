@@ -42,3 +42,25 @@ def test_get_searcher_raises_pipeline_contract_error_for_unknown_key() -> None:
 
     with pytest.raises(PipelineContractError, match="No searcher registered for algorithm missing"):
         get_searcher_module.get_searcher("missing")
+
+
+def test_get_searcher_logs_error_for_unknown_key(caplog: pytest.LogCaptureFixture) -> None:
+    """Emit an error log that includes the unresolved algorithm key."""
+    get_searcher_module = _import_get_searcher_with_registry({})
+
+    with caplog.at_level("ERROR", logger=get_searcher_module.__name__), pytest.raises(
+        PipelineContractError
+    ):
+        get_searcher_module.get_searcher("unknown_algo")
+
+    assert "No searcher registered for algorithm unknown_algo." in caplog.text
+
+
+def test_get_searcher_logs_selected_searcher_class(caplog: pytest.LogCaptureFixture) -> None:
+    """Emit a debug log with searcher class name and requested algorithm key."""
+    get_searcher_module = _import_get_searcher_with_registry({"dummy": _DummySearcher})
+
+    with caplog.at_level("DEBUG", logger=get_searcher_module.__name__):
+        get_searcher_module.get_searcher("dummy")
+
+    assert "Using searcher _DummySearcher for algorithm=dummy" in caplog.text

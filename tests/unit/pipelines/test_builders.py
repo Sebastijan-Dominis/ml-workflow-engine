@@ -203,3 +203,63 @@ def test_build_pipeline_returns_empty_pipeline_when_no_steps_are_configured() ->
     )
 
     assert pipeline.steps == []
+
+
+def test_build_pipeline_returns_empty_pipeline_when_only_model_step_is_present() -> None:
+    """Skip model placeholder step and return an empty pipeline when no preprocessors are configured."""
+    builders, _, _ = _import_builders_with_stubs(
+        features=SimpleNamespace(
+            input_features=["a"],
+            selected_features=["a"],
+            categorical_features=[],
+        ),
+        operators={},
+        pipeline_components={
+            "SchemaValidator": _SchemaValidator,
+            "FillCategoricalMissing": _FillCategoricalMissing,
+            "FeatureEngineer": _FeatureEngineer,
+            "FeatureSelector": _FeatureSelector,
+            "Model": None,
+        },
+    )
+
+    pipeline = builders.build_pipeline(
+        model_cfg=object(),
+        pipeline_cfg={"steps": ["Model"]},
+        input_schema=pd.DataFrame({"feature": ["a"], "dtype": ["int64"]}),
+        derived_schema=pd.DataFrame({"feature": [], "source_operator": []}),
+    )
+
+    assert pipeline.steps == []
+
+
+def test_build_pipeline_ignores_non_step_pipeline_config_keys() -> None:
+    """Ignore unrelated pipeline config keys while building configured step instances."""
+    builders, _, _ = _import_builders_with_stubs(
+        features=SimpleNamespace(
+            input_features=["f1"],
+            selected_features=["f1"],
+            categorical_features=[],
+        ),
+        operators={},
+        pipeline_components={
+            "SchemaValidator": _SchemaValidator,
+            "FillCategoricalMissing": _FillCategoricalMissing,
+            "FeatureEngineer": _FeatureEngineer,
+            "FeatureSelector": _FeatureSelector,
+            "Model": None,
+        },
+    )
+
+    pipeline = builders.build_pipeline(
+        model_cfg=object(),
+        pipeline_cfg={
+            "steps": ["SchemaValidator"],
+            "assumptions": {"note": "ignored by builder"},
+            "other_meta": 123,
+        },
+        input_schema=pd.DataFrame({"feature": ["f1"], "dtype": ["int64"]}),
+        derived_schema=pd.DataFrame({"feature": [], "source_operator": []}),
+    )
+
+    assert [name for name, _ in pipeline.steps] == ["schemavalidator"]

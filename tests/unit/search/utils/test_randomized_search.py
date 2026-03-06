@@ -39,7 +39,7 @@ class _FakeRandomizedSearchCV:
         self.__class__.last_init_kwargs = kwargs
         self.best_params_ = {"Model__depth": 6}
         self.best_score_ = 0.8125
-        self.best_index_ = 2
+        self.best_index_ = np.int64(2)
         self.cv_results_ = {
             "mean_test_score": np.array([0.7, 0.8, 0.8125]),
             "std_test_score": np.array([0.02, 0.01, 0.03]),
@@ -107,6 +107,7 @@ def test_perform_randomized_search_uses_gpu_safe_defaults_and_serializes_results
 
     assert result["best_params"] == {"Model__depth": 6}
     assert result["best_index"] == 2
+    assert isinstance(result["best_index"], int)
     assert result["cv_results"]["mean_test_score"] == [0.7, 0.8, 0.8125]
     assert result["cv_results"]["rank_test_score"] == [3, 2, 1]
     assert result["cv"] == 3
