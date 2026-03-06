@@ -139,7 +139,15 @@ def test_perform_randomized_search_respects_cpu_jobs_and_non_int_cv_label(
     )
 
     monkeypatch.setattr(randomized_search_module, "RandomizedSearchCV", _FakeRandomizedSearchCV)
-    monkeypatch.setattr(randomized_search_module, "check_cv", lambda cv, y, classifier: _ResolvedCV(4))
+    captured_classifier_flags: list[bool] = []
+    monkeypatch.setattr(
+        randomized_search_module,
+        "check_cv",
+        lambda cv, y, classifier: (
+            captured_classifier_flags.append(classifier),
+            _ResolvedCV(4),
+        )[1],
+    )
     monkeypatch.setattr(randomized_search_module, "is_classifier", lambda _: False)
 
     pipeline = Pipeline(steps=[("identity", FunctionTransformer(validate=False))])
@@ -161,8 +169,52 @@ def test_perform_randomized_search_respects_cpu_jobs_and_non_int_cv_label(
     assert _FakeRandomizedSearchCV.last_init_kwargs["cv"] is cv_obj
     assert _FakeRandomizedSearchCV.last_init_kwargs["verbose"] == 0
     assert _FakeRandomizedSearchCV.last_init_kwargs["error_score"] == "raise"
+    assert captured_classifier_flags == [False]
 
     assert result["n_iter"] == 2
     assert result["cv"] == "_CustomCV"
     assert result["random_state"] == 11
     assert result["search_phase"] == "narrow"
+
+
+def test_perform_randomized_search_serializes_none_cv_as_non_int_class_name(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Serialize `cv=None` using class-name path while still using resolved CV for splits."""
+    model_cfg = cast(
+        SearchModelConfig,
+        SimpleNamespace(
+            cv=None,
+            verbose=1,
+            search=SimpleNamespace(
+                broad=SimpleNamespace(n_iter=1),
+                random_state=123,
+                error_score=0.0,
+                hardware=SimpleNamespace(task_type=SimpleNamespace(value="CPU")),
+            ),
+        ),
+    )
+
+    monkeypatch.setattr(randomized_search_module, "RandomizedSearchCV", _FakeRandomizedSearchCV)
+    monkeypatch.setattr(randomized_search_module, "check_cv", lambda cv, y, classifier: _ResolvedCV(5))
+    monkeypatch.setattr(randomized_search_module, "is_classifier", lambda _: True)
+
+    pipeline = Pipeline(steps=[("identity", FunctionTransformer(validate=False))])
+    X_train = pd.DataFrame({"x": [1.0, 2.0, 3.0, 4.0, 5.0]})
+    y_train = pd.Series([0, 1, 0, 1, 0])
+
+    result = randomized_search_module.perform_randomized_search(
+        pipeline,
+        X_train=X_train,
+        y_train=y_train,
+        param_distributions={"Model__depth": [6]},
+        model_cfg=model_cfg,
+        search_phase="broad",
+        scoring="roc_auc",
+    )
+
+    assert _FakeRandomizedSearchCV.last_init_kwargs is not None
+    assert _FakeRandomizedSearchCV.last_init_kwargs["cv"] is None
+    assert _FakeRandomizedSearchCV.last_init_kwargs["error_score"] == 0.0
+    assert result["cv"] == "NoneType"
+    assert result["error_score"] == "0.0"
