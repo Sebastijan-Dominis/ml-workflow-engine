@@ -50,3 +50,14 @@ def test_get_latest_snapshot_path_raises_when_no_valid_snapshots(tmp_path: Path)
 
     with pytest.raises(DataError, match="No valid snapshots found"):
         get_latest_snapshot_path(tmp_path)
+
+
+def test_get_latest_snapshot_path_ignores_timestamp_without_t_separator(tmp_path: Path) -> None:
+    """Ignore folders with underscore split but invalid timestamp format lacking `T`."""
+    (tmp_path / "2024-01-01-12-30-00_abcd").mkdir()
+    valid = tmp_path / "2024-01-01T12-30-00_ffff"
+    valid.mkdir()
+
+    result = get_latest_snapshot_path(tmp_path)
+
+    assert result == valid

@@ -236,3 +236,45 @@ def test_main_returns_one_on_unexpected_exception(
     code = module.main()
 
     assert code == 1
+
+
+def test_main_ignores_non_directory_entries_during_discovery(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Ignore non-directory entries across raw/interim/processed discovery roots."""
+    monkeypatch.chdir(tmp_path)
+
+    # Raw discovery: non-directory under data/raw, under dataset version root, and under snapshot root.
+    raw_root = tmp_path / "data" / "raw"
+    raw_root.mkdir(parents=True)
+    (raw_root / "README.txt").write_text("x", encoding="utf-8")
+    data_dir = raw_root / "hotel_bookings"
+    data_dir.mkdir()
+    (data_dir / "v1.txt").write_text("x", encoding="utf-8")
+    version_dir = data_dir / "v1"
+    version_dir.mkdir()
+    (version_dir / "not_a_snapshot.txt").write_text("x", encoding="utf-8")
+
+    # Interim/processed discovery: non-directory entries under config roots.
+    interim_root = tmp_path / "configs" / "data" / "interim"
+    interim_root.mkdir(parents=True)
+    (interim_root / "notes.txt").write_text("x", encoding="utf-8")
+
+    processed_root = tmp_path / "configs" / "data" / "processed"
+    processed_root.mkdir(parents=True)
+    (processed_root / "notes.txt").write_text("x", encoding="utf-8")
+
+    calls: list[list[str]] = []
+
+    monkeypatch.setattr(module, "parse_args", lambda: Namespace(skip_if_existing=False))
+    monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260307T140000")
+    monkeypatch.setattr(module, "uuid4", lambda: SimpleNamespace(hex="cafebabedeadbeef"))
+    monkeypatch.setattr(module, "setup_logging", lambda _path: None)
+    monkeypatch.setattr(module, "run_cmd", lambda cmd: calls.append(cmd))
+    monkeypatch.setattr(module, "log_completion", lambda *, start_time, message: None)
+
+    code = module.main()
+
+    assert code == 0
+    assert calls == []

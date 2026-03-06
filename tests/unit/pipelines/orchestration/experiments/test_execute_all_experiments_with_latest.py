@@ -47,6 +47,25 @@ def test_discover_models_collects_problem_segment_version_tuples(tmp_path: Path)
     assert result == [("cancellation", "city_hotel", "v1")]
 
 
+def test_discover_models_ignores_non_directory_segment_entries(tmp_path: Path) -> None:
+    """Ignore non-directory entries under problem folders during model discovery."""
+    specs_root = tmp_path / "model_specs"
+    problem_dir = specs_root / "cancellation"
+    segment_dir = problem_dir / "city_hotel"
+    segment_dir.mkdir(parents=True)
+    (problem_dir / "README.txt").write_text("ignore", encoding="utf-8")
+    (segment_dir / "v1.yaml").write_text("x: 1", encoding="utf-8")
+
+    original_dir = module.MODEL_SPECS_DIR
+    module.MODEL_SPECS_DIR = specs_root
+    try:
+        result = module.discover_models()
+    finally:
+        module.MODEL_SPECS_DIR = original_dir
+
+    assert result == [("cancellation", "city_hotel", "v1")]
+
+
 def test_discover_models_returns_empty_when_specs_directory_missing(tmp_path: Path) -> None:
     """Return no models when specs root is absent instead of raising filesystem errors."""
     missing_specs_root = tmp_path / "does_not_exist"

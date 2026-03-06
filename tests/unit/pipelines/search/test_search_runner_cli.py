@@ -207,3 +207,47 @@ def test_main_maps_user_error_through_resolve_exit_code(
     code = module.main()
 
     assert code == 44
+
+
+def test_main_maps_unexpected_error_through_resolve_exit_code(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Map non-user exceptions through resolver while exercising exception-logging branch."""
+    monkeypatch.chdir(tmp_path)
+
+    monkeypatch.setattr(
+        module,
+        "parse_args",
+        lambda: Namespace(
+            problem="lead_time",
+            segment="global",
+            version="v1",
+            experiment_id=None,
+            env="default",
+            strict=True,
+            logging_level="INFO",
+            owner="Sebastijan",
+            clean_up_failure_management=True,
+            overwrite_existing=False,
+        ),
+    )
+    monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260307T150000")
+    monkeypatch.setattr(module, "uuid4", lambda: SimpleNamespace(hex="8899aabbccddeeff"))
+    monkeypatch.setattr(module, "setup_logging", lambda *args, **kwargs: None)
+
+    cfg = SimpleNamespace(algorithm=SimpleNamespace(value="CatBoost"))
+    monkeypatch.setattr(module, "load_and_validate_config", lambda *args, **kwargs: cfg)
+    monkeypatch.setattr(module, "add_config_hash", lambda model_cfg: model_cfg)
+
+    err = RuntimeError("unexpected boom")
+
+    def _raise_searcher(_key: str) -> Any:
+        raise err
+
+    monkeypatch.setattr(module, "get_searcher", _raise_searcher)
+    monkeypatch.setattr(module, "resolve_exit_code", lambda e: 55 if e is err else 99)
+
+    code = module.main()
+
+    assert code == 55
