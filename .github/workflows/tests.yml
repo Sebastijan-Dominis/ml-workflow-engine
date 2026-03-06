@@ -13,6 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache Conda packages
+        uses: actions/cache@v4
+        with:
+          path: ~/conda_pkgs_dir
+          key: ${{ runner.os }}-conda-pkgs-
+          restore-keys: |
+            ${{ runner.os }}-conda-pkgs-
+
       - name: Set up conda
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -22,14 +30,6 @@ jobs:
           use-mamba: true
           auto-activate-base: false
           use-only-tar-bz2: true
-
-      - name: Cache Conda packages
-        uses: actions/cache@v4
-        with:
-          path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-conda-pkgs-
-          restore-keys: |
-            ${{ runner.os }}-conda-pkgs-
 
       - name: Show environment
         run: conda run -n hotel_management conda list
