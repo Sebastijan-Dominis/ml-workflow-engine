@@ -103,6 +103,39 @@ def test_build_reason_and_log_msg_for_failed_production_combines_reasons() -> No
     assert "Model promotion criteria not met" in log_msg
 
 
+def test_build_reason_and_log_msg_for_successful_staging_promotion() -> None:
+    """Return staging-specific success reason and concise staging log message."""
+    persister = PromotionPersister()
+    context = _context(stage="staging")
+    state = _state()
+    result = PromotionResult(promotion_decision=True, beats_previous=True, previous_production_metrics=None, run_info={"x": 1})
+
+    reason, log_msg = persister._build_reason_and_log_msg(context, state, result)
+
+    assert reason == "Model beats the thresholds. No comparison against production model for staging promotion."
+    assert log_msg == "Model promoted to staging successfully."
+
+
+def test_build_reason_and_log_msg_for_failed_staging_uses_threshold_message() -> None:
+    """Return threshold-comparison message directly when staging promotion criteria are not met."""
+    persister = PromotionPersister()
+    context = _context(stage="staging")
+    state = _state()
+    state.threshold_comparison = ThresholdComparisonResult(
+        meets_thresholds=False,
+        message="staging threshold miss",
+        target_sets=[MetricSet.VAL],
+        target_metrics=[MetricName.F1],
+        directions={MetricName.F1: Direction.MAXIMIZE},
+    )
+    result = PromotionResult(promotion_decision=False, beats_previous=False, previous_production_metrics=None)
+
+    reason, log_msg = persister._build_reason_and_log_msg(context, state, result)
+
+    assert reason == "staging threshold miss"
+    assert log_msg == "Model staging criteria not met. Reasoning: staging threshold miss"
+
+
 def test_build_reason_and_log_msg_raises_when_failed_production_has_no_comparison() -> None:
     """Raise RuntimeMLError when production decision is negative but comparison payload is missing."""
     persister = PromotionPersister()
@@ -111,6 +144,28 @@ def test_build_reason_and_log_msg_raises_when_failed_production_has_no_compariso
     result = PromotionResult(promotion_decision=False, beats_previous=False, previous_production_metrics=None)
 
     with pytest.raises(RuntimeMLError, match="Production comparison result is missing"):
+        persister._build_reason_and_log_msg(context, state, result)
+
+
+def test_build_reason_and_log_msg_raises_when_stage_is_invalid_for_positive_decision() -> None:
+    """Raise RuntimeMLError for unsupported stage values even when decision is positive."""
+    persister = PromotionPersister()
+    context = _context(stage="shadow")
+    state = _state()
+    result = PromotionResult(promotion_decision=True, beats_previous=True, previous_production_metrics=None, run_info={"x": 1})
+
+    with pytest.raises(RuntimeMLError, match="Invalid stage 'shadow'"):
+        persister._build_reason_and_log_msg(context, state, result)
+
+
+def test_build_reason_and_log_msg_raises_when_stage_is_invalid_for_negative_decision() -> None:
+    """Raise RuntimeMLError for unsupported stage values when decision is negative."""
+    persister = PromotionPersister()
+    context = _context(stage="shadow")
+    state = _state()
+    result = PromotionResult(promotion_decision=False, beats_previous=False, previous_production_metrics=None)
+
+    with pytest.raises(RuntimeMLError, match="Invalid stage 'shadow'"):
         persister._build_reason_and_log_msg(context, state, result)
 
 
