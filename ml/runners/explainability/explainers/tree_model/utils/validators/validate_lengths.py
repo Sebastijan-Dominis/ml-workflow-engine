@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 
 logger = logging.getLogger(__name__)
 
-def validate_lengths(feature_names: NDArray[np.str_], importances: NDArray[np.float_]) -> None:
+def validate_lengths(feature_names: NDArray[np.str_], importances: NDArray[np.float64]) -> None:
     """Ensure feature-name and importance arrays have identical lengths.
 
     Args:
