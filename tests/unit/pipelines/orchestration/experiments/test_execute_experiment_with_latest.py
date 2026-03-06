@@ -92,6 +92,28 @@ def test_parse_args_converts_boolean_and_optional_fields(monkeypatch: pytest.Mon
     assert args.top_k == 25
 
 
+def test_parse_args_rejects_invalid_env_choice(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Reject unsupported environment values through argparse choices."""
+    monkeypatch.setattr(
+        module.sys,
+        "argv",
+        [
+            "execute_experiment_with_latest",
+            "--problem",
+            "adr",
+            "--segment",
+            "city_hotel",
+            "--version",
+            "v1",
+            "--env",
+            "qa",
+        ],
+    )
+
+    with pytest.raises(SystemExit):
+        module.parse_args()
+
+
 def test_main_runs_search_train_evaluate_explain_in_order(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -262,3 +284,80 @@ def test_main_returns_subprocess_return_code_on_failure(monkeypatch: pytest.Monk
     assert run_calls[0][:3] == [module.sys.executable, "-m", "pipelines.search.search"]
     assert run_calls[1][:3] == [module.sys.executable, "-m", "pipelines.runners.train"]
     assert completion_messages == ["Experiment execution failed with return code 23"]
+
+
+def test_main_falls_back_to_info_when_logging_level_is_unrecognized(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Use INFO fallback when logging level string does not map to logging constants."""
+    monkeypatch.setattr(
+        module,
+        "parse_args",
+        lambda: Namespace(
+            problem="adr",
+            segment="city_hotel",
+            version="v2",
+            env="dev",
+            strict=True,
+            logging_level="not-a-level",
+            owner="Owner",
+            clean_up_failure_management=True,
+            experiment_id=None,
+            overwrite_existing=False,
+            top_k=None,
+        ),
+    )
+    monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260306T173000")
+    monkeypatch.setattr(module, "uuid4", lambda: SimpleNamespace(hex="a1b2c3d4e5f60708"))
+
+    captured: dict[str, Any] = {}
+
+    monkeypatch.setattr(
+        module,
+        "setup_logging",
+        lambda path, level: captured.update({"path": path, "level": level}),
+    )
+    monkeypatch.setattr(module.subprocess, "run", lambda *_args, **_kwargs: SimpleNamespace(returncode=0, stdout="ok", stderr=""))
+    monkeypatch.setattr(module, "log_completion", lambda _start, _message: None)
+
+    code = module.main()
+
+    assert code == 0
+    assert captured["level"] == module.logging.INFO
+    assert str(captured["path"]).endswith("experiment_execution.log")
+
+
+def test_main_handles_subprocess_failure_without_stderr(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Return failing code and completion message even when CalledProcessError lacks stderr."""
+    monkeypatch.setattr(
+        module,
+        "parse_args",
+        lambda: Namespace(
+            problem="cancellation",
+            segment="global",
+            version="v1",
+            env="default",
+            strict=True,
+            logging_level="INFO",
+            owner="Owner",
+            clean_up_failure_management=True,
+            experiment_id=None,
+            overwrite_existing=False,
+            top_k=None,
+        ),
+    )
+    monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260306T173500")
+    monkeypatch.setattr(module, "uuid4", lambda: SimpleNamespace(hex="1029384756abcdef"))
+    monkeypatch.setattr(module, "setup_logging", lambda path, level: None)
+
+    completion_messages: list[str] = []
+
+    def _fail_without_stderr(cmd: list[str], **kwargs: Any) -> SimpleNamespace:
+        _ = kwargs
+        raise subprocess.CalledProcessError(returncode=11, cmd=cmd, stderr="")
+
+    monkeypatch.setattr(module.subprocess, "run", _fail_without_stderr)
+    monkeypatch.setattr(module, "log_completion", lambda _start, message: completion_messages.append(message))
+
+    code = module.main()
+
+    assert code == 11
+    assert completion_messages == ["Experiment execution failed with return code 11"]
