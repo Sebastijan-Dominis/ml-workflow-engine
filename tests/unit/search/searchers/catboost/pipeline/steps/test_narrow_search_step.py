@@ -182,3 +182,23 @@ def test_narrow_search_step_wraps_randomized_search_failures_as_search_error(
 
     with pytest.raises(SearchError, match="Narrow hyperparameter search failed"):
         narrow_search_module.NarrowSearchStep().run(ctx)
+
+
+def test_narrow_search_step_before_logs_start_message(caplog: pytest.LogCaptureFixture) -> None:
+    """Emit the documented start log line from `before` hook."""
+    narrow_search_module = _import_narrow_search_module()
+
+    with caplog.at_level("INFO", logger=narrow_search_module.__name__):
+        narrow_search_module.NarrowSearchStep().before(SimpleNamespace())
+
+    assert "Starting narrow search step." in caplog.text
+
+
+def test_narrow_search_step_after_logs_completion_message(caplog: pytest.LogCaptureFixture) -> None:
+    """Emit the documented completion log line from `after` hook."""
+    narrow_search_module = _import_narrow_search_module()
+
+    with caplog.at_level("INFO", logger=narrow_search_module.__name__):
+        narrow_search_module.NarrowSearchStep().after(SimpleNamespace())
+
+    assert "Completed narrow search step." in caplog.text

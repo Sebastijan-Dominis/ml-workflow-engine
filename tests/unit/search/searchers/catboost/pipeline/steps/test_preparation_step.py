@@ -177,3 +177,23 @@ def test_preparation_step_skips_class_weighting_for_non_classification(
 
     assert ctx.scoring == "rmse"
     assert ctx.class_weights is None
+
+
+def test_preparation_step_before_logs_start_message(caplog: pytest.LogCaptureFixture) -> None:
+    """Emit the documented start log line from `before` hook."""
+    preparation_module = _import_preparation_module()
+
+    with caplog.at_level("INFO", logger=preparation_module.__name__):
+        preparation_module.PreparationStep().before(SimpleNamespace())
+
+    assert "Starting preparation step." in caplog.text
+
+
+def test_preparation_step_after_logs_completion_message(caplog: pytest.LogCaptureFixture) -> None:
+    """Emit the documented completion log line from `after` hook."""
+    preparation_module = _import_preparation_module()
+
+    with caplog.at_level("INFO", logger=preparation_module.__name__):
+        preparation_module.PreparationStep().after(SimpleNamespace())
+
+    assert "Completed preparation step." in caplog.text

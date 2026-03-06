@@ -126,3 +126,23 @@ def test_broad_search_step_raises_config_error_when_param_distributions_empty(
 
     with pytest.raises(ConfigError, match="No broad search param_distributions defined"):
         broad_search_module.BroadSearchStep().run(ctx)
+
+
+def test_broad_search_step_before_logs_start_message(caplog: pytest.LogCaptureFixture) -> None:
+    """Emit the documented start log line from `before` hook."""
+    broad_search_module = _import_broad_search_module()
+
+    with caplog.at_level("INFO", logger=broad_search_module.__name__):
+        broad_search_module.BroadSearchStep().before(SimpleNamespace())
+
+    assert "Starting broad search step." in caplog.text
+
+
+def test_broad_search_step_after_logs_completion_message(caplog: pytest.LogCaptureFixture) -> None:
+    """Emit the documented completion log line from `after` hook."""
+    broad_search_module = _import_broad_search_module()
+
+    with caplog.at_level("INFO", logger=broad_search_module.__name__):
+        broad_search_module.BroadSearchStep().after(SimpleNamespace())
+
+    assert "Completed broad search step." in caplog.text
