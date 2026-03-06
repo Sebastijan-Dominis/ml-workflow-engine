@@ -109,3 +109,53 @@ def test_delete_failure_management_folder_keeps_non_empty_train_parents_for_trai
     assert experiment_dir.exists()
     assert main_dir.exists()
     assert sibling_run_dir.exists()
+
+
+def test_delete_failure_management_folder_keeps_non_empty_search_parent(tmp_path: Path) -> None:
+    """Keep search parent directory when sibling experiment folders remain."""
+    main_dir = tmp_path / "failure_management"
+    target_experiment_dir = main_dir / "exp_a"
+    sibling_experiment_dir = main_dir / "exp_b"
+    target_experiment_dir.mkdir(parents=True)
+    sibling_experiment_dir.mkdir(parents=True)
+    (target_experiment_dir / "state.json").write_text("{}", encoding="utf-8")
+    (sibling_experiment_dir / "marker.txt").write_text("keep", encoding="utf-8")
+
+    delete_failure_management_folder(folder_path=target_experiment_dir, cleanup=True, stage="search")
+
+    assert not target_experiment_dir.exists()
+    assert main_dir.exists()
+    assert sibling_experiment_dir.exists()
+
+
+def test_delete_failure_management_folder_logs_skip_when_cleanup_disabled(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Emit informational skip message when cleanup is explicitly disabled."""
+    folder = tmp_path / "exp_log"
+    folder.mkdir()
+
+    with caplog.at_level(
+        "INFO", logger="ml.search.utils.failure_management.delete_failure_management_folder"
+    ):
+        delete_failure_management_folder(folder_path=folder, cleanup=False, stage="search")
+
+    assert "Skipping cleanup of failure management folder for experiment exp_log." in caplog.text
+
+
+def test_delete_failure_management_folder_logs_warning_for_unexpected_subdirs(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Emit safety warning message when unknown subdirectories prevent deletion."""
+    folder = tmp_path / "exp_warn"
+    folder.mkdir()
+    (folder / "unexpected").mkdir()
+
+    with caplog.at_level(
+        "WARNING", logger="ml.search.utils.failure_management.delete_failure_management_folder"
+    ):
+        delete_failure_management_folder(folder_path=folder, cleanup=True, stage="search")
+
+    assert "contains unexpected subdirectories" in caplog.text

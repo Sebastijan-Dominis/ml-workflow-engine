@@ -64,3 +64,16 @@ def test_get_searcher_logs_selected_searcher_class(caplog: pytest.LogCaptureFixt
         get_searcher_module.get_searcher("dummy")
 
     assert "Using searcher _DummySearcher for algorithm=dummy" in caplog.text
+
+
+def test_get_searcher_propagates_constructor_errors() -> None:
+    """Propagate searcher-constructor exceptions without wrapping or masking them."""
+
+    class _BrokenSearcher:
+        def __init__(self) -> None:
+            raise RuntimeError("constructor failed")
+
+    get_searcher_module = _import_get_searcher_with_registry({"broken": _BrokenSearcher})
+
+    with pytest.raises(RuntimeError, match="constructor failed"):
+        get_searcher_module.get_searcher("broken")
