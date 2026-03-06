@@ -67,3 +67,45 @@ def test_delete_failure_management_folder_skips_when_nested_dir_found_in_allowed
 
     assert folder.exists()
     assert allowed_subdir.exists()
+
+
+def test_delete_failure_management_folder_deletes_empty_parent_chain_for_train_stage(
+    tmp_path: Path,
+) -> None:
+    """Delete run folder and prune empty train/experiment/main directories for train stage."""
+    main_dir = tmp_path / "failure_management"
+    experiment_dir = main_dir / "exp_train"
+    train_dir = experiment_dir / "train"
+    run_dir = train_dir / "run_001"
+    run_dir.mkdir(parents=True)
+    (run_dir / "state.json").write_text("{}", encoding="utf-8")
+
+    delete_failure_management_folder(folder_path=run_dir, cleanup=True, stage="train")
+
+    assert not run_dir.exists()
+    assert not train_dir.exists()
+    assert not experiment_dir.exists()
+    assert not main_dir.exists()
+
+
+def test_delete_failure_management_folder_keeps_non_empty_train_parents_for_train_stage(
+    tmp_path: Path,
+) -> None:
+    """Keep parent directories when train stage still has sibling runs after cleanup."""
+    main_dir = tmp_path / "failure_management"
+    experiment_dir = main_dir / "exp_train"
+    train_dir = experiment_dir / "train"
+    run_dir = train_dir / "run_001"
+    sibling_run_dir = train_dir / "run_002"
+    run_dir.mkdir(parents=True)
+    sibling_run_dir.mkdir(parents=True)
+    (run_dir / "state.json").write_text("{}", encoding="utf-8")
+    (sibling_run_dir / "marker.txt").write_text("keep", encoding="utf-8")
+
+    delete_failure_management_folder(folder_path=run_dir, cleanup=True, stage="train")
+
+    assert not run_dir.exists()
+    assert train_dir.exists()
+    assert experiment_dir.exists()
+    assert main_dir.exists()
+    assert sibling_run_dir.exists()
