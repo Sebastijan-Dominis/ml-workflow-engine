@@ -135,3 +135,97 @@ def test_validate_pipeline_cfg_raises_when_hashes_do_not_match(
 
     with pytest.raises(PipelineContractError, match="Pipeline configuration hash mismatch"):
         validate_pipeline_cfg(tmp_path / "metadata.json", model_cfg)
+
+
+def test_validate_pipeline_cfg_passes_resolved_pipeline_path_to_loader(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Resolve configured pipeline path before loading YAML content."""
+    nested_dir = tmp_path / "nested"
+    nested_dir.mkdir()
+    pipeline_file = nested_dir / "pipeline.yaml"
+    pipeline_file.write_text("steps: []\n", encoding="utf-8")
+    model_cfg = _make_model_cfg(pipeline_file)
+    loaded_paths: list[Path] = []
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_pipeline_cfg.load_json",
+        lambda _path: {"metadata": {"pipeline_hash": "hash-ok"}},
+    )
+
+    def _load_yaml(path: Path) -> dict[str, list[str]]:
+        loaded_paths.append(path)
+        return {"steps": []}
+
+    monkeypatch.setattr("ml.runners.shared.logical_config.validate_pipeline_cfg.load_yaml", _load_yaml)
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_pipeline_cfg.compute_model_config_hash",
+        lambda _cfg: "hash-ok",
+    )
+
+    result = validate_pipeline_cfg(tmp_path / "metadata.json", model_cfg)
+
+    assert result == "hash-ok"
+    assert loaded_paths == [pipeline_file.resolve()]
+
+
+def test_validate_pipeline_cfg_logs_debug_on_success(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Emit success debug log containing the validated pipeline hash."""
+    pipeline_file = tmp_path / "pipeline.yaml"
+    pipeline_file.write_text("steps: []\n", encoding="utf-8")
+    model_cfg = _make_model_cfg(pipeline_file)
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_pipeline_cfg.load_json",
+        lambda _path: {"metadata": {"pipeline_hash": "hash-ok"}},
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_pipeline_cfg.load_yaml",
+        lambda _path: {"steps": []},
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_pipeline_cfg.compute_model_config_hash",
+        lambda _cfg: "hash-ok",
+    )
+
+    with caplog.at_level("DEBUG", logger="ml.runners.shared.logical_config.validate_pipeline_cfg"):
+        result = validate_pipeline_cfg(tmp_path / "metadata.json", model_cfg)
+
+    assert result == "hash-ok"
+    assert "Pipeline configuration hash validated successfully. Hash: hash-ok" in caplog.text
+
+
+def test_validate_pipeline_cfg_logs_error_on_hash_mismatch(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Log expected and actual hash values before raising mismatch error."""
+    pipeline_file = tmp_path / "pipeline.yaml"
+    pipeline_file.write_text("steps: []\n", encoding="utf-8")
+    model_cfg = _make_model_cfg(pipeline_file)
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_pipeline_cfg.load_json",
+        lambda _path: {"metadata": {"pipeline_hash": "expected-h"}},
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_pipeline_cfg.load_yaml",
+        lambda _path: {"steps": []},
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_pipeline_cfg.compute_model_config_hash",
+        lambda _cfg: "actual-h",
+    )
+
+    with caplog.at_level(
+        "ERROR", logger="ml.runners.shared.logical_config.validate_pipeline_cfg"
+    ), pytest.raises(PipelineContractError, match="Pipeline configuration hash mismatch"):
+        validate_pipeline_cfg(tmp_path / "metadata.json", model_cfg)
+
+    assert "Expected: expected-h, Actual: actual-h" in caplog.text
