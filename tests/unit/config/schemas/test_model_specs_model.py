@@ -93,7 +93,7 @@ def _base_model_specs_payload() -> dict:
 
 
 def test_model_specs_accepts_valid_classification_payload() -> None:
-    """Test that the ModelSpecs schema accepts a valid payload for a classification task."""
+    """Accept a valid classification payload."""
     cfg = ModelSpecs.model_validate(_base_model_specs_payload())
 
     assert cfg.task.type == "classification"
@@ -102,7 +102,7 @@ def test_model_specs_accepts_valid_classification_payload() -> None:
 
 
 def test_model_specs_rejects_classification_without_classes() -> None:
-    """Test that the ModelSpecs schema raises a ConfigError if classes are not provided for a classification task."""
+    """Require class metadata for classification tasks."""
     payload = _base_model_specs_payload()
     payload["target"]["classes"] = None
 
@@ -111,7 +111,7 @@ def test_model_specs_rejects_classification_without_classes() -> None:
 
 
 def test_model_specs_rejects_regression_when_classes_are_provided() -> None:
-    """Test that the ModelSpecs schema raises a ConfigError if classes are provided for a regression task."""
+    """Reject regression payloads that include classification classes."""
     payload = _base_model_specs_payload()
     payload["task"] = {"type": "regression", "subtype": None}
 
@@ -120,7 +120,7 @@ def test_model_specs_rejects_regression_when_classes_are_provided() -> None:
 
 
 def test_model_specs_rejects_target_transform_for_non_regression_tasks() -> None:
-    """Test that the ModelSpecs schema raises a ConfigError if target transformation is enabled for non-regression tasks."""
+    """Reject target transforms for non-regression tasks."""
     payload = _base_model_specs_payload()
     payload["target"]["transform"] = {
         "enabled": True,
@@ -133,7 +133,7 @@ def test_model_specs_rejects_target_transform_for_non_regression_tasks() -> None
 
 
 def test_model_specs_rejects_regression_transform_enabled_without_type() -> None:
-    """Test that the ModelSpecs schema raises a ConfigError if target transformation is enabled for regression tasks but type is not specified."""
+    """Require transform type when regression target transformation is enabled."""
     payload = _base_model_specs_payload()
     payload["task"] = {"type": "regression", "subtype": None}
     payload["target"]["classes"] = None
@@ -148,7 +148,7 @@ def test_model_specs_rejects_regression_transform_enabled_without_type() -> None
 
 
 def test_model_specs_rejects_class_weighting_for_non_classification_tasks() -> None:
-    """Test that the ModelSpecs schema raises a ConfigError if class weighting is configured for non-classification tasks."""
+    """Reject class weighting for non-classification tasks."""
     payload = _base_model_specs_payload()
     payload["task"] = {"type": "regression", "subtype": None}
     payload["target"]["classes"] = None

@@ -7,7 +7,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_train_config_defaults_to_cpu_and_runtime_defaults() -> None:
-    """Test that the TrainConfig schema defaults to CPU hardware and reasonable runtime defaults."""
+    """Default training config to CPU and expected runtime values."""
     cfg = TrainConfig.model_validate({"iterations": 200})
 
     assert cfg.hardware.task_type == "CPU"
@@ -16,7 +16,7 @@ def test_train_config_defaults_to_cpu_and_runtime_defaults() -> None:
 
 
 def test_train_config_accepts_explicit_model_and_ensemble_values() -> None:
-    """Test that the TrainConfig schema correctly accepts and validates explicit model and ensemble hyperparameters."""
+    """Accept explicit model, ensemble, and hardware overrides."""
     cfg = TrainConfig.model_validate(
         {
             "iterations": 150,

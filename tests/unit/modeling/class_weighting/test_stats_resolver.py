@@ -1,6 +1,9 @@
 """Unit tests for target-distribution statistics resolution."""
 
+import pytest
 from ml.modeling.class_weighting.stats_resolver import compute_data_stats
+
+pytestmark = pytest.mark.unit
 
 
 def test_compute_data_stats_returns_expected_counts_and_minority_ratio() -> None:

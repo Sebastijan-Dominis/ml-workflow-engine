@@ -10,6 +10,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_get_runtime_info_collects_expected_fields(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Collect expected runtime metadata fields from platform and psutil."""
     monkeypatch.setattr("ml.utils.runtime.runtime_info.platform.system", lambda: "Linux")
     monkeypatch.setattr("ml.utils.runtime.runtime_info.platform.release", lambda: "6.8")
     monkeypatch.setattr("ml.utils.runtime.runtime_info.platform.machine", lambda: "x86_64")
@@ -33,6 +34,7 @@ def test_get_runtime_info_collects_expected_fields(monkeypatch: pytest.MonkeyPat
 
 
 def test_get_runtime_info_wraps_failures_in_runtime_ml_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Wrap runtime collection failures in `RuntimeMLError` with context."""
     def _raise() -> SimpleNamespace:
         raise OSError("psutil failed")
 

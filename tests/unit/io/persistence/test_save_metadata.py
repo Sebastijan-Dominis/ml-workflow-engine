@@ -11,7 +11,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_save_metadata_writes_metadata_json(tmp_path: Path) -> None:
-    """Test that save_metadata writes the correct metadata to a JSON file."""
+    """Write metadata payload to `metadata.json` in the target directory."""
     target_dir = tmp_path / "meta"
     metadata = {"run_id": "abc", "score": 0.91}
 
@@ -22,7 +22,7 @@ def test_save_metadata_writes_metadata_json(tmp_path: Path) -> None:
 
 
 def test_save_metadata_rejects_existing_file_when_overwrite_disabled(tmp_path: Path) -> None:
-    """Test that save_metadata raises a PersistenceError when the target metadata.json file already exists and overwrite_existing is set to False. The test creates a temporary directory and writes an initial metadata.json file to it, then calls save_metadata with overwrite_existing=False and asserts that a PersistenceError is raised with a message indicating that the file already exists, confirming that save_metadata correctly prevents overwriting existing metadata files when overwrite_existing is disabled."""
+    """Raise `PersistenceError` when target file exists and overwrite is disabled."""
     target_dir = tmp_path / "meta"
     target_dir.mkdir(parents=True)
     (target_dir / "metadata.json").write_text("{}", encoding="utf-8")
@@ -32,7 +32,7 @@ def test_save_metadata_rejects_existing_file_when_overwrite_disabled(tmp_path: P
 
 
 def test_save_metadata_overwrites_existing_file_when_enabled(tmp_path: Path) -> None:
-    """Test that save_metadata overwrites an existing metadata.json file when overwrite_existing is set to True."""
+    """Overwrite existing `metadata.json` when overwrite is enabled."""
     target_dir = tmp_path / "meta"
     target_dir.mkdir(parents=True)
     (target_dir / "metadata.json").write_text('{"old": 1}', encoding="utf-8")

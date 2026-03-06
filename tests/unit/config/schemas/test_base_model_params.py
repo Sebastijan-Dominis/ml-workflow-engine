@@ -7,7 +7,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_base_model_params_defaults_to_none_for_all_fields() -> None:
-    """Test that the BaseModelParams schema defaults all fields to None when not provided."""
+    """Default all optional model parameters to `None` when omitted."""
     cfg = BaseModelParams.model_validate({})
 
     assert cfg.depth is None
@@ -19,7 +19,7 @@ def test_base_model_params_defaults_to_none_for_all_fields() -> None:
 
 
 def test_base_model_params_accepts_partial_parameter_payload() -> None:
-    """Test that the BaseModelParams schema accepts a partial payload with only some fields specified."""
+    """Accept partial model parameter payloads while keeping omitted fields as `None`."""
     cfg = BaseModelParams.model_validate(
         {
             "depth": 6,
@@ -35,7 +35,7 @@ def test_base_model_params_accepts_partial_parameter_payload() -> None:
 
 
 def test_base_ensemble_params_defaults_to_none_for_all_fields() -> None:
-    """Test that the BaseEnsembleParams schema defaults all fields to None when not provided."""
+    """Default all optional ensemble parameters to `None` when omitted."""
     cfg = BaseEnsembleParams.model_validate({})
 
     assert cfg.bagging_temperature is None
@@ -43,7 +43,7 @@ def test_base_ensemble_params_defaults_to_none_for_all_fields() -> None:
 
 
 def test_base_ensemble_params_accepts_explicit_values() -> None:
-    """Test that the BaseEnsembleParams schema correctly accepts and validates explicit values for its fields."""
+    """Validate explicit ensemble parameter values."""
     cfg = BaseEnsembleParams.model_validate(
         {
             "bagging_temperature": 0.9,

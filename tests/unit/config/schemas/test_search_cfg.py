@@ -7,7 +7,7 @@ pytestmark = pytest.mark.unit
 
 
 def test_broad_param_distributions_to_flat_dict_uses_model_prefix() -> None:
-    """Test that the to_flat_dict method of BroadParamDistributions correctly flattens the parameter distributions with the appropriate prefixes."""
+    """Flatten broad parameter distributions using default model prefixes."""
     params = BroadParamDistributions.model_validate(
         {
             "model": {
@@ -30,7 +30,7 @@ def test_broad_param_distributions_to_flat_dict_uses_model_prefix() -> None:
 
 
 def test_broad_param_distributions_to_flat_dict_respects_custom_prefixes() -> None:
-    """Test that the to_flat_dict method of BroadParamDistributions respects custom prefixes provided in the prefix_map argument."""
+    """Flatten parameter distributions with caller-provided prefixes."""
     params = BroadParamDistributions.model_validate(
         {
             "model": {"depth": [8]},
@@ -47,7 +47,7 @@ def test_broad_param_distributions_to_flat_dict_respects_custom_prefixes() -> No
 
 
 def test_search_config_defaults_to_disabled_narrow_and_gpu_hardware() -> None:
-    """Test that the SearchConfig schema defaults to disabled narrow search and GPU hardware."""
+    """Default narrow-search settings and hardware values as expected."""
     cfg = SearchConfig.model_validate(
         {
             "random_state": 42,
@@ -66,7 +66,7 @@ def test_search_config_defaults_to_disabled_narrow_and_gpu_hardware() -> None:
 
 
 def test_search_config_normalizes_hardware_task_type_case() -> None:
-    """Test that the SearchConfig schema normalizes the hardware task type to uppercase."""
+    """Normalize search hardware `task_type` casing."""
     cfg = SearchConfig.model_validate(
         {
             "random_state": 42,
