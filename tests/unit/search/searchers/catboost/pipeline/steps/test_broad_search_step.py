@@ -7,6 +7,7 @@ import sys
 import types
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -146,3 +147,72 @@ def test_broad_search_step_after_logs_completion_message(caplog: pytest.LogCaptu
         broad_search_module.BroadSearchStep().after(SimpleNamespace())
 
     assert "Completed broad search step." in caplog.text
+
+
+def test_broad_search_step_forwards_expected_args_and_persists_results(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Forward expected arguments into search helper and persist broad outputs."""
+    broad_search_module = _import_broad_search_module()
+    ctx = _make_context(tmp_path)
+    ctx.model_cfg.search.broad.param_distributions = SimpleNamespace(
+        model_dump=lambda exclude_none=True: {"model": {"depth": [4, 6]}},
+        to_flat_dict=lambda: {"Model__depth": [4, 6]},
+    )
+
+    pipeline_obj = object()
+    model_obj = object()
+    captured_randomized_kwargs: dict[str, Any] = {}
+    captured_save_kwargs: dict[str, Any] = {}
+
+    monkeypatch.setattr(broad_search_module, "load_json", lambda _path, strict=False: {})
+    monkeypatch.setattr(broad_search_module, "prepare_model", lambda *args, **kwargs: model_obj)
+    monkeypatch.setattr(
+        broad_search_module,
+        "build_pipeline_with_model",
+        lambda **kwargs: pipeline_obj,
+    )
+
+    def _perform_randomized_search(pipeline, **kwargs):
+        captured_randomized_kwargs["pipeline"] = pipeline
+        captured_randomized_kwargs.update(kwargs)
+        return {
+            "best_params": {"Model__depth": 6},
+            "best_score": 0.8,
+            "best_index": 0,
+            "cv_results": {
+                "mean_test_score": [0.8],
+                "std_test_score": [0.01],
+                "rank_test_score": [1],
+            },
+            "param_distributions": {"Model__depth": [4, 6]},
+            "n_iter": 2,
+            "cv": 3,
+            "scoring": "roc_auc",
+            "random_state": 42,
+            "error_score": "nan",
+            "search_phase": "broad",
+        }
+
+    monkeypatch.setattr(broad_search_module, "perform_randomized_search", _perform_randomized_search)
+
+    def _save_broad(**kwargs):
+        captured_save_kwargs.update(kwargs)
+
+    monkeypatch.setattr(broad_search_module, "save_broad", _save_broad)
+
+    broad_search_module.BroadSearchStep().run(ctx)
+
+    assert captured_randomized_kwargs["pipeline"] is pipeline_obj
+    assert captured_randomized_kwargs["X_train"].equals(ctx.require_x_train)
+    assert captured_randomized_kwargs["y_train"].equals(ctx.require_y_train)
+    assert captured_randomized_kwargs["param_distributions"] == {"Model__depth": [4, 6]}
+    assert captured_randomized_kwargs["model_cfg"] is ctx.model_cfg
+    assert captured_randomized_kwargs["scoring"] == "roc_auc"
+    assert captured_randomized_kwargs["search_phase"] == "broad"
+
+    assert ctx.best_params_1 == {"Model__depth": 6}
+    assert ctx.broad_result["best_score"] == 0.8
+    assert captured_save_kwargs["best_params_1"] == {"Model__depth": 6}
+    assert captured_save_kwargs["tgt_file"] == tmp_path / "broad_info.json"

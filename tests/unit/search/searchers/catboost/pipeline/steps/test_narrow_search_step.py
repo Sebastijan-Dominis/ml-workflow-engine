@@ -7,6 +7,7 @@ import sys
 import types
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -202,3 +203,91 @@ def test_narrow_search_step_after_logs_completion_message(caplog: pytest.LogCapt
         narrow_search_module.NarrowSearchStep().after(SimpleNamespace())
 
     assert "Completed narrow search step." in caplog.text
+
+
+def test_narrow_search_step_forwards_expected_args_validates_params_and_persists(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Forward expected inputs, validate generated values, and persist narrow outputs."""
+    narrow_search_module = _import_narrow_search_module()
+    param_cfg = SimpleNamespace(model_dump=lambda exclude_none=True: {"model": {"depth": {}}})
+    ctx = _make_context(tmp_path, narrow_enabled=True, narrow_param_cfg=param_cfg)
+
+    pipeline_obj = object()
+    model_obj = object()
+    captured_prepare_kwargs: dict[str, Any] = {}
+    validated_calls: list[tuple[str, object, str]] = []
+    captured_randomized_kwargs: dict[str, Any] = {}
+    captured_save_kwargs: dict[str, Any] = {}
+
+    monkeypatch.setattr(narrow_search_module, "load_json", lambda _path, strict=False: {})
+
+    def _prepare_narrow_params(**kwargs):
+        captured_prepare_kwargs.update(kwargs)
+        return {"Model__depth": [6, 7], "Model__l2_leaf_reg": [2.0]}
+
+    monkeypatch.setattr(narrow_search_module, "prepare_narrow_params", _prepare_narrow_params)
+    monkeypatch.setattr(
+        narrow_search_module,
+        "validate_param_value",
+        lambda param, value, task_type: validated_calls.append((param, value, task_type)),
+    )
+    monkeypatch.setattr(narrow_search_module, "prepare_model", lambda *args, **kwargs: model_obj)
+    monkeypatch.setattr(narrow_search_module, "build_pipeline_with_model", lambda **kwargs: pipeline_obj)
+
+    def _perform_randomized_search(pipeline, **kwargs):
+        captured_randomized_kwargs["pipeline"] = pipeline
+        captured_randomized_kwargs.update(kwargs)
+        return {
+            "best_params": {"Model__depth": 7},
+            "best_score": 0.82,
+            "best_index": 1,
+            "cv_results": {
+                "mean_test_score": [0.8, 0.82],
+                "std_test_score": [0.02, 0.01],
+                "rank_test_score": [2, 1],
+            },
+            "param_distributions": {"Model__depth": [6, 7]},
+            "n_iter": 2,
+            "cv": 3,
+            "scoring": "roc_auc",
+            "random_state": 42,
+            "error_score": "nan",
+            "search_phase": "narrow",
+        }
+
+    monkeypatch.setattr(narrow_search_module, "perform_randomized_search", _perform_randomized_search)
+
+    def _save_narrow(**kwargs):
+        captured_save_kwargs.update(kwargs)
+
+    monkeypatch.setattr(narrow_search_module, "save_narrow", _save_narrow)
+
+    narrow_search_module.NarrowSearchStep().run(ctx)
+
+    assert captured_prepare_kwargs["best_params"] == {"Model__depth": 6}
+    assert captured_prepare_kwargs["narrow_params_cfg"] is param_cfg
+    assert captured_prepare_kwargs["task_type"] == "CPU"
+
+    assert validated_calls == [
+        ("depth", 6, "CPU"),
+        ("depth", 7, "CPU"),
+        ("l2_leaf_reg", 2.0, "CPU"),
+    ]
+
+    assert captured_randomized_kwargs["pipeline"] is pipeline_obj
+    assert captured_randomized_kwargs["X_train"].equals(ctx.require_x_train)
+    assert captured_randomized_kwargs["y_train"].equals(ctx.require_y_train)
+    assert captured_randomized_kwargs["param_distributions"] == {
+        "Model__depth": [6, 7],
+        "Model__l2_leaf_reg": [2.0],
+    }
+    assert captured_randomized_kwargs["model_cfg"] is ctx.model_cfg
+    assert captured_randomized_kwargs["scoring"] == "roc_auc"
+    assert captured_randomized_kwargs["search_phase"] == "narrow"
+
+    assert ctx.best_params == {"Model__depth": 7}
+    assert ctx.narrow_result["best_score"] == 0.82
+    assert captured_save_kwargs["best_params"] == {"Model__depth": 7}
+    assert captured_save_kwargs["tgt_file"] == tmp_path / "narrow_info.json"
