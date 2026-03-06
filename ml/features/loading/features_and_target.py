@@ -177,8 +177,10 @@ def load_features_and_target(
 
     dupes = segmented_df.columns[segmented_df.columns.duplicated()]
     if len(dupes) > 0:
-        logger.warning(f"Dropping duplicated columns: {list(dupes)}")
-        segmented_df = segmented_df.drop(columns=dupes, axis=1)
+        logger.warning(
+            "Dropping duplicate column occurrences (keeping first occurrence): %s",
+            list(dupes),
+        )
     X = segmented_df.loc[:, ~segmented_df.columns.duplicated()].copy()
 
     validate_feature_target_row_id(X=X, y_with_row_id=y_with_row_id)
