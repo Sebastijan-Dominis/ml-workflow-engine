@@ -26,6 +26,16 @@ def _import_searcher_module_with_stubs() -> types.ModuleType:
 
     sys.modules.pop(module_name, None)
 
+    stub_module_names = [
+        context_module_name,
+        prep_module_name,
+        broad_module_name,
+        narrow_module_name,
+        creator_module_name,
+        runner_module_name,
+    ]
+    original_modules = {name: sys.modules.get(name) for name in stub_module_names}
+
     fake_context_module = types.ModuleType(context_module_name)
 
     class _FakeContext:
@@ -97,7 +107,15 @@ def _import_searcher_module_with_stubs() -> types.ModuleType:
     fake_runner_module.__dict__["PipelineRunner"] = _PipelineRunner
     sys.modules[runner_module_name] = fake_runner_module
 
-    return importlib.import_module(module_name)
+    try:
+        return importlib.import_module(module_name)
+    finally:
+        for name in stub_module_names:
+            original_module = original_modules[name]
+            if original_module is None:
+                sys.modules.pop(name, None)
+            else:
+                sys.modules[name] = original_module
 
 
 def test_catboost_searcher_wires_pipeline_steps_and_maps_context_to_output(

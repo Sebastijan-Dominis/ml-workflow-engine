@@ -45,6 +45,8 @@ def _import_step_modules_with_stubbed_heavy_deps() -> tuple[types.ModuleType, ty
 
     sys.modules.pop(broad_module_name, None)
     sys.modules.pop(narrow_module_name, None)
+    original_build_module = sys.modules.get(build_module_name)
+    original_model_module = sys.modules.get(model_module_name)
 
     fake_build_module = types.ModuleType(build_module_name)
     fake_build_module.__dict__["build_pipeline_with_model"] = lambda **kwargs: object()
@@ -54,9 +56,20 @@ def _import_step_modules_with_stubbed_heavy_deps() -> tuple[types.ModuleType, ty
     fake_model_module.__dict__["prepare_model"] = lambda *args, **kwargs: object()
     sys.modules[model_module_name] = fake_model_module
 
-    broad_module = importlib.import_module(broad_module_name)
-    narrow_module = importlib.import_module(narrow_module_name)
-    return broad_module, narrow_module
+    try:
+        broad_module = importlib.import_module(broad_module_name)
+        narrow_module = importlib.import_module(narrow_module_name)
+        return broad_module, narrow_module
+    finally:
+        if original_build_module is None:
+            sys.modules.pop(build_module_name, None)
+        else:
+            sys.modules[build_module_name] = original_build_module
+
+        if original_model_module is None:
+            sys.modules.pop(model_module_name, None)
+        else:
+            sys.modules[model_module_name] = original_model_module
 
 
 def _build_context(failure_management_dir: Path) -> SearchContext:

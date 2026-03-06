@@ -24,6 +24,7 @@ def _import_module_with_stubbed_composition() -> types.ModuleType:
     composition_module_name = "ml.pipelines.composition.add_model_to_pipeline"
 
     sys.modules.pop(module_name, None)
+    original_composition = sys.modules.get(composition_module_name)
 
     fake_composition = types.ModuleType(composition_module_name)
     fake_composition.__dict__["add_model_to_pipeline"] = (
@@ -31,7 +32,13 @@ def _import_module_with_stubbed_composition() -> types.ModuleType:
     )
     sys.modules[composition_module_name] = fake_composition
 
-    return importlib.import_module(module_name)
+    try:
+        return importlib.import_module(module_name)
+    finally:
+        if original_composition is None:
+            sys.modules.pop(composition_module_name, None)
+        else:
+            sys.modules[composition_module_name] = original_composition
 
 
 class _RecordingModel:

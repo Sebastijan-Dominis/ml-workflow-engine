@@ -19,14 +19,43 @@ def _import_trainer_module() -> types.ModuleType:
     """Import trainer module with an isolated feature-loader dependency."""
     module_name = "ml.runners.training.trainers.catboost.catboost"
     loader_module_name = "ml.features.loading.features_and_target"
+    build_module_name = "ml.modeling.catboost.build_pipeline_with_model"
+    model_specific_module_name = "ml.runners.training.utils.model_specific.catboost"
 
     sys.modules.pop(module_name, None)
+    original_loader = sys.modules.get(loader_module_name)
+    original_build_module = sys.modules.get(build_module_name)
+    original_model_specific = sys.modules.get(model_specific_module_name)
 
     fake_loader = types.ModuleType(loader_module_name)
     fake_loader.__dict__["load_features_and_target"] = lambda *args, **kwargs: None
     sys.modules[loader_module_name] = fake_loader
 
-    return importlib.import_module(module_name)
+    fake_build_module = types.ModuleType(build_module_name)
+    fake_build_module.__dict__["build_pipeline_with_model"] = lambda **kwargs: None
+    sys.modules[build_module_name] = fake_build_module
+
+    fake_model_specific = types.ModuleType(model_specific_module_name)
+    fake_model_specific.__dict__["prepare_model"] = lambda **kwargs: None
+    sys.modules[model_specific_module_name] = fake_model_specific
+
+    try:
+        return importlib.import_module(module_name)
+    finally:
+        if original_loader is None:
+            sys.modules.pop(loader_module_name, None)
+        else:
+            sys.modules[loader_module_name] = original_loader
+
+        if original_build_module is None:
+            sys.modules.pop(build_module_name, None)
+        else:
+            sys.modules[build_module_name] = original_build_module
+
+        if original_model_specific is None:
+            sys.modules.pop(model_specific_module_name, None)
+        else:
+            sys.modules[model_specific_module_name] = original_model_specific
 
 
 def _build_minimal_cfg(task_type: str) -> Any:

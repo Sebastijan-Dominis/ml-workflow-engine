@@ -20,6 +20,7 @@ def _import_model_specific_module() -> types.ModuleType:
     catalogs_module_name = "ml.registries.catalogs"
 
     sys.modules.pop(module_name, None)
+    original_catalogs = sys.modules.get(catalogs_module_name)
 
     fake_catalogs = types.ModuleType(catalogs_module_name)
     fake_catalogs.__dict__["MODEL_CLASS_REGISTRY"] = {}
@@ -30,7 +31,13 @@ def _import_model_specific_module() -> types.ModuleType:
     }
     sys.modules[catalogs_module_name] = fake_catalogs
 
-    return importlib.import_module(module_name)
+    try:
+        return importlib.import_module(module_name)
+    finally:
+        if original_catalogs is None:
+            sys.modules.pop(catalogs_module_name, None)
+        else:
+            sys.modules[catalogs_module_name] = original_catalogs
 
 
 def test_prepare_model_sets_gpu_devices_and_regression_loss(monkeypatch: pytest.MonkeyPatch) -> None:
