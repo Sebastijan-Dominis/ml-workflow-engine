@@ -161,3 +161,80 @@ def test_validate_model_and_pipeline_skips_pipeline_check_when_pipeline_file_abs
     result = validate_model_and_pipeline(tmp_path)
 
     assert result == artifacts
+
+
+def test_validate_model_and_pipeline_skips_pipeline_hashing_when_pipeline_path_is_none(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Hash only model artifact when metadata does not provide a pipeline path."""
+    model_file = tmp_path / "model.joblib"
+    model_file.write_bytes(b"m")
+
+    artifacts = Artifacts(
+        model_hash="model-hash",
+        model_path=str(model_file),
+        pipeline_path=None,
+        pipeline_hash=None,
+    )
+    hashed_paths: list[str] = []
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.load_json",
+        lambda _path: {"metadata": "raw"},
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.validate_training_metadata",
+        lambda _raw: _make_training_metadata(artifacts),
+    )
+
+    def _hash_artifact(path: Path) -> str:
+        hashed_paths.append(str(path))
+        return "model-hash"
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.hash_artifact",
+        _hash_artifact,
+    )
+
+    result = validate_model_and_pipeline(tmp_path)
+
+    assert result == artifacts
+    assert hashed_paths == [str(model_file)]
+
+
+def test_validate_model_and_pipeline_logs_mismatch_before_raising(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Log mismatch details before raising `PipelineContractError` for model hash drift."""
+    model_file = tmp_path / "model.joblib"
+    model_file.write_bytes(b"m")
+
+    artifacts = Artifacts(
+        model_hash="expected-hash",
+        model_path=str(model_file),
+        pipeline_path=None,
+        pipeline_hash=None,
+    )
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.load_json",
+        lambda _path: {"metadata": "raw"},
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.validate_training_metadata",
+        lambda _raw: _make_training_metadata(artifacts),
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.hash_artifact",
+        lambda _path: "actual-hash",
+    )
+
+    with caplog.at_level(
+        "ERROR", logger="ml.runners.shared.logical_config.validate_model_and_pipeline"
+    ), pytest.raises(PipelineContractError, match="Model hash mismatch"):
+        validate_model_and_pipeline(tmp_path)
+
+    assert "Model hash mismatch: expected expected-hash, got actual-hash" in caplog.text
