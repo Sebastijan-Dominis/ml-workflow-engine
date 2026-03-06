@@ -336,3 +336,99 @@ def test_validate_model_and_pipeline_raises_when_pipeline_hash_expected_is_missi
 
     with pytest.raises(PipelineContractError, match="Pipeline hash mismatch"):
         validate_model_and_pipeline(tmp_path)
+
+
+def test_validate_model_and_pipeline_reads_metadata_from_expected_train_path(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Read metadata specifically from `<train_dir>/metadata.json`."""
+    model_file = tmp_path / "model.joblib"
+    model_file.write_bytes(b"m")
+
+    artifacts = Artifacts(
+        model_hash="model-hash",
+        model_path=str(model_file),
+        pipeline_path=None,
+        pipeline_hash=None,
+    )
+    loaded_paths: list[Path] = []
+
+    def _load_json(path: Path) -> dict:
+        loaded_paths.append(path)
+        return {"metadata": "raw"}
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.load_json",
+        _load_json,
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.validate_training_metadata",
+        lambda _raw: _make_training_metadata(artifacts),
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.hash_artifact",
+        lambda _path: "model-hash",
+    )
+
+    validate_model_and_pipeline(tmp_path)
+
+    assert loaded_paths == [tmp_path / "metadata.json"]
+
+
+def test_validate_model_and_pipeline_passes_raw_metadata_to_validator(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Forward raw JSON payload from loader directly into metadata validator."""
+    model_file = tmp_path / "model.joblib"
+    model_file.write_bytes(b"m")
+
+    raw_payload = {"meta": {"k": "v"}, "artifacts": {"model_path": str(model_file)}}
+    artifacts = Artifacts(
+        model_hash="model-hash",
+        model_path=str(model_file),
+        pipeline_path=None,
+        pipeline_hash=None,
+    )
+    validated_inputs: list[dict] = []
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.load_json",
+        lambda _path: raw_payload,
+    )
+
+    def _validate_training_metadata(raw: dict) -> SimpleNamespace:
+        validated_inputs.append(raw)
+        return _make_training_metadata(artifacts)
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.validate_training_metadata",
+        _validate_training_metadata,
+    )
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.hash_artifact",
+        lambda _path: "model-hash",
+    )
+
+    validate_model_and_pipeline(tmp_path)
+
+    assert validated_inputs == [raw_payload]
+
+
+def test_validate_model_and_pipeline_propagates_load_json_errors(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Propagate loader errors from metadata file read without masking them."""
+
+    def _load_json(_path: Path) -> dict:
+        raise FileNotFoundError("metadata file missing")
+
+    monkeypatch.setattr(
+        "ml.runners.shared.logical_config.validate_model_and_pipeline.load_json",
+        _load_json,
+    )
+
+    with pytest.raises(FileNotFoundError, match="metadata file missing"):
+        validate_model_and_pipeline(tmp_path)
