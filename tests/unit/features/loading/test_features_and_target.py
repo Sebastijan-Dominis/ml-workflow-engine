@@ -206,3 +206,111 @@ def test_load_features_and_target_resolves_snapshots_and_drops_row_id_on_success
     assert list(X.columns) == ["feature_a"]
     assert y.tolist() == [0, 1]
     assert lineage == ["ok-lineage"]
+
+
+def test_load_features_and_target_uses_given_snapshot_selection_without_resolving(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Honor explicit snapshot_selection and skip resolver invocation."""
+    module = _import_features_target_module()
+
+    fs = SimpleNamespace(name="booking_context_features", version="v1", file_name="features.csv", data_format="csv")
+    model_cfg = _model_cfg_stub([fs], store_path=str(tmp_path / "feature_store"))
+    provided_selection = [
+        {
+            "fs_spec": fs,
+            "snapshot_path": tmp_path / "feature_store" / "booking_context_features" / "v1" / "snap_manual",
+            "snapshot_id": "snap_manual",
+            "metadata": {
+                "feature_schema_hash": "schema-hash",
+                "operator_hash": "operator-hash",
+                "feature_type": "tabular",
+                "data_lineage": [_lineage_dict()],
+                "in_memory_hash": "mem-hash",
+                "file_hash": "file-hash",
+            },
+        }
+    ]
+
+    monkeypatch.setattr(
+        module,
+        "resolve_feature_snapshots",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("resolver should not be called")),
+    )
+    monkeypatch.setattr(module, "ensure_required_fields_present_in_dict", lambda **_kwargs: None)
+    monkeypatch.setattr(
+        module,
+        "read_data",
+        lambda *_args, **_kwargs: pd.DataFrame({"row_id": [1, 2], "feature_a": [0.5, 0.7]}),
+    )
+    monkeypatch.setattr(module, "validate_feature_set", lambda **_kwargs: None)
+    monkeypatch.setattr(module, "validate_set", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(module, "load_and_validate_data", lambda *_args, **_kwargs: pd.DataFrame({"row_id": [1, 2]}))
+    monkeypatch.setattr(module, "get_target_with_row_id", lambda **_kwargs: pd.DataFrame({"row_id": [1, 2], "target": [1, 0]}))
+    monkeypatch.setattr(module, "validate_row_id", lambda _df: None)
+    monkeypatch.setattr(module, "apply_segmentation", lambda data, seg_cfg: data)
+    monkeypatch.setattr(module, "validate_feature_target_row_id", lambda **_kwargs: None)
+    monkeypatch.setattr(module, "validate_min_rows", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(module, "validate_target", lambda **_kwargs: None)
+    monkeypatch.setattr(module, "validate_and_construct_feature_lineage", lambda _raw: ["lineage"])
+
+    X, y, lineage = module.load_features_and_target(
+        model_cfg,
+        snapshot_selection=provided_selection,
+        drop_row_id=False,
+        strict=True,
+    )
+
+    assert list(X.columns) == ["row_id", "feature_a"]
+    assert y.tolist() == [1, 0]
+    assert lineage == ["lineage"]
+
+
+def test_load_features_and_target_raises_when_segmentation_removes_row_id(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Raise ``DataError`` when segmentation removes row_id before alignment validation."""
+    module = _import_features_target_module()
+
+    fs = SimpleNamespace(name="booking_context_features", version="v1", file_name="features.csv", data_format="csv")
+    model_cfg = _model_cfg_stub([fs], store_path=str(tmp_path / "feature_store"))
+    snapshot_selection = [
+        {
+            "fs_spec": fs,
+            "snapshot_path": tmp_path / "feature_store" / "booking_context_features" / "v1" / "snap_001",
+            "snapshot_id": "snap_001",
+            "metadata": {
+                "feature_schema_hash": "schema-hash",
+                "operator_hash": "operator-hash",
+                "feature_type": "tabular",
+                "data_lineage": [_lineage_dict()],
+                "in_memory_hash": "mem-hash",
+                "file_hash": "file-hash",
+            },
+        }
+    ]
+
+    monkeypatch.setattr(module, "ensure_required_fields_present_in_dict", lambda **_kwargs: None)
+    monkeypatch.setattr(
+        module,
+        "read_data",
+        lambda *_args, **_kwargs: pd.DataFrame({"row_id": [1, 2], "feature_a": [0.5, 0.7]}),
+    )
+    monkeypatch.setattr(module, "validate_feature_set", lambda **_kwargs: None)
+    monkeypatch.setattr(module, "validate_set", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(module, "load_and_validate_data", lambda *_args, **_kwargs: pd.DataFrame({"row_id": [1, 2]}))
+    monkeypatch.setattr(module, "get_target_with_row_id", lambda **_kwargs: pd.DataFrame({"row_id": [1, 2], "target": [0, 1]}))
+    monkeypatch.setattr(module, "validate_row_id", lambda _df: None)
+    monkeypatch.setattr(module, "apply_segmentation", lambda data, seg_cfg: data.drop(columns=["row_id"]))
+    monkeypatch.setattr(module, "validate_min_rows", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(module, "validate_target", lambda **_kwargs: None)
+
+    with pytest.raises(DataError, match="Feature set is missing 'row_id' column"):
+        module.load_features_and_target(
+            model_cfg,
+            snapshot_selection=snapshot_selection,
+            drop_row_id=True,
+            strict=True,
+        )
