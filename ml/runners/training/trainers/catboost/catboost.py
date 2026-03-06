@@ -100,8 +100,6 @@ class CatBoostTrainer(Trainer):
         pipeline_cfg = load_yaml(pipeline_path)
         pipeline_cfg_hash = compute_model_config_hash(pipeline_cfg)
 
-        cat_features = get_cat_features(model_cfg, input_schema, derived_schema)
-
         validate_model_feature_pipeline_contract(
             model_cfg,
             pipeline_cfg,
