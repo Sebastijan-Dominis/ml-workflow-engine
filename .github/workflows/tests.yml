@@ -22,13 +22,13 @@ jobs:
           use-mamba: true
           auto-activate-base: false
 
-      - name: Cache Conda environment
+      - name: Cache Conda packages
         uses: actions/cache@v4
         with:
-          path: ~/miniconda3/envs/hotel_management
-          key: ${{ runner.os }}-conda-hotel-${{ hashFiles('environment.yml') }}
+          path: ~/miniconda3/pkgs
+          key: ${{ runner.os }}-conda-pkgs-${{ hashFiles('environment.yml') }}
           restore-keys: |
-            ${{ runner.os }}-conda-hotel-
+            ${{ runner.os }}-conda-pkgs-
 
       - name: Show environment
         run: conda run -n hotel_management conda list
