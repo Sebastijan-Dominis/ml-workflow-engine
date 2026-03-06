@@ -3,8 +3,8 @@ name: Quality
 on:
   pull_request:
   push:
-    # branches: [main, master]
-    branches: [none] # Temporarily disabled to avoid hitting the GitHub Actions limit of 2000 minutes per month
+    branches: [main, master]
+    # branches: [none] # Temporarily disabled to avoid hitting the GitHub Actions limit of 2000 minutes per month
 
 jobs:
   quality:
