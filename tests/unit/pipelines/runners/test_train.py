@@ -238,3 +238,110 @@ def test_main_maps_pipeline_contract_error_when_pipeline_hash_missing(
     code = module.main()
 
     assert code == 88
+
+
+def test_main_returns_one_when_provided_train_run_id_directory_is_missing(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Reject user-provided train run IDs that do not map to an existing directory."""
+    experiment_dir = tmp_path / "experiments" / "no_show" / "global" / "v1" / "exp_4"
+    (experiment_dir / "search").mkdir(parents=True)
+
+    monkeypatch.setattr(
+        module,
+        "parse_args",
+        lambda: Namespace(
+            problem="no_show",
+            segment="global",
+            version="v1",
+            train_run_id="run_missing",
+            env="default",
+            strict=True,
+            experiment_id="exp_4",
+            logging_level="INFO",
+            clean_up_failure_management=True,
+            overwrite_existing=False,
+        ),
+    )
+    monkeypatch.setattr(module, "bootstrap_logging", lambda level: None)
+    monkeypatch.setattr(module, "get_snapshot_path", lambda snapshot_id, parent_dir: experiment_dir)
+
+    code = module.main()
+
+    assert code == 1
+
+
+def test_main_persists_pipeline_artifacts_when_pipeline_and_hash_are_present(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Persist pipeline artifact and hashes when trainer returns pipeline + config hash."""
+    experiment_dir = tmp_path / "experiments" / "adr" / "global" / "v1" / "exp_5"
+    (experiment_dir / "search").mkdir(parents=True)
+
+    monkeypatch.setattr(
+        module,
+        "parse_args",
+        lambda: Namespace(
+            problem="adr",
+            segment="global",
+            version="v1",
+            train_run_id=None,
+            env="test",
+            strict=True,
+            experiment_id="exp_5",
+            logging_level="INFO",
+            clean_up_failure_management=False,
+            overwrite_existing=False,
+        ),
+    )
+    monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260307T130000")
+    monkeypatch.setattr(module, "uuid4", lambda: SimpleNamespace(hex="aabbccddeeff0011"))
+    monkeypatch.setattr(module, "bootstrap_logging", lambda level: None)
+    monkeypatch.setattr(module, "add_file_handler", lambda path, level: None)
+    monkeypatch.setattr(module, "get_snapshot_path", lambda snapshot_id, parent_dir: experiment_dir)
+
+    cfg = SimpleNamespace(algorithm=SimpleNamespace(value="CatBoost"))
+    monkeypatch.setattr(module, "load_and_validate_config", lambda *args, **kwargs: cfg)
+    monkeypatch.setattr(module, "add_config_hash", lambda model_cfg: model_cfg)
+    monkeypatch.setattr(module, "validate_lineage_integrity", lambda search_dir: None)
+    monkeypatch.setattr(module, "validate_reproducibility", lambda runtime_path: None)
+    monkeypatch.setattr(module, "validate_logical_config", lambda model_cfg, search_dir: None)
+    monkeypatch.setattr(module, "validate_pipeline_cfg", lambda metadata_path, model_cfg: None)
+
+    pipeline_obj = object()
+    trainer_output = SimpleNamespace(
+        model=object(),
+        pipeline=pipeline_obj,
+        pipeline_cfg_hash="cfg_hash_123",
+        lineage=[],
+        metrics={"rmse": 1.23},
+    )
+    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir: trainer_output)
+    monkeypatch.setattr(module, "get_trainer", lambda algorithm: trainer)
+
+    model_path = experiment_dir / "training" / "20260307T130000_aabbccdd" / "model.cbm"
+    pipeline_path = experiment_dir / "training" / "20260307T130000_aabbccdd" / "pipeline.pkl"
+    monkeypatch.setattr(module, "save_model", lambda model, train_run_dir: model_path)
+    monkeypatch.setattr(module, "save_pipeline", lambda pipeline, train_run_dir: pipeline_path)
+
+    def _hash_artifact(path: Path) -> str:
+        if path == model_path:
+            return "model_hash"
+        if path == pipeline_path:
+            return "pipeline_hash"
+        raise AssertionError("Unexpected artifact path")
+
+    monkeypatch.setattr(module, "hash_artifact", _hash_artifact)
+
+    persisted: dict[str, Any] = {}
+    monkeypatch.setattr(module, "persist_training_run", lambda model_cfg, **kwargs: persisted.update(kwargs))
+    monkeypatch.setattr(module, "delete_failure_management_folder", lambda **kwargs: None)
+
+    code = module.main()
+
+    assert code == 0
+    assert persisted["pipeline_path"] == pipeline_path
+    assert persisted["pipeline_hash"] == "pipeline_hash"
+    assert persisted["pipeline_cfg_hash"] == "cfg_hash_123"

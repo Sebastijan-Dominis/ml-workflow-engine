@@ -165,3 +165,25 @@ def test_save_runtime_snapshot_overwrites_when_enabled(tmp_path: Path, monkeypat
 
     saved = json.loads((tmp_path / "runtime.json").read_text(encoding="utf-8"))
     assert saved == {"new": 2}
+
+
+def test_save_runtime_snapshot_wraps_write_errors_as_persistence_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Wrap file write failures as `PersistenceError` with destination context."""
+    monkeypatch.setattr("ml.utils.runtime.save_runtime.build_runtime_snapshot", lambda *args, **kwargs: {"x": 1})
+
+    def _raise_open(*args: object, **kwargs: object) -> object:
+        raise OSError("disk full")
+
+    monkeypatch.setattr("builtins.open", _raise_open)
+
+    with pytest.raises(PersistenceError, match="Failed to save runtime snapshot"):
+        save_runtime_snapshot(
+            target_dir=tmp_path,
+            timestamp="2026-03-05T12:00:00",
+            hardware_info=_cpu_hardware(),
+            start_time=100.0,
+            overwrite_existing=True,
+        )
