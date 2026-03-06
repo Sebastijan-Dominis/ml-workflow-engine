@@ -25,3 +25,25 @@ def test_ensure_1d_array_rejects_non_1d_array() -> None:
     """Verify rejection of non-1D prediction payloads."""
     with pytest.raises(PipelineContractError, match="Expected 1D array of predictions"):
         ensure_1d_array([[1, 2], [3, 4]])
+
+
+def test_ensure_1d_array_rejects_scalar_predictions() -> None:
+    """Reject scalar outputs because they become 0D arrays instead of 1D vectors."""
+    with pytest.raises(PipelineContractError, match="Expected 1D array of predictions"):
+        ensure_1d_array(0.5)
+
+
+def test_ensure_1d_array_accepts_empty_1d_inputs() -> None:
+    """Accept empty sequences that still satisfy the 1D shape contract."""
+    result = ensure_1d_array([])
+
+    assert isinstance(result, np.ndarray)
+    assert result.shape == (0,)
+
+
+def test_ensure_1d_array_normalizes_mixed_values_to_1d_array() -> None:
+    """Normalize mixed-value lists into a valid 1D array without raising."""
+    result = ensure_1d_array([1, "two", 3.0])
+
+    assert result.shape == (3,)
+    assert result.tolist() == ["1", "two", "3.0"]
