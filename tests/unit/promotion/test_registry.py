@@ -87,6 +87,52 @@ def test_update_registry_and_archive_staging_updates_staging_without_archiving(t
     assert not archive_path.exists()
 
 
+def test_update_registry_and_archive_initializes_missing_problem_and_segment_keys(tmp_path: Path) -> None:
+    """Create missing problem/segment structure and persist first production record."""
+    registry_path = tmp_path / "models.yaml"
+    archive_path = tmp_path / "archive.yaml"
+
+    updated = update_registry_and_archive(
+        model_registry={},
+        archive_registry={},
+        stage="production",
+        run_info={"promotion_id": "prom-first", "metrics": {"val": {"f1": 0.91}}},
+        problem="no_show",
+        segment="global",
+        registry_path=registry_path,
+        archive_path=archive_path,
+    )
+
+    assert updated == {
+        "no_show": {
+            "global": {
+                "production": {"promotion_id": "prom-first", "metrics": {"val": {"f1": 0.91}}}
+            }
+        }
+    }
+    assert not archive_path.exists()
+
+
+def test_update_registry_and_archive_wraps_filesystem_errors(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Raise PersistenceError when registry/archive writes fail at filesystem boundary."""
+    registry_path = tmp_path / "models.yaml"
+    archive_path = tmp_path / "archive.yaml"
+
+    monkeypatch.setattr("ml.promotion.persistence.registry.os.replace", lambda *_args: (_ for _ in ()).throw(OSError("disk full")))
+
+    with pytest.raises(PersistenceError, match="Failed to update model registry and archive"):
+        update_registry_and_archive(
+            model_registry={},
+            archive_registry={},
+            stage="staging",
+            run_info={"staging_id": "stage-1"},
+            problem="cancellation",
+            segment="city_hotel",
+            registry_path=registry_path,
+            archive_path=archive_path,
+        )
+
+
 def test_persist_registry_diff_writes_previous_and_updated_sections(tmp_path: Path) -> None:
     """Persist registry diff file containing previous and updated registry snapshots."""
     previous = {"a": 1}
