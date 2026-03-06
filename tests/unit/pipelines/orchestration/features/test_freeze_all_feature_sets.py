@@ -152,6 +152,41 @@ def test_main_runs_freeze_command_for_each_feature_version(
     assert commands[0][-2:] == ["--owner", "CI"]
 
 
+def test_main_falls_back_to_info_when_logging_level_is_unrecognized(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Use INFO log level fallback when args contain a non-standard logging level value."""
+    monkeypatch.chdir(tmp_path)
+
+    monkeypatch.setattr(
+        freeze_all_feature_sets,
+        "parse_args",
+        lambda: Namespace(logging_level="not-a-level", owner="Sebastijan", skip_if_existing=True),
+    )
+    monkeypatch.setattr(freeze_all_feature_sets, "iso_no_colon", lambda _dt: "20260306T131250")
+    monkeypatch.setattr(freeze_all_feature_sets, "uuid4", lambda: SimpleNamespace(hex="0011001100110011"))
+    monkeypatch.setattr(
+        freeze_all_feature_sets,
+        "load_yaml",
+        lambda _path: {},
+    )
+
+    captured: dict[str, Any] = {}
+
+    def _setup_logging(*, path: Path, level: int) -> None:
+        captured["path"] = path
+        captured["level"] = level
+
+    monkeypatch.setattr(freeze_all_feature_sets, "setup_logging", _setup_logging)
+
+    code = freeze_all_feature_sets.main()
+
+    assert code == 0
+    assert captured["path"].as_posix().endswith("freeze_all.log")
+    assert captured["level"] == freeze_all_feature_sets.logging.INFO
+
+
 def test_main_returns_subprocess_error_code_on_first_failed_freeze(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -198,3 +233,38 @@ def test_main_returns_subprocess_error_code_on_first_failed_freeze(
     assert code == 17
     assert attempts["count"] == 2
     assert completion_messages == ["Script terminated after successfully freezing 1 feature sets"]
+
+
+def test_main_handles_called_process_error_without_stderr(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Return failing code even when subprocess error has empty stderr payload."""
+    monkeypatch.chdir(tmp_path)
+
+    monkeypatch.setattr(
+        freeze_all_feature_sets,
+        "parse_args",
+        lambda: Namespace(logging_level="INFO", owner="Sebastijan", skip_if_existing=False),
+    )
+    monkeypatch.setattr(freeze_all_feature_sets, "iso_no_colon", lambda _dt: "20260306T131550")
+    monkeypatch.setattr(freeze_all_feature_sets, "uuid4", lambda: SimpleNamespace(hex="ffeeffeeffeeffee"))
+    monkeypatch.setattr(freeze_all_feature_sets, "setup_logging", lambda **kwargs: None)
+    monkeypatch.setattr(
+        freeze_all_feature_sets,
+        "load_yaml",
+        lambda _path: {"booking_context_features": ["v1"]},
+    )
+
+    def _raise_called_process_error(cmd: list[str], **kwargs: Any) -> SimpleNamespace:
+        _ = kwargs
+        raise subprocess.CalledProcessError(returncode=23, cmd=cmd, stderr="")
+
+    monkeypatch.setattr(freeze_all_feature_sets.subprocess, "run", _raise_called_process_error)
+
+    with caplog.at_level("ERROR", logger=freeze_all_feature_sets.__name__):
+        code = freeze_all_feature_sets.main()
+
+    assert code == 23
+    assert "Failed to freeze 'booking_context_features' version 'v1': " in caplog.text
