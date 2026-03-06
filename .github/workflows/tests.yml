@@ -13,6 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache Conda environment
+        uses: actions/cache@v4
+        with:
+          path: ~/conda-envs/hotel_management
+          key: ${{ runner.os }}-conda-hotel-${{ hashFiles('environment.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-conda-hotel-
+
       - name: Set up conda
         uses: conda-incubator/setup-miniconda@v2
         with:
