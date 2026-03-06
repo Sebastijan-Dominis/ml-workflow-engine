@@ -47,5 +47,7 @@ class FillCategoricalMissing(PipelineComponent):
 
         X = X.copy()
         for col in self.categorical_features:
-            X[col] = X[col].astype(str).fillna("missing")
+            # Fill first so Python/NumPy missing values do not become literal
+            # "None"/"nan" strings before replacement.
+            X[col] = X[col].fillna("missing").astype(str)
         return X
