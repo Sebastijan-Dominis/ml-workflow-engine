@@ -10,6 +10,7 @@ from ml.metadata.schemas.runners.training import TrainingMetadata
 from ml.promotion.getters.get import (
     extract_thresholds,
     get_pipeline_cfg_hash,
+    get_runners_metadata,
     get_training_conda_env_hash,
 )
 
@@ -81,3 +82,74 @@ def test_get_training_conda_env_hash_raises_when_hash_missing(monkeypatch: pytes
 
     with pytest.raises(PersistenceError, match="missing conda environment hash"):
         get_training_conda_env_hash(Path("train_run"))
+
+
+def test_get_runners_metadata_loads_each_stage_metadata_and_validates_in_order(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Load train/eval/explain metadata files and return validated stage objects in wrapper order."""
+    train_run_dir = Path("runs") / "train-1"
+    eval_run_dir = Path("runs") / "eval-1"
+    explain_run_dir = Path("runs") / "explain-1"
+
+    calls: list[str] = []
+
+    def _load_json(path: Path) -> dict[str, str]:
+        calls.append(f"load:{path}")
+        if path == train_run_dir / "metadata.json":
+            return {"stage": "training"}
+        if path == eval_run_dir / "metadata.json":
+            return {"stage": "evaluation"}
+        if path == explain_run_dir / "metadata.json":
+            return {"stage": "explainability"}
+        raise AssertionError(f"Unexpected path: {path}")
+
+    monkeypatch.setattr("ml.promotion.getters.get.load_json", _load_json)
+    monkeypatch.setattr(
+        "ml.promotion.getters.get.validate_training_metadata",
+        lambda payload: calls.append(f"validate_training:{payload['stage']}") or "training-validated",
+    )
+    monkeypatch.setattr(
+        "ml.promotion.getters.get.validate_evaluation_metadata",
+        lambda payload: calls.append(f"validate_evaluation:{payload['stage']}") or "evaluation-validated",
+    )
+    monkeypatch.setattr(
+        "ml.promotion.getters.get.validate_explainability_metadata",
+        lambda payload: calls.append(f"validate_explainability:{payload['stage']}") or "explainability-validated",
+    )
+
+    result = get_runners_metadata(train_run_dir, eval_run_dir, explain_run_dir)
+
+    assert result.training_metadata == "training-validated"
+    assert result.evaluation_metadata == "evaluation-validated"
+    assert result.explainability_metadata == "explainability-validated"
+    assert calls == [
+        f"load:{train_run_dir / 'metadata.json'}",
+        "validate_training:training",
+        f"load:{eval_run_dir / 'metadata.json'}",
+        "validate_evaluation:evaluation",
+        f"load:{explain_run_dir / 'metadata.json'}",
+        "validate_explainability:explainability",
+    ]
+
+
+def test_get_runners_metadata_propagates_validation_failures(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Propagate stage validation exceptions so promotion flow can fail fast with context."""
+    train_run_dir = Path("runs") / "train-err"
+    eval_run_dir = Path("runs") / "eval-err"
+    explain_run_dir = Path("runs") / "explain-err"
+
+    monkeypatch.setattr("ml.promotion.getters.get.load_json", lambda _path: {"stage": "training"})
+
+    class _ValidationError(RuntimeError):
+        pass
+
+    monkeypatch.setattr(
+        "ml.promotion.getters.get.validate_training_metadata",
+        lambda _payload: (_ for _ in ()).throw(_ValidationError("bad training metadata")),
+    )
+
+    with pytest.raises(_ValidationError, match="bad training metadata"):
+        get_runners_metadata(train_run_dir, eval_run_dir, explain_run_dir)
