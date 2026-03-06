@@ -141,3 +141,64 @@ def test_evaluate_model_wraps_prediction_artifact_type_errors(
             data_splits=splits,
             transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
         )
+
+
+def test_evaluate_model_drops_row_id_before_split_evaluation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Drop ``row_id`` from feature matrices before invoking split evaluator."""
+    X = pd.DataFrame({"row_id": ["r1", "r2"], "f": [1.0, 2.0]})
+    y = pd.Series([1.0, 2.0])
+    splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
+
+    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+
+    seen_columns: dict[str, list[str]] = {}
+
+    def _eval_split(**kwargs: Any) -> tuple[dict[str, float], pd.DataFrame]:
+        split_name = cast(str, kwargs["split_name"])
+        split_frame = cast(pd.DataFrame, kwargs["X"])
+        seen_columns[split_name] = split_frame.columns.tolist()
+        return {"rmse": 0.0}, pd.DataFrame({"row_id": ["r1"], "split": [split_name]})
+
+    monkeypatch.setattr(module, "evaluate_split", _eval_split)
+
+    module.evaluate_model(
+        pipeline=cast(Pipeline, SimpleNamespace()),
+        data_splits=splits,
+        transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
+    )
+
+    assert seen_columns == {"train": ["f"], "val": ["f"], "test": ["f"]}
+
+
+def test_evaluate_model_wraps_prediction_artifact_runtime_errors(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Wrap non-``TypeError`` artifact-construction failures as ``EvaluationError``."""
+    X = pd.DataFrame({"row_id": ["r1"], "f": [1.0]})
+    y = pd.Series([1.0])
+    splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
+
+    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+    monkeypatch.setattr(
+        module,
+        "evaluate_split",
+        lambda **kwargs: ({"rmse": 0.0}, pd.DataFrame({"row_id": ["r1"], "split": [kwargs["split_name"]]})),
+    )
+
+    class _FailingArtifacts:
+        """Prediction artifacts stub that raises ``RuntimeError`` on construction."""
+
+        def __init__(self, **_kwargs: Any) -> None:
+            """Raise error to exercise generic wrapper branch."""
+            raise RuntimeError("bad artifacts")
+
+    monkeypatch.setattr(module, "PredictionArtifacts", _FailingArtifacts)
+
+    with pytest.raises(EvaluationError, match="Error constructing PredictionArtifacts"):
+        module.evaluate_model(
+            pipeline=cast(Pipeline, SimpleNamespace()),
+            data_splits=splits,
+            transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
+        )

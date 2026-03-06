@@ -154,7 +154,7 @@ def evaluate_model(
 
     try:
         prediction_dfs = PredictionArtifacts(**prediction_dfs_raw)
-    except TypeError as e:
+    except Exception as e:
         msg = f"Error constructing PredictionArtifacts with prediction dataframes: {prediction_dfs_raw}."
         logger.exception(msg)
         raise EvaluationError(msg) from e
