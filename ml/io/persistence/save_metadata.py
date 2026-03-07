@@ -2,6 +2,8 @@
 
 import json
 import logging
+import os
+import tempfile
 from pathlib import Path
 
 from ml.exceptions import PersistenceError
@@ -48,11 +50,30 @@ def save_metadata(
             raise PersistenceError(msg)
         logger.critical(f"Metadata file already exists at {metadata_file}, and overwriting is enabled. It will be overwritten.")
 
+    temp_path: str | None = None
     try:
-        with metadata_file.open("w", encoding="utf-8") as f:
-            json.dump(metadata, f, indent=2)
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=metadata_file.parent,
+            prefix="metadata.",
+            suffix=".tmp",
+            delete=False,
+        ) as tmp_file:
+            temp_path = tmp_file.name
+            json.dump(metadata, tmp_file, indent=2)
+            tmp_file.flush()
+            os.fsync(tmp_file.fileno())
+
+        os.replace(temp_path, metadata_file)
         logger.info(f"Metadata successfully saved to {metadata_file}.")
     except Exception as e:
+        if temp_path and Path(temp_path).exists():
+            try:
+                Path(temp_path).unlink()
+            except OSError:
+                logger.warning("Failed to clean up temporary metadata file: %s", temp_path)
+
         msg = f"Failed to save metadata to {metadata_file}"
         logger.exception(msg)
         raise PersistenceError(msg) from e
