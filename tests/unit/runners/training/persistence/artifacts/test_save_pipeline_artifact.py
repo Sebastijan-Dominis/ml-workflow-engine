@@ -19,11 +19,13 @@ def test_save_pipeline_writes_pipeline_joblib_and_returns_pipeline_path(
     tmp_path: Path,
 ) -> None:
     """Persist pipeline to ``pipeline.joblib`` and return the persisted artifact path."""
-    captured: dict[str, object] = {}
+    captured_pipeline: object | None = None
+    captured_path: Path | None = None
 
     def _dump(pipeline: object, pipeline_file: Path) -> None:
-        captured["pipeline"] = pipeline
-        captured["path"] = pipeline_file
+        nonlocal captured_pipeline, captured_path
+        captured_pipeline = pipeline
+        captured_path = pipeline_file
 
     monkeypatch.setattr(module.joblib, "dump", _dump)
 
@@ -31,8 +33,9 @@ def test_save_pipeline_writes_pipeline_joblib_and_returns_pipeline_path(
     saved_path = module.save_pipeline(pipeline_obj, tmp_path)
 
     assert saved_path == tmp_path / "pipeline.joblib"
-    assert captured["pipeline"] is pipeline_obj
-    dumped_path = Path(captured["path"])
+    assert captured_pipeline is pipeline_obj
+    assert captured_path is not None
+    dumped_path = captured_path
     assert dumped_path.parent == tmp_path
     assert dumped_path.name.startswith("pipeline.")
     assert dumped_path.suffixes[-2:] == [".joblib", ".tmp"]
@@ -61,7 +64,10 @@ def test_save_pipeline_creates_missing_parent_directory(
     """Create artifact directory before dumping pipeline when target path is missing."""
     target_dir = tmp_path / "nested" / "artifacts"
 
-    monkeypatch.setattr(module.joblib, "dump", lambda pipeline, pipeline_file: Path(pipeline_file).write_text("pipeline"))
+    def _dump_to_path(_pipeline: object, pipeline_file: Path) -> None:
+        pipeline_file.write_text("pipeline", encoding="utf-8")
+
+    monkeypatch.setattr(module.joblib, "dump", _dump_to_path)
 
     saved_path = module.save_pipeline(cast(Pipeline, SimpleNamespace()), target_dir)
 
@@ -93,7 +99,10 @@ def test_save_pipeline_cleans_temp_file_when_replace_fails(
     tmp_path: Path,
 ) -> None:
     """Remove temporary pipeline artifact when atomic replace operation fails."""
-    monkeypatch.setattr(module.joblib, "dump", lambda pipeline, pipeline_file: Path(pipeline_file).write_text("temp"))
+    def _dump_to_path(_pipeline: object, pipeline_file: Path) -> None:
+        pipeline_file.write_text("temp", encoding="utf-8")
+
+    monkeypatch.setattr(module.joblib, "dump", _dump_to_path)
 
     captured_temp_path: dict[str, Path] = {}
 

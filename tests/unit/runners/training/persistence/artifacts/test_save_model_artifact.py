@@ -17,11 +17,13 @@ def test_save_model_writes_model_joblib_and_returns_model_path(
     tmp_path: Path,
 ) -> None:
     """Persist model to ``model.joblib`` and return the persisted artifact path."""
-    captured: dict[str, object] = {}
+    captured_model: object | None = None
+    captured_path: Path | None = None
 
     def _dump(model: object, model_file: Path) -> None:
-        captured["model"] = model
-        captured["path"] = model_file
+        nonlocal captured_model, captured_path
+        captured_model = model
+        captured_path = model_file
 
     monkeypatch.setattr(module.joblib, "dump", _dump)
 
@@ -29,8 +31,9 @@ def test_save_model_writes_model_joblib_and_returns_model_path(
     saved_path = module.save_model(model_obj, tmp_path)
 
     assert saved_path == tmp_path / "model.joblib"
-    assert captured["model"] is model_obj
-    dumped_path = Path(captured["path"])
+    assert captured_model is model_obj
+    assert captured_path is not None
+    dumped_path = captured_path
     assert dumped_path.parent == tmp_path
     assert dumped_path.name.startswith("model.")
     assert dumped_path.suffixes[-2:] == [".joblib", ".tmp"]
@@ -59,7 +62,10 @@ def test_save_model_creates_missing_parent_directory(
     """Create artifact directory before dumping model when target path does not exist."""
     target_dir = tmp_path / "nested" / "artifacts"
 
-    monkeypatch.setattr(module.joblib, "dump", lambda model, model_file: Path(model_file).write_text("model"))
+    def _dump_to_path(_model: object, model_file: Path) -> None:
+        model_file.write_text("model", encoding="utf-8")
+
+    monkeypatch.setattr(module.joblib, "dump", _dump_to_path)
 
     saved_path = module.save_model(SimpleNamespace(), target_dir)
 
@@ -91,7 +97,10 @@ def test_save_model_cleans_temp_file_when_replace_fails(
     tmp_path: Path,
 ) -> None:
     """Remove temporary model artifact when atomic replace operation fails."""
-    monkeypatch.setattr(module.joblib, "dump", lambda model, model_file: Path(model_file).write_text("temp"))
+    def _dump_to_path(_model: object, model_file: Path) -> None:
+        model_file.write_text("temp", encoding="utf-8")
+
+    monkeypatch.setattr(module.joblib, "dump", _dump_to_path)
 
     captured_temp_path: dict[str, Path] = {}
 
