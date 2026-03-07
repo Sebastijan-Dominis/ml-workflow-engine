@@ -1,6 +1,8 @@
 """Pipeline artifact persistence helpers for training runs."""
 
 import logging
+import os
+import tempfile
 from pathlib import Path
 
 import joblib
@@ -21,12 +23,31 @@ def save_pipeline(pipeline: Pipeline, path: Path) -> Path:
     """
 
     pipeline_file = path / "pipeline.joblib"
+    pipeline_file.parent.mkdir(parents=True, exist_ok=True)
+
+    temp_path: Path | None = None
 
     try:
-        joblib.dump(pipeline, pipeline_file)
+        with tempfile.NamedTemporaryFile(
+            mode="wb",
+            dir=pipeline_file.parent,
+            prefix="pipeline.",
+            suffix=".joblib.tmp",
+            delete=False,
+        ) as tmp_file:
+            temp_path = Path(tmp_file.name)
+
+        joblib.dump(pipeline, temp_path)
+        os.replace(temp_path, pipeline_file)
         logger.info(f"Pipeline successfully saved to {pipeline_file}.")
         return pipeline_file
     except Exception as e:
+        if temp_path and temp_path.exists():
+            try:
+                temp_path.unlink()
+            except OSError:
+                logger.warning("Failed to clean up temporary pipeline file: %s", temp_path)
+
         msg = f"Failed to save pipeline to {pipeline_file}."
         logger.exception(msg)
         raise PersistenceError(msg) from e

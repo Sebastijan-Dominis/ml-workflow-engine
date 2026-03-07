@@ -32,7 +32,11 @@ def test_save_pipeline_writes_pipeline_joblib_and_returns_pipeline_path(
 
     assert saved_path == tmp_path / "pipeline.joblib"
     assert captured["pipeline"] is pipeline_obj
-    assert captured["path"] == tmp_path / "pipeline.joblib"
+    dumped_path = Path(captured["path"])
+    assert dumped_path.parent == tmp_path
+    assert dumped_path.name.startswith("pipeline.")
+    assert dumped_path.suffixes[-2:] == [".joblib", ".tmp"]
+    assert saved_path.exists()
 
 
 def test_save_pipeline_wraps_joblib_failures_as_persistence_error(
@@ -48,3 +52,60 @@ def test_save_pipeline_wraps_joblib_failures_as_persistence_error(
 
     with pytest.raises(PersistenceError, match="Failed to save pipeline"):
         module.save_pipeline(cast(Pipeline, SimpleNamespace()), tmp_path)
+
+
+def test_save_pipeline_creates_missing_parent_directory(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Create artifact directory before dumping pipeline when target path is missing."""
+    target_dir = tmp_path / "nested" / "artifacts"
+
+    monkeypatch.setattr(module.joblib, "dump", lambda pipeline, pipeline_file: Path(pipeline_file).write_text("pipeline"))
+
+    saved_path = module.save_pipeline(cast(Pipeline, SimpleNamespace()), target_dir)
+
+    assert saved_path == target_dir / "pipeline.joblib"
+    assert target_dir.exists()
+
+
+def test_save_pipeline_preserves_existing_artifact_when_dump_fails(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Keep existing pipeline artifact unchanged when temp-file dump fails."""
+    pipeline_file = tmp_path / "pipeline.joblib"
+    pipeline_file.write_text("stable-pipeline", encoding="utf-8")
+
+    def _failing_dump(*_args: object, **_kwargs: object) -> None:
+        raise OSError("dump failed")
+
+    monkeypatch.setattr(module.joblib, "dump", _failing_dump)
+
+    with pytest.raises(PersistenceError, match="Failed to save pipeline"):
+        module.save_pipeline(cast(Pipeline, SimpleNamespace()), tmp_path)
+
+    assert pipeline_file.read_text(encoding="utf-8") == "stable-pipeline"
+
+
+def test_save_pipeline_cleans_temp_file_when_replace_fails(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Remove temporary pipeline artifact when atomic replace operation fails."""
+    monkeypatch.setattr(module.joblib, "dump", lambda pipeline, pipeline_file: Path(pipeline_file).write_text("temp"))
+
+    captured_temp_path: dict[str, Path] = {}
+
+    def _failing_replace(src: str | Path, dst: str | Path) -> None:
+        _ = dst
+        captured_temp_path["path"] = Path(src)
+        raise OSError("replace blocked")
+
+    monkeypatch.setattr(module.os, "replace", _failing_replace)
+
+    with pytest.raises(PersistenceError, match="Failed to save pipeline"):
+        module.save_pipeline(cast(Pipeline, SimpleNamespace()), tmp_path)
+
+    assert "path" in captured_temp_path
+    assert not captured_temp_path["path"].exists()
