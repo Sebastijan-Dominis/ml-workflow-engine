@@ -2,6 +2,8 @@
 
 import json
 import logging
+import os
+import tempfile
 from pathlib import Path
 
 from ml.exceptions import PersistenceError
@@ -22,11 +24,32 @@ def save_narrow(
         "best_params": best_params
     }
 
+    tgt_file.parent.mkdir(parents=True, exist_ok=True)
+
+    temp_path: str | None = None
     try:
-        with tgt_file.open("w", encoding="utf-8") as f:
-            json.dump(narrow_info, f, indent=2)
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=tgt_file.parent,
+            prefix="narrow.",
+            suffix=".tmp",
+            delete=False,
+        ) as tmp_file:
+            temp_path = tmp_file.name
+            json.dump(narrow_info, tmp_file, indent=2)
+            tmp_file.flush()
+            os.fsync(tmp_file.fileno())
+
+        os.replace(temp_path, tgt_file)
         logger.info(f"Narrow search done marker written to {tgt_file}.")
     except Exception as e:
+        if temp_path and Path(temp_path).exists():
+            try:
+                Path(temp_path).unlink()
+            except OSError:
+                logger.warning("Failed to clean up temporary narrow marker file: %s", temp_path)
+
         msg = f"Failed to save narrow search done marker to {tgt_file}"
         logger.exception(msg)
         raise PersistenceError(msg) from e
