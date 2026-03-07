@@ -28,7 +28,19 @@ def is_ignored(file: Path) -> bool:
     Returns:
         bool: True if the file is in an ignored folder, False otherwise.
     """
-    return any(ignored in file.parents for ignored in IGNORE_FOLDERS)
+    file_parts = [part.lower() for part in file.parts]
+
+    for ignored in IGNORE_FOLDERS:
+        ignored_parts = [part.lower() for part in ignored.parts if part not in (".", "")]
+        if not ignored_parts:
+            continue
+
+        window = len(ignored_parts)
+        for idx in range(0, len(file_parts) - window + 1):
+            if file_parts[idx : idx + window] == ignored_parts:
+                return True
+
+    return False
 
 
 def check_module_name(file: Path):
