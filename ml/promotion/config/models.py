@@ -5,7 +5,7 @@ from datetime import datetime
 from enum import StrEnum
 
 from ml.exceptions import ConfigError
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 
 logger = logging.getLogger(__name__)
 
@@ -36,24 +36,34 @@ class PromotionMetricsConfig(BaseModel):
     metrics: list[MetricName] = Field(..., description="List of metrics to consider for promotion")
     directions: dict[MetricName, Direction] = Field(..., description="dictionary mapping each metric to its optimization direction")
 
-@field_validator("directions")
-def validate_directions(cls, v, values):
-    """Ensure direction entries are provided for every configured metric.
+    @field_validator("directions")
+    @classmethod
+    def validate_directions(
+        cls,
+        directions: dict[MetricName, Direction],
+        info: ValidationInfo,
+    ) -> dict[MetricName, Direction]:
+        """Ensure direction entries are provided for every configured metric.
 
-    Args:
-        v: Directions mapping.
-        values: Other field values from validation context.
+        Args:
+            directions: Directions mapping.
+            info: Pydantic validation context containing already parsed data.
 
-    Returns:
-        dict: Validated directions mapping.
-    """
+        Returns:
+            dict[MetricName, Direction]: Validated directions mapping.
+        """
 
-    metrics = set(values.get("metrics", []))
-    direction_metrics = set(v.keys())
-    if metrics != direction_metrics:
-        msg = f"Directions must be specified for all metrics. Metrics: {metrics}, Directions provided for: {direction_metrics}"
-        logger.error(msg)
-        raise ConfigError(msg)
+        metrics = set(info.data.get("metrics", []))
+        direction_metrics = set(directions.keys())
+        if metrics != direction_metrics:
+            msg = (
+                "Directions must be specified for all metrics. "
+                f"Metrics: {metrics}, Directions provided for: {direction_metrics}"
+            )
+            logger.error(msg)
+            raise ConfigError(msg)
+
+        return directions
 
 class ThresholdsConfig(BaseModel):
     """Per-split threshold values for promotion metrics."""
