@@ -67,7 +67,7 @@ class TargetTransformConfig(BaseModel):
     """Optional target transformation settings."""
 
     enabled: bool = False
-    type: Literal["log1p", "sqrt"] | None = None
+    type: Literal["log1p", "sqrt", "boxcox"] | None = None
     lambda_value: float | None = None  # Only used for Box-Cox transform
 
     # Validate that if type is boxcox, then lambda_value must be provided, and if type is not boxcox, then lambda_value must be None

@@ -27,3 +27,18 @@ def test_target_transform_config_rejects_lambda_for_non_boxcox() -> None:
     """Reject `lambda_value` for non-BoxCox transforms."""
     with pytest.raises(ConfigError, match="lambda_value should only be provided"):
         TargetTransformConfig(enabled=True, type="sqrt", lambda_value=0.3)
+
+
+def test_target_transform_config_allows_boxcox_with_lambda() -> None:
+    """Allow ``boxcox`` transform when a lambda value is provided."""
+    cfg = TargetTransformConfig(enabled=True, type="boxcox", lambda_value=0.3)
+
+    assert cfg.enabled is True
+    assert cfg.type == "boxcox"
+    assert cfg.lambda_value == 0.3
+
+
+def test_target_transform_config_requires_lambda_for_boxcox() -> None:
+    """Reject ``boxcox`` transform when lambda is missing."""
+    with pytest.raises(ConfigError, match="must be provided for Box-Cox"):
+        TargetTransformConfig(enabled=True, type="boxcox", lambda_value=None)
