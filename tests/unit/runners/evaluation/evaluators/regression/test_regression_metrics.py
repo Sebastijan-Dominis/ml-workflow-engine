@@ -69,9 +69,13 @@ def test_evaluate_split_applies_inverse_transform_and_builds_predictions_df(
         transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
     )
 
-    assert "mae" in metrics
+    # After inverse transform (+1), predictions become [1.0, 2.0] for y_true [2.0, 3.0].
+    assert metrics["mae"] == pytest.approx(1.0)
+    assert metrics["rmse"] == pytest.approx(1.0)
     assert df_preds.columns.tolist() == ["row_id", "split", "y_true", "y_pred", "residual"]
     assert df_preds["split"].tolist() == ["val", "val"]
+    assert df_preds["y_pred"].tolist() == [1.0, 2.0]
+    assert df_preds["residual"].tolist() == [1.0, 1.0]
 
 
 def test_evaluate_model_aggregates_splits_and_prediction_artifacts(
