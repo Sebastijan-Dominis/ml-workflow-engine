@@ -88,3 +88,79 @@ def test_import_layers_pass_for_valid_layout(
 
     assert exit_code == 0
     assert "Import layer check passed." in captured.out
+
+
+def test_import_layers_fails_on_deep_registry_catalog_import(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Reject deep imports into registry catalog internals outside package exports."""
+    script_path = SCRIPT_PATH.resolve()
+
+    file = tmp_path / "ml" / "consumer.py"
+    file.parent.mkdir(parents=True, exist_ok=True)
+    file.write_text(
+        "from ml.registries.catalogs.some_module import REGISTRY\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.chdir(tmp_path)
+
+    exit_code = _run_script_as_main(script_path)
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "use package exports instead of deep registry import" in captured.out
+    assert "ml.registries.catalogs.some_module" in captured.out
+
+
+def test_import_layers_fails_on_deep_registry_factory_import(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Reject deep imports into registry factory internals outside package exports."""
+    script_path = SCRIPT_PATH.resolve()
+
+    file = tmp_path / "ml" / "consumer.py"
+    file.parent.mkdir(parents=True, exist_ok=True)
+    file.write_text(
+        "import ml.registries.factories.internal_factory\n",
+        encoding="utf-8",
+    )
+
+    monkeypatch.chdir(tmp_path)
+
+    exit_code = _run_script_as_main(script_path)
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "use package exports instead of deep registry import" in captured.out
+    assert "ml.registries.factories.internal_factory" in captured.out
+
+
+def test_import_layers_fails_on_catalog_factory_cross_dependencies(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Reject cross-imports between registry catalogs and factories to preserve separation."""
+    script_path = SCRIPT_PATH.resolve()
+
+    catalog_file = tmp_path / "ml" / "registries" / "catalogs" / "catalog_entry.py"
+    catalog_file.parent.mkdir(parents=True, exist_ok=True)
+    catalog_file.write_text("from ml.registries.factories import make_factory\n", encoding="utf-8")
+
+    factory_file = tmp_path / "ml" / "registries" / "factories" / "factory_entry.py"
+    factory_file.parent.mkdir(parents=True, exist_ok=True)
+    factory_file.write_text("import ml.registries.catalogs\n", encoding="utf-8")
+
+    monkeypatch.chdir(tmp_path)
+
+    exit_code = _run_script_as_main(script_path)
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "catalogs must not import factories" in captured.out
+    assert "factories must not import catalogs" in captured.out

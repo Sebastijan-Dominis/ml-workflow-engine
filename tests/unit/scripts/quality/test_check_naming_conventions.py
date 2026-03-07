@@ -182,7 +182,16 @@ def test_module_entrypoint_executes_main_block(
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(sys, "argv", ["check_naming_conventions.py"])
 
-    with pytest.raises(SystemExit) as exc:
-        runpy.run_module("scripts.quality.check_naming_conventions", run_name="__main__")
+    # Ensure runpy executes the module from a clean import state to avoid
+    # RuntimeWarning about preloaded package modules.
+    module_name = "scripts.quality.check_naming_conventions"
+    existing_module = sys.modules.pop(module_name, None)
+
+    try:
+        with pytest.raises(SystemExit) as exc:
+            runpy.run_module(module_name, run_name="__main__")
+    finally:
+        if existing_module is not None:
+            sys.modules[module_name] = existing_module
 
     assert exc.value.code == 0

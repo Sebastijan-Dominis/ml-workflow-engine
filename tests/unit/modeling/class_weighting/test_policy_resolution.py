@@ -110,6 +110,30 @@ def test_resolve_metric_raises_when_fixed_policy_has_no_metric() -> None:
         resolve_metric(_as_model_config(config), stats=None)
 
 
+def test_resolve_metric_raises_when_adaptive_binary_has_no_threshold() -> None:
+    """Fail fast when adaptive-binary policy omits required PR-AUC threshold."""
+    config = _ConfigStub(
+        scoring=_ScoringCfg(policy="adaptive_binary", pr_auc_threshold=None),
+        class_weighting=_ClassWeightingCfg(policy="off"),
+    )
+    stats = DataStats(n_samples=100, class_counts={0: 80, 1: 20}, minority_ratio=0.20)
+
+    with pytest.raises(ConfigError, match="pr_auc_threshold must be set"):
+        resolve_metric(_as_model_config(config), stats=stats)
+
+
+def test_resolve_metric_raises_for_unsupported_policy() -> None:
+    """Reject unknown scoring policies to avoid silently unsafe metric defaults."""
+    config = _ConfigStub(
+        scoring=_ScoringCfg(policy="unknown_policy"),
+        class_weighting=_ClassWeightingCfg(policy="off"),
+    )
+    stats = DataStats(n_samples=100, class_counts={0: 80, 1: 20}, minority_ratio=0.20)
+
+    with pytest.raises(ConfigError, match="Unsupported scoring policy"):
+        resolve_metric(_as_model_config(config), stats=stats)
+
+
 def test_resolve_class_weighting_returns_empty_when_policy_off() -> None:
     """Emit no weighting parameters when class-weighting policy is disabled."""
     config = _ConfigStub(

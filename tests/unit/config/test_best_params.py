@@ -77,6 +77,16 @@ def test_apply_best_params_returns_original_config_when_file_missing_and_non_str
     assert result is cfg
 
 
+def test_apply_best_params_raises_when_file_missing_and_strict(tmp_path: Path) -> None:
+    """Raise ConfigError for missing metadata file when strict mode is enabled."""
+    with pytest.raises(ConfigError, match="best_params file not found"):
+        apply_best_params(
+            {"training": {"iterations": 500}},
+            tmp_path / "missing_metadata.json",
+            strict=True,
+        )
+
+
 def test_apply_best_params_raises_when_best_params_are_missing_in_strict_mode(
     tmp_path: Path,
 ) -> None:
@@ -90,3 +100,29 @@ def test_apply_best_params_raises_when_best_params_are_missing_in_strict_mode(
             metadata_path,
             strict=True,
         )
+
+
+def test_apply_best_params_returns_original_when_best_params_missing_and_non_strict(
+    tmp_path: Path,
+) -> None:
+    """Return original config when best params are absent and strict mode is disabled."""
+    metadata_path = tmp_path / "metadata.json"
+    metadata_path.write_text(json.dumps({"search_results": {}}), encoding="utf-8")
+    cfg = {"training": {"iterations": 500}}
+
+    result = apply_best_params(cfg, metadata_path, strict=False)
+
+    assert result is cfg
+
+
+def test_apply_best_params_returns_original_on_invalid_json_in_non_strict_mode(
+    tmp_path: Path,
+) -> None:
+    """Fallback to original config when metadata content is invalid and strict is disabled."""
+    metadata_path = tmp_path / "metadata.json"
+    metadata_path.write_text("{not-json", encoding="utf-8")
+    cfg = {"training": {"iterations": 500}}
+
+    result = apply_best_params(cfg, metadata_path, strict=False)
+
+    assert result is cfg

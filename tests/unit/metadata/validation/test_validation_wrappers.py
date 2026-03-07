@@ -102,6 +102,26 @@ def test_validate_interim_dataset_metadata_wraps_schema_errors(monkeypatch: pyte
         validate_interim_dataset_metadata({"x": 1})
 
 
+def test_validate_interim_dataset_metadata_returns_validated_object(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Ensure interim metadata wrapper returns schema output on success."""
+
+    expected = {"kind": "interim"}
+
+    class _Schema:
+        @staticmethod
+        def model_validate(payload: dict) -> dict:
+            assert payload == {"x": 1}
+            return expected
+
+    monkeypatch.setattr("ml.metadata.validation.data.interim.InterimDatasetMetadata", _Schema)
+
+    result = validate_interim_dataset_metadata({"x": 1})
+
+    assert result is expected
+
+
 def test_validate_processed_dataset_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure processed metadata wrapper converts schema failures to RuntimeMLError."""
 
@@ -114,6 +134,26 @@ def test_validate_processed_dataset_metadata_wraps_schema_errors(monkeypatch: py
 
     with pytest.raises(RuntimeMLError, match="Error validating processed dataset metadata"):
         validate_processed_dataset_metadata({"x": 1})
+
+
+def test_validate_processed_dataset_metadata_returns_validated_object(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Ensure processed metadata wrapper returns schema output on success."""
+
+    expected = {"kind": "processed"}
+
+    class _Schema:
+        @staticmethod
+        def model_validate(payload: dict) -> dict:
+            assert payload == {"x": 1}
+            return expected
+
+    monkeypatch.setattr("ml.metadata.validation.data.processed.ProcessedDatasetMetadata", _Schema)
+
+    result = validate_processed_dataset_metadata({"x": 1})
+
+    assert result is expected
 
 
 def test_validate_freeze_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -130,6 +170,24 @@ def test_validate_freeze_metadata_wraps_schema_errors(monkeypatch: pytest.Monkey
         validate_freeze_metadata({"x": 1})
 
 
+def test_validate_freeze_metadata_returns_validated_object(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ensure freeze metadata wrapper returns schema output on success."""
+
+    expected = {"kind": "freeze"}
+
+    class _Schema:
+        @staticmethod
+        def model_validate(payload: dict) -> dict:
+            assert payload == {"x": 1}
+            return expected
+
+    monkeypatch.setattr("ml.metadata.validation.features.feature_freezing.FreezeMetadata", _Schema)
+
+    result = validate_freeze_metadata({"x": 1})
+
+    assert result is expected
+
+
 def test_validate_search_record_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure search record wrapper converts schema failures to RuntimeMLError."""
 
@@ -142,6 +200,24 @@ def test_validate_search_record_wraps_schema_errors(monkeypatch: pytest.MonkeyPa
 
     with pytest.raises(RuntimeMLError, match="Error validating search record"):
         validate_search_record({"x": 1})
+
+
+def test_validate_search_record_returns_validated_object(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ensure search record wrapper returns schema output on success."""
+
+    expected = {"kind": "search"}
+
+    class _Schema:
+        @staticmethod
+        def model_validate(payload: dict) -> dict:
+            assert payload == {"x": 1}
+            return expected
+
+    monkeypatch.setattr("ml.metadata.validation.search.search.SearchRecord", _Schema)
+
+    result = validate_search_record({"x": 1})
+
+    assert result is expected
 
 
 def test_validate_training_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -158,6 +234,24 @@ def test_validate_training_metadata_wraps_schema_errors(monkeypatch: pytest.Monk
         validate_training_metadata({"x": 1})
 
 
+def test_validate_training_metadata_returns_validated_object(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Ensure training metadata wrapper returns schema output on success."""
+
+    expected = {"kind": "training"}
+
+    class _Schema:
+        @staticmethod
+        def model_validate(payload: dict) -> dict:
+            assert payload == {"x": 1}
+            return expected
+
+    monkeypatch.setattr("ml.metadata.validation.runners.training.TrainingMetadata", _Schema)
+
+    result = validate_training_metadata({"x": 1})
+
+    assert result is expected
+
+
 def test_validate_evaluation_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure evaluation metadata wrapper converts schema failures to UserError."""
 
@@ -172,6 +266,26 @@ def test_validate_evaluation_metadata_wraps_schema_errors(monkeypatch: pytest.Mo
         validate_evaluation_metadata({"x": 1})
 
 
+def test_validate_evaluation_metadata_returns_validated_object(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Ensure evaluation metadata wrapper returns schema output on success."""
+
+    expected = {"kind": "evaluation"}
+
+    class _Schema:
+        @staticmethod
+        def model_validate(payload: dict) -> dict:
+            assert payload == {"x": 1}
+            return expected
+
+    monkeypatch.setattr("ml.metadata.validation.runners.evaluation.EvaluationMetadata", _Schema)
+
+    result = validate_evaluation_metadata({"x": 1})
+
+    assert result is expected
+
+
 def test_validate_explainability_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
     """Ensure explainability metadata wrapper converts schema failures to UserError."""
 
@@ -184,6 +298,26 @@ def test_validate_explainability_metadata_wraps_schema_errors(monkeypatch: pytes
 
     with pytest.raises(UserError, match="Explainability metadata validation failed"):
         validate_explainability_metadata({"x": 1})
+
+
+def test_validate_explainability_metadata_returns_validated_object(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Ensure explainability metadata wrapper returns schema output on success."""
+
+    expected = {"kind": "explainability"}
+
+    class _Schema:
+        @staticmethod
+        def model_validate(payload: dict) -> dict:
+            assert payload == {"x": 1}
+            return expected
+
+    monkeypatch.setattr("ml.metadata.validation.runners.explainability.ExplainabilityMetadata", _Schema)
+
+    result = validate_explainability_metadata({"x": 1})
+
+    assert result is expected
 
 
 def test_validate_promotion_metadata_production_uses_production_schema(monkeypatch: pytest.MonkeyPatch) -> None:
