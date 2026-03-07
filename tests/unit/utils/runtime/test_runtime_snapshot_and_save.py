@@ -174,10 +174,10 @@ def test_save_runtime_snapshot_wraps_write_errors_as_persistence_error(
     """Wrap file write failures as `PersistenceError` with destination context."""
     monkeypatch.setattr("ml.utils.runtime.save_runtime.build_runtime_snapshot", lambda *args, **kwargs: {"x": 1})
 
-    def _raise_open(*args: object, **kwargs: object) -> object:
+    def _raise_dump(*args: object, **kwargs: object) -> object:
         raise OSError("disk full")
 
-    monkeypatch.setattr("builtins.open", _raise_open)
+    monkeypatch.setattr("ml.utils.runtime.save_runtime.json.dump", _raise_dump)
 
     with pytest.raises(PersistenceError, match="Failed to save runtime snapshot"):
         save_runtime_snapshot(
@@ -187,3 +187,58 @@ def test_save_runtime_snapshot_wraps_write_errors_as_persistence_error(
             start_time=100.0,
             overwrite_existing=True,
         )
+
+
+def test_save_runtime_snapshot_preserves_existing_file_when_write_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Keep existing runtime snapshot intact when temporary serialization fails."""
+    runtime_file = tmp_path / "runtime.json"
+    runtime_file.write_text('{"stable": true}', encoding="utf-8")
+    monkeypatch.setattr("ml.utils.runtime.save_runtime.build_runtime_snapshot", lambda *args, **kwargs: {"x": 1})
+
+    def _raise_dump(*args: object, **kwargs: object) -> object:
+        raise OSError("serialization failed")
+
+    monkeypatch.setattr("ml.utils.runtime.save_runtime.json.dump", _raise_dump)
+
+    with pytest.raises(PersistenceError, match="Failed to save runtime snapshot"):
+        save_runtime_snapshot(
+            target_dir=tmp_path,
+            timestamp="2026-03-05T12:00:00",
+            hardware_info=_cpu_hardware(),
+            start_time=100.0,
+            overwrite_existing=True,
+        )
+
+    assert json.loads(runtime_file.read_text(encoding="utf-8")) == {"stable": True}
+
+
+def test_save_runtime_snapshot_cleans_temp_file_when_replace_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Delete temporary runtime snapshot file when atomic replace raises an error."""
+    monkeypatch.setattr("ml.utils.runtime.save_runtime.build_runtime_snapshot", lambda *args, **kwargs: {"x": 1})
+
+    captured_temp_path: dict[str, Path] = {}
+
+    def _failing_replace(src: str | Path, dst: str | Path) -> None:
+        _ = dst
+        captured_temp_path["path"] = Path(src)
+        raise OSError("replace blocked")
+
+    monkeypatch.setattr("ml.utils.runtime.save_runtime.os.replace", _failing_replace)
+
+    with pytest.raises(PersistenceError, match="Failed to save runtime snapshot"):
+        save_runtime_snapshot(
+            target_dir=tmp_path,
+            timestamp="2026-03-05T12:00:00",
+            hardware_info=_cpu_hardware(),
+            start_time=100.0,
+            overwrite_existing=True,
+        )
+
+    assert "path" in captured_temp_path
+    assert not captured_temp_path["path"].exists()

@@ -2,6 +2,8 @@
 
 import json
 import logging
+import os
+import tempfile
 from pathlib import Path
 from typing import Literal
 
@@ -36,17 +38,37 @@ def save_metrics(metrics: dict[str, float] | dict[str, dict[str, float]], *, mod
         "metrics": metrics,
     }
 
+    validated_metrics: TrainingMetrics | EvaluationMetrics
+    temp_path: str | None = None
     try:
-        validated_metrics: TrainingMetrics | EvaluationMetrics
         if stage == "training":
             validated_metrics = validate_training_metrics(metrics_json)
-        elif stage == "evaluation":
+        else:
             validated_metrics = validate_evaluation_metrics(metrics_json)
-        with open(metrics_file, "w") as f:
-            json.dump(validated_metrics.model_dump(exclude_none=True), f, indent=2)
+
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=metrics_file.parent,
+            prefix="metrics.",
+            suffix=".tmp",
+            delete=False,
+        ) as tmp_file:
+            temp_path = tmp_file.name
+            json.dump(validated_metrics.model_dump(exclude_none=True), tmp_file, indent=2)
+            tmp_file.flush()
+            os.fsync(tmp_file.fileno())
+
+        os.replace(temp_path, metrics_file)
         logger.info(f"Metrics successfully saved to {metrics_file}.")
         return str(metrics_file)
     except Exception as e:
+        if temp_path and Path(temp_path).exists():
+            try:
+                Path(temp_path).unlink()
+            except OSError:
+                logger.warning("Failed to clean up temporary metrics file: %s", temp_path)
+
         msg = f"Failed to save metrics to {metrics_file}"
         logger.exception(msg)
         raise PersistenceError(msg) from e

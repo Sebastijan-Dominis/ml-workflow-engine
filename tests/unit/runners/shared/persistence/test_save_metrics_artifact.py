@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import builtins
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -113,11 +112,11 @@ def test_save_metrics_wraps_write_errors_as_persistence_error(
         lambda payload: _MetricsModelStub(payload=payload),
     )
 
-    def _failing_open(*args: Any, **kwargs: Any) -> Any:
+    def _failing_dump(*args: Any, **kwargs: Any) -> Any:
         _ = (args, kwargs)
         raise OSError("disk full")
 
-    monkeypatch.setattr(builtins, "open", _failing_open)
+    monkeypatch.setattr(save_metrics_module.json, "dump", _failing_dump)
 
     with pytest.raises(PersistenceError, match="Failed to save metrics") as exc_info:
         save_metrics_module.save_metrics(
@@ -130,3 +129,69 @@ def test_save_metrics_wraps_write_errors_as_persistence_error(
 
     assert "training" in str(exc_info.value)
     assert "run-err" in str(exc_info.value)
+
+
+def test_save_metrics_preserves_existing_file_when_serialization_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Keep existing metrics artifact unchanged when temporary-file serialization fails."""
+    metrics_file = tmp_path / "training" / "run-2" / "metrics.json"
+    metrics_file.parent.mkdir(parents=True, exist_ok=True)
+    metrics_file.write_text('{"stable": true}', encoding="utf-8")
+
+    monkeypatch.setattr(
+        save_metrics_module,
+        "validate_training_metrics",
+        lambda payload: _MetricsModelStub(payload=payload),
+    )
+
+    def _failing_dump(*args: Any, **kwargs: Any) -> Any:
+        _ = (args, kwargs)
+        raise OSError("serialize blocked")
+
+    monkeypatch.setattr(save_metrics_module.json, "dump", _failing_dump)
+
+    with pytest.raises(PersistenceError, match="Failed to save metrics"):
+        save_metrics_module.save_metrics(
+            {"train_auc": 0.9},
+            model_cfg=_model_cfg(),  # type: ignore[arg-type]
+            target_run_id="run-2",
+            experiment_dir=tmp_path,
+            stage="training",
+        )
+
+    assert json.loads(metrics_file.read_text(encoding="utf-8")) == {"stable": True}
+
+
+def test_save_metrics_cleans_temp_file_when_replace_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Delete temporary metrics file when atomic replace operation fails."""
+    monkeypatch.setattr(
+        save_metrics_module,
+        "validate_training_metrics",
+        lambda payload: _MetricsModelStub(payload=payload),
+    )
+
+    captured_temp_path: dict[str, Path] = {}
+
+    def _failing_replace(src: str | Path, dst: str | Path) -> None:
+        _ = dst
+        captured_temp_path["path"] = Path(src)
+        raise OSError("replace blocked")
+
+    monkeypatch.setattr(save_metrics_module.os, "replace", _failing_replace)
+
+    with pytest.raises(PersistenceError, match="Failed to save metrics"):
+        save_metrics_module.save_metrics(
+            {"train_auc": 0.9},
+            model_cfg=_model_cfg(),  # type: ignore[arg-type]
+            target_run_id="run-3",
+            experiment_dir=tmp_path,
+            stage="training",
+        )
+
+    assert "path" in captured_temp_path
+    assert not captured_temp_path["path"].exists()
