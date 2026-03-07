@@ -118,6 +118,27 @@ def test_resolve_extends_raises_for_missing_parent_when_not_skipping(tmp_path: P
         )
 
 
+def test_resolve_extends_raises_for_non_string_parent_entry(tmp_path: Path) -> None:
+    """Reject non-string entries in `extends` to preserve strict contract shape."""
+    with pytest.raises(ConfigError, match="Invalid extends entry"):
+        resolve_extends(
+            cfg={"extends": [123]},
+            base_path=tmp_path,
+            skip_missing=False,
+        )
+
+
+def test_resolve_extends_skips_missing_parent_when_enabled(tmp_path: Path) -> None:
+    """Ignore missing parent configs when skip-missing behavior is enabled."""
+    cfg = resolve_extends(
+        cfg={"extends": ["does-not-exist.yaml"], "value": 1},
+        base_path=tmp_path,
+        skip_missing=True,
+    )
+
+    assert cfg["value"] == 1
+
+
 def test_apply_env_overlay_merges_nested_overrides_when_overlay_exists(tmp_path: Path) -> None:
     """Apply environment overlay with deep-merge semantics for nested objects."""
     env_file = tmp_path / "dev.yaml"
@@ -150,3 +171,41 @@ def test_apply_env_overlay_requires_env_when_skip_missing_is_false(tmp_path: Pat
     """Fail fast if no env key is provided and skip-missing behavior is disabled."""
     with pytest.raises(ConfigError, match="Environment not specified"):
         apply_env_overlay({"a": 1}, env=None, env_path=tmp_path / "dev.yaml", skip_missing=False)
+
+
+def test_apply_env_overlay_returns_base_when_env_missing_and_skipping(tmp_path: Path) -> None:
+    """Return base config unchanged when env key is missing but skipping is allowed."""
+    base = {"a": 1}
+
+    merged = apply_env_overlay(base, env=None, env_path=tmp_path / "dev.yaml", skip_missing=True)
+
+    assert merged == base
+
+
+def test_apply_env_overlay_returns_base_when_overlay_file_missing_and_skipping(
+    tmp_path: Path,
+) -> None:
+    """Return base config when overlay file is missing and skip-missing is enabled."""
+    base = {"pipeline": {"retries": 1}}
+
+    merged = apply_env_overlay(
+        base,
+        env="dev",
+        env_path=tmp_path / "missing.yaml",
+        skip_missing=True,
+    )
+
+    assert merged == base
+
+
+def test_apply_env_overlay_raises_when_overlay_file_missing_and_not_skipping(
+    tmp_path: Path,
+) -> None:
+    """Raise pipeline contract error when requested overlay file is missing."""
+    with pytest.raises(PipelineContractError, match="Environment overlay not found"):
+        apply_env_overlay(
+            {"pipeline": {"retries": 1}},
+            env="dev",
+            env_path=tmp_path / "missing.yaml",
+            skip_missing=False,
+        )
