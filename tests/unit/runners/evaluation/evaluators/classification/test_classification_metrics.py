@@ -82,10 +82,15 @@ def test_compute_metrics_sets_specificity_nan_when_confusion_matrix_unavailable(
     assert np.isnan(metrics["specificity"])
 
 
-def test_compute_metrics_sets_specificity_zero_when_no_negative_denominator() -> None:
+def test_compute_metrics_sets_specificity_zero_when_no_negative_denominator(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """Set specificity to 0.0 when confusion-matrix TN+FP denominator is zero."""
-    y_true = pd.Series([1, 1, 1, 1])
-    y_pred = pd.Series([0, 0, 0, 0])
+    y_true = pd.Series([0, 1])
+    y_pred = pd.Series([0, 1])
+
+    # Force a valid 2x2 layout with tn=0 and fp=0 to hit the denominator guard.
+    monkeypatch.setattr(module, "confusion_matrix", lambda *_args, **_kwargs: np.array([[0, 0], [1, 3]]))
 
     metrics = module.compute_metrics(y_true, y_pred, y_prob=None)
 
