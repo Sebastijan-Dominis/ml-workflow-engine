@@ -83,6 +83,15 @@ def test_validate_data_types_raises_for_invalid_numerical_dtype() -> None:
         validate_data_types(X, cfg)
 
 
+def test_validate_data_types_raises_for_invalid_datetime_dtype() -> None:
+    """Reject datetime role columns when dtype is not a supported datetime type."""
+    X = pd.DataFrame({"dt_col": pd.Series(["2024-01-01", "2024-01-02"], dtype="string")})
+    cfg = _config_stub(datetime=["dt_col"])
+
+    with pytest.raises(DataError, match="Datetime feature dt_col has invalid dtype"):
+        validate_data_types(X, cfg)
+
+
 def test_validate_data_types_accepts_valid_role_dtypes() -> None:
     """Pass when all role-assigned columns satisfy configured dtype allowlists."""
     X = pd.DataFrame(

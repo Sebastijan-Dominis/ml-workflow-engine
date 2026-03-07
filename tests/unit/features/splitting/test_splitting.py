@@ -157,3 +157,62 @@ def test_get_splits_raises_not_implemented_for_time_series_data_type() -> None:
             data_type="time-series",
             task_cfg=TaskConfig(type=TaskType.regression),
         )
+
+
+def test_get_splits_routes_tabular_to_get_splits_tabular(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Delegate tabular data type requests to tabular split implementation."""
+    X = pd.DataFrame({"x": [1, 2, 3, 4]})
+    y = pd.Series([0, 1, 0, 1])
+    cfg = _split_cfg(stratify_by=None)
+    task_cfg = TaskConfig(type=TaskType.classification)
+
+    expected_splits = object()
+    expected_info = object()
+    captured: dict[str, object] = {}
+
+    def _fake_get_splits_tabular(
+        X_in: pd.DataFrame,
+        y_in: pd.Series,
+        *,
+        split_cfg: SplitConfig,
+        task_cfg: TaskConfig,
+    ) -> tuple[object, object]:
+        captured["X"] = X_in
+        captured["y"] = y_in
+        captured["split_cfg"] = split_cfg
+        captured["task_cfg"] = task_cfg
+        return expected_splits, expected_info
+
+    monkeypatch.setattr(splitting_module, "get_splits_tabular", _fake_get_splits_tabular)
+
+    splits, info = splitting_module.get_splits(
+        X,
+        y,
+        split_cfg=cfg,
+        data_type="tabular",
+        task_cfg=task_cfg,
+    )
+
+    assert splits is expected_splits
+    assert info is expected_info
+    assert captured["X"] is X
+    assert captured["y"] is y
+    assert captured["split_cfg"] is cfg
+    assert captured["task_cfg"] is task_cfg
+
+
+def test_get_splits_raises_for_unsupported_data_type_value() -> None:
+    """Raise explicit error when data type falls outside supported routing values."""
+    X = pd.DataFrame({"x": [1, 2, 3, 4]})
+    y = pd.Series([10, 11, 12, 13])
+
+    with pytest.raises(NotImplementedError, match="Unsupported data_type: image"):
+        splitting_module.get_splits(
+            X,
+            y,
+            split_cfg=_split_cfg(stratify_by=None),
+            data_type=cast(Any, "image"),
+            task_cfg=TaskConfig(type=TaskType.regression),
+        )

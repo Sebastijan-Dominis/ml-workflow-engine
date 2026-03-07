@@ -155,3 +155,6 @@ def get_splits(
         return splits, splits_info
     elif data_type == "time-series":
         raise NotImplementedError("Time-series split not implemented yet.")
+
+    # Defensive guard for invalid/unexpected values passed outside validated config paths.
+    raise NotImplementedError(f"Unsupported data_type: {data_type}")

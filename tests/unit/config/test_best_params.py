@@ -126,3 +126,14 @@ def test_apply_best_params_returns_original_on_invalid_json_in_non_strict_mode(
     result = apply_best_params(cfg, metadata_path, strict=False)
 
     assert result is cfg
+
+
+def test_apply_best_params_raises_on_invalid_json_in_strict_mode(
+    tmp_path: Path,
+) -> None:
+    """Propagate JSON parsing failures when strict mode is enabled."""
+    metadata_path = tmp_path / "metadata.json"
+    metadata_path.write_text("{not-json", encoding="utf-8")
+
+    with pytest.raises(json.JSONDecodeError):
+        apply_best_params({"training": {"iterations": 500}}, metadata_path, strict=True)
