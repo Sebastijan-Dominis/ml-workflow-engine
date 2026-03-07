@@ -90,14 +90,15 @@ def test_prepare_processed_metadata_omits_row_id_info_when_not_provided(
     monkeypatch.setattr(module.time, "perf_counter", lambda: 10.0)
 
     captured: dict[str, Any] = {}
+    expected_metadata = SimpleNamespace()
 
-    def _validate(raw: dict[str, Any]) -> Any:
+    def _validate(raw: dict[str, Any]) -> ProcessedDatasetMetadata:
         captured["raw"] = raw
-        return SimpleNamespace(kind="validated")
+        return cast(ProcessedDatasetMetadata, expected_metadata)
 
     monkeypatch.setattr(module, "validate_processed_dataset_metadata", _validate)
 
-    module.prepare_metadata(
+    result = module.prepare_metadata(
         df,
         config=cfg,
         start_time=9.0,
@@ -111,4 +112,5 @@ def test_prepare_processed_metadata_omits_row_id_info_when_not_provided(
         row_id_info=None,
     )
 
+    assert result is expected_metadata
     assert "row_id_info" not in captured["raw"]

@@ -33,6 +33,35 @@ def test_transform_target_log1p_preserves_index_and_name() -> None:
     assert result.name == "adr"
 
 
+def test_transform_target_log1p_logs_warning_for_invalid_domain_values(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Log warning when ``log1p`` sees values outside its mathematical domain."""
+    y = pd.Series([0.0, -2.0, 1.0], name="target")
+    config = TargetTransformConfig(enabled=True, type="log1p", lambda_value=None)
+
+    with caplog.at_level("WARNING", logger="ml.features.transforms.transform_target"), pytest.warns(
+        RuntimeWarning,
+        match="invalid value encountered in log1p",
+    ):
+        transform_target(y, transform_config=config, split_name="train")
+
+    assert "log1p transformation found invalid target values" in caplog.text
+
+
+def test_transform_target_log1p_wraps_numpy_failures_as_config_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Wrap unexpected ``numpy.log1p`` failures as ``ConfigError`` with stable message."""
+    y = pd.Series([0.0, 1.0], name="target")
+    config = TargetTransformConfig(enabled=True, type="log1p", lambda_value=None)
+
+    monkeypatch.setattr(np, "log1p", lambda _arr: (_ for _ in ()).throw(RuntimeError("boom")))
+
+    with pytest.raises(ConfigError, match="Error applying log1p transformation to target"):
+        transform_target(y, transform_config=config, split_name="train")
+
+
 def test_transform_target_sqrt_rejects_negative_values() -> None:
     """Reject `sqrt` transformation when target contains negative values."""
     y = pd.Series([1.0, -0.5, 2.0], name="target")
