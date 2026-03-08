@@ -1,32 +1,31 @@
 @startuml promote.py Architecture
 title promote.py Architecture
+!include architecture-theme.puml
 left to right direction
 
 skinparam shadowing false
 skinparam linetype ortho
 skinparam packageStyle rectangle
 
-skinparam package {
-    BorderColor black
-    BackgroundColor #f0f0f0
-    Shadowing false
+component script as "promote.py" <<script>>
+
+package "Configs"<<Configs>> {
+    artifact promotion_thresholds as "Promotion Thresholds\n(configs/promotion/)" <<config>>
 }
 
-component script as "promote.py"
-
-package "Configs" {
-    artifact promotion_thresholds as "Promotion Thresholds\n(configs/promotion/)"
+package "Input Artifacts"<<InputArtifacts>> {
+    artifact training_metadata as "Training Metadata\n(experiments/.../training/...)" <<artifact>>
+    artifact evaluation_metadata as "Evaluation Metadata\n(experiments/.../evaluation/...)" <<artifact>>
+    artifact explainability_metadata as "Explainability Metadata\n(experiments/.../explainability/...)" <<artifact>>
+    artifact evaluation_metrics as "Evaluation Metrics\n(experiments/.../evaluation/...)" <<artifact>>
 }
 
-package "Artifacts" {
-    artifact training_metadata as "Training Metadata\n(experiments/.../training/...)"
-    artifact evaluation_metadata as "Evaluation Metadata\n(experiments/.../evaluation/...)"
-    artifact explainability_metadata as "Explainability Metadata\n(experiments/.../explainability/...)"
-    artifact evaluation_metrics as "Evaluation Metrics\n(experiments/.../evaluation/...)"
-    artifact model_registry as "Model Registry\n(model_registry/)"
-    artifact model_archive as "Model Archive\n(model_registry/)"
-    artifact registry_diff as "Registry Diff\n(model_registry/runs/...)"
-    artifact promotion_metadata as "Promotion Metadata\n(model_registry/runs/...)"
+package "Produced Artifacts"<<ProducedArtifacts>> {
+    artifact model_registry as "Model Registry\n(model_registry/)" <<artifact>>
+    artifact model_archive as "Model Archive\n(model_registry/)" <<artifact>>
+    artifact registry_diff as "Registry Diff\n(model_registry/runs/...)" <<artifact>>
+    artifact promotion_metadata as "Promotion Metadata\n(model_registry/runs/...)" <<artifact>>
+
 }
 
 script ..> promotion_thresholds
@@ -35,10 +34,22 @@ script ..> evaluation_metadata
 script ..> explainability_metadata
 script ..> evaluation_metrics
 
-script --> model_registry
-script --> model_archive
+script --[#AAAAAA80]> model_registry
+script ..> model_registry
+script --[#AAAAAA80]> model_archive
+script ..> model_archive
 script --> registry_diff
 script --> promotion_metadata
+
+note right of model_registry
+Reads and updates the model registry;
+no update if the promotion is rejected.
+end note
+
+note right of model_archive
+Reads and updates the model archive;
+no update if the promotion is rejected.
+end note
 
 legend right
 ..>   Config dependency / read

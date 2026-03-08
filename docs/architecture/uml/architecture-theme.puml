@@ -1,0 +1,65 @@
+hide stereotype
+skinparam shadowing false
+skinparam linetype ortho
+
+skinparam artifact {
+    BackgroundColor<<config>> #E8F0FE
+    BorderColor<<config>> #5A6ACF
+
+    BackgroundColor<<env>> #F3E8FF
+    BorderColor<<env>> #8E44AD
+
+    BackgroundColor<<final>> #E6F4EA
+    BorderColor<<final>> #2E7D32
+
+    BackgroundColor<<artifact>> #FFFFFF
+    BorderColor<<artifact>> #333333
+
+    BackgroundColor<<artifact_optional>> #CCCCCC80
+    BorderColor<<artifact_optional>> #999999
+}
+
+skinparam component {
+    BackgroundColor<<script>> #F5F5F5
+    BorderColor<<script>> #616161
+
+    BackgroundColor<<cli>> #FFF4E5
+    BorderColor<<cli>> #E67E22
+}
+
+skinparam package {
+    BorderColor #BBBBBB
+    BackgroundColor #F8F8F8
+    Shadowing false
+}
+
+skinparam legend {
+    BackgroundColor SlateGrey
+    BorderColor Black
+    FontColor White
+    FontSize 10
+}
+
+skinparam package {
+    BackgroundColor #F8F8F8   ' light neutral background
+    BorderColor #BBBBBB       ' medium gray border
+    Shadowing false
+    FontColor #333333
+    FontSize 11
+    FontName Arial
+}
+
+skinparam package<<Configs>> {
+    BackgroundColor #E8F4FF
+    BorderColor #5A6ACF
+}
+
+skinparam package<<InputArtifacts>> {
+    BackgroundColor #FFF8E8
+    BorderColor #E6C200
+}
+
+skinparam package<<ProducedArtifacts>> {
+    BackgroundColor #E8FFE8
+    BorderColor #2E7D32
+}

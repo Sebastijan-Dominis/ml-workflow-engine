@@ -1,27 +1,27 @@
 @startuml freeze.py Architecture
 title freeze.py Architecture
+!include architecture-theme.puml
 left to right direction
 
 skinparam shadowing false
 skinparam linetype ortho
 skinparam packageStyle rectangle
 
-skinparam package {
-    BorderColor black
-    BackgroundColor #f0f0f0
-    Shadowing false
-}   
-
-package "Configs" {
-    artifact feature_registry as "Feature Registry\n(configs/feature_registry/)"
+package "Configs"<<Configs>> {
+    artifact feature_registry as "Feature Registry\n(configs/feature_registry/)" <<config>>
 }
 
-component script as "freeze.py"
+component script as "freeze.py" <<script>>
 
-package "Artifacts" {
-    artifact processed_data as "Processed Data\n(data/processed/...)"
-    artifact feature_set_metadata as "Feature Set Metadata\n(feature_store/...)"
-    artifact features as "Feature Set\n(feature_store/...)"
+package "Input Artifacts"<<InputArtifacts>> {
+    artifact processed_data as "Processed Data\n(data/processed/...)" <<artifact>>
+}
+
+package "Produced Artifacts"<<ProducedArtifacts>> {
+    artifact feature_set_metadata as "Feature Set Metadata\n(feature_store/...)" <<artifact>>
+    artifact feature_set as "Feature Set\n(feature_store/...)" <<artifact>>
+    artifact input_schema as "Input Schema\n(feature_store/...)" <<artifact_optional>>
+    artifact derived_schema as "Derived Schema\n(feature_store/...)" <<artifact_optional>>
 }
 
 script ..> feature_registry
@@ -29,7 +29,22 @@ script ..> feature_registry
 script ..> processed_data
 
 script --> feature_set_metadata
-script --> features
+script --> feature_set
+script --[#AAAAAA80]> input_schema
+script --[#AAAAAA80]> derived_schema
+
+note right of input_schema
+Created at the version level
+(rather than snapshot);
+only validated if it already
+exists.
+end note
+
+note right of derived_schema
+Only the feature sets that
+create operators produce
+derived schemas.
+end note
 
 legend right
 ..>   Config dependency / read

@@ -1,36 +1,40 @@
 @startuml Artifact Lineage Overview
 title Artifact Lineage Overview
+!include architecture-theme.puml
 
 skinparam shadowing false
 skinparam packageStyle rectangle
 skinparam linetype ortho
 
-artifact raw_data_snapshot as "Raw Data Snapshot"
-artifact interim_dataset_snapshot as "Interim Dataset Snapshot"
-artifact processed_dataset_snapshot as "Processed Dataset Snapshot"
-artifact feature_set_snapshot as "Feature Set Snapshot"
-artifact search_run_snapshot as "Search Run Snapshot"
-artifact train_run_snapshot as "Train Run Snapshot"
-artifact evaluation_run_snapshot as "Evaluation Run Snapshot"
-artifact explainability_run_snapshot as "Explainability Run Snapshot"
-artifact promotion_run_snapshot as "Promotion Run Snapshot"
+artifact raw_data_snapshot as "Raw Data Snapshot" <<artifact>>
+artifact interim_dataset_snapshot as "Interim Dataset Snapshot" <<artifact>>
+artifact processed_dataset_snapshot as "Processed Dataset Snapshot" <<artifact>>
+artifact feature_set_snapshot as "Feature Set Snapshot" <<artifact>>
+artifact search_run_snapshot as "Search Run Snapshot" <<artifact>>
+artifact train_run_snapshot as "Train Run Snapshot" <<artifact>>
+artifact evaluation_run_snapshot as "Evaluation Run Snapshot" <<artifact>>
+artifact explainability_run_snapshot as "Explainability Run Snapshot" <<artifact>>
+artifact promotion_run_snapshot as "Promotion Run Snapshot" <<artifact>>
 
 raw_data_snapshot --> interim_dataset_snapshot
 interim_dataset_snapshot --> processed_dataset_snapshot
 processed_dataset_snapshot --> feature_set_snapshot
-
 feature_set_snapshot --> search_run_snapshot
+
+search_run_snapshot --> train_run_snapshot
+train_run_snapshot --> evaluation_run_snapshot
+train_run_snapshot --> explainability_run_snapshot
+evaluation_run_snapshot --> promotion_run_snapshot
+explainability_run_snapshot --> promotion_run_snapshot
+
 note right of feature_set_snapshot
 Input and derived schemas are stored at
 the version level (same across all snapshots)
 end note
 
-search_run_snapshot --> train_run_snapshot
-train_run_snapshot --> evaluation_run_snapshot
-train_run_snapshot --> explainability_run_snapshot
-
-evaluation_run_snapshot --> promotion_run_snapshot
-explainability_run_snapshot --> promotion_run_snapshot
+note right of search_run_snapshot
+Creates a new experiment
+end note
 
 legend right
 -->   Artifact lineage / flow

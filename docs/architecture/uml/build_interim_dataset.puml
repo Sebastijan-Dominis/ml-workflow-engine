@@ -1,27 +1,26 @@
 @startuml build_interim_dataset.py Architecture
 title build_interim_dataset.py Architecture
+!include architecture-theme.puml
+left to right direction
 
 skinparam shadowing false
 skinparam linetype ortho
 skinparam packageStyle rectangle
 
-skinparam package {
-    BorderColor black
-    BackgroundColor #f0f0f0
-    Shadowing false
-}   
-
-package "Configs" {
-    artifact interim_cfg as "Interim configs\n(configs/data/interim/...)"
+package "Configs"<<Configs>> {
+    artifact interim_cfg as "Interim configs\n(configs/data/interim/...)" <<config>>
 }
 
-component script as "build_interim_dataset.py"
+component script as "build_interim_dataset.py" <<script>>
 
-package "Artifacts" {
-    artifact raw_snapshot_metadata as "Raw Snapshot Metadata\n(data/raw/...)"
-    artifact raw_data as "Raw Data\n(data/raw/...)"
-    artifact metadata as "Interim Metadata\n(data/interim/...)"
-    artifact interim_data as "Interim Dataset\n(data/interim/...)"
+package "Input Artifacts"<<InputArtifacts>> {
+    artifact raw_snapshot_metadata as "Raw Snapshot Metadata\n(data/raw/...)" <<artifact>>
+    artifact raw_data as "Raw Data\n(data/raw/...)" <<artifact>>
+}
+
+package "Produced Artifacts"<<ProducedArtifacts>> {
+    artifact metadata as "Interim Metadata\n(data/interim/...)" <<artifact>>
+    artifact interim_data as "Interim Dataset\n(data/interim/...)" <<artifact>>
 }
 
 script ..> interim_cfg

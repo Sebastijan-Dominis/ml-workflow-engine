@@ -1,62 +1,35 @@
-    @startuml Config Resolution Architecture
-    title Config Resolution Architecture
-    top to bottom direction
+@startuml Config Resolution Architecture
+title Config Resolution Architecture
+!include architecture-theme.puml
+top to bottom direction
 
-    hide stereotype
+artifact global_cfg as "Global Default Configs\n(configs/defaults/)" <<config>>
+artifact algo_cfg as "Algorithm Default Configs\n(configs/defaults/)" <<config>>
+artifact model_spec as "Model Specs\n(configs/model_specs/...)" <<config>>
+artifact stage_cfg as "Search/Train Configs\n(configs/search/...|configs/train/...)" <<config>>
+artifact env_cfg as "Environment Configs\n(configs/env/)\n(optional)" <<env>>
 
-    skinparam shadowing false
-    skinparam linetype ortho
+artifact final_cfg as "Resolved Runtime Config" <<final>>
 
-    skinparam component {
-        BackgroundColor<<cli_args>> Orange
-        BorderColor<<cli_args>> DarkOrange
-    }
+global_cfg --> algo_cfg
+algo_cfg --> model_spec
+model_spec --> stage_cfg
+stage_cfg --> env_cfg
+env_cfg --> final_cfg
 
-    skinparam artifact {
-        BackgroundColor<<cfg>> MediumSlateBlue
-        BorderColor<<cfg>> MediumPurple
-    }
+component cli_args as "CLI Arguments" <<cli>>
 
-    skinparam artifact {
-        BackgroundColor<<env_cfg>> MediumOrchid
-        BorderColor<<env_cfg>> MediumPurple
-    }
+cli_args ..> model_spec
+cli_args ..> env_cfg
 
-    skinparam artifact {
-        BackgroundColor<<final_cfg>> LimeGreen
-        BorderColor<<final_cfg>> Green
-    }
+note right of stage_cfg
+Search when run by search.py;
+Train when run by train.py
+end note
 
-    skinparam legend {
-        BackgroundColor SlateGrey
-        BorderColor Black
-    }
+legend right
+-->   Override precedence (lower → higher)
+..>   Selection via CLI
+endlegend
 
-    artifact global_cfg as "Global Default Configs\n(configs/defaults/)" <<cfg>>
-    artifact algo_cfg as "Algorithm Default Configs\n(configs/defaults/)" <<cfg>>
-    artifact model_spec as "Model Specs\n(configs/model_specs/...)" <<cfg>>
-    artifact stage_cfg as "Search/Train Configs\n(configs/search/...|configs/train/...)" <<cfg>>
-    artifact env_cfg as "Environment Configs\n(configs/env/)\n(optional)" <<env_cfg>>
-
-    artifact final_cfg as "Resolved Runtime Config" <<final_cfg>>
-
-    global_cfg --> algo_cfg : overrides
-    algo_cfg --> model_spec : overrides
-    model_spec --> stage_cfg : overrides
-    stage_cfg --> env_cfg : overrides\n(optional)
-    env_cfg --> final_cfg : final merge
-
-    component cli_args as "CLI Arguments" <<cli_args>>
-
-    cli_args ..> model_spec : selects
-    cli_args ..> stage_cfg : selects
-    cli_args ..> env_cfg : enables\n(optional)
-    cli_args-[hidden]->env_cfg
-    cli_args-[hidden]->env_cfg
-
-    legend right
-    -->   Override precedence (lower → higher)
-    ..>   Selection via CLI
-    endlegend
-
-    @enduml
+@enduml

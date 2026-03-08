@@ -1,49 +1,79 @@
 @startuml explain.py Architecture
 title explain.py Architecture
+!include architecture-theme.puml
 left to right direction
 
 skinparam shadowing false
 skinparam linetype ortho
 skinparam packageStyle rectangle
 
-skinparam package {
-    BorderColor black
-    BackgroundColor #f0f0f0
-    Shadowing false
+component script as "explain.py" <<script>>
+
+package "Input Artifacts"<<InputArtifacts>> {
+    artifact feature_sets_metadata as "Feature Set(s) Metadata\n(feature_store/...)" <<artifact>>
+    artifact feature_sets as "Feature Set(s)\n(feature_store/...)" <<artifact>>
+    artifact processed_datasets as "Processed Dataset(s)\n(data/processed/...)" <<artifact>>
+    artifact input_schemas as "Input Schema(s)\n(feature_store/...)" <<artifact>>
+    artifact training_metadata as "Training Metadata\n(experiments/.../training/...)" <<artifact>>
+    artifact training_runtime_info as "Training Runtime Info\n(experiments/.../training/...)" <<artifact>>
+    artifact model as "Trained Model\n(experiments/.../training/...)\n(optional)" <<artifact>>
+    artifact derived_schemas as "Derived Schema(s)\n(feature_store/...)\n(optional)" <<artifact_optional>>
+    artifact pipeline as "Trained Pipeline\n(experiments/.../training/...)\n(optional)" <<artifact_optional>>
 }
 
-component script as "explain.py"
-
-package "Artifacts" {
-    artifact feature_sets_metadata as "Feature Set(s) Metadata\n(feature_store/...)"
-    artifact features as "Feature Set(s)\n(feature_store/...)"
-    artifact processed_datasets as "Processed Dataset(s)\n(data/processed/...)"
-    artifact input_schemas as "Input Schema(s)\n(feature_store/...)"
-    artifact derived_schemas as "Derived Schema(s)\n(feature_store/...)\n(optional)"
-    artifact training_metadata as "Training Metadata\n(experiments/.../training/...)"
-    artifact training_runtime_info as "Training Runtime Info\n(experiments/.../training/...)"
-    artifact model as "Trained Model\n(experiments/.../training/...)\n(optional)"
-    artifact pipeline as "Trained Pipeline\n(experiments/.../training/...)\n(optional)"
-    artifact explainability_metadata as "Explainability Metadata\n(experiments/.../explainability/...)"
-    artifact explainability_runtime_info as "Explainability Runtime Info\n(experiments/.../explainability/...)"
-    artifact top_k_feature_importances as "Top k Feature Importances\n(experiments/.../explainability/...)\n(optional)"
-    artifact top_k_shap_importances as "Top k SHAP Importances\n(experiments/.../explainability/...)\n(optional)"
+package "Produced Artifacts"<<ProducedArtifacts>> {
+    artifact explainability_metadata as "Explainability Metadata\n(experiments/.../explainability/...)" <<artifact>>
+    artifact explainability_runtime_info as "Explainability Runtime Info\n(experiments/.../explainability/...)" <<artifact>>
+    artifact top_k_feature_importances as "Top k Feature Importances\n(experiments/.../explainability/...)\n(optional)" <<artifact_optional>>
+    artifact top_k_shap_importances as "Top k SHAP Importances\n(experiments/.../explainability/...)\n(optional)" <<artifact_optional>>
 }
 
 script ..> feature_sets_metadata
-script ..> features
+script ..> feature_sets
 script ..> processed_datasets
 script ..> input_schemas
-script ..> derived_schemas
 script ..> model
-script ..> pipeline
 script ..> training_metadata
 script ..> training_runtime_info
+script ..[#AAAAAA80]> derived_schemas
+script ..[#AAAAAA80]> pipeline
 
 script --> explainability_metadata
 script --> explainability_runtime_info
 script --> top_k_feature_importances
 script --> top_k_shap_importances
+
+note right of derived_schemas
+Only the feature sets that
+create operators produce
+derived schemas.
+end note
+
+note right of pipeline
+Not all algorithms support/need
+pipeline creation.
+end note
+
+note right of feature_sets
+Merged and validated
+at runtime - decoupled
+from the models.
+end note
+
+note right of processed_datasets
+Merged and validated at runtime;
+used to create the target variable.
+end note
+
+note right of top_k_feature_importances
+Only generated if the algorithm supports
+it and it is enabled (in model specs).
+end note
+
+note right of top_k_shap_importances
+Only generated if the algorithm supports 
+it and it is enabled (in model specs).
+end note
 
 legend right
 ..>   Config dependency / read
