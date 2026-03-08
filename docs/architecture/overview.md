@@ -12,63 +12,63 @@ This document provides a high-level overview of the system architecture, includi
 
 ### Artifact Lineage (high-level overview)
 
-![Artifact Lineage Diagram](artifact_lineage.png)
+![Artifact Lineage Diagram](img/artifact_lineage.png)
 
 ### Orchestration (high-level overview)
 
-![Orchestration Architecture Diagram](orchestration.png)
+![Orchestration Architecture Diagram](img/orchestration.png)
 
 ### Config Resolution
 
 - Applicable for search and train
 
-![Config Resolution Architecture Diagram](config_resolution.png)
+![Config Resolution Architecture Diagram](img/config_resolution.png)
 
 ### Data Preprocessing
 
 #### Raw Snapshot Registration
 
-![register_raw_snapshot.py Architecture Diagram](register_raw_snapshot.png)
+![register_raw_snapshot.py Architecture Diagram](img/register_raw_snapshot.png)
 
 #### Interim Dataset Building
 
-![build_interim_dataset.py Architecture Diagram](build_interim_dataset.png)
+![build_interim_dataset.py Architecture Diagram](img/build_interim_dataset.png)
 
 #### Processed Dataset Building
 
-![build_processed_dataset.py Architecture Diagram](build_processed_dataset.png)
+![build_processed_dataset.py Architecture Diagram](img/build_processed_dataset.png)
 
 ### Feature Freezing
 
 #### Feature Set Freezing
 
-![freeze.py Architecture Diagram](freeze.png)
+![freeze.py Architecture Diagram](img/freeze.png)
 
 ### Search
 
 #### Hyperparameter Search
 
-![search.py Architecture Diagram](search.png)
+![search.py Architecture Diagram](img/search.png)
 
 ### Runners
 
 #### Training
 
-![train.py Architecture Diagram](train.png)
+![train.py Architecture Diagram](img/train.png)
 
 #### Evaluation
 
-![evaluate.py Architecture Diagram](evaluate.png)
+![evaluate.py Architecture Diagram](img/evaluate.png)
 
 #### Explainability
 
-![explain.py Architecture Diagram](explain.png)
+![explain.py Architecture Diagram](img/explain.png)
 
 ### Promotion
 
 #### Model Staging, Promotion and Archiving
 
-![promote.py Architecture Diagram](promote.png)
+![promote.py Architecture Diagram](img/promote.png)
 
 ## Design Decisions
 - See [decisions.md](decisions.md) for rationale behind architectural choices.
