@@ -20,7 +20,7 @@ This document provides a high-level overview of the system architecture, includi
 
 ### Config Resolution
 
-- Applicable for search and train
+- Applied in search.py and train.py
 
 ![Config Resolution Architecture Diagram](img/config_resolution.png)
 
