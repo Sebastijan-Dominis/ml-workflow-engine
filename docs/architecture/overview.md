@@ -6,7 +6,7 @@ This document provides a high-level overview of the system architecture, includi
 - Pipelines: Orchestration and CLI logic
 - ML: Business/domain logic
 - Configs: Declarative YAML configuration
-- Scripts: Useful scripts (quality assessment, hash generation, etc.)
+- Scripts: Useful cli scripts that don't belong to ml or pipelines (quality assessment, hash generation, etc.)
 
 ## Diagrams
 
