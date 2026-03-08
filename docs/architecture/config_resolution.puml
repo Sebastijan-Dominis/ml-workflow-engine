@@ -1,0 +1,51 @@
+@startuml Config Resolution Architecture
+title Config Resolution Architecture
+top to bottom direction
+
+skinparam shadowing false
+skinparam linetype ortho
+
+' =========================
+' CONFIG SOURCES
+' =========================
+
+artifact global_cfg as "Global Default Configs\n(configs/defaults/)"
+artifact algo_cfg as "Algorithm Default Configs\n(configs/defaults/)"
+artifact model_spec as "Model Specs\n(configs/model_specs/...)"
+artifact stage_cfg as "Search/Train Configs\n(configs/search/...|configs/train/...)"
+artifact env_cfg as "Environment Configs\n(configs/env/)\n(optional)"
+
+artifact final_cfg as "Resolved Runtime Config"
+
+' =========================
+' OVERRIDE FLOW
+' =========================
+
+global_cfg --> algo_cfg : overrides
+algo_cfg --> model_spec : overrides
+model_spec --> stage_cfg : overrides
+stage_cfg --> env_cfg : overrides\n(optional)
+env_cfg --> final_cfg : final merge
+
+' =========================
+' CLI SELECTION
+' =========================
+
+component cli_args as "CLI Arguments"
+
+cli_args ..> model_spec : selects
+cli_args ..> stage_cfg : selects
+cli_args ..> env_cfg : enables\n(optional)
+cli_args-[hidden]->env_cfg
+cli_args-[hidden]->env_cfg
+
+' =========================
+' LEGEND
+' =========================
+
+legend right
+-->   Override precedence (lower → higher)
+..>   Selection via CLI
+endlegend
+
+@enduml

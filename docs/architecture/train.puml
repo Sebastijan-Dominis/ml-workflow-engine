@@ -1,0 +1,67 @@
+@startuml train.py Architecture
+title train.py Architecture
+left to right direction
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam package {
+    BorderColor black
+    BackgroundColor #f0f0f0
+    Shadowing false
+}   
+
+package "Configs" {
+    artifact global_cfg as "Global Default Configs\n(configs/defaults/)"
+    artifact algo_cfg as "Algorithm Default Configs\n(configs/defaults/)"
+    artifact model_spec as "Model Specs\n(configs/model_specs/...)"
+    artifact train_cfg as "Train Configs\n(configs/train/...)"
+    artifact env_cfg as "Environment Configs\n(configs/env/)\n(optional)"
+    artifact pipeline_cfg as "Pipeline Configs\n(configs/pipelines/...)\n(optional)"
+}
+
+component script as "train.py"
+
+package "Artifacts" {
+    artifact feature_sets_metadata as "Feature Set(s) Metadata\n(feature_store/...)"
+    artifact features as "Feature Set(s)\n(feature_store/...)"
+    artifact input_schemas as "Input Schema(s)\n(feature_store/...)"
+    artifact derived_schemas as "Derived Schema(s)\n(feature_store/...)\n(optional)"
+    artifact processed_datasets as "Processed Dataset(s)\n(data/processed/...)"
+    artifact search_metadata as "Search Metadata\n(experiments/.../search/)"
+    artifact search_runtime_info as "Search Runtime Info\n(experiments/.../search/)"
+    artifact training_metadata as "Training Metadata\n(experiments/.../training/...)"
+    artifact training_runtime_info as "Training Runtime Info\n(experiments/.../training/...)"
+    artifact training_metrics as "Training Metrics\n(experiments/.../training/...)"
+    artifact model as "Trained Model\n(experiments/.../training/...)"
+    artifact pipeline as "Trained Pipeline\n(experiments/.../training/...)\n(optional)"
+}
+
+script ..> global_cfg
+script ..> algo_cfg
+script ..> model_spec
+script ..> train_cfg
+script ..> env_cfg
+script ..> pipeline_cfg
+
+script ..> feature_sets_metadata
+script ..> features
+script ..> processed_datasets
+script ..> input_schemas
+script ..> derived_schemas
+script ..> search_metadata
+script ..> search_runtime_info
+
+script --> training_metadata
+script --> training_runtime_info
+script --> training_metrics
+script --> model
+script --> pipeline
+
+legend right
+..>   Config dependency / read
+-->   Create
+endlegend
+
+@enduml

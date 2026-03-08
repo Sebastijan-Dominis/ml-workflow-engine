@@ -1,0 +1,40 @@
+@startuml build_processed_dataset.py Architecture
+title build_processed_dataset.py Architecture
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam package {
+    BorderColor black
+    BackgroundColor #f0f0f0
+    Shadowing false
+}   
+
+package "Configs" {
+    artifact processed_cfg as "Processed configs\n(configs/data/processed/...)"
+}
+
+component script as "build_processed_dataset.py"
+
+package "Artifacts" {
+    artifact interim_data as "Interim Data\n(data/interim/...)"
+    artifact interim_metadata as "Interim Metadata\n(data/interim/...)"
+    artifact metadata as "Processed Metadata\n(data/processed/...)"
+    artifact processed_data as "Processed Dataset\n(data/processed/...)"
+}
+
+script ..> processed_cfg
+
+script ..> interim_metadata 
+script ..> interim_data
+
+script --> metadata
+script --> processed_data
+
+legend right
+..>   Config dependency / read
+-->   Create
+endlegend
+
+@enduml

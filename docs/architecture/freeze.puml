@@ -1,0 +1,39 @@
+@startuml freeze.py Architecture
+title freeze.py Architecture
+left to right direction
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam package {
+    BorderColor black
+    BackgroundColor #f0f0f0
+    Shadowing false
+}   
+
+package "Configs" {
+    artifact feature_registry as "Feature Registry\n(configs/feature_registry/)"
+}
+
+component script as "freeze.py"
+
+package "Artifacts" {
+    artifact processed_data as "Processed Data\n(data/processed/...)"
+    artifact feature_set_metadata as "Feature Set Metadata\n(feature_store/...)"
+    artifact features as "Feature Set\n(feature_store/...)"
+}
+
+script ..> feature_registry
+
+script ..> processed_data
+
+script --> feature_set_metadata
+script --> features
+
+legend right
+..>   Config dependency / read
+-->   Create
+endlegend
+
+@enduml

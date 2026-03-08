@@ -1,0 +1,52 @@
+@startuml Orchestration Architecture
+title Orchestration Architecture
+left to right direction
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+skinparam package {
+    BorderColor black
+    BackgroundColor #f0f0f0
+    Shadowing false
+}   
+
+component run_all as "run_all_workflows.py"
+component exec_data as "execute_all_data_preprocessing.py"
+component freeze_all as "freeze_all_feature_sets.py"
+component exec_exp as "execute_experiment_with_latest.py"
+component exec_all_exp as "execute_all_experiments_with_latest.py"
+
+component register_raw as "register_raw_snapshot.py"
+component build_interim as "build_interim_dataset.py"
+component build_processed as "build_processed_dataset.py"
+component freeze as "freeze.py"
+component search as "search.py"
+component train as "train.py"
+component evaluate as "evaluate.py"
+component explain as "explain.py"
+
+run_all ==> exec_data
+run_all ==> freeze_all
+run_all ==> exec_all_exp
+exec_all_exp --> exec_exp
+
+exec_data ..> register_raw
+exec_data ..> build_interim
+exec_data ..> build_processed
+
+freeze_all ..> freeze
+
+exec_exp ..> search
+exec_exp ..> train
+exec_exp ..> evaluate
+exec_exp ..> explain
+
+legend right
+==>   Orchestration trigger (one call)
+--> Orchestration trigger (one or more calls)
+..>   Workflow execution (one or more calls)
+endlegend
+
+@enduml

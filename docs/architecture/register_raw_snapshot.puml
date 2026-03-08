@@ -1,0 +1,30 @@
+@startuml Register Raw Snapshot Architecture
+title Register Raw Snapshot Architecture
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+skinparam package {
+    BorderColor black
+    BackgroundColor #f0f0f0
+    Shadowing false
+}   
+
+component script as "register_raw_snapshot.py"
+
+package "Artifacts" {
+    artifact raw_data as "Raw Data\n(data/raw/...)"
+    artifact metadata as "Raw Snapshot Metadata\n(data/raw/...)"
+}
+
+script ..> raw_data
+
+script --> metadata
+
+legend right
+..>   Config dependency / read
+-->   Create
+endlegend
+
+@enduml
