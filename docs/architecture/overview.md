@@ -22,7 +22,7 @@ This document provides a high-level overview of the system architecture, includi
 
 - Applied in search.py and train.py
 
-![Config Resolution Architecture Diagram](img/config_resolution_v2.png)
+![Config Resolution Architecture Diagram](img/config_resolution_v3.png)
 
 ### Data Preprocessing
 

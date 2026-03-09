@@ -8,6 +8,7 @@ artifact algo_cfg as "Algorithm Default Configs\n(configs/defaults/)" <<config>>
 artifact model_spec as "Model Specs\n(configs/model_specs/...)" <<config>>
 artifact stage_cfg as "Search/Train Configs\n(configs/search/...|configs/train/...)" <<config>>
 artifact env_cfg as "Environment Configs\n(configs/env/)\n(optional)" <<env>>
+artifact best_params as "Best Parameters from Search\n(experiments/.../search/metadata.json)"
 
 artifact final_cfg as "Resolved Runtime Config" <<final>>
 
@@ -15,7 +16,8 @@ global_cfg --> algo_cfg
 algo_cfg --> model_spec
 model_spec --> stage_cfg
 stage_cfg --> env_cfg
-env_cfg --> final_cfg
+env_cfg --> best_params
+best_params --> final_cfg
 
 component cli_args as "CLI Arguments" <<cli>>
 
@@ -25,6 +27,11 @@ cli_args ..> env_cfg
 note right of stage_cfg
 Search when run by search.py;
 Train when run by train.py
+end note
+
+note right of best_params
+Only applied when
+running train.py
 end note
 
 legend right
