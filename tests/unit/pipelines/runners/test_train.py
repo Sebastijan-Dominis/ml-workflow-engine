@@ -9,9 +9,6 @@ from typing import Any
 
 import pytest
 from ml.exceptions import PipelineContractError
-from ml.search.utils.failure_management.delete_failure_management_folder import (
-    delete_failure_management_folder,
-)
 from pipelines.runners import train as module
 
 pytestmark = pytest.mark.unit
@@ -181,13 +178,18 @@ def test_main_runs_training_and_persists_outputs_on_success(
     assert persisted["train_run_id"] == "20260306T180000_abcdef01"
     assert cleanup_calls[0][1:] == (True, "train")
 
-    # Manually remove the failure management folder since cleanup is enabled for this test but the folder would not actually be deleted due to the mocked delete_failure_management_folder
-    leftover_dir = Path("failure_management") / "exp_2" / "training" / "20260306T180000_abcdef01"
-    delete_failure_management_folder(
-        folder_path=leftover_dir,
-        cleanup=True,
-        stage="train"
-    )
+    # The following lines of code can be dangerous if the function implementation changes unexpectedly, since they call the actual function. I included it here, since the test leaves empty folders within the actual failure management directory. I use the snippet below to get rid of this harmless, but annoying side-effect of this test. You can manually delete those folders if you want to as well, and the code guarantees that no experiments or training runs will ever have those same IDs, so there's no side effects apart from it being annoying.
+    # There are three other tests like this around the repo. Alltogether, they leave folders called "exp_2", "exp_3", "exp_5" and "exp_100" within `failure_management`. This comment should help you understand what is happening and deal with it.
+    # I decided to comment the code below out for safety reasons, but leave it in place in case you want to re-enable it for cleanup purposes (I use it locally). Just be mindful of the implications.
+    # As of now, I have not yet been able to find time to deal with this issue directly - it's just a nuisance anyway. Of course, you are free to fix it if you find a solution before I do!
+    # - Sebastijan
+
+    # leftover_dir = Path("failure_management") / "exp_2" / "training" / "20260306T180000_abcdef01"
+    # delete_failure_management_folder(
+    #     folder_path=leftover_dir,
+    #     cleanup=True,
+    #     stage="train"
+    # )
 
 
 def test_main_maps_pipeline_contract_error_when_pipeline_hash_missing(
@@ -250,13 +252,18 @@ def test_main_maps_pipeline_contract_error_when_pipeline_hash_missing(
 
     assert code == 88
 
-    # Manually remove the failure management folder since cleanup is disabled for this test and the folder would otherwise be left behind
-    leftover_dir = Path("failure_management") / "exp_3" / "training" / "20260306T180500_00112233"
-    delete_failure_management_folder(
-        folder_path=leftover_dir,
-        cleanup=True,
-        stage="train"
-    )
+    # The following lines of code can be dangerous if the function implementation changes unexpectedly, since they call the actual function. I included it here, since the test leaves empty folders within the actual failure management directory. I use the snippet below to get rid of this harmless, but annoying side-effect of this test. You can manually delete those folders if you want to as well, and the code guarantees that no experiments or training runs will ever have those same IDs, so there's no side effects apart from it being annoying.
+    # There are three other tests like this around the repo. Alltogether, they leave folders called "exp_2", "exp_3", "exp_5" and "exp_100" within `failure_management`. This comment should help you understand what is happening and deal with it.
+    # I decided to comment the code below out for safety reasons, but leave it in place in case you want to re-enable it for cleanup purposes (I use it locally). Just be mindful of the implications.
+    # As of now, I have not yet been able to find time to deal with this issue directly - it's just a nuisance anyway. Of course, you are free to fix it if you find a solution before I do!
+    # - Sebastijan
+
+    # leftover_dir = Path("failure_management") / "exp_3" / "training" / "20260306T180500_00112233"
+    # delete_failure_management_folder(
+    #     folder_path=leftover_dir,
+    #     cleanup=True,
+    #     stage="train"
+    # )
 
 
 def test_main_returns_one_when_provided_train_run_id_directory_is_missing(
@@ -364,10 +371,15 @@ def test_main_persists_pipeline_artifacts_when_pipeline_and_hash_are_present(
     assert persisted["pipeline_hash"] == "pipeline_hash"
     assert persisted["pipeline_cfg_hash"] == "cfg_hash_123"
 
-    # Manually remove the failure management folder since cleanup is disabled for this test and the folder would otherwise be left behind
-    leftover_dir = Path("failure_management") / "exp_5" / "training" / "20260307T130000_aabbccdd"
-    delete_failure_management_folder(
-        folder_path=leftover_dir,
-        cleanup=True,
-        stage="train"
-    )
+    # The following lines of code can be dangerous if the function implementation changes unexpectedly, since they call the actual function. I included it here, since the test leaves empty folders within the actual failure management directory. I use the snippet below to get rid of this harmless, but annoying side-effect of this test. You can manually delete those folders if you want to as well, and the code guarantees that no experiments or training runs will ever have those same IDs, so there's no side effects apart from it being annoying.
+    # There are three other tests like this around the repo. Alltogether, they leave folders called "exp_2", "exp_3", "exp_5" and "exp_100" within `failure_management`. This comment should help you understand what is happening and deal with it.
+    # I decided to comment the code below out for safety reasons, but leave it in place in case you want to re-enable it for cleanup purposes (I use it locally). Just be mindful of the implications.
+    # As of now, I have not yet been able to find time to deal with this issue directly - it's just a nuisance anyway. Of course, you are free to fix it if you find a solution before I do!
+    # - Sebastijan
+
+    # leftover_dir = Path("failure_management") / "exp_5" / "training" / "20260307T130000_aabbccdd"
+    # delete_failure_management_folder(
+    #     folder_path=leftover_dir,
+    #     cleanup=True,
+    #     stage="train"
+    # )
