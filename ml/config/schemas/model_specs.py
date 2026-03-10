@@ -206,12 +206,10 @@ class AlgorithmConfig(StrEnum):
     """Supported algorithm families."""
 
     catboost = "catboost"
-    xgboost = "xgboost"
-    lightgbm = "lightgbm"
-    random_forest = "random_forest"
-    logistic_regression = "logistic_regression"
-    neural_network = "neural_network"
-    prophet = "prophet"
+    # Planned:
+    # xgboost = "xgboost"
+    # lightgbm = "lightgbm"
+    # prophet = "prophet"
 
 class FeatureStoreConfig(BaseModel):
     """Feature store location and required feature set references."""

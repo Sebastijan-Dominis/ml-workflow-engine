@@ -60,7 +60,17 @@ def test_validate_enriches_context_with_runners_metadata(monkeypatch: pytest.Mon
     service = PromotionService()
     context = _context()
     calls: list[str] = []
-    metadata_obj = cast(Any, SimpleNamespace(name="runners-metadata"))
+    metadata_obj = SimpleNamespace(
+        training_metadata=SimpleNamespace(
+            artifacts=SimpleNamespace(),
+        ),
+        evaluation_metadata=SimpleNamespace(
+            artifacts=SimpleNamespace(),
+        ),
+        explainability_metadata=SimpleNamespace(
+            artifacts=SimpleNamespace(),
+        ),
+    )
 
     def _validate_run_dirs(*_args: Any, **_kwargs: Any) -> None:
         calls.append("validate_run_dirs")
@@ -72,13 +82,17 @@ def test_validate_enriches_context_with_runners_metadata(monkeypatch: pytest.Mon
     def _validate_run_ids(*_args: Any, **_kwargs: Any) -> None:
         calls.append("validate_run_ids")
 
+    def validate_artifacts_consistency(*_args: Any, **_kwargs: Any) -> None:
+        calls.append("validate_artifacts_consistency")
+
     def _validate_explainability(*_args: Any, **_kwargs: Any) -> None:
         calls.append("validate_explainability")
 
     monkeypatch.setattr("ml.promotion.service.validate_run_dirs", _validate_run_dirs)
     monkeypatch.setattr("ml.promotion.service.get_runners_metadata", _get_runners_metadata)
     monkeypatch.setattr("ml.promotion.service.validate_run_ids", _validate_run_ids)
-    monkeypatch.setattr("ml.promotion.service.validate_explainability_artifacts_consistency", _validate_explainability)
+    monkeypatch.setattr("ml.promotion.service.validate_artifacts_consistency", validate_artifacts_consistency)
+    monkeypatch.setattr("ml.promotion.service.validate_explainability_artifacts", _validate_explainability)
 
     result = service._validate(context)
 
@@ -88,6 +102,7 @@ def test_validate_enriches_context_with_runners_metadata(monkeypatch: pytest.Mon
         "validate_run_dirs",
         "get_runners_metadata",
         "validate_run_ids",
+        "validate_artifacts_consistency",
         "validate_explainability",
     ]
 

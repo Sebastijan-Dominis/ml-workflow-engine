@@ -12,7 +12,8 @@ from ml.promotion.state_loader import PromotionStateLoader
 from ml.promotion.strategies.production import ProductionPromotionStrategy
 from ml.promotion.strategies.staging import StagingPromotionStrategy
 from ml.promotion.validation.validate import (
-    validate_explainability_artifacts_consistency,
+    validate_artifacts_consistency,
+    validate_explainability_artifacts,
     validate_run_dirs,
     validate_run_ids,
 )
@@ -60,7 +61,8 @@ class PromotionService:
         validate_run_dirs(context.paths.train_run_dir, context.paths.eval_run_dir, context.paths.explain_run_dir)
         runners_metadata = get_runners_metadata(context.paths.train_run_dir, context.paths.eval_run_dir, context.paths.explain_run_dir)
         validate_run_ids(args=context.args, runners_metadata=runners_metadata)
-        validate_explainability_artifacts_consistency(runners_metadata=runners_metadata, args=context.args)
+        validate_artifacts_consistency(runners_metadata=runners_metadata)
+        validate_explainability_artifacts(runners_metadata.explainability_metadata.artifacts)
         context.runners_metadata = runners_metadata
         return context
 

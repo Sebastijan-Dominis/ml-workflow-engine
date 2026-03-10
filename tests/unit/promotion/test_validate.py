@@ -7,10 +7,13 @@ from typing import cast
 
 import pytest
 from ml.exceptions import ConfigError, UserError
+from ml.metadata.schemas.runners.explainability import ExplainabilityArtifacts
 from ml.promotion.config.models import PromotionThresholds
 from ml.promotion.constants.constants import RunnersMetadata
 from ml.promotion.validation.validate import (
-    validate_explainability_artifacts_consistency,
+    validate_artifacts_consistency,
+    validate_explainability_artifacts,
+    validate_optional_artifact,
     validate_promotion_thresholds,
     validate_run_dirs,
     validate_run_ids,
@@ -26,26 +29,57 @@ def _args() -> argparse.Namespace:
 
 def _runners_metadata(
     *,
+    train_status: str = "success",
+    eval_status: str = "success",
+    explain_status: str = "success",
+    train_train_run_id: str = "train-1",
     eval_train_run_id: str = "train-1",
     explain_train_run_id: str = "train-1",
-    explain_status: str = "success",
-    train_model_hash: str = "model-hash-1",
-    explain_model_hash: str = "model-hash-1",
-    train_pipeline_hash: str = "pipe-hash-1",
-    explain_pipeline_hash: str = "pipe-hash-1",
+    model_path: str | None = None,
+    model_hash: str | None = None,
+    pipeline_path: str | None = None,
+    pipeline_hash: str | None = None,
 ) -> RunnersMetadata:
-    """Construct minimal runners metadata object with configurable mismatch scenarios."""
+    """Construct minimal runners metadata object for validation tests."""
+
     return cast(
         RunnersMetadata,
         SimpleNamespace(
             training_metadata=SimpleNamespace(
-                run_identity=SimpleNamespace(train_run_id="train-1"),
-                artifacts=SimpleNamespace(model_hash=train_model_hash, pipeline_hash=train_pipeline_hash),
+                run_identity=SimpleNamespace(
+                    status=train_status,
+                    train_run_id=train_train_run_id,
+                ),
+                artifacts=SimpleNamespace(
+                    model_path=model_path,
+                    model_hash=model_hash,
+                    pipeline_path=pipeline_path,
+                    pipeline_hash=pipeline_hash,
+                ),
             ),
-            evaluation_metadata=SimpleNamespace(run_identity=SimpleNamespace(train_run_id=eval_train_run_id)),
+            evaluation_metadata=SimpleNamespace(
+                run_identity=SimpleNamespace(
+                    status=eval_status,
+                    train_run_id=eval_train_run_id,
+                ),
+                artifacts=SimpleNamespace(
+                    model_path=model_path,
+                    model_hash=model_hash,
+                    pipeline_path=pipeline_path,
+                    pipeline_hash=pipeline_hash,
+                ),
+            ),
             explainability_metadata=SimpleNamespace(
-                run_identity=SimpleNamespace(train_run_id=explain_train_run_id, status=explain_status),
-                artifacts=SimpleNamespace(model_hash=explain_model_hash, pipeline_hash=explain_pipeline_hash),
+                run_identity=SimpleNamespace(
+                    status=explain_status,
+                    train_run_id=explain_train_run_id,
+                ),
+                artifacts=SimpleNamespace(
+                    model_path=model_path,
+                    model_hash=model_hash,
+                    pipeline_path=pipeline_path,
+                    pipeline_hash=pipeline_hash,
+                ),
             ),
         ),
     )
@@ -115,41 +149,200 @@ def test_validate_run_ids_raises_when_explain_not_linked_to_train() -> None:
         validate_run_ids(args=_args(), runners_metadata=metadata)
 
 
-def test_validate_explainability_artifacts_consistency_passes_on_matching_hashes() -> None:
-    """Accept explainability artifacts when status is success and hashes match training artifacts."""
-    validate_explainability_artifacts_consistency(_runners_metadata(), _args())
+def _write_file(path: Path, content: str = "data") -> str:
+    """Create file and return deterministic hash via hash_artifact."""
+    path.write_text(content)
+    from ml.promotion.validation.validate import hash_artifact
+
+    return hash_artifact(path)
 
 
-def test_validate_explainability_artifacts_consistency_raises_when_status_not_success() -> None:
-    """Raise UserError when explainability run did not complete successfully."""
-    metadata = _runners_metadata(explain_status="failed")
+def test_validate_artifacts_consistency_passes_on_fully_matching_artifacts(
+    tmp_path: Path,
+) -> None:
+    """Accept when all runs succeeded and model/pipeline artifacts match exactly."""
+    model_file = tmp_path / "model.bin"
+    pipeline_file = tmp_path / "pipeline.pkl"
+
+    model_hash = _write_file(model_file, "model")
+    pipeline_hash = _write_file(pipeline_file, "pipeline")
+
+    metadata = _runners_metadata(
+        model_path=str(model_file),
+        model_hash=model_hash,
+        pipeline_path=str(pipeline_file),
+        pipeline_hash=pipeline_hash,
+    )
+
+    validate_artifacts_consistency(metadata)
+
+
+@pytest.mark.parametrize("status_field", ["train", "eval", "explain"])
+def test_validate_artifacts_consistency_raises_on_non_success_status(
+    tmp_path: Path,
+    status_field: str,
+) -> None:
+    """Raise UserError when any run did not complete successfully."""
+    model_file = tmp_path / "model.bin"
+    model_hash = _write_file(model_file)
+
+    kwargs = {
+        "train_status": "success",
+        "eval_status": "success",
+        "explain_status": "success",
+        "model_path": str(model_file),
+        "model_hash": model_hash,
+    }
+    kwargs[f"{status_field}_status"] = "failed"
+
+    metadata = _runners_metadata(**kwargs)
 
     with pytest.raises(UserError, match="did not complete successfully"):
-        validate_explainability_artifacts_consistency(metadata, _args())
+        validate_artifacts_consistency(metadata)
 
 
-def test_validate_explainability_artifacts_consistency_raises_when_model_hash_differs() -> None:
-    """Raise UserError when explainability model hash does not match training model hash."""
-    metadata = _runners_metadata(explain_model_hash="different-model-hash")
+def test_validate_artifacts_consistency_raises_on_model_hash_mismatch(
+    tmp_path: Path,
+) -> None:
+    """Raise when runtime model hash differs from metadata hash."""
+    model_file = tmp_path / "model.bin"
+    _write_file(model_file, "real")
 
-    with pytest.raises(UserError, match="Model hash in explain run exp-1 does not match"):
-        validate_explainability_artifacts_consistency(metadata, _args())
+    metadata = _runners_metadata(
+        model_path=str(model_file),
+        model_hash="different-hash",
+    )
+
+    with pytest.raises(UserError, match="Model hash mismatch"):
+        validate_artifacts_consistency(metadata)
 
 
-def test_validate_explainability_artifacts_consistency_raises_when_pipeline_hash_missing() -> None:
-    """Raise UserError when explainability artifacts do not include pipeline hash."""
-    metadata = _runners_metadata(explain_pipeline_hash="")
+def test_validate_artifacts_consistency_raises_on_missing_model_path() -> None:
+    """Raise when model path is missing."""
+    metadata = _runners_metadata(model_path=None, model_hash="hash")
 
-    with pytest.raises(UserError, match="is missing pipeline hash artifact"):
-        validate_explainability_artifacts_consistency(metadata, _args())
+    with pytest.raises(UserError, match="Model path is missing"):
+        validate_artifacts_consistency(metadata)
 
 
-def test_validate_explainability_artifacts_consistency_raises_when_pipeline_hash_differs() -> None:
-    """Raise UserError when explainability pipeline hash differs from training pipeline hash."""
-    metadata = _runners_metadata(explain_pipeline_hash="different-pipeline-hash")
+def test_validate_artifacts_consistency_raises_on_missing_model_hash(
+    tmp_path: Path,
+) -> None:
+    """Raise when model hash is missing."""
+    model_file = tmp_path / "model.bin"
+    _write_file(model_file)
 
-    with pytest.raises(UserError, match="Pipeline hash in explain run exp-1 does not match"):
-        validate_explainability_artifacts_consistency(metadata, _args())
+    metadata = _runners_metadata(
+        model_path=str(model_file),
+        model_hash=None,
+    )
+
+    with pytest.raises(UserError, match="Missing model hash"):
+        validate_artifacts_consistency(metadata)
+
+
+def test_validate_artifacts_consistency_raises_on_pipeline_presence_mismatch(
+    tmp_path: Path,
+) -> None:
+    """Raise when pipeline path presence differs across runs."""
+    model_file = tmp_path / "model.bin"
+    model_hash = _write_file(model_file)
+
+    metadata = _runners_metadata(
+        model_path=str(model_file),
+        model_hash=model_hash,
+    )
+
+    metadata.evaluation_metadata.artifacts.pipeline_hash = "some-hash"
+
+    with pytest.raises(UserError, match="Inconsistent pipeline_hash presence"):
+        validate_artifacts_consistency(metadata)
+
+
+# ---------------------------------------------------------------------------
+# validate_optional_artifact
+# ---------------------------------------------------------------------------
+
+
+def test_validate_optional_artifact_passes_when_absent() -> None:
+    """Accept when both path and hash are None."""
+    validate_optional_artifact(None, None, "artifact")
+
+
+def test_validate_optional_artifact_raises_on_presence_mismatch() -> None:
+    """Raise when path exists but hash does not (or vice versa)."""
+    with pytest.raises(UserError, match="Inconsistent presence"):
+        validate_optional_artifact("some/path", None, "artifact")
+
+
+def test_validate_optional_artifact_raises_on_missing_file(
+    tmp_path: Path,
+) -> None:
+    """Raise when artifact path does not exist."""
+    fake = tmp_path / "missing.bin"
+
+    with pytest.raises(UserError, match="does not exist"):
+        validate_optional_artifact(str(fake), "hash", "artifact")
+
+
+def test_validate_optional_artifact_raises_on_hash_mismatch(
+    tmp_path: Path,
+) -> None:
+    """Raise when computed hash differs from expected hash."""
+    file = tmp_path / "file.bin"
+    _write_file(file, "real")
+
+    with pytest.raises(UserError, match="Artifact hash mismatch"):
+        validate_optional_artifact(str(file), "wrong-hash", "artifact")
+
+
+# ---------------------------------------------------------------------------
+# validate_explainability_artifacts
+# ---------------------------------------------------------------------------
+
+
+def test_validate_explainability_artifacts_passes(
+    tmp_path: Path,
+) -> None:
+    """Accept when explainability artifacts are consistent."""
+    file1 = tmp_path / "f1.bin"
+    file2 = tmp_path / "f2.bin"
+
+    hash1 = _write_file(file1, "a")
+    hash2 = _write_file(file2, "b")
+
+    artifacts = cast(
+        ExplainabilityArtifacts,
+        SimpleNamespace(
+            top_k_feature_importances_path=str(file1),
+            top_k_feature_importances_hash=hash1,
+            top_k_shap_importances_path=str(file2),
+            top_k_shap_importances_hash=hash2,
+        )
+    )
+
+    validate_explainability_artifacts(artifacts)
+
+
+def test_validate_explainability_artifacts_raises_on_mismatch(
+    tmp_path: Path,
+) -> None:
+    """Raise when any explainability artifact is invalid."""
+    file1 = tmp_path / "f1.bin"
+    _write_file(file1, "a")
+
+    artifacts = cast(
+        ExplainabilityArtifacts,
+        SimpleNamespace(
+            top_k_feature_importances_path=str(file1),
+            top_k_feature_importances_hash="wrong",
+            top_k_shap_importances_path=None,
+            top_k_shap_importances_hash=None,
+        )
+    )
+
+    with pytest.raises(UserError):
+        validate_explainability_artifacts(artifacts)
 
 
 def test_validate_promotion_thresholds_returns_validated_schema() -> None:
