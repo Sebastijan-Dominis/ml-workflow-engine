@@ -6,7 +6,7 @@ from ml.data.validation.validate_min_rows import validate_min_rows
 from ml.data.validation.validate_row_id import validate_row_id
 from ml.feature_freezing.freeze_strategies.tabular.pipeline.context import FreezeContext
 from ml.feature_freezing.utils.data_loader import load_data_with_lineage
-from ml.feature_freezing.utils.operators import validate_operators
+from ml.features.validation.validate_operators import validate_operators
 from ml.utils.pipeline_core.step import PipelineStep
 
 logger = logging.getLogger(__name__)

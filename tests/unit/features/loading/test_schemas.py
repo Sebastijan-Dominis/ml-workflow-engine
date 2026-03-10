@@ -91,59 +91,53 @@ def test_load_schemas_raises_when_no_feature_sets_defined() -> None:
 
 def test_load_schemas_aggregates_input_and_derived_schemas_across_feature_sets(tmp_path: Path) -> None:
     """
-    Test aggregation of input and derived schemas across feature sets.
+    Test schema aggregation with dummy operator and hash validation.
 
-    Uses a dummy operator and side-effect patch on validate_operators to allow normal hashes
-    and raise DataError for a manually injected bad hash.
+    Patching validate_operators in its original module to allow normal hashes
+    and raise DataError for manually injected bad_hash.
     """
     VersionInfo = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
     dummy_hash = "dummy_hash"
 
-    # Patch sys.version_info for consistent environment
+    # Patch sys.version_info for consistent hash environment
     with patch.object(sys, "version_info", VersionInfo(3, 11, 0, "final", 0)):
 
         # Setup dummy feature store
-        fs_root: Path = tmp_path / "feature_store"
-        fs_a: Path = fs_root / "booking_context_features" / "v1"
-        fs_b: Path = fs_root / "pricing_party_features" / "v2"
+        fs_root = tmp_path / "feature_store"
+        fs_a = fs_root / "booking_context_features" / "v1"
+        fs_b = fs_root / "pricing_party_features" / "v2"
         fs_a.mkdir(parents=True)
         fs_b.mkdir(parents=True)
 
-        # Input schema CSVs
-        pd.DataFrame({"feature": ["lead_time", "hotel"], "dtype": ["int64", "category"]}).to_csv(
-            fs_a / "input_schema.csv", index=False
-        )
-        pd.DataFrame({"feature": ["adr_per_person"], "source_operator": ["AdrPerPerson"]}).to_csv(
-            fs_a / "derived_schema.csv", index=False
-        )
-        pd.DataFrame({"feature": ["hotel", "adr"], "dtype": ["string", "float64"]}).to_csv(
-            fs_b / "input_schema.csv", index=False
-        )
+        # Create input schema CSVs
+        pd.DataFrame({"feature": ["lead_time", "hotel"], "dtype": ["int64", "category"]}).to_csv(fs_a / "input_schema.csv", index=False)
+        pd.DataFrame({"feature": ["adr_per_person"], "source_operator": ["AdrPerPerson"]}).to_csv(fs_a / "derived_schema.csv", index=False)
+        pd.DataFrame({"feature": ["hotel", "adr"], "dtype": ["string", "float64"]}).to_csv(fs_b / "input_schema.csv", index=False)
 
-        # metadata.json with dummy hash
+        # Create metadata.json
         (fs_a / "metadata.json").write_text(f'{{"operator_hash": "{dummy_hash}"}}', encoding="utf-8")
         (fs_b / "metadata.json").write_text(f'{{"operator_hash": "{dummy_hash}"}}', encoding="utf-8")
 
-        # Define dummy operator
+        # Dummy operator
         class DummyAdrPerPerson:
             @staticmethod
             def transform() -> str:
                 return "test"
         DummyAdrPerPerson.__module__ = "ml.feature_freezing.utils.operators"
 
-        # Side-effect function for validate_operators
+        # Side-effect for validate_operators
         def _validate_operators_side_effect(operators, expected_hash, path):
             if expected_hash == "bad_hash":
                 raise DataError("Operator hash mismatch")
             return True
 
-        # Patch FEATURE_OPERATORS and validate_operators
-        with patch.dict("ml.feature_freezing.utils.operators.FEATURE_OPERATORS",
+        # Patch FEATURE_OPERATORS and validate_operators in their **original module**
+        with patch.dict("ml.features.validation.validate_operators.FEATURE_OPERATORS",
                         {"AdrPerPerson": DummyAdrPerPerson}), \
-             patch("ml.feature_freezing.utils.operators.validate_operators",
+             patch("ml.features.validation.validate_operators.validate_operators",
                    side_effect=_validate_operators_side_effect):
 
-            # Feature lineage uses dummy_hash
+            # Feature lineage using dummy hash
             feature_lineage = [
                 FeatureLineage(
                     name="booking_context_features",
@@ -167,8 +161,7 @@ def test_load_schemas_aggregates_input_and_derived_schemas_across_feature_sets(t
                 ),
             ]
 
-            # Model config
-            model_cfg: SearchModelConfig = cast(
+            model_cfg = cast(
                 SearchModelConfig,
                 SimpleNamespace(
                     feature_store=SimpleNamespace(
@@ -184,7 +177,7 @@ def test_load_schemas_aggregates_input_and_derived_schemas_across_feature_sets(t
             # Run schema aggregation
             input_schema, derived_schema = load_schemas(model_cfg, feature_lineage)
 
-            # Validate aggregation results
+            # Validate aggregated results
             assert sorted(input_schema["feature"].tolist()) == sorted(["lead_time", "hotel", "adr"])
             assert "adr_per_person" in derived_schema["feature"].tolist()
 

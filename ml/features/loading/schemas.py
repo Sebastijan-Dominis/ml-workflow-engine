@@ -27,7 +27,7 @@ def load_feature_set_schemas(features_path: Path, file_path: Path) -> tuple[pd.D
     """
 
     # Deliberate lazy import to avoid circular dependency with operator validation logic
-    from ml.feature_freezing.utils.operators import validate_operators
+    from ml.features.validation.validate_operators import validate_operators
 
     input_schema_path = features_path / "input_schema.csv"
     derived_schema_path = features_path / "derived_schema.csv"
