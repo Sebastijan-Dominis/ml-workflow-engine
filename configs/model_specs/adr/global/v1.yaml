@@ -38,37 +38,22 @@ feature_store:
   feature_sets:
     - name: booking_context_features
       version: v2
-      schema_format: csv
-      input_schema: input_schema.csv
-      derived_schema: derived_schema.csv
       data_format: parquet
       file_name: features.parquet
     - name: customer_history_features
       version: v2
-      schema_format: csv
-      input_schema: input_schema.csv
-      derived_schema: derived_schema.csv
       data_format: parquet
       file_name: features.parquet
     - name: pricing_party_features
       version: v3
-      schema_format: csv
-      input_schema: input_schema.csv
-      derived_schema: derived_schema.csv
       data_format: parquet
       file_name: features.parquet
     - name: channel_and_agent_features
       version: v1
-      schema_format: csv
-      input_schema: input_schema.csv
-      derived_schema: derived_schema.csv
       data_format: parquet
       file_name: features.parquet
     - name: room_allocation_features
       version: v2
-      schema_format: csv
-      input_schema: input_schema.csv
-      derived_schema: derived_schema.csv
       data_format: parquet
       file_name: features.parquet
 

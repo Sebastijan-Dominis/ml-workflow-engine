@@ -190,9 +190,6 @@ class FeatureSetConfig(BaseModel):
 
     name: str
     version: str
-    schema_format: str
-    input_schema: str
-    derived_schema: str
     data_format: str
     file_name: str
 
