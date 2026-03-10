@@ -42,9 +42,9 @@ def test_load_json_non_strict_missing_file_returns_empty_dict(tmp_path: Path) ->
     assert result == {}
 
 
-def test_load_json_strict_missing_file_raises_config_error(tmp_path: Path) -> None:
-    """Verify that strict `load_json` raises `ConfigError` for missing files."""
-    with pytest.raises(ConfigError, match="File not found"):
+def test_load_json_strict_missing_file_raises_data_error(tmp_path: Path) -> None:
+    """Verify that strict `load_json` raises `DataError` for missing files."""
+    with pytest.raises(DataError, match="File not found"):
         load_json(tmp_path / "missing.json", strict=True)
 
 

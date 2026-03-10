@@ -9,10 +9,14 @@ class Metrics(BaseModel):
 
 class TrainingMetrics(Metrics):
     """Model training metrics."""
-    metrics: dict[str, float] | dict[str, dict[str, float]]
+    metrics: dict[str, float | dict[str, float]]
+
+class EvaluationMetricsHelper(BaseModel):
+    """Helper model for evaluation metrics to allow nested structure."""
+    train: dict[str, float]
+    val: dict[str, float]
+    test: dict[str, float]
 
 class EvaluationMetrics(Metrics):
     """Model evaluation metrics."""
-    train: dict
-    val: dict
-    test: dict
+    metrics: EvaluationMetricsHelper

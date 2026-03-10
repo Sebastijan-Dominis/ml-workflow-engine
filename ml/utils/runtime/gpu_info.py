@@ -53,7 +53,12 @@ def prepare_gpu_info() -> tuple[list[str], list[int], list[float], str, str]:
             gpu_memories_gb.append(gpu_total_gb)
         cuda_version_int = pynvml.nvmlSystemGetCudaDriverVersion()
         cuda_version_str = parse_cuda_driver_version(cuda_version_int)
-        gpu_driver_version = str(pynvml.nvmlSystemGetDriverVersion().decode("utf-8"))
+        driver_version = pynvml.nvmlSystemGetDriverVersion()
+        gpu_driver_version = (
+            driver_version.decode("utf-8")
+            if isinstance(driver_version, bytes)
+            else str(driver_version)
+        )
         pynvml.nvmlShutdown()
     except pynvml.NVMLError:
         gpu_names = []

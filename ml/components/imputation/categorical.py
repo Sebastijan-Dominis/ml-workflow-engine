@@ -1,5 +1,7 @@
 """Categorical missing-value imputation components."""
 
+import pandas as pd
+
 from ..base import PipelineComponent
 
 
@@ -36,18 +38,21 @@ class FillCategoricalMissing(PipelineComponent):
         return self
 
     def transform(self, X):
-        """Replace missing categorical values with the literal ``"missing"``.
+        """
+        Replace missing categorical values with the literal "missing" and coerce all values to string type for consistency.
 
         Args:
             X: Input dataframe.
 
         Returns:
-            pd.DataFrame: Dataframe with imputed categorical columns.
+            pd.DataFrame: Dataframe with imputed categorical columns, all as string dtype.
         """
-
         X = X.copy()
         for col in self.categorical_features:
-            # Fill first so Python/NumPy missing values do not become literal
-            # "None"/"nan" strings before replacement.
+            if col not in X.columns:
+                continue
+            # If column is categorical, register "missing" as a valid category
+            if isinstance(X[col].dtype, pd.CategoricalDtype) and "missing" not in X[col].cat.categories:
+                X[col] = X[col].cat.add_categories(["missing"])
             X[col] = X[col].fillna("missing").astype(str)
         return X

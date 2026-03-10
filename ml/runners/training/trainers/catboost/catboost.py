@@ -92,7 +92,7 @@ class CatBoostTrainer(Trainer):
             split_name="val"
         )
 
-        input_schema, derived_schema = load_schemas(model_cfg)
+        input_schema, derived_schema = load_schemas(model_cfg, lineage)
 
         cat_features = get_cat_features(model_cfg, input_schema, derived_schema)
 

@@ -58,7 +58,7 @@ def load_json(path: Path, strict = True) -> dict[str, Any]:
         if strict:
             msg = f"File not found: {path}"
             logger.error(msg)
-            raise ConfigError(msg) from None
+            raise DataError(msg) from None
         else:
             # No logger warning, since non-strict loading is used in some cases where the file may not exist on first run (e.g. loading best broad params before they are saved). Log warnings separately if needed.
             return {}

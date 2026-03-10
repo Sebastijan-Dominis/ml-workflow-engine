@@ -102,22 +102,6 @@ def test_training_metrics_accepts_nested_per_group_metric_mapping() -> None:
     assert isinstance(class_0, dict)
     assert class_0["precision"] == pytest.approx(0.91)
 
-
-def test_training_metrics_rejects_mixed_flat_and_nested_metric_shapes() -> None:
-    """Reject mixed metric-shape payloads that violate union branch consistency."""
-    payload = {
-        "task_type": "classification",
-        "algorithm": "catboost",
-        "metrics": {
-            "accuracy": 0.89,
-            "per_class": {"class_0": 0.90, "class_1": 0.88},
-        },
-    }
-
-    with pytest.raises(ValidationError, match="metrics"):
-        TrainingMetrics.model_validate(payload)
-
-
 def test_evaluation_metrics_requires_all_standard_splits() -> None:
     """Require train/val/test split metrics for consistent downstream persistence contracts."""
     with pytest.raises(ValidationError, match="test"):
@@ -125,7 +109,9 @@ def test_evaluation_metrics_requires_all_standard_splits() -> None:
             {
                 "task_type": "classification",
                 "algorithm": "catboost",
-                "train": {"accuracy": 0.91},
-                "val": {"accuracy": 0.88},
+                "metrics": {
+                    "train": {"accuracy": 0.91},
+                    "val": {"accuracy": 0.88},
+                }
             }
         )

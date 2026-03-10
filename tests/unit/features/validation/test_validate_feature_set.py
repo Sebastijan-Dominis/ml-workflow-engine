@@ -27,7 +27,7 @@ def test_validate_feature_set_raises_when_row_id_column_missing() -> None:
         validate_feature_set(
             feature_set,
             metadata=_metadata(),
-            file_path=Path("features.parquet"),
+            file_path=Path("a/b/features.parquet"),
             strict=True,
         )
 
@@ -38,16 +38,21 @@ def test_validate_feature_set_raises_on_schema_hash_mismatch(
     """Fail validation when computed schema hash differs from metadata contract."""
     feature_set = pd.DataFrame({"row_id": [1, 2], "feature_a": [10.0, 20.0]})
 
+    import pandas as _pd
     monkeypatch.setattr(
         "ml.features.validation.validate_feature_set.hash_feature_schema",
         lambda df: "schema-actual",
+    )
+    monkeypatch.setattr(
+        "ml.features.validation.validate_feature_set.load_feature_set_schemas",
+        lambda features_path, file_path: (_pd.DataFrame(), _pd.DataFrame()),
     )
 
     with pytest.raises(DataError, match="Feature schema hash mismatch"):
         validate_feature_set(
             feature_set,
             metadata=_metadata(schema="schema-expected"),
-            file_path=Path("features.parquet"),
+            file_path=Path("a/b/features.parquet"),
             strict=True,
         )
 
@@ -58,9 +63,14 @@ def test_validate_feature_set_strict_false_skips_in_memory_and_file_hash_checks(
     """Allow validation to pass with strict mode disabled after schema check succeeds."""
     feature_set = pd.DataFrame({"row_id": [1, 2], "feature_a": [10.0, 20.0]})
 
+    import pandas as _pd
     monkeypatch.setattr(
         "ml.features.validation.validate_feature_set.hash_feature_schema",
         lambda df: "schema-ok",
+    )
+    monkeypatch.setattr(
+        "ml.features.validation.validate_feature_set.load_feature_set_schemas",
+        lambda features_path, file_path: (_pd.DataFrame(), _pd.DataFrame()),
     )
 
     def _should_not_be_called(*args: object, **kwargs: object) -> str:
@@ -78,7 +88,7 @@ def test_validate_feature_set_strict_false_skips_in_memory_and_file_hash_checks(
     validate_feature_set(
         feature_set,
         metadata=_metadata(schema="schema-ok", in_memory="ignored", file_hash="ignored"),
-        file_path=Path("features.parquet"),
+        file_path=Path("a/b/features.parquet"),
         strict=False,
     )
 
@@ -90,9 +100,15 @@ def test_validate_feature_set_logs_warning_for_in_memory_hash_mismatch_only(
     """Warn on in-memory hash mismatch but continue when file hash still matches."""
     feature_set = pd.DataFrame({"row_id": [1, 2], "feature_a": [10.0, 20.0]})
 
+
+    import pandas as _pd
     monkeypatch.setattr(
         "ml.features.validation.validate_feature_set.hash_feature_schema",
         lambda df: "schema-ok",
+    )
+    monkeypatch.setattr(
+        "ml.features.validation.validate_feature_set.load_feature_set_schemas",
+        lambda features_path, file_path: (_pd.DataFrame(), _pd.DataFrame()),
     )
     monkeypatch.setattr(
         "ml.features.validation.validate_feature_set.hash_dataframe_content",
@@ -107,7 +123,7 @@ def test_validate_feature_set_logs_warning_for_in_memory_hash_mismatch_only(
         validate_feature_set(
             feature_set,
             metadata=_metadata(schema="schema-ok", in_memory="mem-expected", file_hash="file-ok"),
-            file_path=Path("features.parquet"),
+            file_path=Path("a/b/features.parquet"),
             strict=True,
         )
 
@@ -120,9 +136,15 @@ def test_validate_feature_set_raises_on_file_hash_mismatch_in_strict_mode(
     """Raise DataError when strict validation detects persisted-file hash drift."""
     feature_set = pd.DataFrame({"row_id": [1, 2], "feature_a": [10.0, 20.0]})
 
+
+    import pandas as _pd
     monkeypatch.setattr(
         "ml.features.validation.validate_feature_set.hash_feature_schema",
         lambda df: "schema-ok",
+    )
+    monkeypatch.setattr(
+        "ml.features.validation.validate_feature_set.load_feature_set_schemas",
+        lambda features_path, file_path: (_pd.DataFrame(), _pd.DataFrame()),
     )
     monkeypatch.setattr(
         "ml.features.validation.validate_feature_set.hash_dataframe_content",
@@ -137,6 +159,6 @@ def test_validate_feature_set_raises_on_file_hash_mismatch_in_strict_mode(
         validate_feature_set(
             feature_set,
             metadata=_metadata(schema="schema-ok", in_memory="mem-ok", file_hash="file-expected"),
-            file_path=Path("features.parquet"),
+            file_path=Path("a/b/features.parquet"),
             strict=True,
         )

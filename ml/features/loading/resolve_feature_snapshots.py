@@ -4,7 +4,6 @@
 import logging
 from pathlib import Path
 
-from ml.exceptions import DataError
 from ml.modeling.models.feature_lineage import FeatureLineage
 from ml.utils.loaders import load_json
 from ml.utils.snapshots.latest_snapshot import get_latest_snapshot_path
@@ -44,11 +43,6 @@ def resolve_feature_snapshots(
         logger.debug(f"Resolving feature set {fs.name} {fs.version} to snapshot {snapshot_path}")
 
         metadata_path = snapshot_path / "metadata.json"
-        if not metadata_path.exists():
-            msg = f"Missing metadata.json in snapshot path {snapshot_path}"
-            logger.error(msg)
-            raise DataError(msg)
-
         metadata = load_json(metadata_path)
 
         resolved.append({

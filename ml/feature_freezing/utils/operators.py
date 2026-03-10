@@ -1,13 +1,11 @@
-"""Operator hashing and validation utilities for feature freezing integrity."""
-
+"""Operator hashing utility for operator integrity."""
+# TODO: Move to global utils
 import hashlib
 import inspect
 import json
 import logging
 import sys
 
-import pandas as pd
-import sklearn
 from ml.exceptions import DataError, UserError
 from ml.registries.catalogs import FEATURE_OPERATORS
 
@@ -25,35 +23,50 @@ def generate_operator_hash(operator_names):
 
     operator_names = sorted(operator_names)
     operators = [FEATURE_OPERATORS[name] for name in operator_names]
-    operator_sources = ""
-    for operator in operators:
-        source = inspect.getsource(operator)
-        operator_sources += source
 
-    operator_ids = [f"{op.__module__}.{op.__name__}" for op in operators]
+    bytecode_parts = []
+    operator_ids = []
+
+    for op in operators:
+        operator_ids.append(f"{op.__module__}.{op.__name__}")
+
+        # hash all functions defined on the class
+        for _name, member in inspect.getmembers(op, inspect.isfunction):
+            bytecode_parts.append(member.__code__.co_code)
 
     payload = {
-        "operators": operator_sources,
         "operator_ids": operator_ids,
-        "python": sys.version,
-        "pandas": pd.__version__,
-        "sklearn": sklearn.__version__,
+        "operator_bytecode": b"".join(bytecode_parts).hex(),
+        "python_major_minor": f"{sys.version_info.major}.{sys.version_info.minor}",
     }
 
-    operator_hash = hashlib.md5(json.dumps(payload, sort_keys=True).encode('utf-8')).hexdigest()
+    return hashlib.md5(json.dumps(payload, sort_keys=True).encode()).hexdigest()
 
-    return operator_hash
-
-def validate_operators(operators: list, operator_hash: str):
+def validate_operators(operators: list, operator_hash: str | None, file_path: str | None = None) -> None:
     """Validate operator names and verify computed hash matches expected hash.
 
     Args:
         operators: Operator names to validate.
         operator_hash: Expected operator hash value.
+        file_path: Optional file path for logging context in case of validation failure.
 
     Returns:
         None: Raises on validation/hash mismatch failure.
     """
+
+    if file_path:
+        logger.debug(f"Validating operators for feature set at {file_path} with expected operator hash {operator_hash} and operators {operators}")
+    else:
+        logger.debug(f"Validating operators with expected operator hash {operator_hash} and operators {operators}; no file path provided for context.")
+
+    if operator_hash is None or operator_hash == "none":
+        if operators:
+            msg = f"Operator hash is required when operators are specified. Provided operators: {operators}"
+            logger.error(msg)
+            raise DataError(msg)
+        else:
+            logger.debug("No operators specified and no operator hash provided; skipping operator validation.")
+            return
 
     for name in operators:
         if name not in FEATURE_OPERATORS:

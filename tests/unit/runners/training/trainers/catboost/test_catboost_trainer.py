@@ -107,7 +107,7 @@ def test_train_executes_classification_flow_and_returns_expected_output(
         return transformed_y_val
 
     monkeypatch.setattr(module, "transform_target", _transform_target)
-    monkeypatch.setattr(module, "load_schemas", lambda model_cfg: ("input_schema", "derived_schema"))
+    monkeypatch.setattr(module, "load_schemas", lambda model_cfg, feature_lineage: ({}, []))
 
     cat_feature_calls: list[tuple[Any, Any, Any]] = []
 
@@ -175,7 +175,7 @@ def test_train_skips_class_weight_resolution_for_regression(monkeypatch: pytest.
     monkeypatch.setattr(module, "load_features_and_target", lambda model_cfg, snapshot_selection, strict: (X, y, []))
     monkeypatch.setattr(module, "get_splits", lambda **kwargs: (splits, {}))
     monkeypatch.setattr(module, "transform_target", lambda series, *, transform_config, split_name: series)
-    monkeypatch.setattr(module, "load_schemas", lambda model_cfg: ("in", "derived"))
+    monkeypatch.setattr(module, "load_schemas", lambda model_cfg, feature_lineage: ({}, []))
     monkeypatch.setattr(module, "get_cat_features", lambda *args, **kwargs: [])
     monkeypatch.setattr(module, "load_yaml", lambda path: {"steps": []})
     monkeypatch.setattr(module, "compute_model_config_hash", lambda cfg_dict: "hash")

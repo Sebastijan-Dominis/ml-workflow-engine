@@ -93,16 +93,20 @@ def _promotion_base_payload() -> dict:
         "metrics": {
             "task_type": "classification",
             "algorithm": "catboost",
-            "train": {"f1": 0.8, "roc_auc": 0.85},
-            "val": {"f1": 0.78, "roc_auc": 0.83},
-            "test": {"f1": 0.77, "roc_auc": 0.82},
+            "metrics": {
+                "train": {"f1": 0.8, "roc_auc": 0.85},
+                "val": {"f1": 0.78, "roc_auc": 0.83},
+                "test": {"f1": 0.77, "roc_auc": 0.82},
+            }
         },
         "previous_production_metrics": {
             "task_type": "classification",
             "algorithm": "catboost",
-            "train": {"f1": 0.75, "roc_auc": 0.8},
-            "val": {"f1": 0.74, "roc_auc": 0.79},
-            "test": {"f1": 0.73, "roc_auc": 0.78},
+            "metrics": {
+                "train": {"f1": 0.75, "roc_auc": 0.8},
+                "val": {"f1": 0.74, "roc_auc": 0.79},
+                "test": {"f1": 0.73, "roc_auc": 0.78},
+            }
         },
         "promotion_thresholds": {
             "promotion_metrics": {

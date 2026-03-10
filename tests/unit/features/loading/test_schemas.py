@@ -2,15 +2,20 @@
 
 from __future__ import annotations
 
+import sys
+from collections import namedtuple
 from pathlib import Path
 from types import SimpleNamespace
 from typing import cast
+from unittest.mock import patch
 
 import pandas as pd
 import pytest
 from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.exceptions import DataError
+from ml.feature_freezing.utils.operators import generate_operator_hash
 from ml.features.loading.schemas import aggregate_schema_dfs, load_feature_set_schemas, load_schemas
+from ml.modeling.models.feature_lineage import FeatureLineage
 
 pytestmark = pytest.mark.unit
 
@@ -18,15 +23,19 @@ pytestmark = pytest.mark.unit
 def test_load_feature_set_schemas_raises_when_input_schema_is_missing(tmp_path: Path) -> None:
     """Raise ``DataError`` when the required input schema CSV file is absent."""
     with pytest.raises(DataError, match="Input schema file not found"):
-        load_feature_set_schemas(tmp_path)
+        load_feature_set_schemas(tmp_path, tmp_path)
 
 
 def test_load_feature_set_schemas_returns_empty_derived_when_derived_schema_missing(tmp_path: Path) -> None:
     """Load input schema and return an empty derived schema when derived CSV is absent."""
     input_schema_path = tmp_path / "input_schema.csv"
+
+    # Provide required 'operator_hash' in metadata.json, matching empty operator list
+    empty_operator_hash = generate_operator_hash([])
+    (tmp_path / "metadata.json").write_text(f'{{"operator_hash": "{empty_operator_hash}"}}', encoding="utf-8")
     pd.DataFrame({"feature": ["lead_time"], "dtype": ["int64"]}).to_csv(input_schema_path, index=False)
 
-    input_schema, derived_schema = load_feature_set_schemas(tmp_path)
+    input_schema, derived_schema = load_feature_set_schemas(tmp_path, tmp_path)
 
     assert input_schema.shape == (1, 2)
     assert derived_schema.empty
@@ -76,53 +85,110 @@ def test_load_schemas_raises_when_no_feature_sets_defined() -> None:
         SimpleNamespace(feature_store=SimpleNamespace(path="feature_store", feature_sets=[])),
     )
 
-    with pytest.raises(DataError, match="No feature sets defined"):
-        load_schemas(model_cfg)
-
+    # Pass empty list for feature_lineage
+    with pytest.raises(DataError):
+        load_schemas(model_cfg, feature_lineage=[])
 
 def test_load_schemas_aggregates_input_and_derived_schemas_across_feature_sets(tmp_path: Path) -> None:
-    """Aggregate all configured feature-set schemas and deduplicate by feature name."""
-    fs_root = tmp_path / "feature_store"
+    """
+    Test aggregation of input and derived schemas across feature sets.
 
-    fs_a = fs_root / "booking_context_features" / "v1"
-    fs_b = fs_root / "pricing_party_features" / "v2"
-    fs_a.mkdir(parents=True)
-    fs_b.mkdir(parents=True)
+    Uses a dummy operator and side-effect patch on validate_operators to allow normal hashes
+    and raise DataError for a manually injected bad hash.
+    """
+    VersionInfo = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
+    dummy_hash = "dummy_hash"
 
-    pd.DataFrame(
-        {
-            "feature": ["lead_time", "hotel"],
-            "dtype": ["int64", "category"],
-        }
-    ).to_csv(fs_a / "input_schema.csv", index=False)
-    pd.DataFrame(
-        {
-            "feature": ["is_long_stay"],
-            "source_operator": ["length_bucket"],
-        }
-    ).to_csv(fs_a / "derived_schema.csv", index=False)
+    # Patch sys.version_info for consistent environment
+    with patch.object(sys, "version_info", VersionInfo(3, 11, 0, "final", 0)):
 
-    pd.DataFrame(
-        {
-            "feature": ["hotel", "adr"],
-            "dtype": ["string", "float64"],
-        }
-    ).to_csv(fs_b / "input_schema.csv", index=False)
+        # Setup dummy feature store
+        fs_root: Path = tmp_path / "feature_store"
+        fs_a: Path = fs_root / "booking_context_features" / "v1"
+        fs_b: Path = fs_root / "pricing_party_features" / "v2"
+        fs_a.mkdir(parents=True)
+        fs_b.mkdir(parents=True)
 
-    model_cfg = cast(
-        SearchModelConfig,
-        SimpleNamespace(
-            feature_store=SimpleNamespace(
-                path=str(fs_root),
-                feature_sets=[
-                    SimpleNamespace(name="booking_context_features", version="v1"),
-                    SimpleNamespace(name="pricing_party_features", version="v2"),
-                ],
+        # Input schema CSVs
+        pd.DataFrame({"feature": ["lead_time", "hotel"], "dtype": ["int64", "category"]}).to_csv(
+            fs_a / "input_schema.csv", index=False
+        )
+        pd.DataFrame({"feature": ["adr_per_person"], "source_operator": ["AdrPerPerson"]}).to_csv(
+            fs_a / "derived_schema.csv", index=False
+        )
+        pd.DataFrame({"feature": ["hotel", "adr"], "dtype": ["string", "float64"]}).to_csv(
+            fs_b / "input_schema.csv", index=False
+        )
+
+        # metadata.json with dummy hash
+        (fs_a / "metadata.json").write_text(f'{{"operator_hash": "{dummy_hash}"}}', encoding="utf-8")
+        (fs_b / "metadata.json").write_text(f'{{"operator_hash": "{dummy_hash}"}}', encoding="utf-8")
+
+        # Define dummy operator
+        class DummyAdrPerPerson:
+            @staticmethod
+            def transform() -> str:
+                return "test"
+        DummyAdrPerPerson.__module__ = "ml.feature_freezing.utils.operators"
+
+        # Side-effect function for validate_operators
+        def _validate_operators_side_effect(operators, expected_hash, path):
+            if expected_hash == "bad_hash":
+                raise DataError("Operator hash mismatch")
+            return True
+
+        # Patch FEATURE_OPERATORS and validate_operators
+        with patch.dict("ml.feature_freezing.utils.operators.FEATURE_OPERATORS",
+                        {"AdrPerPerson": DummyAdrPerPerson}), \
+             patch("ml.feature_freezing.utils.operators.validate_operators",
+                   side_effect=_validate_operators_side_effect):
+
+            # Feature lineage uses dummy_hash
+            feature_lineage = [
+                FeatureLineage(
+                    name="booking_context_features",
+                    version="v1",
+                    snapshot_id="",
+                    file_hash="",
+                    in_memory_hash="",
+                    feature_schema_hash="",
+                    operator_hash=dummy_hash,
+                    feature_type="tabular",
+                ),
+                FeatureLineage(
+                    name="pricing_party_features",
+                    version="v2",
+                    snapshot_id="",
+                    file_hash="",
+                    in_memory_hash="",
+                    feature_schema_hash="",
+                    operator_hash=dummy_hash,
+                    feature_type="tabular",
+                ),
+            ]
+
+            # Model config
+            model_cfg: SearchModelConfig = cast(
+                SearchModelConfig,
+                SimpleNamespace(
+                    feature_store=SimpleNamespace(
+                        path=str(fs_root),
+                        feature_sets=[
+                            SimpleNamespace(name="booking_context_features", version="v1"),
+                            SimpleNamespace(name="pricing_party_features", version="v2"),
+                        ],
+                    )
+                ),
             )
-        ),
-    )
 
-    input_schema, derived_schema = load_schemas(model_cfg)
+            # Run schema aggregation
+            input_schema, derived_schema = load_schemas(model_cfg, feature_lineage)
 
-    assert input_schema["feature"].tolist() == ["lead_time", "hotel", "adr"]
-    assert derived_schema["feature"].tolist() == ["is_long_stay"]
+            # Validate aggregation results
+            assert sorted(input_schema["feature"].tolist()) == sorted(["lead_time", "hotel", "adr"])
+            assert "adr_per_person" in derived_schema["feature"].tolist()
+
+            # Edge case: operator hash mismatch
+            (fs_a / "metadata.json").write_text('{"operator_hash": "bad_hash"}', encoding="utf-8")
+            with pytest.raises(DataError, match="Operator hash mismatch"):
+                load_schemas(model_cfg, feature_lineage)

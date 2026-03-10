@@ -83,7 +83,7 @@ class PreparationStep(PipelineStep[SearchContext]):
             data_type=ctx.model_cfg.data_type,
             task_cfg=ctx.model_cfg.task
         )
-        input_schema, derived_schema = load_schemas(ctx.model_cfg)
+        input_schema, derived_schema = load_schemas(ctx.model_cfg, lineage)
 
         pipeline_path = Path(f"{ctx.model_cfg.pipeline.path}").resolve()
         pipeline_cfg = load_yaml(pipeline_path)

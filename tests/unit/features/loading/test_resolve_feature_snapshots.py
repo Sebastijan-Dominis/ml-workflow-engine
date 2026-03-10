@@ -101,7 +101,7 @@ def test_resolve_feature_snapshots_raises_for_missing_metadata_file(
         lambda _: snapshot_path,
     )
 
-    with pytest.raises(DataError, match="Missing metadata.json"):
+    with pytest.raises(DataError, match="File not found"):
         resolve_feature_snapshots(
             feature_store_path=tmp_path / "feature_store",
             feature_sets=[SimpleNamespace(name="booking_context_features", version="v1")],
