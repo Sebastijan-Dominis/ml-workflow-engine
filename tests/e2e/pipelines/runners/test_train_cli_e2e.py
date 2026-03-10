@@ -6,6 +6,9 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from ml.search.utils.failure_management.delete_failure_management_folder import (
+    delete_failure_management_folder,
+)
 from pipelines.runners import train as train_module
 
 pytestmark = pytest.mark.e2e
@@ -96,3 +99,11 @@ def test_train_main_executes_end_to_end_control_flow_with_cli_args(
     assert persisted["metrics"] == {"auc": 0.81}
     assert persisted["train_run_id"] == "20260306T200000_12345678"
     assert cleanup_calls[0][1:] == (False, "train")
+
+    # Manually remove the failure management folder since cleanup is enabled for this test but the folder would not actually be deleted due to the mocked delete_failure_management_folder
+    leftover_dir = Path("failure_management") / "exp_100" / "training" / "20260306T200000_12345678"
+    delete_failure_management_folder(
+        folder_path=leftover_dir,
+        cleanup=True,
+        stage="train"
+    )
