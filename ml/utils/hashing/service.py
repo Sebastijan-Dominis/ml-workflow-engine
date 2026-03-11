@@ -6,13 +6,17 @@ They keep call sites domain-explicit while preserving a single hashing
 mechanism.
 """
 
+import logging
 from collections.abc import Callable
 from pathlib import Path
 
+from ml.exceptions import ConfigError
 from ml.features.hashing.hash_arrow_metadata import hash_arrow_metadata
 from ml.features.hashing.hash_parquet_metadata import hash_parquet_metadata
 from ml.utils.hashing.hash_dict import hash_dict
 from ml.utils.hashing.hash_streaming import hash_streaming
+
+logger = logging.getLogger(__name__)
 
 HASH_LOADER_REGISTRY: dict[str, Callable[[Path], str]] = {
     "parquet": hash_parquet_metadata,
@@ -66,5 +70,11 @@ def hash_thresholds(thresholds: dict) -> str:
     Returns:
         str: Deterministic hash digest for thresholds payload.
     """
+
+    if not thresholds.get("lineage", {}).get("created_at"):
+        msg = "Missing 'created_at' timestamp in thresholds lineage. This timestamp is required for deterministic hashing of thresholds payloads. Please ensure that the 'created_at' field is included in the thresholds lineage metadata and is properly formatted as an ISO 8601 string."
+        logger.error(msg)
+        raise ConfigError(msg)
+    thresholds["lineage"]["created_at"] = thresholds["lineage"]["created_at"].isoformat()
 
     return hash_dict(thresholds)

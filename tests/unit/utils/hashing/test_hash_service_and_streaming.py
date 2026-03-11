@@ -1,14 +1,11 @@
 """Unit tests for streaming hashing and hashing service wrappers."""
+from datetime import datetime
 from pathlib import Path
 
 import pytest
+from ml.exceptions import ConfigError
 from ml.utils.hashing.hash_streaming import hash_streaming
-from ml.utils.hashing.service import (
-    hash_artifact,
-    hash_data,
-    hash_file,
-    hash_thresholds,
-)
+from ml.utils.hashing.service import hash_artifact, hash_data, hash_file, hash_thresholds
 
 pytestmark = pytest.mark.unit
 
@@ -53,9 +50,59 @@ def test_hash_service_wrappers_delegate_to_streaming(monkeypatch: pytest.MonkeyP
     assert calls == [path_a, path_b, path_c]
 
 
+def _base_payload():
+    return {
+        "val": {"f1": 0.7, "roc_auc": 0.8},
+        "test": {"f1": 0.69, "roc_auc": 0.79},
+        "lineage": {"created_at": datetime(2024, 1, 1, 12, 0, 0)},
+    }
+
+
 def test_hash_thresholds_is_stable_for_reordered_keys() -> None:
     """Verify stable threshold hashes for equivalent payloads with reordered keys."""
-    payload_a = {"val": {"f1": 0.7, "roc_auc": 0.8}, "test": {"f1": 0.69, "roc_auc": 0.79}}
-    payload_b = {"test": {"roc_auc": 0.79, "f1": 0.69}, "val": {"roc_auc": 0.8, "f1": 0.7}}
+    payload_a = {
+        "val": {"f1": 0.7, "roc_auc": 0.8},
+        "test": {"f1": 0.69, "roc_auc": 0.79},
+        "lineage": {"created_at": datetime(2024, 1, 1, 12, 0, 0)},
+    }
+
+    payload_b = {
+        "test": {"roc_auc": 0.79, "f1": 0.69},
+        "val": {"roc_auc": 0.8, "f1": 0.7},
+        "lineage": {"created_at": datetime(2024, 1, 1, 12, 0, 0)},
+    }
 
     assert hash_thresholds(payload_a) == hash_thresholds(payload_b)
+
+
+def test_hash_thresholds_converts_datetime_to_iso() -> None:
+    """Ensure datetime created_at is converted to ISO format before hashing."""
+    payload = _base_payload()
+
+    hash_thresholds(payload)
+
+    assert isinstance(payload["lineage"]["created_at"], str)
+    assert payload["lineage"]["created_at"] == "2024-01-01T12:00:00"
+
+
+def test_hash_thresholds_raises_if_created_at_missing() -> None:
+    """Ensure ConfigError is raised when created_at is missing."""
+    payload = {
+        "val": {"f1": 0.7},
+        "test": {"f1": 0.69},
+        "lineage": {},
+    }
+
+    with pytest.raises(ConfigError):
+        hash_thresholds(payload)
+
+
+def test_hash_thresholds_raises_if_lineage_missing() -> None:
+    """Ensure ConfigError is raised when lineage block is missing."""
+    payload = {
+        "val": {"f1": 0.7},
+        "test": {"f1": 0.69},
+    }
+
+    with pytest.raises(ConfigError):
+        hash_thresholds(payload)
