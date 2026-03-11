@@ -1,5 +1,0 @@
-feature,dtype,role
-country,category,input
-agent,string,input
-market_segment,category,input
-distribution_channel,category,input

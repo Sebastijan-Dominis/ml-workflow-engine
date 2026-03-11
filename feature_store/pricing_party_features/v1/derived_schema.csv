@@ -1,2 +1,0 @@
-feature,dtype,role,source_operator,materialized
-adr_per_person,float64,derived,AdrPerPerson,False

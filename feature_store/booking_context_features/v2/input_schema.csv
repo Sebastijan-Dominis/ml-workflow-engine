@@ -1,9 +1,0 @@
-feature,dtype,role
-hotel,category,input
-lead_time,int16,input
-arrival_date_week_number,int8,input
-stays_in_weekend_nights,int8,input
-stays_in_week_nights,int8,input
-meal,category,input
-deposit_type,category,input
-days_in_waiting_list,int16,input

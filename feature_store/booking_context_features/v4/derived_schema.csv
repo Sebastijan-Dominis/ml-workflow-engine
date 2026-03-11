@@ -1,4 +1,0 @@
-feature,dtype,role,source_operator,materialized
-total_stay,int8,derived,TotalStay,False
-arrival_season,object,derived,ArrivalSeason,False
-arrival_date,datetime64[ns],derived,ArrivalDate,False
