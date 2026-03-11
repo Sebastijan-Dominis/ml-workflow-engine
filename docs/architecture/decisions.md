@@ -14,7 +14,6 @@ Each decision is classified as one of:
 ## Storage assumption
 The system assumes:
 - Single-writer per experiment
-- POSIX-compliant filesystem
 - Atomic file writes for metadata artifacts
 
 Migration to object storage or distributed runners would require
