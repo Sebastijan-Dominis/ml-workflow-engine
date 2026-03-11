@@ -77,7 +77,7 @@
 
 ### Operator Integrity
 
-- Operator hash generated at runtime (during feature freezing) must equal the one found in the feature registry.
+- Operator hash generated at runtime (during feature freezing or loading) must equal the one found in the feature registry or metadata.
 
 ## Search Determinism
 
