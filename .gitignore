@@ -215,3 +215,6 @@ catboost_info/
 
 # VSCodeCounter cache
 .vscodecounter/
+
+# Failure management folder that helps deal with failed search and train runs by storing relevant information at runtime (best params from each search, training model snapshots) and deleting if the run is successful. Irrelevant for version control.
+failure_management
