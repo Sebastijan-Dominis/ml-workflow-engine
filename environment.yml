@@ -8,7 +8,6 @@ dependencies:
   - joblib
   - pandas
   - scikit-learn
-  - xgboost
   - ipykernel
   - pyarrow
   - matplotlib
@@ -20,9 +19,9 @@ dependencies:
   - pydantic
   - pytest
   - nvidia-ml-py
-  - prophet
   - ruff
   - isort
   - mypy
   - pre-commit
   - types-pyyaml
+  - pytest-cov
