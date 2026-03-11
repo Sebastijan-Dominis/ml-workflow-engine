@@ -40,8 +40,5 @@ jobs:
       - name: Run tests with coverage
         run: conda run -n hotel_management coverage run -m pytest -v --maxfail=1 --disable-warnings
 
-      - name: Generate coverage xml report
-        run: conda run -n hotel_management coverage xml -i
-
       - name: Show coverage summary
         run: conda run -n hotel_management coverage report -m -i
