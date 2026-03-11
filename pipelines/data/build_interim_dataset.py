@@ -158,7 +158,11 @@ def main() -> int:
             df = df.drop_duplicates()
             logger.info(f"Dropped duplicates. DataFrame now has {len(df)} rows.")
 
-        data_path = save_data(df, config=config, data_dir=data_dir)
+        data_path = save_data(
+            df,
+            config=config,
+            data_dir=data_dir
+        )
         logger.info(f"Interim data saved successfully at {data_path} with {len(df)} rows and {len(df.columns)} columns.")
 
         memory_usage = get_memory_usage(df)
