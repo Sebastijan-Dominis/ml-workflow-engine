@@ -34,5 +34,14 @@ jobs:
       - name: Show environment
         run: conda run -n hotel_management conda list
 
-      - name: Run tests
-        run: conda run -n hotel_management pytest -v --maxfail=1 --disable-warnings
+      - name: Install coverage
+        run: conda run -n hotel_management pip install coverage
+
+      - name: Run tests with coverage
+        run: conda run -n hotel_management coverage run -m pytest -v --maxfail=1 --disable-warnings
+
+      - name: Generate coverage xml report
+        run: conda run -n hotel_management coverage xml -i
+
+      - name: Show coverage summary
+        run: conda run -n hotel_management coverage report -m -i
