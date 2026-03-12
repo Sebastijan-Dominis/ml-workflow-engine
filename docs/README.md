@@ -5,7 +5,7 @@ This directory contains detailed documentation for the hotel_management project.
 - [Architecture](architecture/overview.md)
 - [Setup](setup.md)
 - [Usage](usage.md)
-- [Contributing](contributing.md)
+- [Contributing](/.github/contributing.md) (in `.github/`)
 - [API Reference](api/README.md)
 - [Testing](testing.md)
 - [Maintenance](maintenance.md)
