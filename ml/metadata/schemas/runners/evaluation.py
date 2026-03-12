@@ -1,12 +1,13 @@
 """Metadata models for evaluation runs."""
 from typing import Literal
 
+from pydantic import BaseModel
+
 from ml.modeling.models.artifacts import Artifacts
 from ml.modeling.models.config_fingerprint import ConfigFingerprint
 from ml.modeling.models.experiment_lineage import ExperimentLineage
 from ml.modeling.models.run_identity import RunIdentity
 from ml.runners.evaluation.models.predictions import PredictionsPathsAndHashes
-from pydantic import BaseModel
 
 
 class EvaluationRunIdentity(RunIdentity):

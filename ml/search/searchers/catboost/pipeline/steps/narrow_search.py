@@ -3,6 +3,7 @@
 import logging
 
 import numpy as np
+
 from ml.exceptions import ConfigError, SearchError, UserError
 from ml.modeling.catboost.build_pipeline_with_model import build_pipeline_with_model
 from ml.search.params.catboost.refinement import prepare_narrow_params

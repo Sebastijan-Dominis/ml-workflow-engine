@@ -6,8 +6,9 @@ import tempfile
 from pathlib import Path
 
 import joblib
-from ml.exceptions import PersistenceError
 from sklearn.pipeline import Pipeline
+
+from ml.exceptions import PersistenceError
 
 logger = logging.getLogger(__name__)
 

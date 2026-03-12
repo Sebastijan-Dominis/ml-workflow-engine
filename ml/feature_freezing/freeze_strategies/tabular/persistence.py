@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.metadata.validation.features.feature_freezing import validate_freeze_metadata
 from ml.registries.catalogs import FEATURE_OPERATORS

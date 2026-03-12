@@ -3,6 +3,7 @@
 import logging
 
 import pandas as pd
+
 from ml.data.processed.processing.add_row_id_base import AddRowIDBase, RowIDMetadata
 from ml.data.processed.processing.hotel_bookings.cols_for_row_id import (
     COLS_FOR_ROW_ID_FINGERPRINT,

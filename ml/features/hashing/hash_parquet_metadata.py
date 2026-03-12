@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 
 import pyarrow.parquet as pq
+
 from ml.exceptions import RuntimeMLError
 from ml.features.hashing.safe import safe
 

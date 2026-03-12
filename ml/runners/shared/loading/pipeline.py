@@ -5,9 +5,10 @@ from pathlib import Path
 from typing import Literal, overload
 
 import joblib
+from sklearn.pipeline import Pipeline
+
 from ml.exceptions import PipelineContractError
 from ml.types import AllowedModels
-from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 

@@ -3,11 +3,12 @@
 import logging
 
 import numpy as np
+from sklearn.utils.class_weight import compute_class_weight
+
 from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import ConfigError
 from ml.modeling.class_weighting.constants import SUPPORTED_LIBRARIES
 from ml.modeling.class_weighting.models import DataStats
-from sklearn.utils.class_weight import compute_class_weight
 
 
 def resolve_class_weighting(

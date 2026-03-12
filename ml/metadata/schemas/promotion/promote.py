@@ -1,9 +1,10 @@
 """Models for promotion metadata."""
 from typing import Literal
 
+from pydantic import BaseModel
+
 from ml.modeling.models.metrics import EvaluationMetricsHelper
 from ml.promotion.config.models import PromotionThresholds
-from pydantic import BaseModel
 
 
 class RunIdentity(BaseModel):

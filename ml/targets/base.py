@@ -4,6 +4,7 @@ import logging
 from abc import ABC, abstractmethod
 
 import pandas as pd
+
 from ml.exceptions import UserError
 
 logger = logging.getLogger(__name__)

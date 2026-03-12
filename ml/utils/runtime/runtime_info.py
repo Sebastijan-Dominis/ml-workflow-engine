@@ -4,6 +4,7 @@ import logging
 import platform
 
 import psutil
+
 from ml.exceptions import RuntimeMLError
 
 logger = logging.getLogger(__name__)

@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from catboost import CatBoostClassifier, CatBoostRegressor
+
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import UserError
 from ml.registries.catalogs import MODEL_CLASS_REGISTRY, REGRESSION_LOSS_FUNCTIONS

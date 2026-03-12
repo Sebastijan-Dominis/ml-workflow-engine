@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 
 import yaml
+
 from ml.exceptions import PersistenceError
 from ml.promotion.constants.constants import Stage
 

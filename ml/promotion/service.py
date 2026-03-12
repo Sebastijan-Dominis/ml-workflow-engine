@@ -4,6 +4,7 @@ import logging
 from contextlib import contextmanager
 
 from filelock import FileLock
+
 from ml.exceptions import UserError
 from ml.promotion.context import PromotionContext
 from ml.promotion.getters.get import get_runners_metadata

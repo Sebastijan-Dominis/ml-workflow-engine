@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pandas as pd
+
 from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import DataError
 from ml.modeling.models.feature_lineage import FeatureLineage

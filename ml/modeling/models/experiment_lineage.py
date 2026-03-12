@@ -1,6 +1,7 @@
 
-from ml.modeling.models.feature_lineage import FeatureLineage
 from pydantic import BaseModel
+
+from ml.modeling.models.feature_lineage import FeatureLineage
 
 
 class ExperimentLineage(BaseModel):

@@ -3,6 +3,7 @@
 import logging
 
 from catboost import CatBoostClassifier, CatBoostRegressor
+
 from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.registries.catalogs import MODEL_CLASS_REGISTRY
 from ml.search.constants import SEARCH_PHASES

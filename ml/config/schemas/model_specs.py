@@ -9,9 +9,10 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any, Literal
 
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
 from ml.exceptions import ConfigError
 from ml.modeling.class_weighting.constants import SUPPORTED_SCORING_FUNCTIONS
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 logger = logging.getLogger(__name__)
 

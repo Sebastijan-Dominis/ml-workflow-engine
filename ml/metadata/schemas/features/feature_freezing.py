@@ -1,7 +1,8 @@
 """Schema for metadata of a frozen feature snapshot."""
+from pydantic import BaseModel
+
 from ml.feature_freezing.models.freeze_runtime import FreezeRuntimeInfo
 from ml.types import DataLineageEntry
-from pydantic import BaseModel
 
 
 class FreezeMetadata(BaseModel):

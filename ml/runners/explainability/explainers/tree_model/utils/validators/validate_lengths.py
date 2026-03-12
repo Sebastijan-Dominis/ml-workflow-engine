@@ -3,8 +3,9 @@
 import logging
 
 import numpy as np
-from ml.exceptions import DataError
 from numpy.typing import NDArray
+
+from ml.exceptions import DataError
 
 logger = logging.getLogger(__name__)
 

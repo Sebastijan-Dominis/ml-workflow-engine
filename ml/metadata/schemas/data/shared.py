@@ -1,6 +1,7 @@
 """Schemas for shared metadata components used across different dataset types."""
-from ml.data.config.schemas.shared import DataInfo
 from pydantic import BaseModel
+
+from ml.data.config.schemas.shared import DataInfo
 
 
 class DataBasic(BaseModel):

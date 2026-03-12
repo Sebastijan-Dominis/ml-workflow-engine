@@ -3,9 +3,10 @@
 import logging
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
+
 from ml.config.schemas.model_specs import DATA_TYPE, SplitConfig, TaskConfig
 from ml.types import AllSplitsInfo, SplitInfo, TabularSplits
-from sklearn.model_selection import train_test_split
 
 logger = logging.getLogger(__name__)
 

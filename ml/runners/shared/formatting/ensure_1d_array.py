@@ -4,6 +4,7 @@ import logging
 from typing import Any
 
 import numpy as np
+
 from ml.exceptions import PipelineContractError
 
 logger = logging.getLogger(__name__)

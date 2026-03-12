@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pandas as pd
+
 from ml.exceptions import RuntimeMLError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.types import DataLineageEntry

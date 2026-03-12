@@ -3,9 +3,10 @@
 import logging
 from typing import Any
 
+from sklearn.pipeline import Pipeline
+
 from ml.exceptions import PipelineContractError
 from ml.registries.catalogs import MODEL_CLASS_REGISTRY
-from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 

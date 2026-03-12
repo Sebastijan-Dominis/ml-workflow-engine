@@ -1,6 +1,7 @@
+from pydantic import BaseModel
+
 from ml.search.models.experiment_metadata import ExperimentMetadata
 from ml.search.models.search_results import SearchResults
-from pydantic import BaseModel
 
 
 class SearchRecord(BaseModel):

@@ -1,8 +1,9 @@
 """Validation schemas for broad/narrow hyperparameter search settings."""
 
 
-from ml.config.schemas.hardware_cfg import HardwareConfig, HardwareTaskType
 from pydantic import BaseModel, Field
+
+from ml.config.schemas.hardware_cfg import HardwareConfig, HardwareTaskType
 
 
 # === Broad search model/ensemble params ===

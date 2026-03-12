@@ -1,6 +1,7 @@
 """Utilities for resolving categorical feature columns for model training."""
 
 import pandas as pd
+
 from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 
 

@@ -5,8 +5,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Literal
 
-from ml.exceptions import ConfigError
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 

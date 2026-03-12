@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+
 from ml.data.merge.merge_dataset_into_main import merge_dataset_into_main
 from ml.exceptions import ConfigError, DataError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig

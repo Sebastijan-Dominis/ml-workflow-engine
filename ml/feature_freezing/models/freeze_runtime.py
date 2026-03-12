@@ -1,6 +1,7 @@
 """Schemas for the feature freezing process, including dependency versions and runtime information."""
-from ml.modeling.models.runtime_info import Runtime
 from pydantic import BaseModel
+
+from ml.modeling.models.runtime_info import Runtime
 
 
 class FreezeDeps(BaseModel):

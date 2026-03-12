@@ -4,10 +4,11 @@ import logging
 
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
+from sklearn.pipeline import Pipeline
+
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import TrainingError
 from ml.pipelines.composition.add_model_to_pipeline import add_model_to_pipeline
-from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 

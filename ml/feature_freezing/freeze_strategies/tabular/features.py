@@ -3,6 +3,7 @@
 import logging
 
 import pandas as pd
+
 from ml.exceptions import DataError, UserError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.registries.catalogs import FEATURE_OPERATORS

@@ -3,6 +3,8 @@
 import logging
 from datetime import datetime
 
+from pydantic import BaseModel, Field, model_validator
+
 from ml.data.config.schemas.constants import BorderValue
 from ml.data.config.schemas.shared import DataInfo
 from ml.exceptions import ConfigError
@@ -11,7 +13,6 @@ from ml.policies.data.interim_constraints import (
     MAX_CONSTRAINTS,
     MIN_CONSTRAINTS,
 )
-from pydantic import BaseModel, Field, model_validator
 
 logger = logging.getLogger(__name__)
 

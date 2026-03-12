@@ -1,6 +1,7 @@
 """Version 1 special-requests target strategy."""
 
 import pandas as pd
+
 from ml.targets.base import TargetStrategy
 
 

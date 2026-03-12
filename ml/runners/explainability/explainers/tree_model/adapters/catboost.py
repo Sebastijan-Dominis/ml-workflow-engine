@@ -6,6 +6,7 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 from catboost import Pool
+
 from ml.exceptions import ExplainabilityError
 from ml.runners.explainability.explainers.tree_model.adapters.base import TreeModelAdapter
 

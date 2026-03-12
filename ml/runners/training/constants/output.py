@@ -4,8 +4,9 @@ from dataclasses import dataclass
 from typing import TypeAlias
 
 from catboost import CatBoostClassifier, CatBoostRegressor
-from ml.modeling.models.feature_lineage import FeatureLineage
 from sklearn.pipeline import Pipeline
+
+from ml.modeling.models.feature_lineage import FeatureLineage
 
 SUPPORTED_MODELS: TypeAlias = CatBoostClassifier | CatBoostRegressor
 

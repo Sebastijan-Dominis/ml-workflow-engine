@@ -4,13 +4,14 @@ import logging
 
 import numpy as np
 import pandas as pd
+from numpy.typing import NDArray
+
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import ConfigError, DataError, ExplainabilityError
 from ml.runners.explainability.explainers.tree_model.adapters.base import TreeModelAdapter
 from ml.runners.explainability.explainers.tree_model.utils.validators.validate_lengths import (
     validate_lengths,
 )
-from numpy.typing import NDArray
 
 logger = logging.getLogger(__name__)
 

@@ -5,6 +5,7 @@ from collections.abc import Iterable
 from pathlib import Path
 
 import pandas as pd
+
 from ml.data.merge.merge_dataset_into_main import merge_dataset_into_main
 from ml.exceptions import ConfigError, DataError
 from ml.types import DataLineageEntry

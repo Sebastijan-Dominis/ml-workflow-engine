@@ -1,6 +1,7 @@
 """Runtime information about the system where the runner is executing."""
-from ml.config.schemas.hardware_cfg import HardwareTaskType
 from pydantic import BaseModel
+
+from ml.config.schemas.hardware_cfg import HardwareTaskType
 
 
 class Environment(BaseModel):

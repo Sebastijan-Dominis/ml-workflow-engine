@@ -3,6 +3,7 @@
 import logging
 
 import pandas as pd
+
 from ml.exceptions import DataError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
 from ml.features.validation.normalize_dtype import normalize_dtype

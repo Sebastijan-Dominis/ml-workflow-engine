@@ -3,6 +3,7 @@
 import logging
 
 from catboost import CatBoost
+
 from ml.exceptions import PipelineContractError
 from ml.runners.explainability.explainers.tree_model.adapters.base import TreeModelAdapter
 from ml.runners.explainability.explainers.tree_model.adapters.catboost import CatBoostAdapter

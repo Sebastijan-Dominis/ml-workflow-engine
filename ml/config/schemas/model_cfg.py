@@ -3,10 +3,11 @@
 from datetime import datetime
 from typing import Any
 
+from pydantic import BaseModel, ConfigDict, Field
+
 from ml.config.schemas.model_specs import ModelSpecs
 from ml.config.schemas.search_cfg import SearchConfig
 from ml.config.schemas.train_cfg import TrainConfig
-from pydantic import BaseModel, ConfigDict, Field
 
 
 class SearchLineageConfig(BaseModel):

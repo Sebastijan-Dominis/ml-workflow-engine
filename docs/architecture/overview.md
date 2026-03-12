@@ -72,3 +72,12 @@ This document provides a high-level overview of the system architecture, includi
 
 ## Design Decisions
 - See [decisions.md](decisions.md) for rationale behind architectural choices.
+
+## Boundaries
+- See [boundaries.md](boundaries.md) for boundaries-specific information.
+
+## System Invariants
+- See [system_invariants.md](system_invariants.md) for details on system invariants.
+
+## Validation Guarantees
+- See [validation_guarantees.md](validation_guarantees.md) for details on validation guarantees.

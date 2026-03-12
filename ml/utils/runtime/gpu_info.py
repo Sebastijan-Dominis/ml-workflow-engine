@@ -3,6 +3,7 @@
 from typing import TypedDict
 
 import pynvml
+
 from ml.config.schemas.hardware_cfg import HardwareConfig
 
 

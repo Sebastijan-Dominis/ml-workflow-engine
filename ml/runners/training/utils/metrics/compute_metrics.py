@@ -4,14 +4,15 @@ import logging
 from typing import Any
 
 import pandas as pd
+from sklearn.metrics import mean_absolute_error, r2_score, roc_auc_score, root_mean_squared_error
+from sklearn.pipeline import Pipeline
+
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import UserError
 from ml.features.transforms.transform_target import inverse_transform_target
 from ml.policies.promotion.threshold_support import TASKS_SUPPORTING_THRESHOLDS
 from ml.runners.shared.formatting.ensure_1d_array import ensure_1d_array
 from ml.runners.training.utils.metrics.best_f1 import get_best_f1_threshold
-from sklearn.metrics import mean_absolute_error, r2_score, roc_auc_score, root_mean_squared_error
-from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 

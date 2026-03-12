@@ -1,10 +1,11 @@
 from typing import Literal
 
+from pydantic import BaseModel
+
 from ml.config.schemas.hardware_cfg import HardwareConfig
 from ml.config.schemas.model_specs import ClassWeightingConfig, TargetTransformConfig
 from ml.modeling.models.feature_lineage import FeatureLineage
 from ml.types.splits import AllSplitsInfo
-from pydantic import BaseModel
 
 
 class Sources(BaseModel):

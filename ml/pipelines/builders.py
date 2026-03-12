@@ -3,12 +3,13 @@
 import logging
 
 import pandas as pd
+from sklearn.pipeline import Pipeline
+
 from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import ConfigError
 from ml.pipelines.operator_factory import build_operators
 from ml.pipelines.schema_utils import get_pipeline_features
 from ml.registries.catalogs import PIPELINE_COMPONENTS
-from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 __version__ = "1.0.0"

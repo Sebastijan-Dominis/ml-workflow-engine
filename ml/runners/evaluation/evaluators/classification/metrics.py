@@ -4,11 +4,6 @@ import logging
 
 import numpy as np
 import pandas as pd
-from ml.config.schemas.model_cfg import TrainModelConfig
-from ml.exceptions import EvaluationError, PipelineContractError, UserError
-from ml.runners.evaluation.constants.data_splits import DataSplits
-from ml.runners.evaluation.models.predictions import PredictionArtifacts
-from ml.runners.evaluation.utils.get_row_ids import get_row_ids
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
@@ -22,6 +17,12 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.pipeline import Pipeline
+
+from ml.config.schemas.model_cfg import TrainModelConfig
+from ml.exceptions import EvaluationError, PipelineContractError, UserError
+from ml.runners.evaluation.constants.data_splits import DataSplits
+from ml.runners.evaluation.models.predictions import PredictionArtifacts
+from ml.runners.evaluation.utils.get_row_ids import get_row_ids
 
 logger = logging.getLogger(__name__)
 

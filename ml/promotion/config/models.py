@@ -4,8 +4,9 @@ import logging
 from datetime import datetime
 from enum import StrEnum
 
-from ml.exceptions import ConfigError
 from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
+
+from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +20,30 @@ class MetricSet(StrEnum):
 class MetricName(StrEnum):
     """Supported metric names used in promotion criteria."""
 
+    # Classification metrics
+    POSITIVE_RATE = "positive_rate"
+    PREDICTION_POSITIVE_RATE = "prediction_positive_rate"
     ACCURACY = "accuracy"
     F1 = "f1"
+    PRECISION = "precision"
+    RECALL = "recall"
+    BALANCED_ACCURACY = "balanced_accuracy"
+    SPECIFICITY = "specificity"
     ROC_AUC = "roc_auc"
+    PR_AUC = "pr_auc"
+    LOG_LOSS = "log_loss"
+    BRIER_SCORE = "brier_score"
+    ECE = "ece"
+
+    # Regression metrics
+    MAE = "mae"
+    MSE = "mse"
+    RMSE = "rmse"
+    R2 = "r2"
+    MEDIAN_AE = "median_ae"
+    EXPLAINED_VARIANCE = "explained_variance"
+    RESIDUAL_MEAN = "residual_mean"
+    RESIDUAL_STD = "residual_std"
 
 class Direction(StrEnum):
     """Optimization direction per promotion metric."""
