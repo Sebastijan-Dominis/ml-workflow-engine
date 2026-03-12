@@ -57,7 +57,7 @@ python -m pipelines.data.register_raw_snapshot --data hotel_bookings --version v
 
 > Note: This still assumes:
 - Environment set up properly
-- data.csv exists in `data/raw/hotel_bookings/v1/{snapshot_id}/data.csv` (default)
+- `data/raw/hotel_bookings/v1/{snapshot_id}/data.csv` exists and is uncorrupted (default)
 
 ## Architecture
 
