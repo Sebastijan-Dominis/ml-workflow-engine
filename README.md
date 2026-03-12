@@ -55,6 +55,10 @@ python -m pipelines.data.register_raw_snapshot --data hotel_bookings --version v
 
 3. Use the artifact from this run for building interim datasets.
 
+> Note: This still assumes:
+- Environment set up properly
+- data.csv exists in `data/raw/hotel_bookings/v1/{snapshot_id}/data.csv` (default)
+
 ## Architecture
 
 See the [architecture overview](docs/architecture/overview.md) for details.
