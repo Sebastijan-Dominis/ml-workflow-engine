@@ -15,7 +15,7 @@ _Last updated: 2026-03-12_
     - Status: planned
     - Importance: crucial
 - [] Set up a proper environment for contributors
-    - Status: planned
+    - Status: in progress (started 2026-03-12)
     - Importance: high
 - [] Add a document describing each of the configs
     - Status: planned

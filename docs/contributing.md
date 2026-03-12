@@ -3,9 +3,8 @@
 Thank you for considering contributing to this project.
 
 - This repo is currently getting prepared to enable contributions.
-- The lines below will get un-commented once everything is prepared.
 
-<!-- ## Development Setup
+## Development Setup
 - Go to [setup.md](setup.md) for instructions.
 
 ## Code Style
@@ -25,6 +24,14 @@ Create feature branches preferably using the following format:
 - `fix/<issue>`
 - `docs/<topic>`
 
+## Commit Messages
+Use clear, descriptive commit messages.
+
+Examples:
+- feat: add monitoring pipeline
+- fix: correct the promotion step
+- docs: update the glossary
+
 ## Pull Requests
 - Create a pull request from a feature branch
 - Write clear commit messages
@@ -34,4 +41,7 @@ Create feature branches preferably using the following format:
 ## Review Process
 - All code must be reviewed before merging
 - Tests must pass before approval
-- Address reviewer feedback before merge -->
+- Address reviewer feedback before merge
+
+## Running tests
+- Please check [testing.md](testing.md) for detailed guidance
