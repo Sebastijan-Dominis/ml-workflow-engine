@@ -18,7 +18,7 @@ def _promotion_base_payload() -> dict:
     """Return a valid base payload shared by staging and production schemas."""
 
     return {
-        "previous_run_identity": {
+        "previous_production_run_identity": {
             "experiment_id": "exp-prev",
             "train_run_id": "train-prev",
             "eval_run_id": "eval-prev",
@@ -26,13 +26,9 @@ def _promotion_base_payload() -> dict:
             "promotion_id": "promotion-prev",
         },
         "metrics": {
-            "task_type": "classification",
-            "algorithm": "catboost",
-            "metrics": {
-                "train": {"f1": 0.8, "roc_auc": 0.85},
-                "val": {"f1": 0.78, "roc_auc": 0.83},
-                "test": {"f1": 0.77, "roc_auc": 0.82},
-            }
+            "train": {"f1": 0.8, "roc_auc": 0.85},
+            "val": {"f1": 0.78, "roc_auc": 0.83},
+            "test": {"f1": 0.77, "roc_auc": 0.82},
         },
         "previous_production_metrics": None,
         "promotion_thresholds": {
@@ -82,6 +78,39 @@ def test_production_promotion_metadata_allows_none_previous_metrics() -> None:
     assert result.previous_production_metrics is None
     assert result.decision.beats_previous is True
 
+
+def test_production_promotion_metadata_allows_none_previous_run_identity_fields() -> None:
+    """Ensure ProductionPromotionMetadata accepts None for previous run identity fields."""
+
+    payload = {
+        **_promotion_base_payload(),
+        "previous_production_run_identity": {
+            "experiment_id": None,
+            "train_run_id": None,
+            "eval_run_id": None,
+            "explain_run_id": None,
+            "promotion_id": None,
+        },
+        "run_identity": {
+            "stage": "production",
+            "experiment_id": "exp-current",
+            "train_run_id": "train-current",
+            "eval_run_id": "eval-current",
+            "explain_run_id": "explain-current",
+            "promotion_id": "promotion-current",
+        },
+        "decision": {
+            "promoted": True,
+            "reason": "beats previous",
+            "beats_previous": True,
+        },
+    }
+
+    result = ProductionPromotionMetadata.model_validate(payload)
+
+    assert result.previous_production_run_identity.experiment_id is None
+    assert result.previous_production_run_identity.promotion_id is None
+    assert result.decision.beats_previous is True
 
 def test_production_promotion_metadata_requires_promotion_id() -> None:
     """Ensure ProductionPromotionMetadata rejects payloads missing promotion_id."""

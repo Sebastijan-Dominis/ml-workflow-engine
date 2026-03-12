@@ -83,7 +83,7 @@ def _promotion_base_payload() -> dict:
     """Return a valid shared promotion metadata payload."""
 
     return {
-        "previous_run_identity": {
+        "previous_production_run_identity": {
             "experiment_id": "exp-prev",
             "train_run_id": "train-prev",
             "eval_run_id": "eval-prev",
@@ -91,22 +91,14 @@ def _promotion_base_payload() -> dict:
             "promotion_id": "promotion-prev",
         },
         "metrics": {
-            "task_type": "classification",
-            "algorithm": "catboost",
-            "metrics": {
-                "train": {"f1": 0.8, "roc_auc": 0.85},
-                "val": {"f1": 0.78, "roc_auc": 0.83},
-                "test": {"f1": 0.77, "roc_auc": 0.82},
-            }
+            "train": {"f1": 0.8, "roc_auc": 0.85},
+            "val": {"f1": 0.78, "roc_auc": 0.83},
+            "test": {"f1": 0.77, "roc_auc": 0.82},
         },
         "previous_production_metrics": {
-            "task_type": "classification",
-            "algorithm": "catboost",
-            "metrics": {
-                "train": {"f1": 0.75, "roc_auc": 0.8},
-                "val": {"f1": 0.74, "roc_auc": 0.79},
-                "test": {"f1": 0.73, "roc_auc": 0.78},
-            }
+            "train": {"f1": 0.75, "roc_auc": 0.8},
+            "val": {"f1": 0.74, "roc_auc": 0.79},
+            "test": {"f1": 0.73, "roc_auc": 0.78},
         },
         "promotion_thresholds": {
             "promotion_metrics": {

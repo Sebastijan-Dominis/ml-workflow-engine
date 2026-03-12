@@ -1,7 +1,7 @@
 """Models for promotion metadata."""
 from typing import Literal
 
-from ml.modeling.models.metrics import EvaluationMetrics
+from ml.modeling.models.metrics import EvaluationMetricsHelper
 from ml.promotion.config.models import PromotionThresholds
 from pydantic import BaseModel
 
@@ -20,13 +20,17 @@ class CurrentProductionRunIdentity(CurrentRunIdentity):
     """Model for current production run identity, extending base run identity."""
     promotion_id: str
 
-class PreviousProductionRunIdentity(RunIdentity):
-    """Model for previous production run identity, extending base run identity."""
-    promotion_id: str
-
 class CurrentStagingRunIdentity(CurrentRunIdentity):
     """Model for current staging run identity, extending base run identity."""
     staging_id: str
+
+class PreviousProductionRunIdentity(BaseModel):
+    """Model for previous production run identity, extending base run identity."""
+    experiment_id: str | None = None
+    train_run_id: str | None = None
+    eval_run_id: str | None = None
+    explain_run_id: str | None = None
+    promotion_id: str | None = None  # promotion_id may be None if no previous production run exists
 
 class PromotionDecision(BaseModel):
     """Base model for promotion decision results."""
@@ -46,9 +50,9 @@ class Context(BaseModel):
 
 class PromotionMetadata(BaseModel):
     """Base model for promotion metadata, containing all relevant information for decision making and metadata preparation."""
-    previous_run_identity: PreviousProductionRunIdentity
-    metrics: EvaluationMetrics
-    previous_production_metrics: EvaluationMetrics | None
+    previous_production_run_identity: PreviousProductionRunIdentity
+    metrics: EvaluationMetricsHelper
+    previous_production_metrics: EvaluationMetricsHelper | None = None
     promotion_thresholds: PromotionThresholds
     promotion_thresholds_hash: str
     context: Context

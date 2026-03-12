@@ -185,4 +185,7 @@ def prepare_metadata(
         logger.error(msg)
         raise UserError(msg)
 
-    return validated_metadata.model_dump(exclude_none=True)
+    return validated_metadata.model_dump(
+        exclude_none=True,
+        mode="json"
+    )
