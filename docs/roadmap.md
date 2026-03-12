@@ -11,9 +11,9 @@ _Last updated: 2026-03-12_
     - importance (low/medium/high/crucial)
 
 ## Short Term (less than 1 month)
-- [ ] Write the main project README.md
+- [x] Write the main project README.md
     - Status: planned
-    - Importance: crucial
+    - Importance: done (2026-03-12)
 - [x] Set up a proper environment for contributors
     - Status: done (2026-03-12)
     - Importance: high
