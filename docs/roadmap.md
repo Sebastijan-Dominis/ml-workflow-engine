@@ -14,7 +14,7 @@ _Last updated: 2026-03-12_
 - [] Write the main project README.md
     - Status: planned
     - Importance: crucial
-- [] Set up a proper environment for contributors
+- [x] Set up a proper environment for contributors
     - Status: in progress (started 2026-03-12)
     - Importance: high
 - [] Add a document describing each of the configs
