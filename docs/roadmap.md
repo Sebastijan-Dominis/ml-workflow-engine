@@ -34,9 +34,6 @@ _Last updated: 2026-03-12_
     - Importance: low
 
 ## Mid Term (1-6 months)
-_No items currently planned._
-
-## Long Term (6+ months)
 - [] Create tools for an LLM using the production models and their respective artifacts
     - Status: planned
     - Importance: low
@@ -49,3 +46,6 @@ _No items currently planned._
 - [] Add support for xgboost and lgbm algorithms
     - Status: planned
     - Importance: low
+
+## Long Term (6+ months)
+_No items currently planned._
