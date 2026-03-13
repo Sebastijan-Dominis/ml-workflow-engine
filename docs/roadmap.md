@@ -32,9 +32,9 @@ _Last updated: 2026-03-13_
 - [ ] Add monitor.py
     - Status: planned
     - Importance: low
-- [ ] Add config hash validation at post-search steps
+- [ ] Add pipeline config validation to the training pipeline
     - Status: planned
-    - Importance: low
+    - Importance: medium
 
 ## Mid Term (1-6 months)
 - [ ] Create tools for an LLM using the production models and their respective artifacts
