@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib
 import sys
 import types
+from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, cast
@@ -68,6 +69,11 @@ def _build_minimal_cfg(task_type: str) -> Any:
             data_type="tabular",
             target=SimpleNamespace(transform=SimpleNamespace()),
             pipeline=SimpleNamespace(path="configs/pipelines/tabular/sample.yaml"),
+            assumptions={
+                "handles_categoricals": True,
+                "supports_regression": True,
+                "supports_classification": True,
+            },
         ),
     )
 
@@ -116,7 +122,20 @@ def test_train_executes_classification_flow_and_returns_expected_output(
         return ["cat"]
 
     monkeypatch.setattr(module, "get_cat_features", _get_cat_features)
-    monkeypatch.setattr(module, "load_yaml", lambda path: {"steps": ["dummy"]})
+    monkeypatch.setattr(module, "load_yaml", lambda path: {
+        "name": "test_pipeline",
+        "version": "v1",
+        "steps": ["SchemaValidator"],
+        "assumptions": {
+            "handles_categoricals": True,
+            "supports_regression": True,
+            "supports_classification": True,
+        },
+        "lineage": {
+            "created_by": "test_user",
+            "created_at": datetime.now().isoformat(),
+        },
+    })
     monkeypatch.setattr(module, "compute_model_config_hash", lambda cfg_dict: "pipeline-hash-1")
 
     monkeypatch.setattr(
@@ -177,7 +196,21 @@ def test_train_skips_class_weight_resolution_for_regression(monkeypatch: pytest.
     monkeypatch.setattr(module, "transform_target", lambda series, *, transform_config, split_name: series)
     monkeypatch.setattr(module, "load_schemas", lambda model_cfg, feature_lineage: ({}, []))
     monkeypatch.setattr(module, "get_cat_features", lambda *args, **kwargs: [])
-    monkeypatch.setattr(module, "load_yaml", lambda path: {"steps": []})
+    from datetime import datetime
+    monkeypatch.setattr(module, "load_yaml", lambda path: {
+        "name": "test_pipeline",
+        "version": "v1",
+        "steps": ["SchemaValidator"],
+        "assumptions": {
+            "handles_categoricals": True,
+            "supports_regression": True,
+            "supports_classification": True,
+        },
+        "lineage": {
+            "created_by": "test_user",
+            "created_at": datetime.now().isoformat(),
+        },
+    })
     monkeypatch.setattr(module, "compute_model_config_hash", lambda cfg_dict: "hash")
     monkeypatch.setattr(module, "validate_model_feature_pipeline_contract", lambda *args, **kwargs: None)
 

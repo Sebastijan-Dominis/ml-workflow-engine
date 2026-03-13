@@ -14,6 +14,7 @@ from ml.modeling.class_weighting.models import DataStats
 from ml.modeling.class_weighting.resolve_class_weighting import resolve_class_weighting
 from ml.modeling.class_weighting.resolve_metric import resolve_metric
 from ml.modeling.class_weighting.stats_resolver import compute_data_stats
+from ml.pipelines.validation import validate_pipeline_config
 from ml.search.searchers.catboost.pipeline.context import SearchContext
 from ml.utils.loaders import load_yaml
 from ml.utils.pipeline_core.step import PipelineStep
@@ -86,8 +87,9 @@ class PreparationStep(PipelineStep[SearchContext]):
         input_schema, derived_schema = load_schemas(ctx.model_cfg, lineage)
 
         pipeline_path = Path(f"{ctx.model_cfg.pipeline.path}").resolve()
-        pipeline_cfg = load_yaml(pipeline_path)
-        pipeline_hash = compute_model_config_hash(pipeline_cfg)
+        pipeline_cfg_raw = load_yaml(pipeline_path)
+        pipeline_cfg = validate_pipeline_config(pipeline_cfg_raw)
+        pipeline_hash = compute_model_config_hash(pipeline_cfg.model_dump())
 
         cat_features = get_cat_features(ctx.model_cfg, input_schema, derived_schema)
 

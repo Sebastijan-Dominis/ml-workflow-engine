@@ -12,6 +12,7 @@ def validate_processed_dataset_metadata(metadata: dict) -> ProcessedDatasetMetad
 
     Args:
         metadata (dict): The metadata dictionary to validate.
+
     Returns:
         ProcessedDatasetMetadata: The validated metadata object.
     """

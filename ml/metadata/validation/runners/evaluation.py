@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from ml.exceptions import UserError
+from ml.exceptions import RuntimeMLError
 from ml.metadata.schemas.runners.evaluation import EvaluationMetadata
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ def validate_evaluation_metadata(metadata_dict: dict[str, Any]) -> EvaluationMet
         An instance of EvaluationMetadata if validation is successful.
 
     Raises:
-        pydantic.ValidationError: If the input dictionary does not conform to the EvaluationMetadata schema.
+        RuntimeMLError: If the input dictionary does not conform to the EvaluationMetadata schema.
     """
 
     try:
@@ -25,4 +25,4 @@ def validate_evaluation_metadata(metadata_dict: dict[str, Any]) -> EvaluationMet
     except Exception as e:
         msg = "Evaluation metadata validation failed."
         logger.exception(msg)
-        raise UserError(msg) from e
+        raise RuntimeMLError(msg) from e

@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from ml.exceptions import UserError
+from ml.exceptions import RuntimeMLError
 from ml.metadata.schemas.runners.explainability import ExplainabilityMetadata
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ def validate_explainability_metadata(explainability_metadata: dict[str, Any]) ->
     Returns:
         The validated ExplainabilityMetadata object.
     Raises:
-        UserError: If any required fields are missing or contain invalid values.
+        RuntimeMLError: If any required fields are missing or contain invalid values.
     """
 
     try:
@@ -24,4 +24,4 @@ def validate_explainability_metadata(explainability_metadata: dict[str, Any]) ->
     except Exception as e:
         msg = "Explainability metadata validation failed."
         logger.exception(msg)
-        raise UserError(msg) from e
+        raise RuntimeMLError(msg) from e

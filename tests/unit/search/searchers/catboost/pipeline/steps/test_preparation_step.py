@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib
 import sys
 import types
+from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -89,6 +90,11 @@ def _make_context(tmp_path: Path, *, task_type: str) -> SimpleNamespace:
             task=SimpleNamespace(type=task_type),
             pipeline=SimpleNamespace(path=str(pipeline_file)),
             target=SimpleNamespace(transform=SimpleNamespace(enabled=False, type=None)),
+            assumptions={
+                "handles_categoricals": True,
+                "supports_regression": True,
+                "supports_classification": True,
+            },
         ),
         strict=True,
         class_weights=None,
@@ -110,13 +116,25 @@ def test_preparation_step_populates_context_and_resolves_classification_weights(
     splits_info = {"train_rows": 1}
     input_schema = pd.DataFrame({"feature": ["country"], "dtype": ["object"]})
     derived_schema = pd.DataFrame({"feature": [], "source_operator": []})
-    pipeline_cfg = {"steps": ["SchemaValidator"]}
     stats_obj = object()
 
     monkeypatch.setattr(preparation_module, "load_features_and_target", lambda *_args, **_kwargs: (x_raw, y_raw, lineage))
     monkeypatch.setattr(preparation_module, "get_splits", lambda *_args, **_kwargs: (splits, splits_info))
     monkeypatch.setattr(preparation_module, "load_schemas", lambda *_args, **_kwargs: (input_schema, derived_schema))
-    monkeypatch.setattr(preparation_module, "load_yaml", lambda _path: pipeline_cfg)
+    monkeypatch.setattr(preparation_module, "load_yaml", lambda _path: {
+        "name": "test_pipeline",
+        "version": "v1",
+        "steps": ["SchemaValidator"],
+        "assumptions": {
+            "handles_categoricals": True,
+            "supports_regression": True,
+            "supports_classification": True,
+        },
+        "lineage": {
+            "created_by": "test_user",
+            "created_at": datetime.now().isoformat(),
+        },
+    })
     monkeypatch.setattr(preparation_module, "compute_model_config_hash", lambda _cfg: "pipeline-hash")
     monkeypatch.setattr(preparation_module, "get_cat_features", lambda *_args, **_kwargs: ["country"])
     monkeypatch.setattr(preparation_module, "validate_model_feature_pipeline_contract", lambda *_args, **_kwargs: None)
@@ -131,7 +149,7 @@ def test_preparation_step_populates_context_and_resolves_classification_weights(
     assert ctx.X_train.equals(splits.X_train)
     assert ctx.y_train.tolist() == [11]
     assert ctx.splits_info == splits_info
-    assert ctx.pipeline_cfg == pipeline_cfg
+    assert ctx.pipeline_cfg.steps == ["SchemaValidator"]
     assert ctx.input_schema.equals(input_schema)
     assert ctx.derived_schema.equals(derived_schema)
     assert ctx.cat_features == ["country"]
@@ -156,7 +174,21 @@ def test_preparation_step_skips_class_weighting_for_non_classification(
     monkeypatch.setattr(preparation_module, "load_features_and_target", lambda *_args, **_kwargs: (x_raw, y_raw, []))
     monkeypatch.setattr(preparation_module, "get_splits", lambda *_args, **_kwargs: (splits, {"train_rows": 1}))
     monkeypatch.setattr(preparation_module, "load_schemas", lambda *_args, **_kwargs: (pd.DataFrame(), pd.DataFrame()))
-    monkeypatch.setattr(preparation_module, "load_yaml", lambda _path: {"steps": []})
+    from datetime import datetime
+    monkeypatch.setattr(preparation_module, "load_yaml", lambda _path: {
+        "name": "test_pipeline",
+        "version": "v1",
+        "steps": ["SchemaValidator"],
+        "assumptions": {
+            "handles_categoricals": True,
+            "supports_regression": True,
+            "supports_classification": True,
+        },
+        "lineage": {
+            "created_by": "test_user",
+            "created_at": datetime.now().isoformat(),
+        },
+    })
     monkeypatch.setattr(preparation_module, "compute_model_config_hash", lambda _cfg: "h")
     monkeypatch.setattr(preparation_module, "get_cat_features", lambda *_args, **_kwargs: [])
     monkeypatch.setattr(preparation_module, "validate_model_feature_pipeline_contract", lambda *_args, **_kwargs: None)

@@ -85,6 +85,8 @@ def _build_context(failure_management_dir: Path) -> SearchContext:
         ),
     )
 
+    pipeline_cfg = SimpleNamespace(assumptions=SimpleNamespace(handles_categoricals=True))
+
     ctx = SearchContext(
         model_cfg=cast(Any, model_cfg),
         strict=True,
@@ -94,7 +96,7 @@ def _build_context(failure_management_dir: Path) -> SearchContext:
     ctx.y_train = pd.Series([1, 0])
     ctx.input_schema = pd.DataFrame({"feature": ["country"], "dtype": ["object"]})
     ctx.derived_schema = pd.DataFrame({"feature": [], "source_operator": []})
-    ctx.pipeline_cfg = {"steps": []}
+    ctx.pipeline_cfg = cast(Any, pipeline_cfg)
     ctx.cat_features = ["country"]
     ctx.class_weights = {"class_weights": [1.0, 1.0]}
     ctx.scoring = "roc_auc"

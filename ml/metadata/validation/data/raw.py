@@ -12,6 +12,7 @@ def validate_raw_snapshot_metadata(metadata: dict) -> RawSnapshotMetadata:
 
     Args:
         metadata (dict): The metadata dictionary to validate.
+
     Returns:
         RawSnapshotMetadata: The validated metadata object.
     """

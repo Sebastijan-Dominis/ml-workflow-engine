@@ -16,8 +16,10 @@ def validate_promotion_metadata(promotion_metadata_raw: PromotionMetadataDict, s
     Args:
         promotion_metadata_raw: Raw promotion metadata dictionary to validate.
         stage: The stage for which to validate the metadata.
+
     Returns:
         Validated promotion metadata as either ProductionPromotionMetadata or StagingPromotionMetadata.
+
     Raises:
         RuntimeMLError: If validation fails against both staging and production models.
     """

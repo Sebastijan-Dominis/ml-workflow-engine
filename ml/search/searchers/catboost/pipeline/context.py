@@ -10,6 +10,7 @@ from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.exceptions import RuntimeMLError
 from ml.modeling.class_weighting.constants import SUPPORTED_SCORING_FUNCTIONS
 from ml.modeling.models.feature_lineage import FeatureLineage
+from ml.pipelines.models import PipelineConfig
 from ml.types import AllSplitsInfo
 
 logger = logging.getLogger(__name__)
@@ -28,7 +29,7 @@ class SearchContext:
     feature_lineage: list[FeatureLineage] | None = None
     input_schema: pd.DataFrame | None = None
     derived_schema: pd.DataFrame | None = None
-    pipeline_cfg: dict | None = None
+    pipeline_cfg: PipelineConfig | None = None
     pipeline_hash: str | None = None
     cat_features: list[str] | None = None
     scoring: SUPPORTED_SCORING_FUNCTIONS | None = None
@@ -126,11 +127,11 @@ class SearchContext:
         return self.derived_schema
 
     @property
-    def require_pipeline_cfg(self) -> dict:
+    def require_pipeline_cfg(self) -> PipelineConfig:
         """Return loaded pipeline config or raise if missing.
 
         Returns:
-            dict: Loaded pipeline configuration.
+            PipelineConfig: Loaded pipeline configuration.
         """
 
         if self.pipeline_cfg is None:

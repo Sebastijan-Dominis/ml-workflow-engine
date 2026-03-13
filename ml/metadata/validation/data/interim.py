@@ -12,6 +12,7 @@ def validate_interim_dataset_metadata(metadata: dict) -> InterimDatasetMetadata:
 
     Args:
         metadata (dict): The metadata dictionary to validate.
+
     Returns:
         InterimDatasetMetadata: The validated metadata object.
     """

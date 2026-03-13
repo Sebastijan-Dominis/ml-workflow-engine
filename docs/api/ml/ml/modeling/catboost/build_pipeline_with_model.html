@@ -71,44 +71,45 @@
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineContractError</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml.pipelines.builders</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_pipeline</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml.pipelines.composition.add_model_to_pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_model_to_pipeline</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="k">def</span><span class="w"> </span><span class="nf">build_pipeline_with_model</span><span class="p">(</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="n">model_cfg</span><span class="p">:</span> <span class="n">SearchModelConfig</span> <span class="o">|</span> <span class="n">TrainModelConfig</span><span class="p">,</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">pipeline_cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">input_schema</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">derived_schema</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">model</span><span class="p">:</span> <span class="n">CatBoostClassifier</span> <span class="o">|</span> <span class="n">CatBoostRegressor</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pipeline</span><span class="p">:</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a feature pipeline and append a validated CatBoost model step.</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    Args:</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">        model_cfg: Validated search or train model configuration.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">        pipeline_cfg: Pipeline configuration dictionary.</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        input_schema: Input feature schema dataframe.</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        derived_schema: Derived feature schema dataframe.</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        model: Instantiated CatBoost estimator.</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">    Returns:</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">        Pipeline: Constructed sklearn pipeline with final `Model` step attached.</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">build_pipeline</span><span class="p">(</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="n">pipeline_cfg</span><span class="o">=</span><span class="n">pipeline_cfg</span><span class="p">,</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="n">input_schema</span><span class="o">=</span><span class="n">input_schema</span><span class="p">,</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="n">derived_schema</span><span class="o">=</span><span class="n">derived_schema</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="p">)</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">CatBoostClassifier</span><span class="p">,</span> <span class="n">CatBoostRegressor</span><span class="p">)):</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Defined model is not a CatBoostClassifier or CatBoostRegressor instance.&quot;</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="k">raise</span> <span class="n">PipelineContractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">add_model_to_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="k">return</span> <span class="n">pipeline</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml.pipelines.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineConfig</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="k">def</span><span class="w"> </span><span class="nf">build_pipeline_with_model</span><span class="p">(</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="n">model_cfg</span><span class="p">:</span> <span class="n">SearchModelConfig</span> <span class="o">|</span> <span class="n">TrainModelConfig</span><span class="p">,</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">pipeline_cfg</span><span class="p">:</span> <span class="n">PipelineConfig</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">input_schema</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="n">derived_schema</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="n">model</span><span class="p">:</span> <span class="n">CatBoostClassifier</span> <span class="o">|</span> <span class="n">CatBoostRegressor</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pipeline</span><span class="p">:</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a feature pipeline and append a validated CatBoost model step.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    Args:</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">        model_cfg: Validated search or train model configuration.</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        pipeline_cfg: Pipeline configuration object.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        input_schema: Input feature schema dataframe.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        derived_schema: Derived feature schema dataframe.</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        model: Instantiated CatBoost estimator.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">    Returns:</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">        Pipeline: Constructed sklearn pipeline with final `Model` step attached.</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">build_pipeline</span><span class="p">(</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="n">pipeline_cfg</span><span class="o">=</span><span class="n">pipeline_cfg</span><span class="p">,</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="n">input_schema</span><span class="o">=</span><span class="n">input_schema</span><span class="p">,</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="n">derived_schema</span><span class="o">=</span><span class="n">derived_schema</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="p">)</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">CatBoostClassifier</span><span class="p">,</span> <span class="n">CatBoostRegressor</span><span class="p">)):</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Defined model is not a CatBoostClassifier or CatBoostRegressor instance.&quot;</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="k">raise</span> <span class="n">PipelineContractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">add_model_to_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="k">return</span> <span class="n">pipeline</span>
 </span></pre></div>
 
 
@@ -130,47 +131,47 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">build_pipeline_with_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="n"><a href="../../config/schemas/model_cfg.html#SearchModelConfig">ml.config.schemas.model_cfg.SearchModelConfig</a></span> <span class="o">|</span> <span class="n"><a href="../../config/schemas/model_cfg.html#TrainModelConfig">ml.config.schemas.model_cfg.TrainModelConfig</a></span>,</span><span class="param">	<span class="n">pipeline_cfg</span><span class="p">:</span> <span class="nb">dict</span>,</span><span class="param">	<span class="n">input_schema</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">derived_schema</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">catboost</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">CatBoostClassifier</span> <span class="o">|</span> <span class="n">catboost</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">CatBoostRegressor</span></span><span class="return-annotation">) -> <span class="n">sklearn</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">Pipeline</span>:</span></span>
+        <span class="name">build_pipeline_with_model</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="n"><a href="../../config/schemas/model_cfg.html#SearchModelConfig">ml.config.schemas.model_cfg.SearchModelConfig</a></span> <span class="o">|</span> <span class="n"><a href="../../config/schemas/model_cfg.html#TrainModelConfig">ml.config.schemas.model_cfg.TrainModelConfig</a></span>,</span><span class="param">	<span class="n">pipeline_cfg</span><span class="p">:</span> <span class="n"><a href="../../pipelines/models.html#PipelineConfig">ml.pipelines.models.PipelineConfig</a></span>,</span><span class="param">	<span class="n">input_schema</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">derived_schema</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">catboost</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">CatBoostClassifier</span> <span class="o">|</span> <span class="n">catboost</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">CatBoostRegressor</span></span><span class="return-annotation">) -> <span class="n">sklearn</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">Pipeline</span>:</span></span>
 
                 <label class="view-source-button" for="build_pipeline_with_model-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#build_pipeline_with_model"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="build_pipeline_with_model-17"><a href="#build_pipeline_with_model-17"><span class="linenos">17</span></a><span class="k">def</span><span class="w"> </span><span class="nf">build_pipeline_with_model</span><span class="p">(</span>
-</span><span id="build_pipeline_with_model-18"><a href="#build_pipeline_with_model-18"><span class="linenos">18</span></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="build_pipeline_with_model-19"><a href="#build_pipeline_with_model-19"><span class="linenos">19</span></a>    <span class="n">model_cfg</span><span class="p">:</span> <span class="n">SearchModelConfig</span> <span class="o">|</span> <span class="n">TrainModelConfig</span><span class="p">,</span>
-</span><span id="build_pipeline_with_model-20"><a href="#build_pipeline_with_model-20"><span class="linenos">20</span></a>    <span class="n">pipeline_cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
-</span><span id="build_pipeline_with_model-21"><a href="#build_pipeline_with_model-21"><span class="linenos">21</span></a>    <span class="n">input_schema</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="build_pipeline_with_model-22"><a href="#build_pipeline_with_model-22"><span class="linenos">22</span></a>    <span class="n">derived_schema</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="build_pipeline_with_model-23"><a href="#build_pipeline_with_model-23"><span class="linenos">23</span></a>    <span class="n">model</span><span class="p">:</span> <span class="n">CatBoostClassifier</span> <span class="o">|</span> <span class="n">CatBoostRegressor</span>
-</span><span id="build_pipeline_with_model-24"><a href="#build_pipeline_with_model-24"><span class="linenos">24</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pipeline</span><span class="p">:</span>
-</span><span id="build_pipeline_with_model-25"><a href="#build_pipeline_with_model-25"><span class="linenos">25</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a feature pipeline and append a validated CatBoost model step.</span>
-</span><span id="build_pipeline_with_model-26"><a href="#build_pipeline_with_model-26"><span class="linenos">26</span></a>
-</span><span id="build_pipeline_with_model-27"><a href="#build_pipeline_with_model-27"><span class="linenos">27</span></a><span class="sd">    Args:</span>
-</span><span id="build_pipeline_with_model-28"><a href="#build_pipeline_with_model-28"><span class="linenos">28</span></a><span class="sd">        model_cfg: Validated search or train model configuration.</span>
-</span><span id="build_pipeline_with_model-29"><a href="#build_pipeline_with_model-29"><span class="linenos">29</span></a><span class="sd">        pipeline_cfg: Pipeline configuration dictionary.</span>
-</span><span id="build_pipeline_with_model-30"><a href="#build_pipeline_with_model-30"><span class="linenos">30</span></a><span class="sd">        input_schema: Input feature schema dataframe.</span>
-</span><span id="build_pipeline_with_model-31"><a href="#build_pipeline_with_model-31"><span class="linenos">31</span></a><span class="sd">        derived_schema: Derived feature schema dataframe.</span>
-</span><span id="build_pipeline_with_model-32"><a href="#build_pipeline_with_model-32"><span class="linenos">32</span></a><span class="sd">        model: Instantiated CatBoost estimator.</span>
-</span><span id="build_pipeline_with_model-33"><a href="#build_pipeline_with_model-33"><span class="linenos">33</span></a>
-</span><span id="build_pipeline_with_model-34"><a href="#build_pipeline_with_model-34"><span class="linenos">34</span></a><span class="sd">    Returns:</span>
-</span><span id="build_pipeline_with_model-35"><a href="#build_pipeline_with_model-35"><span class="linenos">35</span></a><span class="sd">        Pipeline: Constructed sklearn pipeline with final `Model` step attached.</span>
-</span><span id="build_pipeline_with_model-36"><a href="#build_pipeline_with_model-36"><span class="linenos">36</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="build_pipeline_with_model-37"><a href="#build_pipeline_with_model-37"><span class="linenos">37</span></a>
-</span><span id="build_pipeline_with_model-38"><a href="#build_pipeline_with_model-38"><span class="linenos">38</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">build_pipeline</span><span class="p">(</span>
-</span><span id="build_pipeline_with_model-39"><a href="#build_pipeline_with_model-39"><span class="linenos">39</span></a>        <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="build_pipeline_with_model-40"><a href="#build_pipeline_with_model-40"><span class="linenos">40</span></a>        <span class="n">pipeline_cfg</span><span class="o">=</span><span class="n">pipeline_cfg</span><span class="p">,</span>
-</span><span id="build_pipeline_with_model-41"><a href="#build_pipeline_with_model-41"><span class="linenos">41</span></a>        <span class="n">input_schema</span><span class="o">=</span><span class="n">input_schema</span><span class="p">,</span>
-</span><span id="build_pipeline_with_model-42"><a href="#build_pipeline_with_model-42"><span class="linenos">42</span></a>        <span class="n">derived_schema</span><span class="o">=</span><span class="n">derived_schema</span>
-</span><span id="build_pipeline_with_model-43"><a href="#build_pipeline_with_model-43"><span class="linenos">43</span></a>    <span class="p">)</span>
-</span><span id="build_pipeline_with_model-44"><a href="#build_pipeline_with_model-44"><span class="linenos">44</span></a>
-</span><span id="build_pipeline_with_model-45"><a href="#build_pipeline_with_model-45"><span class="linenos">45</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">CatBoostClassifier</span><span class="p">,</span> <span class="n">CatBoostRegressor</span><span class="p">)):</span>
-</span><span id="build_pipeline_with_model-46"><a href="#build_pipeline_with_model-46"><span class="linenos">46</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Defined model is not a CatBoostClassifier or CatBoostRegressor instance.&quot;</span>
-</span><span id="build_pipeline_with_model-47"><a href="#build_pipeline_with_model-47"><span class="linenos">47</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="build_pipeline_with_model-48"><a href="#build_pipeline_with_model-48"><span class="linenos">48</span></a>        <span class="k">raise</span> <span class="n">PipelineContractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="build_pipeline_with_model-49"><a href="#build_pipeline_with_model-49"><span class="linenos">49</span></a>
-</span><span id="build_pipeline_with_model-50"><a href="#build_pipeline_with_model-50"><span class="linenos">50</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">add_model_to_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-</span><span id="build_pipeline_with_model-51"><a href="#build_pipeline_with_model-51"><span class="linenos">51</span></a>    <span class="k">return</span> <span class="n">pipeline</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="build_pipeline_with_model-18"><a href="#build_pipeline_with_model-18"><span class="linenos">18</span></a><span class="k">def</span><span class="w"> </span><span class="nf">build_pipeline_with_model</span><span class="p">(</span>
+</span><span id="build_pipeline_with_model-19"><a href="#build_pipeline_with_model-19"><span class="linenos">19</span></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="build_pipeline_with_model-20"><a href="#build_pipeline_with_model-20"><span class="linenos">20</span></a>    <span class="n">model_cfg</span><span class="p">:</span> <span class="n">SearchModelConfig</span> <span class="o">|</span> <span class="n">TrainModelConfig</span><span class="p">,</span>
+</span><span id="build_pipeline_with_model-21"><a href="#build_pipeline_with_model-21"><span class="linenos">21</span></a>    <span class="n">pipeline_cfg</span><span class="p">:</span> <span class="n">PipelineConfig</span><span class="p">,</span>
+</span><span id="build_pipeline_with_model-22"><a href="#build_pipeline_with_model-22"><span class="linenos">22</span></a>    <span class="n">input_schema</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="build_pipeline_with_model-23"><a href="#build_pipeline_with_model-23"><span class="linenos">23</span></a>    <span class="n">derived_schema</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="build_pipeline_with_model-24"><a href="#build_pipeline_with_model-24"><span class="linenos">24</span></a>    <span class="n">model</span><span class="p">:</span> <span class="n">CatBoostClassifier</span> <span class="o">|</span> <span class="n">CatBoostRegressor</span>
+</span><span id="build_pipeline_with_model-25"><a href="#build_pipeline_with_model-25"><span class="linenos">25</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Pipeline</span><span class="p">:</span>
+</span><span id="build_pipeline_with_model-26"><a href="#build_pipeline_with_model-26"><span class="linenos">26</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a feature pipeline and append a validated CatBoost model step.</span>
+</span><span id="build_pipeline_with_model-27"><a href="#build_pipeline_with_model-27"><span class="linenos">27</span></a>
+</span><span id="build_pipeline_with_model-28"><a href="#build_pipeline_with_model-28"><span class="linenos">28</span></a><span class="sd">    Args:</span>
+</span><span id="build_pipeline_with_model-29"><a href="#build_pipeline_with_model-29"><span class="linenos">29</span></a><span class="sd">        model_cfg: Validated search or train model configuration.</span>
+</span><span id="build_pipeline_with_model-30"><a href="#build_pipeline_with_model-30"><span class="linenos">30</span></a><span class="sd">        pipeline_cfg: Pipeline configuration object.</span>
+</span><span id="build_pipeline_with_model-31"><a href="#build_pipeline_with_model-31"><span class="linenos">31</span></a><span class="sd">        input_schema: Input feature schema dataframe.</span>
+</span><span id="build_pipeline_with_model-32"><a href="#build_pipeline_with_model-32"><span class="linenos">32</span></a><span class="sd">        derived_schema: Derived feature schema dataframe.</span>
+</span><span id="build_pipeline_with_model-33"><a href="#build_pipeline_with_model-33"><span class="linenos">33</span></a><span class="sd">        model: Instantiated CatBoost estimator.</span>
+</span><span id="build_pipeline_with_model-34"><a href="#build_pipeline_with_model-34"><span class="linenos">34</span></a>
+</span><span id="build_pipeline_with_model-35"><a href="#build_pipeline_with_model-35"><span class="linenos">35</span></a><span class="sd">    Returns:</span>
+</span><span id="build_pipeline_with_model-36"><a href="#build_pipeline_with_model-36"><span class="linenos">36</span></a><span class="sd">        Pipeline: Constructed sklearn pipeline with final `Model` step attached.</span>
+</span><span id="build_pipeline_with_model-37"><a href="#build_pipeline_with_model-37"><span class="linenos">37</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="build_pipeline_with_model-38"><a href="#build_pipeline_with_model-38"><span class="linenos">38</span></a>
+</span><span id="build_pipeline_with_model-39"><a href="#build_pipeline_with_model-39"><span class="linenos">39</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">build_pipeline</span><span class="p">(</span>
+</span><span id="build_pipeline_with_model-40"><a href="#build_pipeline_with_model-40"><span class="linenos">40</span></a>        <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="build_pipeline_with_model-41"><a href="#build_pipeline_with_model-41"><span class="linenos">41</span></a>        <span class="n">pipeline_cfg</span><span class="o">=</span><span class="n">pipeline_cfg</span><span class="p">,</span>
+</span><span id="build_pipeline_with_model-42"><a href="#build_pipeline_with_model-42"><span class="linenos">42</span></a>        <span class="n">input_schema</span><span class="o">=</span><span class="n">input_schema</span><span class="p">,</span>
+</span><span id="build_pipeline_with_model-43"><a href="#build_pipeline_with_model-43"><span class="linenos">43</span></a>        <span class="n">derived_schema</span><span class="o">=</span><span class="n">derived_schema</span>
+</span><span id="build_pipeline_with_model-44"><a href="#build_pipeline_with_model-44"><span class="linenos">44</span></a>    <span class="p">)</span>
+</span><span id="build_pipeline_with_model-45"><a href="#build_pipeline_with_model-45"><span class="linenos">45</span></a>
+</span><span id="build_pipeline_with_model-46"><a href="#build_pipeline_with_model-46"><span class="linenos">46</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">(</span><span class="n">CatBoostClassifier</span><span class="p">,</span> <span class="n">CatBoostRegressor</span><span class="p">)):</span>
+</span><span id="build_pipeline_with_model-47"><a href="#build_pipeline_with_model-47"><span class="linenos">47</span></a>        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Defined model is not a CatBoostClassifier or CatBoostRegressor instance.&quot;</span>
+</span><span id="build_pipeline_with_model-48"><a href="#build_pipeline_with_model-48"><span class="linenos">48</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="build_pipeline_with_model-49"><a href="#build_pipeline_with_model-49"><span class="linenos">49</span></a>        <span class="k">raise</span> <span class="n">PipelineContractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="build_pipeline_with_model-50"><a href="#build_pipeline_with_model-50"><span class="linenos">50</span></a>
+</span><span id="build_pipeline_with_model-51"><a href="#build_pipeline_with_model-51"><span class="linenos">51</span></a>    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">add_model_to_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</span><span id="build_pipeline_with_model-52"><a href="#build_pipeline_with_model-52"><span class="linenos">52</span></a>    <span class="k">return</span> <span class="n">pipeline</span>
 </span></pre></div>
 
 
@@ -178,7 +179,7 @@
 
 <p>Args:
     model_cfg: Validated search or train model configuration.
-    pipeline_cfg: Pipeline configuration dictionary.
+    pipeline_cfg: Pipeline configuration object.
     input_schema: Input feature schema dataframe.
     derived_schema: Derived feature schema dataframe.
     model: Instantiated CatBoost estimator.</p>

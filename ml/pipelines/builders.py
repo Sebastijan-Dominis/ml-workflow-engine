@@ -7,6 +7,7 @@ from sklearn.pipeline import Pipeline
 
 from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import ConfigError
+from ml.pipelines.models import PipelineConfig
 from ml.pipelines.operator_factory import build_operators
 from ml.pipelines.schema_utils import get_pipeline_features
 from ml.registries.catalogs import PIPELINE_COMPONENTS
@@ -17,7 +18,7 @@ __version__ = "1.0.0"
 def build_pipeline(
     *,
     model_cfg: SearchModelConfig | TrainModelConfig,
-    pipeline_cfg: dict,
+    pipeline_cfg: PipelineConfig,
     input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame,
 ) -> Pipeline:
@@ -25,7 +26,7 @@ def build_pipeline(
 
     Args:
         model_cfg: Validated search or training model config.
-        pipeline_cfg: dict with keys 'steps' and optional 'assumptions'.
+        pipeline_cfg: Pipeline configuration object.
         input_schema: DataFrame with columns 'feature' and 'dtype' for raw inputs.
         derived_schema: DataFrame with columns 'feature' and 'source_operator' for engineered features.
 
@@ -60,7 +61,7 @@ def build_pipeline(
     }
 
     # ---- build steps from config ----
-    for step_name in pipeline_cfg.get("steps", []):
+    for step_name in pipeline_cfg.steps:
         if step_name == "Model":
             logger.debug("Skipping Model step; model should be injected later")
             continue

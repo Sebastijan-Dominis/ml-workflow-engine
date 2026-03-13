@@ -5,11 +5,13 @@ from __future__ import annotations
 import importlib
 import sys
 import types
+from datetime import datetime
 from types import SimpleNamespace
 
 import pandas as pd
 import pytest
 from ml.exceptions import ConfigError
+from ml.pipelines.models import PipelineConfig
 
 pytestmark = pytest.mark.unit
 
@@ -42,6 +44,34 @@ class _FeatureSelector:
     def __init__(self, *, selected_features: list[str]) -> None:
         self.selected_features = selected_features
 
+
+
+
+def _as_pipeline_config(cfg_dict: dict) -> PipelineConfig:
+    """Convert lightweight test dict to a PipelineConfig Pydantic model with minimal defaults."""
+    # Fill required fields if missing
+    if "name" not in cfg_dict:
+        cfg_dict["name"] = "test_pipeline"
+    if "version" not in cfg_dict:
+        cfg_dict["version"] = "v1"
+    if "steps" not in cfg_dict:
+        cfg_dict["steps"] = []
+    if "assumptions" not in cfg_dict:
+        cfg_dict["assumptions"] = {
+            "handles_categoricals": True,
+            "supports_regression": True,
+            "supports_classification": True,
+        }
+    else:
+        for k in ["handles_categoricals", "supports_regression", "supports_classification"]:
+            cfg_dict["assumptions"].setdefault(k, False)
+    if "lineage" not in cfg_dict:
+        cfg_dict["lineage"] = {
+            "created_by": "test_user",
+            "created_at": datetime.utcnow()
+        }
+
+    return PipelineConfig.model_validate(cfg_dict)
 
 def _import_builders_with_stubs(
     *,
@@ -117,7 +147,7 @@ def test_build_pipeline_wires_components_with_expected_inputs_and_order() -> Non
 
     pipeline = builders.build_pipeline(
         model_cfg=model_cfg,
-        pipeline_cfg={
+        pipeline_cfg=_as_pipeline_config({
             "steps": [
                 "SchemaValidator",
                 "FillCategoricalMissing",
@@ -125,7 +155,7 @@ def test_build_pipeline_wires_components_with_expected_inputs_and_order() -> Non
                 "FeatureSelector",
                 "Model",
             ]
-        },
+        }),
         input_schema=input_schema,
         derived_schema=derived_schema,
     )
@@ -168,10 +198,10 @@ def test_build_pipeline_raises_config_error_for_unknown_step() -> None:
         },
     )
 
-    with pytest.raises(ConfigError, match="Unknown pipeline step: UnknownStep"):
+    with pytest.raises(ConfigError, match="Unknown pipeline steps: {'UnknownStep'}"):
         builders.build_pipeline(
             model_cfg=object(),
-            pipeline_cfg={"steps": ["UnknownStep"]},
+            pipeline_cfg=_as_pipeline_config({"steps": ["UnknownStep"]}),
             input_schema=pd.DataFrame({"feature": [], "dtype": []}),
             derived_schema=pd.DataFrame({"feature": [], "source_operator": []}),
         )
@@ -195,71 +225,17 @@ def test_build_pipeline_returns_empty_pipeline_when_no_steps_are_configured() ->
         },
     )
 
-    pipeline = builders.build_pipeline(
-        model_cfg=object(),
-        pipeline_cfg={},
-        input_schema=pd.DataFrame({"feature": ["a"], "dtype": ["int64"]}),
-        derived_schema=pd.DataFrame({"feature": [], "source_operator": []}),
-    )
-
-    assert pipeline.steps == []
-
-
-def test_build_pipeline_returns_empty_pipeline_when_only_model_step_is_present() -> None:
-    """Skip model placeholder step and return an empty pipeline when no preprocessors are configured."""
-    builders, _, _ = _import_builders_with_stubs(
-        features=SimpleNamespace(
-            input_features=["a"],
-            selected_features=["a"],
-            categorical_features=[],
-        ),
-        operators={},
-        pipeline_components={
-            "SchemaValidator": _SchemaValidator,
-            "FillCategoricalMissing": _FillCategoricalMissing,
-            "FeatureEngineer": _FeatureEngineer,
-            "FeatureSelector": _FeatureSelector,
-            "Model": None,
-        },
-    )
-
-    pipeline = builders.build_pipeline(
-        model_cfg=object(),
-        pipeline_cfg={"steps": ["Model"]},
-        input_schema=pd.DataFrame({"feature": ["a"], "dtype": ["int64"]}),
-        derived_schema=pd.DataFrame({"feature": [], "source_operator": []}),
-    )
-
-    assert pipeline.steps == []
-
-
-def test_build_pipeline_ignores_non_step_pipeline_config_keys() -> None:
-    """Ignore unrelated pipeline config keys while building configured step instances."""
-    builders, _, _ = _import_builders_with_stubs(
-        features=SimpleNamespace(
-            input_features=["f1"],
-            selected_features=["f1"],
-            categorical_features=[],
-        ),
-        operators={},
-        pipeline_components={
-            "SchemaValidator": _SchemaValidator,
-            "FillCategoricalMissing": _FillCategoricalMissing,
-            "FeatureEngineer": _FeatureEngineer,
-            "FeatureSelector": _FeatureSelector,
-            "Model": None,
-        },
-    )
-
-    pipeline = builders.build_pipeline(
-        model_cfg=object(),
-        pipeline_cfg={
-            "steps": ["SchemaValidator"],
-            "assumptions": {"note": "ignored by builder"},
-            "other_meta": 123,
-        },
-        input_schema=pd.DataFrame({"feature": ["f1"], "dtype": ["int64"]}),
-        derived_schema=pd.DataFrame({"feature": [], "source_operator": []}),
-    )
-
-    assert [name for name, _ in pipeline.steps] == ["schemavalidator"]
+    with pytest.raises(ConfigError, match="Pipeline steps cannot be empty"):
+        builders.build_pipeline(
+            model_cfg=object(),
+            pipeline_cfg=_as_pipeline_config({
+                "assumptions": {
+                    "handles_categoricals": False,
+                    "supports_regression": False,
+                    "supports_classification": False,
+                },
+                "steps": [],
+            }),
+            input_schema=pd.DataFrame({"feature": ["a"], "dtype": ["int64"]}),
+            derived_schema=pd.DataFrame({"feature": [], "source_operator": []}),
+        )

@@ -11,7 +11,7 @@ import sys
 import types
 
 import pytest
-from ml.exceptions import RuntimeMLError, UserError
+from ml.exceptions import RuntimeMLError
 
 # Some metadata schemas import ml.types, which imports catboost at module import time.
 if "catboost" not in sys.modules:
@@ -157,7 +157,7 @@ def test_validate_processed_dataset_metadata_returns_validated_object(
 
 
 def test_validate_freeze_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Ensure freeze metadata wrapper converts schema failures to UserError."""
+    """Ensure freeze metadata wrapper converts schema failures to RuntimeMLError."""
 
     class _Schema:
         @staticmethod
@@ -166,7 +166,7 @@ def test_validate_freeze_metadata_wraps_schema_errors(monkeypatch: pytest.Monkey
 
     monkeypatch.setattr("ml.metadata.validation.features.feature_freezing.FreezeMetadata", _Schema)
 
-    with pytest.raises(UserError, match="Freeze metadata validation failed"):
+    with pytest.raises(RuntimeMLError, match="Freeze metadata validation failed"):
         validate_freeze_metadata({"x": 1})
 
 
@@ -221,7 +221,7 @@ def test_validate_search_record_returns_validated_object(monkeypatch: pytest.Mon
 
 
 def test_validate_training_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Ensure training metadata wrapper converts schema failures to UserError."""
+    """Ensure training metadata wrapper converts schema failures to RuntimeMLError."""
 
     class _Schema:
         @staticmethod
@@ -230,7 +230,7 @@ def test_validate_training_metadata_wraps_schema_errors(monkeypatch: pytest.Monk
 
     monkeypatch.setattr("ml.metadata.validation.runners.training.TrainingMetadata", _Schema)
 
-    with pytest.raises(UserError, match="Training metadata validation failed"):
+    with pytest.raises(RuntimeMLError, match="Training metadata validation failed"):
         validate_training_metadata({"x": 1})
 
 
@@ -253,7 +253,7 @@ def test_validate_training_metadata_returns_validated_object(monkeypatch: pytest
 
 
 def test_validate_evaluation_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Ensure evaluation metadata wrapper converts schema failures to UserError."""
+    """Ensure evaluation metadata wrapper converts schema failures to RuntimeMLError."""
 
     class _Schema:
         @staticmethod
@@ -262,7 +262,7 @@ def test_validate_evaluation_metadata_wraps_schema_errors(monkeypatch: pytest.Mo
 
     monkeypatch.setattr("ml.metadata.validation.runners.evaluation.EvaluationMetadata", _Schema)
 
-    with pytest.raises(UserError, match="Evaluation metadata validation failed"):
+    with pytest.raises(RuntimeMLError, match="Evaluation metadata validation failed"):
         validate_evaluation_metadata({"x": 1})
 
 
@@ -287,7 +287,7 @@ def test_validate_evaluation_metadata_returns_validated_object(
 
 
 def test_validate_explainability_metadata_wraps_schema_errors(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Ensure explainability metadata wrapper converts schema failures to UserError."""
+    """Ensure explainability metadata wrapper converts schema failures to RuntimeMLError."""
 
     class _Schema:
         @staticmethod
@@ -296,7 +296,7 @@ def test_validate_explainability_metadata_wraps_schema_errors(monkeypatch: pytes
 
     monkeypatch.setattr("ml.metadata.validation.runners.explainability.ExplainabilityMetadata", _Schema)
 
-    with pytest.raises(UserError, match="Explainability metadata validation failed"):
+    with pytest.raises(RuntimeMLError, match="Explainability metadata validation failed"):
         validate_explainability_metadata({"x": 1})
 
 

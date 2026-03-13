@@ -10,13 +10,14 @@ from ml.config.schemas.model_cfg import SearchModelConfig, TrainModelConfig
 from ml.exceptions import PipelineContractError
 from ml.pipelines.builders import build_pipeline
 from ml.pipelines.composition.add_model_to_pipeline import add_model_to_pipeline
+from ml.pipelines.models import PipelineConfig
 
 logger = logging.getLogger(__name__)
 
 def build_pipeline_with_model(
     *,
     model_cfg: SearchModelConfig | TrainModelConfig,
-    pipeline_cfg: dict,
+    pipeline_cfg: PipelineConfig,
     input_schema: pd.DataFrame,
     derived_schema: pd.DataFrame,
     model: CatBoostClassifier | CatBoostRegressor
@@ -25,7 +26,7 @@ def build_pipeline_with_model(
 
     Args:
         model_cfg: Validated search or train model configuration.
-        pipeline_cfg: Pipeline configuration dictionary.
+        pipeline_cfg: Pipeline configuration object.
         input_schema: Input feature schema dataframe.
         derived_schema: Derived feature schema dataframe.
         model: Instantiated CatBoost estimator.

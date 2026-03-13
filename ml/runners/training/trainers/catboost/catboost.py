@@ -26,6 +26,7 @@ from ml.modeling.catboost.build_pipeline_with_model import build_pipeline_with_m
 from ml.modeling.class_weighting.models import DataStats
 from ml.modeling.class_weighting.resolve_class_weighting import resolve_class_weighting
 from ml.modeling.class_weighting.stats_resolver import compute_data_stats
+from ml.pipelines.validation import validate_pipeline_config
 from ml.runners.training.constants.output import TrainOutput
 from ml.runners.training.trainers.base import Trainer
 from ml.runners.training.trainers.catboost.train_catboost_model import train_catboost_model
@@ -97,8 +98,9 @@ class CatBoostTrainer(Trainer):
         cat_features = get_cat_features(model_cfg, input_schema, derived_schema)
 
         pipeline_path = Path(f"{model_cfg.pipeline.path}").resolve()
-        pipeline_cfg = load_yaml(pipeline_path)
-        pipeline_cfg_hash = compute_model_config_hash(pipeline_cfg)
+        pipeline_cfg_raw = load_yaml(pipeline_path)
+        pipeline_cfg = validate_pipeline_config(pipeline_cfg_raw)
+        pipeline_cfg_hash = compute_model_config_hash(pipeline_cfg.model_dump())
 
         validate_model_feature_pipeline_contract(
             model_cfg,
