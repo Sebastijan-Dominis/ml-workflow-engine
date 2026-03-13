@@ -20,29 +20,20 @@ _Last updated: 2026-03-13_
 - [x] Add a document describing each of the configs
     - Status: done (2026-03-13)
     - Importance: high
-- [ ] Create an ml service to wrap pipelines and config-generating scripts, using Dash and FastAPI
+- [ ] Create an ml service that wraps pipelines and allows config writing using Dash and FastAPI
     - Status: planned
     - Importance: medium
-- [ ] Create scripts for generating configs
-    - Status: planned
-    - Importance: medium
-- [ ] Add infer.py
-    - Status: planned
-    - Importance: medium
-- [ ] Add monitor.py
-    - Status: planned
-    - Importance: low
 - [x] Add pipeline config validation to the training pipeline
     - Status: done (2026-03-13)
     - Importance: medium
+- [ ] Create tools for an LLM that leverage model_registry + explainability artifacts to provide users with useful feedback
+    - Status: planned
+    - Importance: medium
+- [ ] Create a Dash + FastAPI app that implements that LLM, where users can interact with it
+    - Status: planned
+    - Importance: medium
 
 ## Mid Term (1-6 months)
-- [ ] Create tools for an LLM using the production models and their respective artifacts
-    - Status: planned
-    - Importance: low
-- [ ] Create an app that implements that LLM, where users can interact with it
-    - Status: planned
-    - Importance: low
 - [ ] Add time-series logic, starting with Prophet algorithm
     - Status: planned
     - Importance: low

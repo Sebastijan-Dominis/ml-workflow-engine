@@ -71,6 +71,37 @@ Snapshots are immutable.
 - **Alternatives:** Tie features to each model (rejected - less scalability, flexibility and reusability)
 - **Type:** Foundational
 
+### Snapshot id enabled as a cli argument in data preprocessing pipelines
+- **Decision:** Include snapshot id (representing data snapshot from the previous stage) as an optional cli argument; default to latest
+- **Rationale:** While not meant to be used yet, it is simple to implement and allows flexibility for potential future enhancements
+- **Alternatives:** Always use the latest snapshot (rejected - a viable option, considering the existing workflow, but not including this feature now would save little time, while potentially causing a lot more work in the future)
+- **Type:** Structural
+
+### Latest full snapshot usage for each of the feature set's datasets
+- **Decision:** Always use the latest full dataset snapshots (old + new rows) when freezing a feature set
+- **Rationale:** Easier implementation - prevents clogging the feature registry, since including snapshots in it would imply a lot more versioning; not needed at this stage; space not an issue if not updated too frequently
+- **Alternatives:** Define snapshot path and id for each dataset in the feature registry (rejected - would quickly clog the file; not needed);
+                    Switch from using a feature registry for freezing configs to someting more distributed (rejected - would be harder to track, and would unnecessarily complicate the existing workflow)
+- **Type**: Structural
+
+### Latest full snapshot usage for each of the experiment's feature sets
+- **Decision:** Always use the latest full feature set snapshots (old + new rows) when starting a new experiment
+- **Rationale:** Easier implementation - less code and prevents config versioning hell, since configs don't need to contain snapshots; not needed at this stage; space not an issue if not updated too frequently
+- **Alternatives:** Define feature snapshots in model specs (rejected - overly complex and not needed, unless we aimed to implement inference and monitoring cron jobs that automate modeling - beyond scope)
+- **Type:** Structural
+
+### Absence of the inference and monitoring pipelines
+- **Decision:** Do not implement inference and monitoring pipelines
+- **Rationale:** The current snapshot logic (full snaphots with old and new rows) renders these two obsolete; not needed at this stage
+- **Alternatives:** Run inference and monitoring on all rows (those used for training the model + new ones) (rejected - results could be misleading)
+- **Type:** Structural
+
+### Absence of cron jobs
+- **Decision:** Do not implement cron jobs
+- **Rationale:** The current architecture implies they are not needed
+- **Alternatives:** Run `run_all_workflows.py` whenever a new snapshot of raw data appears (rejected - not needed at this stage; could result in unexpected outcomes - that orchestrator is powerful)
+- **Type:** Tactical
+
 ## Artifacts and configs - general
 
 ### Informational artifacts stored in `json` format
