@@ -3,19 +3,19 @@
 ## 1. Location
 
 Interim data configurations can found at:
-- `configs/data/interim/{dataset_name}/{version}.yaml`, where:
-    - `dataset_name` represents the name of the dataset they are intended for.
-    - `version` implies the version of configurations for that specific dataset.
+`configs/data/interim/{dataset_name}/{version}.yaml`, where:
+  - `dataset_name` represents the name of the dataset they are intended for.
+  - `version` implies the version of configurations for that specific dataset.
 - Example: `configs/data/interim/hotel_bookings/v1.yaml`
 
 These configurations are used by the pipeline:
-- `pipelines/data/build_interim_dataset.py`
+`pipelines/data/build_interim_dataset.py`
 
 The purpose of the interim stage is to *transform raw data into memory-optimized interim datasets* by optimizing column data types.
 
 ## 2. Fields
 
-**Top-level fields**
+### Top-level fields
 
 |Field|Type|Description|
 |:----|:---|:----------|
@@ -29,7 +29,7 @@ The purpose of the interim stage is to *transform raw data into memory-optimized
 |`min_rows`|int|Minimum number of rows required after cleaning|
 |`lineage`|object|Metadata describing config provenance|
 
-**`data`**
+### `data`
 
 Defines metadata for the produced interim dataset.
 
@@ -39,7 +39,7 @@ Defines metadata for the produced interim dataset.
 |`version`|string|Dataset version (`v{integer}` format)|
 |`output`|object|Output storage configuration|
 
-**`data.output`**
+### `data.output`
 
 Controls how the interim dataset is persisted.
 
@@ -49,7 +49,7 @@ Controls how the interim dataset is persisted.
 |`format`|string|Output format (currently only `parquet`)|
 |`compression`|string or null|Compression codec (`snappy`, `gzip`, `brotli`, `lz4`, `zstd`)|
 
-**`data_schema`**
+### `data_schema`
 
 Defines the expected schema of the interim dataset.
 
@@ -65,7 +65,7 @@ data_schema:
 
 The pipeline will enforce these dtypes during preprocessing.
 
-**`raw_data_version`**
+### `raw_data_version`
 
 Specifies the raw dataset version used to build the interim dataset.
 
@@ -89,7 +89,7 @@ raw_data_version: version2
 raw_data_version: raw_v2
 ```
 
-**`cleaning`**
+### `cleaning`
 
 Defines columns normalization rules applied before validation.
 
@@ -102,7 +102,7 @@ Defines columns normalization rules applied before validation.
 
 These operations standardize raw data before schema validation.
 
-**`invariants`**
+### `invariants`
 
 Defines column-level validation rules applied during preprocessing.
 
@@ -123,7 +123,7 @@ invariants:
             op: gte
 ```
 
-**`BorderValue`**
+### `BorderValue`
 
 Used to define boundary checks.
 Used by `min` and `max`.
@@ -141,7 +141,7 @@ gt >
 gte >=
 ```
 
-**Default Invariants**
+### Default Invariants
 
 If a column does not specify invariants in the configuration:
 - Default constraints from the internal registry will be applied automatically.
@@ -153,9 +153,9 @@ This ensures:
 - invalid values cannot silently enter the pipeline
 - invariant coverage is complete
 
-**Row Filtering**
+*Row Filtering:*
 
-`drop_duplicates`
+### `drop_duplicates`
 
 - Removes duplicate rows after cleaning.
 - Default:
@@ -163,7 +163,7 @@ This ensures:
 drop_duplicates: true
 ```
 
-`drop_missing_ints`
+### `drop_missing_ints`
 
 - Drops rows containing missing values in integer columns
 - Default:
@@ -171,11 +171,11 @@ drop_duplicates: true
 drop_missing_ints: true
 ```
 
-`min_rows`
+### `min_rows`
 - Minimum number of rows required after preprocessing.
 - If the dataset contains fewer rows than this threshold, the pipeline will fail.
 
-`lineage`
+### `lineage`
 Stores metadata describing the origin of the configuration.
 
 |Field|Type|Description|

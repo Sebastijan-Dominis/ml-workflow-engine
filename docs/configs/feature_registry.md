@@ -3,7 +3,7 @@
 ## 1. Location
 
 Feature registry configurations are defined in:
-- `configs/feature_registry/features.yaml`
+`configs/feature_registry/features.yaml`
 
 Feature definitions are organized by feature set name and version:
 

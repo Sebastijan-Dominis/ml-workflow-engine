@@ -3,19 +3,19 @@
 ## 1. Location
 
 Processed data configurations can be found at:
-- `configs/data/processed/{dataset_name}/{version}.yaml`, where
-    - `dataset_name` represents the dataset these configurations apply to
-    - `version` represents the version of the configuration
+`configs/data/processed/{dataset_name}/{version}.yaml`, where
+  - `dataset_name` represents the dataset these configurations apply to
+  - `version` represents the version of the configuration
 - Example: `configs/data/processed/hotel_bookings/v1.yaml`
 
 These configurations are used by the pipeline:
-- `pipelines/data/build_processed_dataset.py`
+`pipelines/data/build_processed_dataset.py`
 
 The purpose of the processed stage is to *transform interim datasets into modeling-ready datasets* by removing unnecessary columns and preparing the final dataset artifact.
 
 ## 2. Fields
 
-**Top-Level Fields**
+### Top-Level Fields
 
 | Field                  | Type         | Description                                  |
 | ---------------------- | ------------ | -------------------------------------------- |
@@ -24,7 +24,7 @@ The purpose of the processed stage is to *transform interim datasets into modeli
 | `remove_columns`       | list[string] | Columns to remove from the dataset           |
 | `lineage`              | object       | Metadata describing config provenance        |
 
-**`data`**
+### `data`
 
 Defines metadata for the processed dataset artifact.
 
@@ -34,7 +34,7 @@ Defines metadata for the processed dataset artifact.
 | `version` | string | Dataset version (`v{integer}` format) |
 | `output`  | object | Output storage configuration          |
 
-**`data.output`**
+### `data.output`
 
 Controls how the processed dataset is persisted.
 
@@ -45,7 +45,7 @@ Controls how the processed dataset is persisted.
 | `compression` | string or null | Compression codec (`snappy`, `gzip`, `brotli`, `lz4`, `zstd`) |
 
 
-**`interim_data_version`**
+### `interim_data_version`
 
 Specifies which interim dataset version should be used as the input.
 
@@ -76,7 +76,7 @@ interim_data_version: interim_v2
 
 If the version does not match the required format, the pipeline will raise a `ConfigError`.
 
-**`remove_columns`**
+### `remove_columns`
 
 Specifies columns that should be removed from the dataset during processing.
 
@@ -99,7 +99,7 @@ remove_columns:
 
 Columns are added or removed depending on modeling requirements.
 
-**`lineage`**
+### `lineage`
 
 Stores metadata describing the origin of the configuration.
 
