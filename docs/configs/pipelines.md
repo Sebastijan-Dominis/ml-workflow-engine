@@ -2,6 +2,17 @@
 
 This document describes the structure, fields, and usage of pipeline configuration files used within the ML workflow. Pipeline configs define the steps, assumptions, and metadata for building `sklearn` pipelines.
 
+## Extensibility
+
+The pipeline configuration system is designed to support future workflow extensions:
+
+- New data types: While only `tabular` pipelines are currently supported, the system is structured to allow time-series, text, or other modalities in the future.
+- Custom pipeline steps: Additional pipeline components (e.g., a PITOperator for predictive interval targets) can be integrated by registering them in `PIPELINE_COMPONENTS` and referencing them in the `steps` field.
+- Modular assumptions: Assumptions can be expanded to include new task types, feature types, or data requirements.
+- Versioned configurations: Adding new steps or pipelines is safe and reproducible because all pipeline configs are versioned (`v{integer}.yaml`).
+
+This ensures that the ML workflow can grow with your project or be adapted for other datasets or models without breaking existing pipelines.
+
 ## 1. Location
 
 Pipeline configurations are defined in:
