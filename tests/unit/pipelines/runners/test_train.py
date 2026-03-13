@@ -147,7 +147,7 @@ def test_main_runs_training_and_persists_outputs_on_success(
         lineage=[SimpleNamespace(feature="x")],
         metrics={"auc": 0.8},
     )
-    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir: train_output)
+    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir, search_dir: train_output)
     monkeypatch.setattr(module, "get_trainer", lambda algorithm: trainer)
 
     model_path = experiment_dir / "training" / "20260306T180000_abcdef01" / "model.pkl"
@@ -237,7 +237,7 @@ def test_main_maps_pipeline_contract_error_when_pipeline_hash_missing(
         lineage=[],
         metrics={},
     )
-    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir: trainer_output)
+    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir, search_dir: trainer_output)
     monkeypatch.setattr(module, "get_trainer", lambda algorithm: trainer)
     monkeypatch.setattr(module, "save_model", lambda model, train_run_dir: train_run_dir / "model.pkl")
     monkeypatch.setattr(module, "hash_artifact", lambda artifact_path: "hash-model")
@@ -343,7 +343,7 @@ def test_main_persists_pipeline_artifacts_when_pipeline_and_hash_are_present(
         lineage=[],
         metrics={"rmse": 1.23},
     )
-    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir: trainer_output)
+    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir, search_dir: trainer_output)
     monkeypatch.setattr(module, "get_trainer", lambda algorithm: trainer)
 
     model_path = experiment_dir / "training" / "20260307T130000_aabbccdd" / "model.cbm"

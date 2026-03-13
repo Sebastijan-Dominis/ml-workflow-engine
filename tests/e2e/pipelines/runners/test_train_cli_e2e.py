@@ -66,7 +66,7 @@ def test_train_main_executes_end_to_end_control_flow_with_cli_args(
         lineage=[],
         metrics={"auc": 0.81},
     )
-    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir: training_output)
+    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir, search_dir: training_output)
     monkeypatch.setattr(train_module, "get_trainer", lambda algorithm: trainer)
 
     monkeypatch.setattr(

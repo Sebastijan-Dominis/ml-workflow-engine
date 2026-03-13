@@ -228,6 +228,7 @@ def main() -> int:
             model_cfg,
             strict=args.strict,
             failure_management_dir=failure_management_dir,
+            search_dir=search_dir
         )
         logger.info("Training completed. Persisting training run...")
 

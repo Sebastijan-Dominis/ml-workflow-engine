@@ -83,6 +83,8 @@ def test_train_executes_classification_flow_and_returns_expected_output(
 ) -> None:
     """Run full orchestration for classification and assert contract-level outputs."""
     module = _import_trainer_module()
+    monkeypatch.setattr(module, "validate_pipeline_config_consistency", lambda actual_hash, search_dir: None)
+    monkeypatch.setattr(module, "validate_pipeline_config_consistency", lambda actual_hash, search_dir: None)
     module_calls: dict[str, Any] = {}
 
     cfg = _build_minimal_cfg(task_type="classification")
@@ -165,7 +167,7 @@ def test_train_executes_classification_flow_and_returns_expected_output(
     monkeypatch.setattr(module, "compute_metrics", lambda **kwargs: {"f1": 0.75})
 
     trainer = module.CatBoostTrainer()
-    output = trainer.train(cfg, strict=True, failure_management_dir=Path("failure_dir"))
+    output = trainer.train(cfg, strict=True, failure_management_dir=Path("failure_dir"), search_dir=Path("search"))
 
     assert output.model == "trained-model"
     assert output.pipeline == "trained-pipeline"
@@ -180,6 +182,8 @@ def test_train_executes_classification_flow_and_returns_expected_output(
 def test_train_skips_class_weight_resolution_for_regression(monkeypatch: pytest.MonkeyPatch) -> None:
     """Do not compute class weighting when task type is regression."""
     module = _import_trainer_module()
+    monkeypatch.setattr(module, "validate_pipeline_config_consistency", lambda actual_hash, search_dir: None)
+    monkeypatch.setattr(module, "validate_pipeline_config_consistency", lambda actual_hash, search_dir: None)
     cfg = _build_minimal_cfg(task_type="regression")
 
     X = pd.DataFrame({"a": [1.0, 2.0]})
@@ -241,7 +245,7 @@ def test_train_skips_class_weight_resolution_for_regression(monkeypatch: pytest.
     )
     monkeypatch.setattr(module, "compute_metrics", lambda **kwargs: {"rmse": 1.23})
 
-    output = module.CatBoostTrainer().train(cfg, strict=False, failure_management_dir=Path("fm"))
+    output = module.CatBoostTrainer().train(cfg, strict=False, failure_management_dir=Path("fm"), search_dir=Path("search"))
 
     assert output.metrics == {"rmse": 1.23}
     assert prepare_payload["class_weights"] == {}

@@ -28,6 +28,7 @@ def compute_model_config_hash(cfg: dict[str, Any]) -> str:
 
     cfg_copy = deepcopy(cfg)
     cfg_copy.pop("_meta", None)  # remove infrastructure-only metadata
+    cfg_copy.pop("lineage", None)  # remove lineage which can be non-deterministic
     payload = json.dumps(cfg_copy, sort_keys=True, default=str)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 

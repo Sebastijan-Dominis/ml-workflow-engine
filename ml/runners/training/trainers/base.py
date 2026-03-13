@@ -17,7 +17,8 @@ class Trainer(Protocol):
         model_cfg: TrainModelConfig,
         *,
         strict: bool,
-        failure_management_dir: Path
+        failure_management_dir: Path,
+        search_dir: Path
     ) -> TrainOutput:
         """Train model artifacts using provided configuration and runtime controls.
 

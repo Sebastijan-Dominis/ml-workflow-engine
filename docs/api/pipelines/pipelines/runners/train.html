@@ -307,64 +307,65 @@ directory created by a prior search run.</p>
 </span><span id="L-228"><a href="#L-228"><span class="linenos">228</span></a>            <span class="n">model_cfg</span><span class="p">,</span>
 </span><span id="L-229"><a href="#L-229"><span class="linenos">229</span></a>            <span class="n">strict</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">strict</span><span class="p">,</span>
 </span><span id="L-230"><a href="#L-230"><span class="linenos">230</span></a>            <span class="n">failure_management_dir</span><span class="o">=</span><span class="n">failure_management_dir</span><span class="p">,</span>
-</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>        <span class="p">)</span>
-</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training completed. Persisting training run...&quot;</span><span class="p">)</span>
-</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>
-</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>        <span class="n">model</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">model</span>
-</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>        <span class="n">model_path</span> <span class="o">=</span> <span class="n">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_run_dir</span><span class="p">)</span>
-</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>        <span class="n">model_hash</span> <span class="o">=</span> <span class="n">hash_artifact</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
-</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>
-</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>        <span class="n">pipeline</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>        <span class="n">pipeline_path</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>        <span class="n">pipeline_hash</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>        <span class="n">pipeline_cfg_hash</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>            <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline_cfg_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Pipeline config hash is missing in the trainer output, but a pipeline object is present. This is unexpected as the pipeline config hash is needed for reproducibility tracking. Please ensure that the trainer implementation returns a pipeline config hash when a pipeline is returned.&quot;</span>
-</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>                <span class="k">raise</span> <span class="n">PipelineContractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>
-</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>            <span class="n">pipeline</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline</span>
-</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>            <span class="n">pipeline_path</span> <span class="o">=</span> <span class="n">save_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">train_run_dir</span><span class="p">)</span>
-</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>            <span class="n">pipeline_hash</span> <span class="o">=</span> <span class="n">hash_artifact</span><span class="p">(</span><span class="n">pipeline_path</span><span class="p">)</span>
-</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>            <span class="n">pipeline_cfg_hash</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline_cfg_hash</span>
-</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>
+</span><span id="L-231"><a href="#L-231"><span class="linenos">231</span></a>            <span class="n">search_dir</span><span class="o">=</span><span class="n">search_dir</span>
+</span><span id="L-232"><a href="#L-232"><span class="linenos">232</span></a>        <span class="p">)</span>
+</span><span id="L-233"><a href="#L-233"><span class="linenos">233</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training completed. Persisting training run...&quot;</span><span class="p">)</span>
+</span><span id="L-234"><a href="#L-234"><span class="linenos">234</span></a>
+</span><span id="L-235"><a href="#L-235"><span class="linenos">235</span></a>        <span class="n">model</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">model</span>
+</span><span id="L-236"><a href="#L-236"><span class="linenos">236</span></a>        <span class="n">model_path</span> <span class="o">=</span> <span class="n">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_run_dir</span><span class="p">)</span>
+</span><span id="L-237"><a href="#L-237"><span class="linenos">237</span></a>        <span class="n">model_hash</span> <span class="o">=</span> <span class="n">hash_artifact</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+</span><span id="L-238"><a href="#L-238"><span class="linenos">238</span></a>
+</span><span id="L-239"><a href="#L-239"><span class="linenos">239</span></a>        <span class="n">pipeline</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-240"><a href="#L-240"><span class="linenos">240</span></a>        <span class="n">pipeline_path</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-241"><a href="#L-241"><span class="linenos">241</span></a>        <span class="n">pipeline_hash</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-242"><a href="#L-242"><span class="linenos">242</span></a>        <span class="n">pipeline_cfg_hash</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-243"><a href="#L-243"><span class="linenos">243</span></a>        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-244"><a href="#L-244"><span class="linenos">244</span></a>            <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline_cfg_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-245"><a href="#L-245"><span class="linenos">245</span></a>                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Pipeline config hash is missing in the trainer output, but a pipeline object is present. This is unexpected as the pipeline config hash is needed for reproducibility tracking. Please ensure that the trainer implementation returns a pipeline config hash when a pipeline is returned.&quot;</span>
+</span><span id="L-246"><a href="#L-246"><span class="linenos">246</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-247"><a href="#L-247"><span class="linenos">247</span></a>                <span class="k">raise</span> <span class="n">PipelineContractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="L-248"><a href="#L-248"><span class="linenos">248</span></a>
+</span><span id="L-249"><a href="#L-249"><span class="linenos">249</span></a>            <span class="n">pipeline</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline</span>
+</span><span id="L-250"><a href="#L-250"><span class="linenos">250</span></a>            <span class="n">pipeline_path</span> <span class="o">=</span> <span class="n">save_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">train_run_dir</span><span class="p">)</span>
+</span><span id="L-251"><a href="#L-251"><span class="linenos">251</span></a>            <span class="n">pipeline_hash</span> <span class="o">=</span> <span class="n">hash_artifact</span><span class="p">(</span><span class="n">pipeline_path</span><span class="p">)</span>
+</span><span id="L-252"><a href="#L-252"><span class="linenos">252</span></a>            <span class="n">pipeline_cfg_hash</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline_cfg_hash</span>
 </span><span id="L-253"><a href="#L-253"><span class="linenos">253</span></a>
-</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>        <span class="n">feature_lineage</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">lineage</span>
-</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>        <span class="n">metrics</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">metrics</span>
-</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>
-</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>        <span class="n">persist_training_run</span><span class="p">(</span>
-</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>            <span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">feature_lineage</span><span class="p">,</span>
-</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>            <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
-</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>            <span class="n">train_run_id</span><span class="o">=</span><span class="n">train_run_id</span><span class="p">,</span>
-</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>            <span class="n">experiment_dir</span><span class="o">=</span><span class="n">experiment_dir</span><span class="p">,</span>
-</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>            <span class="n">train_run_dir</span><span class="o">=</span><span class="n">train_run_dir</span><span class="p">,</span>
-</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
-</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>            <span class="n">model_hash</span><span class="o">=</span><span class="n">model_hash</span><span class="p">,</span>
-</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">pipeline_hash</span><span class="p">,</span>
-</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>            <span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span>
-</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>            <span class="n">pipeline_path</span><span class="o">=</span><span class="n">pipeline_path</span><span class="p">,</span>
-</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>            <span class="n">pipeline_cfg_hash</span><span class="o">=</span><span class="n">pipeline_cfg_hash</span><span class="p">,</span>
-</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span>
-</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>        <span class="p">)</span>
-</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>
-</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training run successfully persisted.&quot;</span><span class="p">)</span>
-</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>
-</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>        <span class="n">delete_failure_management_folder</span><span class="p">(</span>
-</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>            <span class="n">folder_path</span><span class="o">=</span><span class="n">failure_management_dir</span><span class="p">,</span>
-</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>            <span class="n">cleanup</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">clean_up_failure_management</span><span class="p">,</span>
-</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span>
-</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>        <span class="p">)</span>
-</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>
-</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>        <span class="k">return</span> <span class="mi">0</span>
-</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>
-</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;An error occurred during training.&quot;</span><span class="p">)</span>
-</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>        <span class="k">return</span> <span class="n">resolve_exit_code</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>
-</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a>    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</span><span id="L-254"><a href="#L-254"><span class="linenos">254</span></a>
+</span><span id="L-255"><a href="#L-255"><span class="linenos">255</span></a>        <span class="n">feature_lineage</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">lineage</span>
+</span><span id="L-256"><a href="#L-256"><span class="linenos">256</span></a>        <span class="n">metrics</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">metrics</span>
+</span><span id="L-257"><a href="#L-257"><span class="linenos">257</span></a>
+</span><span id="L-258"><a href="#L-258"><span class="linenos">258</span></a>        <span class="n">persist_training_run</span><span class="p">(</span>
+</span><span id="L-259"><a href="#L-259"><span class="linenos">259</span></a>            <span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="L-260"><a href="#L-260"><span class="linenos">260</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">feature_lineage</span><span class="p">,</span>
+</span><span id="L-261"><a href="#L-261"><span class="linenos">261</span></a>            <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+</span><span id="L-262"><a href="#L-262"><span class="linenos">262</span></a>            <span class="n">train_run_id</span><span class="o">=</span><span class="n">train_run_id</span><span class="p">,</span>
+</span><span id="L-263"><a href="#L-263"><span class="linenos">263</span></a>            <span class="n">experiment_dir</span><span class="o">=</span><span class="n">experiment_dir</span><span class="p">,</span>
+</span><span id="L-264"><a href="#L-264"><span class="linenos">264</span></a>            <span class="n">train_run_dir</span><span class="o">=</span><span class="n">train_run_dir</span><span class="p">,</span>
+</span><span id="L-265"><a href="#L-265"><span class="linenos">265</span></a>            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+</span><span id="L-266"><a href="#L-266"><span class="linenos">266</span></a>            <span class="n">model_hash</span><span class="o">=</span><span class="n">model_hash</span><span class="p">,</span>
+</span><span id="L-267"><a href="#L-267"><span class="linenos">267</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">pipeline_hash</span><span class="p">,</span>
+</span><span id="L-268"><a href="#L-268"><span class="linenos">268</span></a>            <span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span>
+</span><span id="L-269"><a href="#L-269"><span class="linenos">269</span></a>            <span class="n">pipeline_path</span><span class="o">=</span><span class="n">pipeline_path</span><span class="p">,</span>
+</span><span id="L-270"><a href="#L-270"><span class="linenos">270</span></a>            <span class="n">pipeline_cfg_hash</span><span class="o">=</span><span class="n">pipeline_cfg_hash</span><span class="p">,</span>
+</span><span id="L-271"><a href="#L-271"><span class="linenos">271</span></a>            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span>
+</span><span id="L-272"><a href="#L-272"><span class="linenos">272</span></a>        <span class="p">)</span>
+</span><span id="L-273"><a href="#L-273"><span class="linenos">273</span></a>
+</span><span id="L-274"><a href="#L-274"><span class="linenos">274</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training run successfully persisted.&quot;</span><span class="p">)</span>
+</span><span id="L-275"><a href="#L-275"><span class="linenos">275</span></a>
+</span><span id="L-276"><a href="#L-276"><span class="linenos">276</span></a>        <span class="n">delete_failure_management_folder</span><span class="p">(</span>
+</span><span id="L-277"><a href="#L-277"><span class="linenos">277</span></a>            <span class="n">folder_path</span><span class="o">=</span><span class="n">failure_management_dir</span><span class="p">,</span>
+</span><span id="L-278"><a href="#L-278"><span class="linenos">278</span></a>            <span class="n">cleanup</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">clean_up_failure_management</span><span class="p">,</span>
+</span><span id="L-279"><a href="#L-279"><span class="linenos">279</span></a>            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span>
+</span><span id="L-280"><a href="#L-280"><span class="linenos">280</span></a>        <span class="p">)</span>
+</span><span id="L-281"><a href="#L-281"><span class="linenos">281</span></a>
+</span><span id="L-282"><a href="#L-282"><span class="linenos">282</span></a>        <span class="k">return</span> <span class="mi">0</span>
+</span><span id="L-283"><a href="#L-283"><span class="linenos">283</span></a>
+</span><span id="L-284"><a href="#L-284"><span class="linenos">284</span></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="L-285"><a href="#L-285"><span class="linenos">285</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;An error occurred during training.&quot;</span><span class="p">)</span>
+</span><span id="L-286"><a href="#L-286"><span class="linenos">286</span></a>        <span class="k">return</span> <span class="n">resolve_exit_code</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span><span id="L-287"><a href="#L-287"><span class="linenos">287</span></a>
+</span><span id="L-288"><a href="#L-288"><span class="linenos">288</span></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="L-289"><a href="#L-289"><span class="linenos">289</span></a>    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </span></pre></div>
 
 
@@ -586,61 +587,62 @@ directory created by a prior search run.</p>
 </span><span id="main-229"><a href="#main-229"><span class="linenos">229</span></a>            <span class="n">model_cfg</span><span class="p">,</span>
 </span><span id="main-230"><a href="#main-230"><span class="linenos">230</span></a>            <span class="n">strict</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">strict</span><span class="p">,</span>
 </span><span id="main-231"><a href="#main-231"><span class="linenos">231</span></a>            <span class="n">failure_management_dir</span><span class="o">=</span><span class="n">failure_management_dir</span><span class="p">,</span>
-</span><span id="main-232"><a href="#main-232"><span class="linenos">232</span></a>        <span class="p">)</span>
-</span><span id="main-233"><a href="#main-233"><span class="linenos">233</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training completed. Persisting training run...&quot;</span><span class="p">)</span>
-</span><span id="main-234"><a href="#main-234"><span class="linenos">234</span></a>
-</span><span id="main-235"><a href="#main-235"><span class="linenos">235</span></a>        <span class="n">model</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">model</span>
-</span><span id="main-236"><a href="#main-236"><span class="linenos">236</span></a>        <span class="n">model_path</span> <span class="o">=</span> <span class="n">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_run_dir</span><span class="p">)</span>
-</span><span id="main-237"><a href="#main-237"><span class="linenos">237</span></a>        <span class="n">model_hash</span> <span class="o">=</span> <span class="n">hash_artifact</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
-</span><span id="main-238"><a href="#main-238"><span class="linenos">238</span></a>
-</span><span id="main-239"><a href="#main-239"><span class="linenos">239</span></a>        <span class="n">pipeline</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="main-240"><a href="#main-240"><span class="linenos">240</span></a>        <span class="n">pipeline_path</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="main-241"><a href="#main-241"><span class="linenos">241</span></a>        <span class="n">pipeline_hash</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="main-242"><a href="#main-242"><span class="linenos">242</span></a>        <span class="n">pipeline_cfg_hash</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="main-243"><a href="#main-243"><span class="linenos">243</span></a>        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="main-244"><a href="#main-244"><span class="linenos">244</span></a>            <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline_cfg_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="main-245"><a href="#main-245"><span class="linenos">245</span></a>                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Pipeline config hash is missing in the trainer output, but a pipeline object is present. This is unexpected as the pipeline config hash is needed for reproducibility tracking. Please ensure that the trainer implementation returns a pipeline config hash when a pipeline is returned.&quot;</span>
-</span><span id="main-246"><a href="#main-246"><span class="linenos">246</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="main-247"><a href="#main-247"><span class="linenos">247</span></a>                <span class="k">raise</span> <span class="n">PipelineContractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="main-248"><a href="#main-248"><span class="linenos">248</span></a>
-</span><span id="main-249"><a href="#main-249"><span class="linenos">249</span></a>            <span class="n">pipeline</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline</span>
-</span><span id="main-250"><a href="#main-250"><span class="linenos">250</span></a>            <span class="n">pipeline_path</span> <span class="o">=</span> <span class="n">save_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">train_run_dir</span><span class="p">)</span>
-</span><span id="main-251"><a href="#main-251"><span class="linenos">251</span></a>            <span class="n">pipeline_hash</span> <span class="o">=</span> <span class="n">hash_artifact</span><span class="p">(</span><span class="n">pipeline_path</span><span class="p">)</span>
-</span><span id="main-252"><a href="#main-252"><span class="linenos">252</span></a>            <span class="n">pipeline_cfg_hash</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline_cfg_hash</span>
-</span><span id="main-253"><a href="#main-253"><span class="linenos">253</span></a>
+</span><span id="main-232"><a href="#main-232"><span class="linenos">232</span></a>            <span class="n">search_dir</span><span class="o">=</span><span class="n">search_dir</span>
+</span><span id="main-233"><a href="#main-233"><span class="linenos">233</span></a>        <span class="p">)</span>
+</span><span id="main-234"><a href="#main-234"><span class="linenos">234</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training completed. Persisting training run...&quot;</span><span class="p">)</span>
+</span><span id="main-235"><a href="#main-235"><span class="linenos">235</span></a>
+</span><span id="main-236"><a href="#main-236"><span class="linenos">236</span></a>        <span class="n">model</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">model</span>
+</span><span id="main-237"><a href="#main-237"><span class="linenos">237</span></a>        <span class="n">model_path</span> <span class="o">=</span> <span class="n">save_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_run_dir</span><span class="p">)</span>
+</span><span id="main-238"><a href="#main-238"><span class="linenos">238</span></a>        <span class="n">model_hash</span> <span class="o">=</span> <span class="n">hash_artifact</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+</span><span id="main-239"><a href="#main-239"><span class="linenos">239</span></a>
+</span><span id="main-240"><a href="#main-240"><span class="linenos">240</span></a>        <span class="n">pipeline</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="main-241"><a href="#main-241"><span class="linenos">241</span></a>        <span class="n">pipeline_path</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="main-242"><a href="#main-242"><span class="linenos">242</span></a>        <span class="n">pipeline_hash</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="main-243"><a href="#main-243"><span class="linenos">243</span></a>        <span class="n">pipeline_cfg_hash</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="main-244"><a href="#main-244"><span class="linenos">244</span></a>        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="main-245"><a href="#main-245"><span class="linenos">245</span></a>            <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline_cfg_hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="main-246"><a href="#main-246"><span class="linenos">246</span></a>                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Pipeline config hash is missing in the trainer output, but a pipeline object is present. This is unexpected as the pipeline config hash is needed for reproducibility tracking. Please ensure that the trainer implementation returns a pipeline config hash when a pipeline is returned.&quot;</span>
+</span><span id="main-247"><a href="#main-247"><span class="linenos">247</span></a>                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="main-248"><a href="#main-248"><span class="linenos">248</span></a>                <span class="k">raise</span> <span class="n">PipelineContractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="main-249"><a href="#main-249"><span class="linenos">249</span></a>
+</span><span id="main-250"><a href="#main-250"><span class="linenos">250</span></a>            <span class="n">pipeline</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline</span>
+</span><span id="main-251"><a href="#main-251"><span class="linenos">251</span></a>            <span class="n">pipeline_path</span> <span class="o">=</span> <span class="n">save_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">train_run_dir</span><span class="p">)</span>
+</span><span id="main-252"><a href="#main-252"><span class="linenos">252</span></a>            <span class="n">pipeline_hash</span> <span class="o">=</span> <span class="n">hash_artifact</span><span class="p">(</span><span class="n">pipeline_path</span><span class="p">)</span>
+</span><span id="main-253"><a href="#main-253"><span class="linenos">253</span></a>            <span class="n">pipeline_cfg_hash</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">pipeline_cfg_hash</span>
 </span><span id="main-254"><a href="#main-254"><span class="linenos">254</span></a>
-</span><span id="main-255"><a href="#main-255"><span class="linenos">255</span></a>        <span class="n">feature_lineage</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">lineage</span>
-</span><span id="main-256"><a href="#main-256"><span class="linenos">256</span></a>        <span class="n">metrics</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">metrics</span>
-</span><span id="main-257"><a href="#main-257"><span class="linenos">257</span></a>
-</span><span id="main-258"><a href="#main-258"><span class="linenos">258</span></a>        <span class="n">persist_training_run</span><span class="p">(</span>
-</span><span id="main-259"><a href="#main-259"><span class="linenos">259</span></a>            <span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="main-260"><a href="#main-260"><span class="linenos">260</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">feature_lineage</span><span class="p">,</span>
-</span><span id="main-261"><a href="#main-261"><span class="linenos">261</span></a>            <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
-</span><span id="main-262"><a href="#main-262"><span class="linenos">262</span></a>            <span class="n">train_run_id</span><span class="o">=</span><span class="n">train_run_id</span><span class="p">,</span>
-</span><span id="main-263"><a href="#main-263"><span class="linenos">263</span></a>            <span class="n">experiment_dir</span><span class="o">=</span><span class="n">experiment_dir</span><span class="p">,</span>
-</span><span id="main-264"><a href="#main-264"><span class="linenos">264</span></a>            <span class="n">train_run_dir</span><span class="o">=</span><span class="n">train_run_dir</span><span class="p">,</span>
-</span><span id="main-265"><a href="#main-265"><span class="linenos">265</span></a>            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
-</span><span id="main-266"><a href="#main-266"><span class="linenos">266</span></a>            <span class="n">model_hash</span><span class="o">=</span><span class="n">model_hash</span><span class="p">,</span>
-</span><span id="main-267"><a href="#main-267"><span class="linenos">267</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">pipeline_hash</span><span class="p">,</span>
-</span><span id="main-268"><a href="#main-268"><span class="linenos">268</span></a>            <span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span>
-</span><span id="main-269"><a href="#main-269"><span class="linenos">269</span></a>            <span class="n">pipeline_path</span><span class="o">=</span><span class="n">pipeline_path</span><span class="p">,</span>
-</span><span id="main-270"><a href="#main-270"><span class="linenos">270</span></a>            <span class="n">pipeline_cfg_hash</span><span class="o">=</span><span class="n">pipeline_cfg_hash</span><span class="p">,</span>
-</span><span id="main-271"><a href="#main-271"><span class="linenos">271</span></a>            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span>
-</span><span id="main-272"><a href="#main-272"><span class="linenos">272</span></a>        <span class="p">)</span>
-</span><span id="main-273"><a href="#main-273"><span class="linenos">273</span></a>
-</span><span id="main-274"><a href="#main-274"><span class="linenos">274</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training run successfully persisted.&quot;</span><span class="p">)</span>
-</span><span id="main-275"><a href="#main-275"><span class="linenos">275</span></a>
-</span><span id="main-276"><a href="#main-276"><span class="linenos">276</span></a>        <span class="n">delete_failure_management_folder</span><span class="p">(</span>
-</span><span id="main-277"><a href="#main-277"><span class="linenos">277</span></a>            <span class="n">folder_path</span><span class="o">=</span><span class="n">failure_management_dir</span><span class="p">,</span>
-</span><span id="main-278"><a href="#main-278"><span class="linenos">278</span></a>            <span class="n">cleanup</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">clean_up_failure_management</span><span class="p">,</span>
-</span><span id="main-279"><a href="#main-279"><span class="linenos">279</span></a>            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span>
-</span><span id="main-280"><a href="#main-280"><span class="linenos">280</span></a>        <span class="p">)</span>
-</span><span id="main-281"><a href="#main-281"><span class="linenos">281</span></a>
-</span><span id="main-282"><a href="#main-282"><span class="linenos">282</span></a>        <span class="k">return</span> <span class="mi">0</span>
-</span><span id="main-283"><a href="#main-283"><span class="linenos">283</span></a>
-</span><span id="main-284"><a href="#main-284"><span class="linenos">284</span></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-</span><span id="main-285"><a href="#main-285"><span class="linenos">285</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;An error occurred during training.&quot;</span><span class="p">)</span>
-</span><span id="main-286"><a href="#main-286"><span class="linenos">286</span></a>        <span class="k">return</span> <span class="n">resolve_exit_code</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</span><span id="main-255"><a href="#main-255"><span class="linenos">255</span></a>
+</span><span id="main-256"><a href="#main-256"><span class="linenos">256</span></a>        <span class="n">feature_lineage</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">lineage</span>
+</span><span id="main-257"><a href="#main-257"><span class="linenos">257</span></a>        <span class="n">metrics</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">metrics</span>
+</span><span id="main-258"><a href="#main-258"><span class="linenos">258</span></a>
+</span><span id="main-259"><a href="#main-259"><span class="linenos">259</span></a>        <span class="n">persist_training_run</span><span class="p">(</span>
+</span><span id="main-260"><a href="#main-260"><span class="linenos">260</span></a>            <span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="main-261"><a href="#main-261"><span class="linenos">261</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">feature_lineage</span><span class="p">,</span>
+</span><span id="main-262"><a href="#main-262"><span class="linenos">262</span></a>            <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+</span><span id="main-263"><a href="#main-263"><span class="linenos">263</span></a>            <span class="n">train_run_id</span><span class="o">=</span><span class="n">train_run_id</span><span class="p">,</span>
+</span><span id="main-264"><a href="#main-264"><span class="linenos">264</span></a>            <span class="n">experiment_dir</span><span class="o">=</span><span class="n">experiment_dir</span><span class="p">,</span>
+</span><span id="main-265"><a href="#main-265"><span class="linenos">265</span></a>            <span class="n">train_run_dir</span><span class="o">=</span><span class="n">train_run_dir</span><span class="p">,</span>
+</span><span id="main-266"><a href="#main-266"><span class="linenos">266</span></a>            <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+</span><span id="main-267"><a href="#main-267"><span class="linenos">267</span></a>            <span class="n">model_hash</span><span class="o">=</span><span class="n">model_hash</span><span class="p">,</span>
+</span><span id="main-268"><a href="#main-268"><span class="linenos">268</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">pipeline_hash</span><span class="p">,</span>
+</span><span id="main-269"><a href="#main-269"><span class="linenos">269</span></a>            <span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span>
+</span><span id="main-270"><a href="#main-270"><span class="linenos">270</span></a>            <span class="n">pipeline_path</span><span class="o">=</span><span class="n">pipeline_path</span><span class="p">,</span>
+</span><span id="main-271"><a href="#main-271"><span class="linenos">271</span></a>            <span class="n">pipeline_cfg_hash</span><span class="o">=</span><span class="n">pipeline_cfg_hash</span><span class="p">,</span>
+</span><span id="main-272"><a href="#main-272"><span class="linenos">272</span></a>            <span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span>
+</span><span id="main-273"><a href="#main-273"><span class="linenos">273</span></a>        <span class="p">)</span>
+</span><span id="main-274"><a href="#main-274"><span class="linenos">274</span></a>
+</span><span id="main-275"><a href="#main-275"><span class="linenos">275</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Training run successfully persisted.&quot;</span><span class="p">)</span>
+</span><span id="main-276"><a href="#main-276"><span class="linenos">276</span></a>
+</span><span id="main-277"><a href="#main-277"><span class="linenos">277</span></a>        <span class="n">delete_failure_management_folder</span><span class="p">(</span>
+</span><span id="main-278"><a href="#main-278"><span class="linenos">278</span></a>            <span class="n">folder_path</span><span class="o">=</span><span class="n">failure_management_dir</span><span class="p">,</span>
+</span><span id="main-279"><a href="#main-279"><span class="linenos">279</span></a>            <span class="n">cleanup</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">clean_up_failure_management</span><span class="p">,</span>
+</span><span id="main-280"><a href="#main-280"><span class="linenos">280</span></a>            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span>
+</span><span id="main-281"><a href="#main-281"><span class="linenos">281</span></a>        <span class="p">)</span>
+</span><span id="main-282"><a href="#main-282"><span class="linenos">282</span></a>
+</span><span id="main-283"><a href="#main-283"><span class="linenos">283</span></a>        <span class="k">return</span> <span class="mi">0</span>
+</span><span id="main-284"><a href="#main-284"><span class="linenos">284</span></a>
+</span><span id="main-285"><a href="#main-285"><span class="linenos">285</span></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="main-286"><a href="#main-286"><span class="linenos">286</span></a>        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;An error occurred during training.&quot;</span><span class="p">)</span>
+</span><span id="main-287"><a href="#main-287"><span class="linenos">287</span></a>        <span class="k">return</span> <span class="n">resolve_exit_code</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 </span></pre></div>
 
 

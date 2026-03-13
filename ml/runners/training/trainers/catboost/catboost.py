@@ -26,7 +26,7 @@ from ml.modeling.catboost.build_pipeline_with_model import build_pipeline_with_m
 from ml.modeling.class_weighting.models import DataStats
 from ml.modeling.class_weighting.resolve_class_weighting import resolve_class_weighting
 from ml.modeling.class_weighting.stats_resolver import compute_data_stats
-from ml.pipelines.validation import validate_pipeline_config
+from ml.pipelines.validation import validate_pipeline_config, validate_pipeline_config_consistency
 from ml.runners.training.constants.output import TrainOutput
 from ml.runners.training.trainers.base import Trainer
 from ml.runners.training.trainers.catboost.train_catboost_model import train_catboost_model
@@ -43,7 +43,8 @@ class CatBoostTrainer(Trainer):
         model_cfg: TrainModelConfig,
         *,
         strict: bool,
-        failure_management_dir: Path
+        failure_management_dir: Path,
+        search_dir: Path
     ) -> TrainOutput:
         """Execute end-to-end CatBoost training and return standardized output.
 
@@ -51,7 +52,7 @@ class CatBoostTrainer(Trainer):
             model_cfg: Validated model configuration for training.
             strict: Whether feature/data loading operations should fail strictly.
             failure_management_dir: Directory for storing failure-management artifacts.
-
+            search_dir: Directory for storing search-related artifacts.
         Returns:
             Standardized training output containing model, pipeline, lineage, and metrics.
 
@@ -101,6 +102,7 @@ class CatBoostTrainer(Trainer):
         pipeline_cfg_raw = load_yaml(pipeline_path)
         pipeline_cfg = validate_pipeline_config(pipeline_cfg_raw)
         pipeline_cfg_hash = compute_model_config_hash(pipeline_cfg.model_dump())
+        validate_pipeline_config_consistency(pipeline_cfg_hash, search_dir)
 
         validate_model_feature_pipeline_contract(
             model_cfg,
