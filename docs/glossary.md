@@ -88,3 +88,4 @@ Definitions of domain-specific terms and abbreviations.
 - **Components**: Within this repo, usually refers to the pre-model steps within an sklearn Pipeline.
 - **Imputation**: Within this repo, a process of replacing missing (null or N/A) rows with some values (e.g. the string "missing").
 - **Target**: A variable the value of which we are trying to predict with a given model.
+- **Model Specs**: Model specifications.
