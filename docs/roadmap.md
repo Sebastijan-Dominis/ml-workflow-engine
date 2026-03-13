@@ -32,8 +32,8 @@ _Last updated: 2026-03-13_
 - [ ] Add monitor.py
     - Status: planned
     - Importance: low
-- [ ] Add pipeline config validation to the training pipeline
-    - Status: planned
+- [x] Add pipeline config validation to the training pipeline
+    - Status: done (2026-03-13)
     - Importance: medium
 
 ## Mid Term (1-6 months)
