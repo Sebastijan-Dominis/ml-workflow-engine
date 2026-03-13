@@ -3,13 +3,24 @@
 ## 1. Location
 
 Processed data configurations can be found at:
-`configs/data/processed/{dataset_name}/{version}.yaml`, where
-  - `dataset_name` represents the dataset these configurations apply to
-  - `version` represents the version of the configuration
-- Example: `configs/data/processed/hotel_bookings/v1.yaml`
+
+```text
+configs/data/processed/{dataset_name}/{version}.yaml
+```
+
+- `dataset_name` represents the dataset these configurations apply to
+- `version` represents the version of the configuration
+- Example: 
+
+```text
+configs/data/processed/hotel_bookings/v1.yaml
+```
 
 These configurations are used by the pipeline:
-`pipelines/data/build_processed_dataset.py`
+
+```text
+pipelines/data/build_processed_dataset.py
+```
 
 The purpose of the processed stage is to *transform interim datasets into modeling-ready datasets* by removing unnecessary columns and preparing the final dataset artifact.
 

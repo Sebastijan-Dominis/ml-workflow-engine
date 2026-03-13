@@ -3,7 +3,10 @@
 ## 1. Location
 
 Feature registry configurations are defined in:
-`configs/feature_registry/features.yaml`
+
+```text
+configs/feature_registry/features.yaml
+```
 
 Feature definitions are organized by feature set name and version:
 
@@ -21,7 +24,10 @@ booking_context_features:
 ```
 
 These configurations are used by the pipeline:
-- `pipelines/features/freeze.py`
+
+```text
+pipelines/features/freeze.py
+```
 
 The pipeline materializes feature sets into the feature store, creating versioned snapshots that can be used by modeling workflows.
 

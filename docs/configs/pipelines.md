@@ -16,14 +16,20 @@ This ensures that the ML workflow can grow with your project or be adapted for o
 ## 1. Location
 
 Pipeline configurations are defined in:
-`configs/pipelines/{data_type}/{algorithm}/{pipeline_version}.yaml`
+
+```text
+configs/pipelines/{data_type}/{algorithm}/{pipeline_version}.yaml
+```
 
 - `data_type`: currently only `tabular` (time-series support is planned).
 - `algorithm`: name of the modeling algorithm (e.g., `catboost`).
 - `pipeline_version`: version of the pipeline configuration (`v{integer}.yaml`).
 
 Example:
-- `configs/pipelines/tabular/catboost/v1.yaml`
+
+```text
+configs/pipelines/tabular/catboost/v1.yaml
+```
 
 ## 2. Fields
 

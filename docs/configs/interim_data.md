@@ -3,13 +3,24 @@
 ## 1. Location
 
 Interim data configurations can found at:
-`configs/data/interim/{dataset_name}/{version}.yaml`, where:
-  - `dataset_name` represents the name of the dataset they are intended for.
-  - `version` implies the version of configurations for that specific dataset.
-- Example: `configs/data/interim/hotel_bookings/v1.yaml`
+
+```text
+configs/data/interim/{dataset_name}/{version}.yaml
+```
+  
+- `dataset_name` represents the name of the dataset they are intended for.
+- `version` implies the version of configurations for that specific dataset.
+- Example: 
+
+```text
+configs/data/interim/hotel_bookings/v1.yaml
+```
 
 These configurations are used by the pipeline:
-`pipelines/data/build_interim_dataset.py`
+
+```text
+pipelines/data/build_interim_dataset.py
+```
 
 The purpose of the interim stage is to *transform raw data into memory-optimized interim datasets* by optimizing column data types.
 

@@ -17,8 +17,8 @@ _Last updated: 2026-03-12_
 - [x] Set up a proper environment for contributors
     - Status: done (2026-03-12)
     - Importance: high
-- [ ] Add a document describing each of the configs
-    - Status: in progress (started 2026-03-13)
+- [x] Add a document describing each of the configs
+    - Status: done (2026-03-13)
     - Importance: high
 - [ ] Create an ml service to wrap pipelines and config-generating scripts, using Dash and FastAPI
     - Status: planned
@@ -34,7 +34,7 @@ _Last updated: 2026-03-12_
     - Importance: low
 - [ ] Add config hash validation at post-search steps
     - Status: planned
-    - Importance: medium
+    - Importance: low
 
 ## Mid Term (1-6 months)
 - [ ] Create tools for an LLM using the production models and their respective artifacts

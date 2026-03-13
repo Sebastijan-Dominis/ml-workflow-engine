@@ -57,6 +57,9 @@ including its location, expected fields, validation logic, and usage examples.
 | [Interim Data Configurations](configs/interim_data.md) | Data cleaning and validation |
 | [Processed Data Configurations](configs/processed_data.md) | Feature-ready dataset creation |
 | [Feature Registry](configs/feature_registry.md) | Feature set definitions |
-| [Model Configurations](configs/model_configs.md) | Modeling-specific configurations |
+| [Model Specifications](configs/model_specs.md) | Model specifications (canonical for model configurations) |
+| [Model Configurations](configs/model_config.md) | Modeling-specific configurations (used by search and train pipelines) |
 | [Pipelines Configurations](configs/pipelines.md) | Configurations for sklearn Pipelines |
-| [Promotion Configuration](configs/promotion.md) | Model promotion thresholds |
+| [Promotion Thresholds](configs/promotion.md) | Model promotion criteria and performance thresholds |
+
+> Note: Defaults (global and algorithm-specific), as well as environment configurations, are covered within model configurations (`docs/configs/model_config.md`)

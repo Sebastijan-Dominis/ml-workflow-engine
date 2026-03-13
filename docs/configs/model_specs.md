@@ -14,14 +14,20 @@ Search and train configurations reference a model specification to ensure that b
 ## 1. Location
 
 Model specifications are defined in:
-`configs/model_specs/{problem}/{segment}/{version}.yaml`
+
+```text
+configs/model_specs/{problem}/{segment}/{version}.yaml
+```
 
 - **problem** — modeling problem identifier (e.g., `cancellation`)
 - **segment** — dataset segment identifier (e.g., `global`)
 - **version** — specification version (`v{integer}.yaml`)
 
 Example:
-`configs/model_specs/cancellation/global/v1.yaml`
+
+```text
+configs/model_specs/cancellation/global/v1.yaml
+```
 
 ## 2. Fields
 
