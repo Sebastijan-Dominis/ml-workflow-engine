@@ -18,7 +18,7 @@ _Last updated: 2026-03-12_
     - Status: done (2026-03-12)
     - Importance: high
 - [ ] Add a document describing each of the configs
-    - Status: planned
+    - Status: in progress (started 2026-03-13)
     - Importance: high
 - [ ] Create an ml service to wrap pipelines and config-generating scripts, using Dash and FastAPI
     - Status: planned

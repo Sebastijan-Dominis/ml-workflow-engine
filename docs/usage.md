@@ -136,6 +136,13 @@ How to use the hotel_management project for typical workflows.
 - Their expected use is primarily convenience in dev/test environment and assurance of quality in prod environment
 - The repo comes with some predefined configs for each of the environments - feel free to adjust them to your use-cases
 
+### Pipeline Configs
+
+- Define pipeline configs in `configs/pipelines/{data_type}/{algorithm}/{pipeline_version}.yaml`
+- Data type can currently only be tabular; time-series is a planned implementation
+- These configs define the logic used within an sklearn Pipeline that wraps some models
+- Model specs define which pipeline version (if any) will be used
+
 ### Promotion Configs
 
 - Define promotion thresholds for each model in `configs/promotion/thresholds.yaml`
