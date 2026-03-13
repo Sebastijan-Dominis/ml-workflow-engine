@@ -1,4 +1,3 @@
-*Note that this file is a work in progress. Some links will not work until the work is finished.*
 # Configuration Reference
 
 This document explains where configuration files are located,
