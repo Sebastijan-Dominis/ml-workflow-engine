@@ -32,6 +32,9 @@ _Last updated: 2026-03-12_
 - [ ] Add monitor.py
     - Status: planned
     - Importance: low
+- [ ] Add config hash validation at post-search steps
+    - Status: planned
+    - Importance: medium
 
 ## Mid Term (1-6 months)
 - [ ] Create tools for an LLM using the production models and their respective artifacts
