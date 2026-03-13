@@ -37,6 +37,7 @@ Examples:
 - Write clear commit messages
 - Link related issues in the PR description
 - Ensure all CI checks pass
+- Update documentation as needed
 
 ## Review Process
 - All code must be reviewed before merging
