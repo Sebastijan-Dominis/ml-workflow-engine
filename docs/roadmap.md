@@ -1,4 +1,4 @@
-_Last updated: 2026-03-13_
+_Last updated: 2026-03-14_
 # Roadmap
 
 - This document outlines the planned development roadmap for the project.
@@ -21,7 +21,7 @@ _Last updated: 2026-03-13_
     - Status: done (2026-03-13)
     - Importance: high
 - [ ] Create an ml service that wraps pipelines and allows config writing using Dash and FastAPI
-    - Status: planned
+    - Status: in progress (2026-03-14)
     - Importance: medium
 - [x] Add pipeline config validation to the training pipeline
     - Status: done (2026-03-13)

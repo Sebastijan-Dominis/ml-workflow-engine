@@ -20,6 +20,7 @@ exclude = [
   "feature_store",
   "data",
   "experiments",
+  "ml_service",
 ]
 
 [tool.ruff.lint]
@@ -35,7 +36,7 @@ disallow_incomplete_defs = false
 check_untyped_defs = true
 no_implicit_optional = true
 ignore_missing_imports = true
-exclude = "(^notebooks/|^feature_store/|^data/|^experiments/)"
+exclude = "(^notebooks/|^feature_store/|^data/|^experiments/|^ml_service/)"
 
 [tool.coverage.run]
 branch = true

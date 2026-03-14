@@ -1,0 +1,532 @@
+[
+  {
+    "name": "register_raw_snapshot",
+    "fields": [
+      {
+        "name": "data",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "snapshot_id",
+        "type": "str | None",
+        "default": "latest"
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      }
+    ]
+  },
+  {
+    "name": "build_interim_dataset",
+    "fields": [
+      {
+        "name": "data",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "raw_snapshot_id",
+        "type": "str | None",
+        "default": "latest"
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      }
+    ]
+  },
+  {
+    "name": "build_processed_dataset",
+    "fields": [
+      {
+        "name": "data",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "interim_snapshot_id",
+        "type": "str | None",
+        "default": "latest"
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      }
+    ]
+  },
+  {
+    "name": "freeze_feature_set",
+    "fields": [
+      {
+        "name": "feature_set",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      }
+    ]
+  },
+  {
+    "name": "search",
+    "fields": [
+      {
+        "name": "problem",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "segment",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "experiment_id",
+        "type": "str | None",
+        "default": null
+      },
+      {
+        "name": "env",
+        "type": "str | None",
+        "default": "default"
+      },
+      {
+        "name": "strict",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      },
+      {
+        "name": "clean_up_failure_management",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "overwrite_existing",
+        "type": "bool | None",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "train",
+    "fields": [
+      {
+        "name": "problem",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "segment",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "train_run_id",
+        "type": "str | None",
+        "default": null
+      },
+      {
+        "name": "experiment_id",
+        "type": "str | None",
+        "default": null
+      },
+      {
+        "name": "env",
+        "type": "str | None",
+        "default": "default"
+      },
+      {
+        "name": "strict",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "clean_up_failure_management",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "overwrite_existing",
+        "type": "bool | None",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "evaluate",
+    "fields": [
+      {
+        "name": "problem",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "segment",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "experiment_id",
+        "type": "str | None",
+        "default": null
+      },
+      {
+        "name": "train_id",
+        "type": "str | None",
+        "default": null
+      },
+      {
+        "name": "env",
+        "type": "str | None",
+        "default": "default"
+      },
+      {
+        "name": "strict",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      }
+    ]
+  },
+  {
+    "name": "explain",
+    "fields": [
+      {
+        "name": "problem",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "segment",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "experiment_id",
+        "type": "str | None",
+        "default": null
+      },
+      {
+        "name": "train_id",
+        "type": "str | None",
+        "default": null
+      },
+      {
+        "name": "top_k",
+        "type": "int | None",
+        "default": null
+      },
+      {
+        "name": "env",
+        "type": "str | None",
+        "default": "default"
+      },
+      {
+        "name": "strict",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      }
+    ]
+  },
+  {
+    "name": "promote",
+    "fields": [
+      {
+        "name": "problem",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "segment",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "experiment_id",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "train_run_id",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "eval_run_id",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "explain_run_id",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "stage",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      }
+    ]
+  },
+  {
+    "name": "execute_all_data_preprocessing",
+    "fields": [
+      {
+        "name": "skip_if_existing",
+        "type": "<class 'bool'>",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "execute_experiment_with_latest",
+    "fields": [
+      {
+        "name": "problem",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "segment",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "env",
+        "type": "str | None",
+        "default": "default"
+      },
+      {
+        "name": "strict",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      },
+      {
+        "name": "clean_up_failure_management",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "version",
+        "type": "<class 'str'>",
+        "default": null
+      },
+      {
+        "name": "experiment_id",
+        "type": "str | None",
+        "default": null
+      },
+      {
+        "name": "overwrite_existing",
+        "type": "bool | None",
+        "default": false
+      },
+      {
+        "name": "top_k",
+        "type": "int | None",
+        "default": null
+      }
+    ]
+  },
+  {
+    "name": "execute_all_experiments_with_latest",
+    "fields": [
+      {
+        "name": "env",
+        "type": "str | None",
+        "default": "dev"
+      },
+      {
+        "name": "strict",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      },
+      {
+        "name": "clean_up_failure_management",
+        "type": "bool | None",
+        "default": true
+      },
+      {
+        "name": "overwrite_existing",
+        "type": "bool | None",
+        "default": false
+      },
+      {
+        "name": "top_k",
+        "type": "int | None",
+        "default": null
+      },
+      {
+        "name": "skip_if_existing",
+        "type": "<class 'bool'>",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "freeze_all_feature_sets",
+    "fields": [
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      },
+      {
+        "name": "skip_if_existing",
+        "type": "<class 'bool'>",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "run_all_workflows",
+    "fields": [
+      {
+        "name": "env",
+        "type": "str | None",
+        "default": "dev"
+      },
+      {
+        "name": "logging_level",
+        "type": "Literal['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']",
+        "default": "INFO"
+      },
+      {
+        "name": "owner",
+        "type": "str | None",
+        "default": "Sebastijan"
+      },
+      {
+        "name": "skip_if_existing",
+        "type": "<class 'bool'>",
+        "default": true
+      }
+    ]
+  }
+]

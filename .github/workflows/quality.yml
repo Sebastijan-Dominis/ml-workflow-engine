@@ -37,7 +37,7 @@ jobs:
           pip list | grep -E "ruff|mypy|types-pyyaml|pytest"
 
       - name: Run ruff
-        run: ruff check .
+        run: ruff check . --config pyproject.toml
 
       - name: Run mypy (non-strict, respects mypy.ini)
         run: mypy ml pipelines
