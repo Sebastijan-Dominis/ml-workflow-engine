@@ -36,7 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--env",
         choices = ["dev", "test", "prod", "default"],
-        default="default",
+        default="dev",
         help="Environment to run the script in (dev/test/prod) (default: default) ~ none"
     )
 

@@ -19,7 +19,7 @@ def test_parse_args_uses_expected_defaults(monkeypatch: pytest.MonkeyPatch) -> N
 
     args = module.parse_args()
 
-    assert args.env == "default"
+    assert args.env == "dev"
     assert args.strict is True
     assert args.logging_level == "INFO"
     assert args.owner == "Sebastijan"
