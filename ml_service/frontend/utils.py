@@ -3,7 +3,7 @@ import os
 import dotenv
 import requests
 
-dotenv.load_dotenv()
+dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
 API_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 

@@ -2,8 +2,10 @@ import os
 import subprocess
 
 from fastapi import APIRouter, Body, HTTPException
+from ml_service.backend.registries.pipelines_for_endpoint_registration import (
+    PIPELINES_FOR_ENDPOINT_REGISTRATION,
+)
 from pydantic import BaseModel
-from registries.pipelines_for_endpoint_registration import PIPELINES_FOR_ENDPOINT_REGISTRATION
 
 router = APIRouter(prefix="/pipelines", tags=["pipelines"])
 
@@ -36,7 +38,6 @@ def register_pipeline(
 
     async def endpoint(payload: args_schema = Body(...)):  # type: ignore
         cmd = [
-            "conda", "run", "-n", ml_environment_name, "--no-capture-output",
             "python", "-m", module_path,
         ]
 

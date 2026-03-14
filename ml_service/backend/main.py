@@ -1,8 +1,11 @@
 import os
 
+import dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import pipelines
+from ml_service.backend.routers import pipelines
+
+dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
 app = FastAPI()
 

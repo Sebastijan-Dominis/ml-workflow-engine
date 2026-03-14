@@ -1,4 +1,4 @@
-from models.pipelines import (
+from ml_service.backend.models.pipelines import (
     BuildInterimDatasetInput,
     BuildProcessedDatasetInput,
     EvaluateInput,

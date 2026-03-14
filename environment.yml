@@ -25,3 +25,9 @@ dependencies:
   - pre-commit
   - types-pyyaml
   - pytest-cov
+  - pdoc
+  - fastapi
+  - uvicorn
+  - dash-bootstrap-components
+  - python-dotenv
+  - dash

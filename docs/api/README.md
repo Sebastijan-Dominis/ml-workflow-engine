@@ -45,8 +45,7 @@ conda install -c conda-forge pdoc
 pip install pdoc
 ```
 
-> Note: `pdoc` package is not included in `environment.yml`.
-> Install it if you're a contributor, or simply want to generate api docs.
+> Note: `pdoc` package is also included in `environment.yml`.
 
 2. Ensure `__init__.py` files exist
 - Create them for each package, even if empty

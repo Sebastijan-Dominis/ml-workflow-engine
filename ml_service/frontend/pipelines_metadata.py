@@ -1,35 +1,23 @@
-import json
-from pathlib import Path
+from ml_service.backend.registries.pipelines_for_endpoint_registration import (
+    PIPELINES_FOR_ENDPOINT_REGISTRATION,
+)
 
-with open(Path(__file__).parent / "frontend_pipeline_schema.json") as f:
-    raw_pipelines = json.load(f)
-
+# Transform Pydantic model into simple metadata for frontend
 FRONTEND_PIPELINES = []
 
-for p in raw_pipelines:
+for p in PIPELINES_FOR_ENDPOINT_REGISTRATION:
     fields = []
-    for field in p["fields"]:
-        if field["name"] == "logging_level":
+    for field_name, model_field in p["args_schema"].model_fields.items():
+        type_hint = str(model_field.annotation).replace("typing.", "")
+        if field_name == "logging_level":
             fields.append({
-                "name": field["name"],
+                "name": field_name,
                 "type": "dropdown",
                 "options": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-                "value": field["default"] or "INFO"
+                "value": model_field.default if model_field.default is not None else "INFO"
             })
-        elif field["type"].lower() == "bool":
-            fields.append({
-                "name": field["name"],
-                "type": "boolean",
-                "value": bool(field["default"]) if field["default"] is not None else False
-            })
+        elif type_hint == "bool":
+            fields.append({"name": field_name, "type": "boolean", "value": model_field.default})
         else:
-            fields.append({
-                "name": field["name"],
-                "type": "text",
-                "placeholder": field["name"],
-                "value": field.get("default")
-            })
-    FRONTEND_PIPELINES.append({
-        "name": p["name"],
-        "fields": fields
-    })
+            fields.append({"name": field_name, "type": "text", "placeholder": field_name})
+    FRONTEND_PIPELINES.append({"name": p["name"], "fields": fields})
