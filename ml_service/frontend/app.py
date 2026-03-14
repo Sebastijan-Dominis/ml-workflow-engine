@@ -44,16 +44,23 @@ for pipeline in FRONTEND_PIPELINES:
         [State(input_id, "value") for input_id in input_ids],
         prevent_initial_call=True
     )
-    def run_pipeline(n_clicks, *values, pipeline_name=pipeline["name"], field_names=[f["name"] for f in pipeline["fields"]]):
+    def run_pipeline(
+        n_clicks,
+        *values,
+        pipeline=pipeline,
+        pipeline_name=pipeline["name"],
+        field_names=None
+    ):
+        if field_names is None:
+            field_names = [f["name"] for f in pipeline["fields"]]
         payload = {}
-        for k, v, f in zip(field_names, values, pipeline["fields"]):
-            # Convert boolean checklist back to bool
+        for k, v, f in zip(field_names, values, pipeline["fields"], strict=True):
             if f["type"] == "boolean":
                 payload[k] = bool(v)
             else:
                 payload[k] = v
         result = call_pipeline(pipeline_name, payload)
         return dbc.Textarea(value=str(result), style={"width": "100%", "height": "200px"})
-    
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,5 +1,6 @@
 import os
 import subprocess
+from typing import Annotated
 
 from fastapi import APIRouter, Body, HTTPException
 from ml_service.backend.registries.pipelines_for_endpoint_registration import (
@@ -36,7 +37,7 @@ def register_pipeline(
 ):
     boolean_args = boolean_args or []
 
-    async def endpoint(payload: args_schema = Body(...)):  # type: ignore
+    async def endpoint(payload: Annotated[args_schema, Body(...)]):  # type: ignore
         cmd = [
             "python", "-m", module_path,
         ]
@@ -64,7 +65,10 @@ def register_pipeline(
                 shell=True,
             )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to start pipeline: {e}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to start pipeline: {e}"
+            ) from e
 
         exit_code = result.returncode
         return {
