@@ -110,6 +110,8 @@ app.layout = dbc.Container([
     style={
         "backgroundColor": "#8fa0d8",
         "minHeight": "100vh",
+        "padding-top": "25px",
+        "padding-bottom": "30px",
     }
 )
 
