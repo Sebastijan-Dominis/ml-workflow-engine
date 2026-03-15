@@ -31,3 +31,7 @@ dependencies:
   - dash-bootstrap-components
   - python-dotenv
   - dash
+  - slowapi
+  - pip
+  - pip:
+      - dash-ace
