@@ -1,88 +1,149 @@
-import os
-import subprocess
 from typing import Annotated
 
-from fastapi import APIRouter, Body, HTTPException
-from ml_service.backend.registries.pipelines_for_endpoint_registration import (
-    PIPELINES_FOR_ENDPOINT_REGISTRATION,
+from fastapi import APIRouter, Body, Request
+from ml_service.backend.main import limiter
+from ml_service.backend.pipelines.execute_pipeline import execute_pipeline
+from ml_service.backend.pipelines.models.pipelines_cli_args import (
+    BuildInterimDatasetInput,
+    BuildProcessedDatasetInput,
+    EvaluateInput,
+    ExecuteAllDataPreprocessingInput,
+    ExecuteAllExperimentsWithLatestInput,
+    ExecuteExperimentWithLatestInput,
+    ExplainInput,
+    FreezeAllFeatureSetsInput,
+    FreezeFeaturesInput,
+    PromoteInput,
+    RegisterRawSnapshotInput,
+    RunAllWorkflowsInput,
+    SearchInput,
+    TrainInput,
 )
-from pydantic import BaseModel
 
 router = APIRouter(prefix="/pipelines", tags=["pipelines"])
 
-repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-env = os.environ.copy()
-env["PYTHONPATH"] = repo_root
+@router.post("/register_raw_snapshot", status_code=200)
+@limiter.limit("1/30seconds")
+def register_raw_snapshot(payload: Annotated[RegisterRawSnapshotInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.data.register_raw_snapshot",
+        payload=payload,
+        boolean_args=[],
+    )
 
-EXIT_MEANING = {
-    0: "SUCCESS",
-    1: "UNEXPECTED_ERROR",
-    2: "CONFIG_ERROR",
-    3: "DATA_ERROR",
-    4: "PIPELINE_ERROR",
-    5: "SEARCH_ERROR",
-    6: "TRAINING_ERROR",
-    7: "EVALUATION_ERROR",
-    8: "EXPLAINABILITY_ERROR",
-    9: "PERSISTENCE_ERROR",
-}
+@router.post("/build_interim_dataset", status_code=200)
+@limiter.limit("1/30seconds")
+def build_interim_dataset(payload: Annotated[BuildInterimDatasetInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.data.build_interim_dataset",
+        payload=payload,
+        boolean_args=[],
+    )
 
-def register_pipeline(
-    name: str,
-    module_path: str,
-    args_schema: type[BaseModel],
-    boolean_args: list[str] | None = None,
-):
-    boolean_args = boolean_args or []
+@router.post("/build_processed_dataset", status_code=200)
+@limiter.limit("1/30seconds")
+def build_processed_dataset(payload: Annotated[BuildProcessedDatasetInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.data.build_processed_dataset",
+        payload=payload,
+        boolean_args=[],
+    )
 
-    async def endpoint(payload: Annotated[args_schema, Body(...)]):  # type: ignore
-        cmd = [
-            "python", "-m", module_path,
-        ]
+@router.post("/freeze_feature_set", status_code=200)
+@limiter.limit("1/15seconds")
+def freeze_feature_set(payload: Annotated[FreezeFeaturesInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.features.freeze",
+        payload=payload,
+        boolean_args=[],
+    )
 
-        for field_name, value in payload.model_dump(exclude_none=True).items():
-            if value is None or (isinstance(value, str) and value.strip() == ""):
-                continue
+@router.post("/search", status_code=200)
+@limiter.limit("1/minute")
+def search(payload: Annotated[SearchInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.search.search",
+        payload=payload,
+        boolean_args=["strict", "clean_up_failure_management", "overwrite_existing"],
+    )
 
-            flag = f"--{field_name.replace('_', '-')}"
+@router.post("/train", status_code=200)
+@limiter.limit("1/minute")
+def train(payload: Annotated[TrainInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.runners.training.train",
+        payload=payload,
+        boolean_args=["strict", "clean_up_failure_management", "overwrite_existing"],
+    )
 
-            if field_name in boolean_args:
-                value = "True" if value else "False"
+@router.post("/evaluate", status_code=200)
+@limiter.limit("1/30seconds")
+def evaluate(payload: Annotated[EvaluateInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.runners.evaluation.evaluate",
+        payload=payload,
+        boolean_args=["strict", "clean_up_failure_management", "overwrite_existing"],
+    )
 
-            cmd.extend([flag, str(value)])
+@router.post("/explain", status_code=200)
+@limiter.limit("1/30seconds")
+def explain(payload: Annotated[ExplainInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.runners.explainability.explain",
+        payload=payload,
+        boolean_args=["strict", "clean_up_failure_management", "overwrite_existing"],
+    )
 
-        print(f"Executing command: {' '.join(cmd)}")
+@router.post("/promote", status_code=200)
+@limiter.limit("1/minute")
+def promote(payload: Annotated[PromoteInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.promotion.promote",
+        payload=payload,
+        boolean_args=[],
+    )
 
-        try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                env=env,
-                cwd=repo_root,
-                shell=True,
-            )
-        except Exception as e:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Failed to start pipeline: {e}"
-            ) from e
+@router.post("/execute_all_data_preprocessing", status_code=200)
+@limiter.limit("1/10minutes; 3/hour")
+def execute_all_data_preprocessing(payload: Annotated[ExecuteAllDataPreprocessingInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.orchestration.data.execute_all_data_preprocessing",
+        payload=payload,
+        boolean_args=[],
+    )
 
-        exit_code = result.returncode
-        return {
-            "exit_code": exit_code,
-            "status": EXIT_MEANING.get(exit_code, "UNKNOWN_ERROR"),
-            "stdout": result.stdout,
-            "stderr": result.stderr,
-        }
+@router.post("/freeze_all_feature_sets", status_code=200)
+@limiter.limit("1/10minutes")
+def freeze_all_feature_sets(payload: Annotated[FreezeAllFeatureSetsInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.orchestration.features.freeze_all_feature_sets",
+        payload=payload,
+        boolean_args=[],
+    )
 
-    router.post(f"/{name}")(endpoint)
+@router.post("/execute_experiment_with_latest", status_code=200)
+@limiter.limit("1/10minutes; 3/hour")
+def execute_experiment_with_latest(payload: Annotated[ExecuteExperimentWithLatestInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.orchestration.experiments.execute_experiment_with_latest",
+        payload=payload,
+        boolean_args=["strict", "clean_up_failure_management", "overwrite_existing"],
+    )
 
+@router.post("/execute_all_experiments_with_latest", status_code=200)
+@limiter.limit("1/hour; 5/day")
+def execute_all_experiments_with_latest(payload: Annotated[ExecuteAllExperimentsWithLatestInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.orchestration.experiments.execute_all_experiments_with_latest",
+        payload=payload,
+        boolean_args=[],
+    )
 
-for pipeline_info in PIPELINES_FOR_ENDPOINT_REGISTRATION:
-    register_pipeline(
-        name=pipeline_info["name"],
-        module_path=pipeline_info["module_path"],
-        args_schema=pipeline_info["args_schema"],
-        boolean_args=pipeline_info.get("boolean_args", []),
+@router.post("/run_all_workflows", status_code=200)
+@limiter.limit("1/hour; 5/day")
+def run_all_workflows(payload: Annotated[RunAllWorkflowsInput, Body(...)], request: Request): # type: ignore
+    return execute_pipeline(
+        module_path="pipelines.orchestration.run_all_workflows",
+        payload=payload,
+        boolean_args=[],
     )

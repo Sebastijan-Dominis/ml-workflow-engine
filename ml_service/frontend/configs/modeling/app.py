@@ -22,15 +22,25 @@ app.layout = dbc.Container(
             "Modeling Config Editor",
             style={
                 "text-align": "center",
-                "color": "#580958",
+                "color": "#050525",
                 "font-weight": "bold",
+                "font-size": "2.5rem",
+                "margin-bottom": "40px",
             }
         ),
         dbc.Row(
             [
                 dbc.Col(
                   [
-                    html.H2(name, style={"text-align": "center", "color": "#580958"}),
+                    html.H2(
+                        name,
+                        style={
+                            "text-align": "center",
+                            "color": "#050525",
+                            "font-weight": "bold",
+                            "font-size": "2rem",
+                        }
+                    ),
                     dash_ace.DashAceEditor
                     (
                       id=name,
@@ -44,7 +54,7 @@ app.layout = dbc.Container(
                       fontSize=20,
                       height="1000px",
                       style={
-                          "margin": "50px auto 0 auto",
+                          "margin": "30px auto 30px auto",
                           "display": "block",
                           "background-color": "#f8f9fa",
                       },
@@ -87,7 +97,7 @@ app.layout = dbc.Container(
     ],
     fluid=True,
     style={
-        "background-color": "#e8a3f1",
+        "background-color": "#8fa0d8",
         "min-height": "100vh",
         "padding-top": "45px",
         "padding-bottom": "50px",
