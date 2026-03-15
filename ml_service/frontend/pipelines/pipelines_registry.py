@@ -51,12 +51,12 @@ FRONTEND_PIPELINES_REGISTRY = [
         "args_schema": EvaluateInput
     },
     {
-        "name": "Explainability",
+        "name": "Explain",
         "endpoint": "pipelines/explain",
         "args_schema": ExplainInput
     },
     {
-        "name": "Promotion",
+        "name": "Promote",
         "endpoint": "pipelines/promote",
         "args_schema": PromoteInput
     },
