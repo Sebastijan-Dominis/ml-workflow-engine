@@ -29,13 +29,12 @@ jobs:
           activate-environment: hotel_management
           use-mamba: true
           auto-activate-base: false
-          use-only-tar-bz2: true
+
+      - name: Install additional pip dependencies
+        run: conda run -n hotel_management pip install -r requirements-pip.txt coverage
 
       - name: Show environment
         run: conda run -n hotel_management conda list
-
-      - name: Install coverage
-        run: conda run -n hotel_management pip install coverage
 
       - name: Run tests with coverage
         run: conda run -n hotel_management coverage run -m pytest -v --maxfail=1 --disable-warnings
