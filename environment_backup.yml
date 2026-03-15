@@ -32,6 +32,3 @@ dependencies:
   - python-dotenv
   - dash
   - slowapi
-  - pip
-  - pip:
-      - dash-ace
