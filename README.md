@@ -59,6 +59,18 @@ python -m pipelines.data.register_raw_snapshot --data hotel_bookings --version v
 - Environment set up properly
 - `data/raw/hotel_bookings/v1/{snapshot_id}/data.csv` exists and is uncorrupted (default)
 
+### ML Service
+
+Use apps located within `ml_service`, if preferred.
+
+#### Pipelines
+
+!["Gif portrayal of pipelines app from ml_service"](assets/gifs/ml_service_pipelines.gif)
+
+#### Modeling Configs
+
+!["Gif portrayal of modeling configs app from ml_service"](assets/gifs/ml_service_modeling_configs.gif)
+
 ## Architecture
 
 See the [architecture overview](docs/architecture/overview.md) for details.
