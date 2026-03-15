@@ -14,8 +14,6 @@ repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", 
 env = os.environ.copy()
 env["PYTHONPATH"] = repo_root
 
-ml_environment_name = os.getenv("ML_ENVIRONMENT_NAME", "hotel_management")
-
 EXIT_MEANING = {
     0: "SUCCESS",
     1: "UNEXPECTED_ERROR",

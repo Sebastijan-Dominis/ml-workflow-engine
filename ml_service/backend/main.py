@@ -3,7 +3,12 @@ import os
 import dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from ml_service.backend.routers import pipelines
+from fastapi.responses import JSONResponse
+from ml_service.backend.routers.modeling import router as modeling_router
+from ml_service.backend.routers.pipelines import router as pipelines_router
+from slowapi import Limiter
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
@@ -17,7 +22,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(pipelines.router)
+routers = [pipelines_router, modeling_router]
+
+for router in routers:
+    app.include_router(router)
+
+limiter = Limiter(key_func=get_remote_address, default_limits=["3/minute", "1/minute"])
+app.state.limiter = limiter
+
+async def rate_limit_exceeded_handler(request, exc):
+    return JSONResponse(
+        status_code=429,
+        content={"message": "Rate limit exceeded. Please try again later."},
+    )
+
+app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
 
 @app.get("/")
 async def health_check():

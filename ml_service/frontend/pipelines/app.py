@@ -1,8 +1,8 @@
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, dcc, html
-from ml_service.frontend.pipelines_metadata import FRONTEND_PIPELINES
-from ml_service.frontend.utils import call_pipeline
+from ml_service.frontend.pipelines.pipelines_metadata import FRONTEND_PIPELINES
+from ml_service.frontend.pipelines.utils import call_pipeline
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
