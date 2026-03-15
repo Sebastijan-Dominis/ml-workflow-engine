@@ -1,1 +1,2 @@
 dash-ace
+dash-bootstrap-components

@@ -28,7 +28,6 @@ dependencies:
   - pdoc
   - fastapi
   - uvicorn
-  - dash-bootstrap-components
   - python-dotenv
   - dash
   - slowapi
