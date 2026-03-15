@@ -18,6 +18,7 @@ This document contains the instructions for setting up the development environme
    ```bash
    conda env create -f environment.yml -n hotel_management # default name
    conda activate hotel_management # if you used the default name
+   pip install -r requirements-pip.txt # for packages that can't be installed with conda-forge
    ```
 
 ## Expectations

@@ -1,6 +1,6 @@
+"""A module to define the metadata for the frontend pipelines, which is then used to dynamically generate the UI components for each pipeline."""
 from ml_service.frontend.pipelines.pipelines_registry import FRONTEND_PIPELINES_REGISTRY
 
-# Transform Pydantic model into simple metadata for frontend
 FRONTEND_PIPELINES = []
 
 for p in FRONTEND_PIPELINES_REGISTRY:

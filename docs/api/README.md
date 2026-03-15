@@ -5,7 +5,7 @@ It includes the main packages, classes, and functions that developers and data s
 
 > Note: all detailed documentation is auto-generated from docstrings, using the `pdoc` package.
 
-There are three folders, covering three of the main folders found in the repo - `ml/`, `pipelines/` and `scripts/`.
+There are four folders, covering three of the main folders found in the repo - `ml/`, `pipelines/` and `scripts/`, along with `ml_service/`.
 
 ## Viewing
 

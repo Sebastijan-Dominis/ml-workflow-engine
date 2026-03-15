@@ -1,3 +1,4 @@
+"""A module containing the Dash app for editing modeling configs."""
 import os
 
 import dash
@@ -7,6 +8,7 @@ import dotenv
 import requests
 import yaml
 from dash import Input, Output, State, html
+
 from ml_service.frontend.configs.modeling.config_examples import CONFIG_EXAMPLES_REGISTRY
 
 dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", "..", ".env"))
@@ -114,7 +116,7 @@ app.layout = dbc.Container(
     prevent_initial_call=True,
 )
 def validate_yaml(_, *yaml_values):
-
+    """Validate the YAML configs by sending them to the backend for validation."""
     keys = list(CONFIG_EXAMPLES_REGISTRY.keys())
     yaml_texts = dict(zip(keys, yaml_values, strict=True))
 
@@ -167,6 +169,7 @@ def validate_yaml(_, *yaml_values):
     prevent_initial_call=True,
 )
 def write_yaml(_, *yaml_values):
+    """Write the YAML configs to disk by sending them to the backend for writing."""
     yaml_texts = dict(zip(CONFIG_EXAMPLES_REGISTRY.keys(), yaml_values, strict=True))
 
     model_specs = yaml_texts.get("Model Specs", "")

@@ -1,3 +1,5 @@
+"""A module containing example YAML configurations for modeling, which can be used as templates for creating new configurations."""
+
 CONFIG_EXAMPLES_REGISTRY = {
 "Model Specs":
 """problem: example_problem

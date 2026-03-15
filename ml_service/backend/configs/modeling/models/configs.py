@@ -1,3 +1,4 @@
+"""Module containing pydantic models for validating the modeling configuration section of the ML service."""
 from dataclasses import dataclass
 
 from ml.config.schemas.model_specs import ModelSpecs
@@ -20,18 +21,21 @@ class TrainConfigForValidation(BaseModel):
 
 @dataclass
 class RawConfigsWithLineage:
+    """Dataclass to hold raw configs along with their lineage information."""
     model_specs: dict
     search: dict
     training: dict
 
 @dataclass
 class ValidatedConfigs:
+    """Dataclass to hold validated configs along with their lineage information."""
     model_specs: ModelSpecs
     search: SearchConfigForValidation
     training: TrainConfigForValidation
 
 @dataclass
 class ConfigPaths:
+    """Dataclass to hold the paths for each configuration file."""
     model_specs: str
     search: str
     training: str

@@ -1,3 +1,4 @@
+"""A module that defines the registry of pipelines available in the frontend, including their names, endpoints, and argument schemas."""
 from ml_service.backend.pipelines.models.pipelines_cli_args import (
     BuildInterimDatasetInput,
     BuildProcessedDatasetInput,

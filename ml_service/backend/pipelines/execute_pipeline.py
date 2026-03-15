@@ -1,10 +1,11 @@
-
+"""A module to execute a pipeline as a subprocess and capture its output and exit code."""
 import os
 import subprocess
 
 from fastapi import HTTPException
-from ml_service.backend.registries.exit_codes_meaning import EXIT_MEANING
 from pydantic import BaseModel
+
+from ml_service.backend.registries.exit_codes_meaning import EXIT_MEANING
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 env = os.environ.copy()
@@ -15,6 +16,16 @@ def execute_pipeline(
     payload: BaseModel,
     boolean_args: list[str] | None = None,
 ):
+    """Execute a pipeline as a subprocess and capture its output and exit code.
+
+    Args:
+        module_path (str): The module path to execute (e.g., "ml_service.pipelines.my_pipeline").
+        payload (BaseModel): The payload containing the arguments for the pipeline.
+        boolean_args (list[str] | None): A list of argument names that should be treated as boolean flags.
+
+    Returns:
+        dict: A dictionary containing the exit code, status, stdout, and stderr of the executed pipeline.
+    """
     boolean_args = boolean_args or []
 
     cmd = [

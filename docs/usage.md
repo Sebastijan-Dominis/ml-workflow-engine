@@ -8,6 +8,50 @@ How to use the hotel_management project for typical workflows.
 - Orchestrators were created almost exclusively for dev/test convenience and efficiency in single-owner, single-dev work
 - `skip-if-existing` flag determines whether an orchestrator will run the given pipelines if it notices at least one snapshot in the target location (e.g. if set to true and `feature_store/{feature_set_name}/{feature_set_version}/{snapshot_id}/` already exists, it will not freeze that feature set; otherwise it will - new snapshot gets created)
 
+## ML Service
+
+### Overview
+
+- Code within the `ml_service/` folder provides `Dash` + `FastAPI` apps that can be used to:
+    - Run pipelines
+    - Create and store configs
+
+### Instructions
+
+In order to use it:
+
+1. Launch the backend with
+
+```bash
+uvicorn ml_service.backend.main:app --reload
+```
+
+2. Launch the desired frontend with
+
+```bash
+python -m ml_service.frontend.{specific_part}.app
+```
+
+where `specific_part` will depend on which service you wish to use.
+
+For example, this launches the pipeline-focused dashboard (enables running all pipelines from the browser):
+
+```bash
+python -m ml_service.frontend.pipelines.app
+```
+
+3. Open the dashboard in your browser at the specified port and use it.
+
+### Examples
+
+#### Pipelines:
+
+!["Gif portrayal of pipelines app from ml_service"](assets/gifs/ml_service_pipelines.gif)
+
+#### Modeling Configs:
+
+!["Gif portrayal of modeling configs app from ml_service"](assets/gifs/ml_service_modeling_configs.gif)
+
 ## Running Pipelines
 
 - Use CLI commands with python scripts found in `pipelines/`
@@ -18,8 +62,6 @@ How to use the hotel_management project for typical workflows.
     - [system invariants](architecture/system_invariants.md)
     - [boundaries](architecture/boundaries.md)
     - [validation guarantees](architecture/validation_guarantees.md)
-
-
 
 ### Data Preprocessing
 

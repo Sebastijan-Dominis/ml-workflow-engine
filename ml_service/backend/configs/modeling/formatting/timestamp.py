@@ -1,3 +1,4 @@
+"""Timestamp formatting utilities for lineage tracking in ML service configurations."""
 from datetime import UTC, datetime
 
 

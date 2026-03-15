@@ -1,0 +1,1 @@
+"""A package for the ML service, which includes both the backend and the frontend. Frontend is split into multiple different Dash apps, while backend is a FastAPI application that serves the Dash apps."""

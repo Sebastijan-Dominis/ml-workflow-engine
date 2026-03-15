@@ -1,3 +1,5 @@
+"""Exit codes and their meanings for the ML service."""
+
 EXIT_MEANING = {
     0: "SUCCESS",
     1: "UNEXPECTED_ERROR",

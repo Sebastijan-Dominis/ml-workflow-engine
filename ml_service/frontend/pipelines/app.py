@@ -1,6 +1,8 @@
+"""A Dash app to run ML pipelines from the frontend. It dynamically generates tabs and forms based on pipeline metadata, allowing users to input parameters and execute pipelines with confirmation modals."""
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, dcc, html
+
 from ml_service.frontend.pipelines.pipelines_metadata import FRONTEND_PIPELINES
 from ml_service.frontend.pipelines.utils import call_pipeline
 
@@ -117,6 +119,7 @@ app.layout = dbc.Container([
 
 
 def create_pipeline_callbacks(pipeline):
+    """Creates callbacks for a given pipeline to handle modal toggling and pipeline execution."""
     input_ids = [f"{pipeline['name']}-{f['name']}" for f in pipeline["fields"]]
     submit_id = f"{pipeline['name']}-submit"
     output_id = f"{pipeline['name']}-output"
@@ -133,6 +136,7 @@ def create_pipeline_callbacks(pipeline):
         prevent_initial_call=True
     )
     def toggle_modal(submit_click, confirm_click, cancel_click, is_open):
+        """Toggles the confirmation modal based on which button was clicked."""
         ctx = dash.callback_context
         if not ctx.triggered:
             return is_open
@@ -150,6 +154,7 @@ def create_pipeline_callbacks(pipeline):
         prevent_initial_call=True
     )
     def run_pipeline(n_clicks, *values):
+        """Executes the pipeline when the confirm button is clicked and displays the result."""
         if n_clicks is None:
             return dash.no_update
         payload = {}

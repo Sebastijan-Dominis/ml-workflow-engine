@@ -2,6 +2,7 @@
 
 This document describes the testing strategy, conventions, and instructions for this ML project.
 > Note: Most of the tests currently found in the repo were AI-generated (with careful prompting)
+> Note: only the folders that constitute the main focus of the repo are tested (`ml/`, `pipelines/`, `scripts/`)
 
 ## Environment Setup
 

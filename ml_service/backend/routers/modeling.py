@@ -1,4 +1,6 @@
+"""A module for handling modeling-related API endpoints, including validation and writing of YAML configurations."""
 from fastapi import APIRouter, HTTPException, Request
+
 from ml_service.backend.configs.modeling.loading.load_all_yamls_and_add_lineage import (
     load_all_yamls_and_add_lineage,
 )
@@ -12,6 +14,7 @@ router = APIRouter(prefix="/modeling", tags=["modeling"])
 @router.post("/validate", status_code=200)
 @limiter.limit("1/15seconds")
 def validate_yaml(payload: dict, request: Request):
+    """Validate the provided YAML configurations for modeling."""
     try:
         data_with_lineage = load_all_yamls_and_add_lineage(payload)
 
@@ -34,6 +37,7 @@ def validate_yaml(payload: dict, request: Request):
 @router.post("/write", status_code=201)
 @limiter.limit("1/minute")
 def write_yaml(payload: dict, request: Request):
+    """Validate and write the provided YAML configurations for modeling."""
     try:
         data_with_lineage = load_all_yamls_and_add_lineage(payload)
 

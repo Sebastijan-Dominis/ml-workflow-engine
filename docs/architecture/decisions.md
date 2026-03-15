@@ -34,7 +34,7 @@ a storage abstraction layer.
 - Canonical lineage between modeling stages
 - Filesystem transparency over hidden metadata services
 
-## Snapshot policy (applies to raw/interim/processed/features)
+## Snapshot Policy (Applies to raw/interim/processed/features)
 Snapshots represent new rows for the same logical dataset(s) version(s).
 Versions represent schema or transformation changes.
 Snapshots are immutable.
@@ -102,7 +102,7 @@ Snapshots are immutable.
 - **Alternatives:** Run `run_all_workflows.py` whenever a new snapshot of raw data appears (rejected - not needed at this stage; could result in unexpected outcomes - that orchestrator is powerful)
 - **Type:** Tactical
 
-## Artifacts and configs - general
+## Artifacts and Configs - General
 
 ### Informational artifacts stored in `json` format
 - **Decision:** Store all of the informational artifacts (metadata, runtime info, metrics) in `json` format
@@ -467,5 +467,19 @@ Snapshots are immutable.
 ### A single archive for all models, internal nesting by problem type and segment
 - **Decision:** Archive all of the previous production models within `model_registry/archive.yaml` and nest them by problem type and segment
 - **Rationale:** Archiving is mostly done for auditing and data analysis - this architecture fits that purpose perfectly
-- **Alternative:** Use one archive but no nesting (rejected - it is easier to get the desired models when nesting is in place, and it doesn't incur any extra cost)
+- **Alternatives:** Use one archive but no nesting (rejected - it is easier to get the desired models when nesting is in place, and it doesn't incur any extra cost)
+- **Type:** Structural
+
+## ML Service
+
+### ML service existence
+- **Decision:** Create an ML service to simplify the workflow
+- **Rationale:** Easier to operate the ml workflow, better UX, less error-prone
+- **Alternatives:** Stick to CLI-only (rejected - dashboards are convenient and not too difficult to create and maintain)
+- **Type:** Convenience (eveything still works fine without this code)
+
+### Singular backend, multiple frontends
+- **Decision:** Use one backend, but multiple dashboards for the frontend
+- **Rationale:** `FastAPI` scales well, but `Dash` scales poorly, so including all of the logic in one dashboard could easily become messy
+- **Alternatives:** Have a singular frontend (rejected - the code could easily become much more complex that it needs to be); write the frontend in React (rejected - too much complexity at this stage)
 - **Type:** Structural

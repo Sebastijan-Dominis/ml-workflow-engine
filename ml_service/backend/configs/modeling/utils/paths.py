@@ -1,3 +1,4 @@
+"""A module for path computations and checks related to model specs, search, and training configurations."""
 import os
 
 from ml_service.backend.configs.modeling.models.configs import ConfigPaths, ValidatedConfigs
@@ -7,6 +8,14 @@ env = os.environ.copy()
 env["PYTHONPATH"] = repo_root
 
 def compute_paths(validated_configs: ValidatedConfigs) -> ConfigPaths:
+    """Computes the file paths for model specs, search, and training configurations based on the validated configurations provided.
+
+    Args:
+        validated_configs (ValidatedConfigs): The validated configurations containing model specifications and other relevant information.
+
+    Returns:
+        ConfigPaths: The computed file paths for each configuration type.
+    """
     model_specs = validated_configs.model_specs
 
     model_specs_path = f"{repo_root}/configs/model_specs/{model_specs.problem}/{model_specs.segment.name}/{model_specs.version}.yaml"
@@ -20,6 +29,14 @@ def compute_paths(validated_configs: ValidatedConfigs) -> ConfigPaths:
     )
 
 def check_paths(validated_configs: ValidatedConfigs) -> ConfigPaths:
+    """Checks if the computed paths for model specs, search, and training configurations already exist.
+
+    Args:
+        validated_configs (ValidatedConfigs): The validated configurations containing model specifications and other relevant information.
+
+    Returns:
+        ConfigPaths: The computed file paths for each configuration type.
+    """
     paths = compute_paths(validated_configs)
 
     if os.path.exists(paths.model_specs):
