@@ -1,1 +1,7 @@
 dash-ace
+dash
+slowapi
+dash-bootstrap-components
+fastapi
+uvicorn
+python-dotenv

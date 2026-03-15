@@ -27,9 +27,4 @@ dependencies:
   - types-pyyaml
   - pytest-cov
   - pdoc
-  - fastapi
-  - uvicorn
-  - python-dotenv
-  - dash
-  - slowapi
-  - dash-bootstrap-components
+
