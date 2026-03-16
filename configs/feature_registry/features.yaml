@@ -82,7 +82,7 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v2:
     type: tabular
     description: > 
@@ -153,7 +153,7 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v3:
     type: tabular
     description: > 
@@ -212,7 +212,7 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v4:
     type: tabular
     description: > 
@@ -294,7 +294,7 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v5:
     type: tabular
     description: > 
@@ -351,7 +351,7 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v6:
     type: tabular
     description: > 
@@ -416,7 +416,7 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v7:
     type: tabular
     description: > 
@@ -501,7 +501,7 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
 customer_history_features:
   v1:
     type: tabular
@@ -544,7 +544,7 @@ customer_history_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v2:
     type: tabular
     description: > 
@@ -584,7 +584,7 @@ customer_history_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v3:
     type: tabular
     description: > 
@@ -620,7 +620,7 @@ customer_history_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v4:
     type: tabular
     description: > 
@@ -662,7 +662,7 @@ customer_history_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
 pricing_party_features:
   v1:
     type: tabular
@@ -723,7 +723,7 @@ pricing_party_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v2:
     type: tabular
     description: > 
@@ -780,7 +780,7 @@ pricing_party_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v3:
     type: tabular
     description: > 
@@ -823,7 +823,7 @@ pricing_party_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v4:
     type: tabular
     description: > 
@@ -862,7 +862,7 @@ pricing_party_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v5:
     type: tabular
     description: > 
@@ -924,7 +924,7 @@ pricing_party_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
 channel_and_agent_features:
   v1:
     type: tabular
@@ -967,7 +967,7 @@ channel_and_agent_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v2:
     type: tabular
     description: > 
@@ -1009,7 +1009,7 @@ channel_and_agent_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v3:
     type: tabular
     description: > 
@@ -1052,7 +1052,7 @@ channel_and_agent_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
 room_allocation_features:
   v1:
     type: tabular
@@ -1089,7 +1089,7 @@ room_allocation_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
   v2:
     type: tabular
     description: > 
@@ -1124,4 +1124,4 @@ room_allocation_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: 2026-02-27t23:53:30z
+      created_at: 2026-02-27T23:53:30Z
