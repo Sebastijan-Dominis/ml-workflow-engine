@@ -15,10 +15,44 @@ How to use the hotel_management project for typical workflows.
 - Code within the `ml_service/` folder provides `Dash` + `FastAPI` apps that can be used to:
     - Run pipelines
     - Create and store configs
+        - Includes validation to ensure proper quality
+
+#### Configurations
+
+##### Supported
+
+Currently *supports* the following configs:
+- model specs + search + training
+    - `configs/model_specs/{problem_type}/{segment}{model_version}.yaml`
+    - `configs/search/{problem_type}/{segment}{model_version}.yaml`
+    - `configs/train/{problem_type}/{segment}{model_version}.yaml`
+- data (interim + processed)
+    - `configs/data/interim/{dataset_name}/{dataset_version}.yaml`
+    - `configs/data/processed/{dataset_name}/{dataset_version}.yaml`
+- feature set configs (feature registry)
+    - `configs/feature_registry/features.yaml`
+- pipeline configs
+    - `configs/pipelines/{data_type}/{algorithm}/{pipeline_version}.yaml`
+- promotion thresholds
+    - `configs/promotion/thresholds.yaml`
+
+##### Not Supported
+
+Currently *does not support* the following configs:
+- defaults:
+    - `configs/defaults/global.yaml`
+    - `configs/defaults/{algorithm}.yaml`
+- environment overlay (configs):
+    - `configs/env/{env_name}.yaml`
+
+##### Reasoning
+
+- The supported defaults are written more often, require lineage with timestamp, and are versioned
+- The unsupported configs are not meant to be altered, do not require lineage, and are not versioned
 
 ### Instructions
 
-In order to use it:
+In order to use the ml service:
 
 1. Launch the backend with
 

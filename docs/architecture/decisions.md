@@ -481,5 +481,5 @@ Snapshots are immutable.
 ### Singular backend, multiple frontends
 - **Decision:** Use one backend, but multiple dashboards for the frontend
 - **Rationale:** `FastAPI` scales well, but `Dash` scales poorly, so including all of the logic in one dashboard could easily become messy
-- **Alternatives:** Have a singular frontend (rejected - the code could easily become much more complex that it needs to be); write the frontend in React (rejected - too much complexity at this stage)
+- **Alternatives:** Have a singular frontend (rejected - the code could easily become much more complex that it needs to be); write the frontend in `React.js` (rejected - too much complexity at this stage)
 - **Type:** Structural

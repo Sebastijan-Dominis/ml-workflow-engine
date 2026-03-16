@@ -31,7 +31,7 @@ jobs:
           auto-activate-base: false
 
       - name: Install additional pip dependencies
-        run: conda run -n hotel_management pip install -r requirements-pip.txt coverage
+        run: conda run -n hotel_management pip install -r requirements.txt coverage
 
       - name: Show environment
         run: conda run -n hotel_management conda list
