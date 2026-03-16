@@ -1,10 +1,9 @@
 booking_context_features:
   v1:
     type: tabular
-    description: 'Features describing the booking itself, independent of the guest''s
+    description: > 
+      Features describing the booking itself, independent of the guest's
       past.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -86,13 +85,12 @@ booking_context_features:
       created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: 'Updated version of booking context features, which doesn''t include
+    description: > 
+      Updated version of booking context features, which doesn't include
       arrival_date_year, arrival_date_month and arrival_date_day_of_month. It also
-      doesn''t create ArrivalDate, but still creates ArrivalSeason. Useful for adr
+      doesn't create ArrivalDate, but still creates ArrivalSeason. Useful for adr
       prediction, where arrival_date_year, arrival_date_month and arrival_date_day_of_month
       are not relevant, but seasonality is.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -158,14 +156,13 @@ booking_context_features:
       created_at: 2026-02-27t23:53:30z
   v3:
     type: tabular
-    description: 'Updated version of booking context features, which doesn''t include
+    description: > 
+      Updated version of booking context features, which doesn''t include
       arrival_date_year, arrival_date_week_number, arrival_date_day_of_month, arrival_month,
       lead_time, and days_in_waiting_list. It also doesn''t create arrival_season
       and arrival_date. Useful for models like special requests prediction, where
       the exact arrival date and lead time are not relevant, but the length of stay
       is.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -218,11 +215,10 @@ booking_context_features:
       created_at: 2026-02-27t23:53:30z
   v4:
     type: tabular
-    description: 'Updated version of booking context features, which includes everything
+    description: > 
+      Updated version of booking context features, which includes everything
       from v1, except days_in_waiting_list. Useful for room upgrade prediction, where
       the days in waiting list are not relevant, but the other features are.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -301,13 +297,12 @@ booking_context_features:
       created_at: 2026-02-27t23:53:30z
   v5:
     type: tabular
-    description: 'Updated version of booking context features, which only includes
+    description: > 
+      Updated version of booking context features, which only includes
       hotel, stays_in_weekend_nights, stays_in_week_nights, lead_time, and meal. It
       creates TotalStay, but doesn''t create ArrivalSeason and ArrivalDate. Useful
       for repeated guest prediction, where the length of stay and lead time are relevant,
       but the exact arrival date and seasonality are not.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -359,11 +354,10 @@ booking_context_features:
       created_at: 2026-02-27t23:53:30z
   v6:
     type: tabular
-    description: 'Minimal booking context for lead time prediction, where seasonality
+    description: > 
+      Minimal booking context for lead time prediction, where seasonality
       is relevant, but the exact date is not, and where lead_time itself is not included
       to avoid leakage.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -425,11 +419,10 @@ booking_context_features:
       created_at: 2026-02-27t23:53:30z
   v7:
     type: tabular
-    description: 'Features describing the booking itself, independent of the guest''s
+    description: > 
+      Features describing the booking itself, independent of the guest''s
       past, using hotel_bookings v2 dataset; includes reservation_status for deriving
       no_show target.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -512,10 +505,9 @@ booking_context_features:
 customer_history_features:
   v1:
     type: tabular
-    description: 'Features describing the past behavior of the customer making the
+    description: > 
+      Features describing the past behavior of the customer making the
       booking.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -555,11 +547,10 @@ customer_history_features:
       created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: 'Updated version of customer history features, which doesn''t include
+    description: > 
+      Updated version of customer history features, which doesn''t include
       is_repeated_guest. Useful for adr, lead_time, and special_requests prediction,
       where whether the guest is a repeated guest or not is not relevant.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -596,13 +587,12 @@ customer_history_features:
       created_at: 2026-02-27t23:53:30z
   v3:
     type: tabular
-    description: 'Updated version of customer history features, which only includes
+    description: > 
+      Updated version of customer history features, which only includes
       customer_type. Useful for repeated guest prediction, where the customer type
       is relevant, but the number of previous cancellations and previous bookings
       not canceled are not. Whether a guest is a repeated guest or not has to be excluded,
       since it is the target for repeated guest prediction.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -633,10 +623,9 @@ customer_history_features:
       created_at: 2026-02-27t23:53:30z
   v4:
     type: tabular
-    description: 'Features describing the past behavior of the customer, using hotel_bookings
+    description: > 
+      Features describing the past behavior of the customer, using hotel_bookings
       v2 dataset; includes reservation_status for deriving no_show target.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -677,11 +666,10 @@ customer_history_features:
 pricing_party_features:
   v1:
     type: tabular
-    description: 'Features describing the pricing of the booking, as well as the number
+    description: > 
+      Features describing the pricing of the booking, as well as the number
       of people in the booking, which is relevant for pricing. They answer the question
       "How much did the booking cost and how many people were in the booking?".
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -738,12 +726,11 @@ pricing_party_features:
       created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: 'Updated version of pricing party features, which doesn''t include
+    description: > 
+      Updated version of pricing party features, which doesn''t include
       required_car_parking_spaces. Useful for models like room upgrade prediction,
       where the number of required car parking spaces is not relevant, but the other
       features are.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -796,12 +783,11 @@ pricing_party_features:
       created_at: 2026-02-27t23:53:30z
   v3:
     type: tabular
-    description: 'Updated version of pricing party features, which only includes adults,
+    description: > 
+      Updated version of pricing party features, which only includes adults,
       children and babies. Useful for adr and lead_time prediction, where the number
       of people in the booking is relevant, but adr, required car parking spaces,
       and the number of special requests are leakage for the target.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -840,13 +826,12 @@ pricing_party_features:
       created_at: 2026-02-27t23:53:30z
   v4:
     type: tabular
-    description: 'Updated version of pricing party features, which only includes adr
+    description: > 
+      Updated version of pricing party features, which only includes adr
       and total_of_special_requests. Useful for models like repeated guest prediction,
       where the number of people in the booking is not relevant, and neither are the
       required car parking spaces, but the price and the number of special requests
       are.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -880,13 +865,12 @@ pricing_party_features:
       created_at: 2026-02-27t23:53:30z
   v5:
     type: tabular
-    description: 'Features describing the pricing of the booking, as well as the number
+    description: > 
+      Features describing the pricing of the booking, as well as the number
       of people in the booking, which is relevant for pricing. They answer the question
       "How much did the booking cost and how many people were in the booking?". Uses
       v2 of hotel_bookings dataset, which includes reservation_status for deriving
       no_show target.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -944,9 +928,8 @@ pricing_party_features:
 channel_and_agent_features:
   v1:
     type: tabular
-    description: 'Features describing how the booking came in.
-
-      '
+    description: > 
+      Features describing how the booking came in.
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -987,12 +970,11 @@ channel_and_agent_features:
       created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: 'Updated version of channel and agent features, which doesn''t include
+    description: > 
+      Updated version of channel and agent features, which doesn''t include
       agent. Useful for models like room upgrade and repeated guest prediction, where
       the agent through which the booking came in is not relevant, but the country,
       market segment, and distribution channel are.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -1030,9 +1012,9 @@ channel_and_agent_features:
       created_at: 2026-02-27t23:53:30z
   v3:
     type: tabular
-    description: "Features describing how the booking came in, using hotel_bookings\
-      \ v2 dataset; includes reservation_status for deriving no_show target.\u201D\
-      \n"
+    description: > 
+      Features describing how the booking came in, using hotel_bookings
+      v2 dataset; includes reservation_status for deriving no_show target.
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -1074,9 +1056,8 @@ channel_and_agent_features:
 room_allocation_features:
   v1:
     type: tabular
-    description: 'Features describing the allocation of rooms in the booking.
-
-      '
+    description: > 
+      Features describing the allocation of rooms in the booking.
     data:
     - ref: data/processed
       name: hotel_bookings
@@ -1111,12 +1092,11 @@ room_allocation_features:
       created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: 'Updated version of room allocation features, which only includes
+    description: > 
+      Updated version of room allocation features, which only includes
       reserved_room_type. Useful for models where assigned_room_type is leakage for
       the target, such as lead time, adr, and special requests prediction, where the
       assigned room type can be influenced by the target variable.
-
-      '
     data:
     - ref: data/processed
       name: hotel_bookings
