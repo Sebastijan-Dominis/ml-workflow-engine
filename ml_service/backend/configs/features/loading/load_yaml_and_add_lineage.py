@@ -7,7 +7,4 @@ def load_yaml_and_add_lineage(yaml_text: str) -> dict:
 
     data = yaml.safe_load(yaml_text)
 
-    if "lineage" not in data:
-        raise ValueError("Missing 'lineage' section.")
-
     return add_timestamp(data, "lineage")

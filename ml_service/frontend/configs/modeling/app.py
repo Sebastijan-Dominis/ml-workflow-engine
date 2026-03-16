@@ -13,7 +13,7 @@ from ml_service.frontend.configs.modeling.config_examples import CONFIG_EXAMPLES
 
 dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", "..", ".env"))
 
-API_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+API_URL = os.getenv("ML_SERVICE_BACKEND_URL", "http://localhost:8000")
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server

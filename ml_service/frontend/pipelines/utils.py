@@ -6,7 +6,7 @@ import requests
 
 dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", "..", ".env"))
 
-API_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
+API_URL = os.getenv("ML_SERVICE_BACKEND_URL", "http://localhost:8000")
 
 def call_pipeline(pipeline_endpoint: str, payload: dict) -> dict:
     """Call a backend pipeline endpoint with the given payload.
