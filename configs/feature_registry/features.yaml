@@ -1,18 +1,65 @@
 booking_context_features:
   v1:
     type: tabular
-    description: >
-      Features describing the booking itself, independent of the guest's past.
+    description: 'Features describing the booking itself, independent of the guest''s
+      past.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v1
     columns:
+    - hotel
+    - lead_time
+    - arrival_date_year
+    - arrival_date_month
+    - arrival_date_week_number
+    - arrival_date_day_of_month
+    - stays_in_weekend_nights
+    - stays_in_week_nights
+    - meal
+    - deposit_type
+    - days_in_waiting_list
+    feature_roles:
+      categorical:
+      - hotel
+      - arrival_date_month
+      - meal
+      - deposit_type
+      numerical:
+      - lead_time
+      - arrival_date_year
+      - arrival_date_week_number
+      - arrival_date_day_of_month
+      - stays_in_weekend_nights
+      - stays_in_week_nights
+      - days_in_waiting_list
+      datetime: []
+    operators:
+      mode: logical
+      names:
+      - TotalStay
+      - ArrivalSeason
+      - ArrivalDate
+      hash: 2074c53b8d1e6124b67ba8e625315f86
+      required_features:
+        TotalStay:
+        - stays_in_weekend_nights
+        - stays_in_week_nights
+        ArrivalSeason:
+        - arrival_date_week_number
+        ArrivalDate:
+        - arrival_date_year
+        - arrival_date_month
+        - arrival_date_week_number
+    constraints:
+      forbid_nulls:
       - hotel
       - lead_time
       - arrival_date_year
@@ -24,35 +71,7 @@ booking_context_features:
       - meal
       - deposit_type
       - days_in_waiting_list
-    feature_roles:
-      categorical:
-        - hotel
-        - arrival_date_month
-        - meal
-        - deposit_type
-      numerical:
-        - lead_time
-        - arrival_date_year
-        - arrival_date_week_number
-        - arrival_date_day_of_month
-        - stays_in_weekend_nights
-        - stays_in_week_nights
-        - days_in_waiting_list
-      datetime: []
-    operators:
-      mode: logical
-      names:
-        - TotalStay
-        - ArrivalSeason
-        - ArrivalDate
-      hash: 2074c53b8d1e6124b67ba8e625315f86
-      required_features:
-        TotalStay: [stays_in_weekend_nights, stays_in_week_nights]
-        ArrivalSeason: [arrival_date_week_number]
-        ArrivalDate: [arrival_date_year, arrival_date_month, arrival_date_week_number]
-    constraints:
-      forbid_nulls: [hotel, lead_time, arrival_date_year, arrival_date_month, arrival_date_week_number, arrival_date_day_of_month, stays_in_weekend_nights, stays_in_week_nights, meal, deposit_type, days_in_waiting_list]
-      max_cardinality: 
+      max_cardinality:
         hotel: 2
         arrival_date_month: 12
         arrival_date_week_number: 53
@@ -64,21 +83,60 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: >
-      Updated version of booking context features, which doesn't include arrival_date_year, arrival_date_month and arrival_date_day_of_month. It also doesn't create ArrivalDate, but still creates ArrivalSeason. Useful for adr prediction, where arrival_date_year, arrival_date_month and arrival_date_day_of_month are not relevant, but seasonality is.
+    description: 'Updated version of booking context features, which doesn''t include
+      arrival_date_year, arrival_date_month and arrival_date_day_of_month. It also
+      doesn''t create ArrivalDate, but still creates ArrivalSeason. Useful for adr
+      prediction, where arrival_date_year, arrival_date_month and arrival_date_day_of_month
+      are not relevant, but seasonality is.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v2
     columns:
+    - hotel
+    - lead_time
+    - arrival_date_week_number
+    - stays_in_weekend_nights
+    - stays_in_week_nights
+    - meal
+    - deposit_type
+    - days_in_waiting_list
+    feature_roles:
+      categorical:
+      - hotel
+      - meal
+      - deposit_type
+      numerical:
+      - lead_time
+      - arrival_date_week_number
+      - stays_in_weekend_nights
+      - stays_in_week_nights
+      - days_in_waiting_list
+      datetime: []
+    operators:
+      mode: logical
+      names:
+      - TotalStay
+      - ArrivalSeason
+      hash: fec3f1ee5f443bac3e9f688f1ddddf5a
+      required_features:
+        TotalStay:
+        - stays_in_weekend_nights
+        - stays_in_week_nights
+        ArrivalSeason:
+        - arrival_date_week_number
+    constraints:
+      forbid_nulls:
       - hotel
       - lead_time
       - arrival_date_week_number
@@ -87,30 +145,7 @@ booking_context_features:
       - meal
       - deposit_type
       - days_in_waiting_list
-    feature_roles:
-      categorical:
-        - hotel
-        - meal
-        - deposit_type
-      numerical:
-        - lead_time
-        - arrival_date_week_number
-        - stays_in_weekend_nights
-        - stays_in_week_nights
-        - days_in_waiting_list
-      datetime: []
-    operators:
-      mode: logical
-      names:
-        - TotalStay
-        - ArrivalSeason
-      hash: fec3f1ee5f443bac3e9f688f1ddddf5a
-      required_features:
-        TotalStay: [stays_in_weekend_nights, stays_in_week_nights]
-        ArrivalSeason: [arrival_date_week_number]
-    constraints:
-      forbid_nulls: [hotel, lead_time, arrival_date_week_number, stays_in_weekend_nights, stays_in_week_nights, meal, deposit_type, days_in_waiting_list]
-      max_cardinality: 
+      max_cardinality:
         hotel: 2
         arrival_date_week_number: 53
         meal: 5
@@ -120,44 +155,57 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v3:
     type: tabular
-    description: >
-      Updated version of booking context features, which doesn't include arrival_date_year, arrival_date_week_number, arrival_date_day_of_month, arrival_month, lead_time, and days_in_waiting_list. It also doesn't create arrival_season and arrival_date. Useful for models like special requests prediction, where the exact arrival date and lead time are not relevant, but the length of stay is.
+    description: 'Updated version of booking context features, which doesn''t include
+      arrival_date_year, arrival_date_week_number, arrival_date_day_of_month, arrival_month,
+      lead_time, and days_in_waiting_list. It also doesn''t create arrival_season
+      and arrival_date. Useful for models like special requests prediction, where
+      the exact arrival date and lead time are not relevant, but the length of stay
+      is.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v3
     columns:
+    - hotel
+    - stays_in_weekend_nights
+    - stays_in_week_nights
+    - meal
+    - deposit_type
+    feature_roles:
+      categorical:
+      - hotel
+      - meal
+      - deposit_type
+      numerical:
+      - stays_in_weekend_nights
+      - stays_in_week_nights
+      datetime: []
+    operators:
+      mode: logical
+      names:
+      - TotalStay
+      hash: fc66c5a376376a2b2558968de7c42ad3
+      required_features:
+        TotalStay:
+        - stays_in_weekend_nights
+        - stays_in_week_nights
+    constraints:
+      forbid_nulls:
       - hotel
       - stays_in_weekend_nights
       - stays_in_week_nights
       - meal
       - deposit_type
-    feature_roles:
-      categorical:
-        - hotel
-        - meal
-        - deposit_type
-      numerical:
-        - stays_in_weekend_nights
-        - stays_in_week_nights
-      datetime: []
-    operators:
-      mode: logical
-      names:
-        - TotalStay
-      hash: fc66c5a376376a2b2558968de7c42ad3
-      required_features:
-        TotalStay: [stays_in_weekend_nights, stays_in_week_nights]
-    constraints:
-      forbid_nulls: [hotel, stays_in_weekend_nights, stays_in_week_nights, meal, deposit_type]
       max_cardinality:
         hotel: 2
         meal: 5
@@ -167,21 +215,67 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v4:
     type: tabular
-    description: >
-      Updated version of booking context features, which includes everything from v1, except days_in_waiting_list. Useful for room upgrade prediction, where the days in waiting list are not relevant, but the other features are.
+    description: 'Updated version of booking context features, which includes everything
+      from v1, except days_in_waiting_list. Useful for room upgrade prediction, where
+      the days in waiting list are not relevant, but the other features are.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v4
     columns:
+    - hotel
+    - lead_time
+    - arrival_date_year
+    - arrival_date_month
+    - arrival_date_week_number
+    - arrival_date_day_of_month
+    - stays_in_weekend_nights
+    - stays_in_week_nights
+    - meal
+    - deposit_type
+    feature_roles:
+      categorical:
+      - hotel
+      - arrival_date_month
+      - meal
+      - deposit_type
+      numerical:
+      - lead_time
+      - arrival_date_year
+      - arrival_date_week_number
+      - arrival_date_day_of_month
+      - stays_in_weekend_nights
+      - stays_in_week_nights
+      datetime: []
+    operators:
+      mode: logical
+      names:
+      - TotalStay
+      - ArrivalSeason
+      - ArrivalDate
+      hash: 2074c53b8d1e6124b67ba8e625315f86
+      required_features:
+        TotalStay:
+        - stays_in_weekend_nights
+        - stays_in_week_nights
+        ArrivalSeason:
+        - arrival_date_week_number
+        ArrivalDate:
+        - arrival_date_year
+        - arrival_date_month
+        - arrival_date_week_number
+    constraints:
+      forbid_nulls:
       - hotel
       - lead_time
       - arrival_date_year
@@ -192,33 +286,6 @@ booking_context_features:
       - stays_in_week_nights
       - meal
       - deposit_type
-    feature_roles:
-      categorical:
-        - hotel
-        - arrival_date_month
-        - meal
-        - deposit_type
-      numerical:
-        - lead_time
-        - arrival_date_year
-        - arrival_date_week_number
-        - arrival_date_day_of_month
-        - stays_in_weekend_nights
-        - stays_in_week_nights
-      datetime: []
-    operators:
-      mode: logical
-      names:
-        - TotalStay
-        - ArrivalSeason
-        - ArrivalDate
-      hash: 2074c53b8d1e6124b67ba8e625315f86
-      required_features:
-        TotalStay: [stays_in_weekend_nights, stays_in_week_nights]
-        ArrivalSeason: [arrival_date_week_number]
-        ArrivalDate: [arrival_date_year, arrival_date_month, arrival_date_week_number]
-    constraints:
-      forbid_nulls: [hotel, lead_time, arrival_date_year, arrival_date_month, arrival_date_week_number, arrival_date_day_of_month, stays_in_weekend_nights, stays_in_week_nights, meal, deposit_type]
       max_cardinality:
         hotel: 2
         arrival_date_month: 12
@@ -231,44 +298,56 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v5:
     type: tabular
-    description: >
-      Updated version of booking context features, which only includes hotel, stays_in_weekend_nights, stays_in_week_nights, lead_time, and meal. It creates TotalStay, but doesn't create ArrivalSeason and ArrivalDate. Useful for repeated guest prediction, where the length of stay and lead time are relevant, but the exact arrival date and seasonality are not.
+    description: 'Updated version of booking context features, which only includes
+      hotel, stays_in_weekend_nights, stays_in_week_nights, lead_time, and meal. It
+      creates TotalStay, but doesn''t create ArrivalSeason and ArrivalDate. Useful
+      for repeated guest prediction, where the length of stay and lead time are relevant,
+      but the exact arrival date and seasonality are not.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v5
     columns:
+    - hotel
+    - lead_time
+    - stays_in_weekend_nights
+    - stays_in_week_nights
+    - meal
+    feature_roles:
+      categorical:
+      - hotel
+      - meal
+      numerical:
+      - lead_time
+      - stays_in_weekend_nights
+      - stays_in_week_nights
+      datetime: []
+    operators:
+      mode: logical
+      names:
+      - TotalStay
+      hash: fc66c5a376376a2b2558968de7c42ad3
+      required_features:
+        TotalStay:
+        - stays_in_weekend_nights
+        - stays_in_week_nights
+    constraints:
+      forbid_nulls:
       - hotel
       - lead_time
       - stays_in_weekend_nights
       - stays_in_week_nights
       - meal
-    feature_roles:
-      categorical:
-        - hotel
-        - meal
-      numerical:
-        - lead_time
-        - stays_in_weekend_nights
-        - stays_in_week_nights
-      datetime: []
-    operators:
-      mode: logical
-      names:
-        - TotalStay
-      hash: fc66c5a376376a2b2558968de7c42ad3
-      required_features:
-        TotalStay: [stays_in_weekend_nights, stays_in_week_nights]
-    constraints:
-      forbid_nulls: [hotel, lead_time, stays_in_weekend_nights, stays_in_week_nights, meal]
       max_cardinality:
         hotel: 2
         meal: 5
@@ -277,50 +356,62 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v6:
     type: tabular
-    description: >
-      Minimal booking context for lead time prediction, where seasonality is relevant, but the exact date is not, and where lead_time itself is not included to avoid leakage.
+    description: 'Minimal booking context for lead time prediction, where seasonality
+      is relevant, but the exact date is not, and where lead_time itself is not included
+      to avoid leakage.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v6
     columns:
-      - hotel
-      - arrival_date_week_number
-      - arrival_date_month
-      - stays_in_weekend_nights
-      - stays_in_week_nights
-      - meal
-      - deposit_type
+    - hotel
+    - arrival_date_week_number
+    - arrival_date_month
+    - stays_in_weekend_nights
+    - stays_in_week_nights
+    - meal
+    - deposit_type
     feature_roles:
       categorical:
-        - hotel
-        - arrival_date_month
-        - meal
-        - deposit_type
+      - hotel
+      - arrival_date_month
+      - meal
+      - deposit_type
       numerical:
-        - arrival_date_week_number
-        - stays_in_weekend_nights
-        - stays_in_week_nights
+      - arrival_date_week_number
+      - stays_in_weekend_nights
+      - stays_in_week_nights
       datetime: []
     operators:
       mode: logical
       names:
-        - TotalStay
-        - ArrivalSeason
+      - TotalStay
+      - ArrivalSeason
       hash: fec3f1ee5f443bac3e9f688f1ddddf5a
       required_features:
-        TotalStay: [stays_in_weekend_nights, stays_in_week_nights]
-        ArrivalSeason: [arrival_date_week_number]
+        TotalStay:
+        - stays_in_weekend_nights
+        - stays_in_week_nights
+        ArrivalSeason:
+        - arrival_date_week_number
     constraints:
-      forbid_nulls: [hotel, arrival_date_week_number, stays_in_weekend_nights, stays_in_week_nights, meal, deposit_type]
+      forbid_nulls:
+      - hotel
+      - arrival_date_week_number
+      - stays_in_weekend_nights
+      - stays_in_week_nights
+      - meal
+      - deposit_type
       max_cardinality:
         hotel: 2
         arrival_date_month: 12
@@ -331,21 +422,69 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v7:
     type: tabular
-    description: >
-      Features describing the booking itself, independent of the guest's past, using hotel_bookings v2 dataset; includes reservation_status for deriving no_show target.
+    description: 'Features describing the booking itself, independent of the guest''s
+      past, using hotel_bookings v2 dataset; includes reservation_status for deriving
+      no_show target.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v2
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v2
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/booking_context_features/v7
     columns:
+    - hotel
+    - lead_time
+    - arrival_date_year
+    - arrival_date_month
+    - arrival_date_week_number
+    - arrival_date_day_of_month
+    - stays_in_weekend_nights
+    - stays_in_week_nights
+    - meal
+    - deposit_type
+    - days_in_waiting_list
+    feature_roles:
+      categorical:
+      - hotel
+      - arrival_date_month
+      - meal
+      - deposit_type
+      numerical:
+      - lead_time
+      - arrival_date_year
+      - arrival_date_week_number
+      - arrival_date_day_of_month
+      - stays_in_weekend_nights
+      - stays_in_week_nights
+      - days_in_waiting_list
+      datetime: []
+    operators:
+      mode: logical
+      names:
+      - TotalStay
+      - ArrivalSeason
+      - ArrivalDate
+      hash: 2074c53b8d1e6124b67ba8e625315f86
+      required_features:
+        TotalStay:
+        - stays_in_weekend_nights
+        - stays_in_week_nights
+        ArrivalSeason:
+        - arrival_date_week_number
+        ArrivalDate:
+        - arrival_date_year
+        - arrival_date_month
+        - arrival_date_week_number
+    constraints:
+      forbid_nulls:
       - hotel
       - lead_time
       - arrival_date_year
@@ -357,35 +496,7 @@ booking_context_features:
       - meal
       - deposit_type
       - days_in_waiting_list
-    feature_roles:
-      categorical:
-        - hotel
-        - arrival_date_month
-        - meal
-        - deposit_type
-      numerical:
-        - lead_time
-        - arrival_date_year
-        - arrival_date_week_number
-        - arrival_date_day_of_month
-        - stays_in_weekend_nights
-        - stays_in_week_nights
-        - days_in_waiting_list
-      datetime: []
-    operators:
-      mode: logical
-      names:
-        - TotalStay
-        - ArrivalSeason
-        - ArrivalDate
-      hash: 2074c53b8d1e6124b67ba8e625315f86
-      required_features:
-        TotalStay: [stays_in_weekend_nights, stays_in_week_nights]
-        ArrivalSeason: [arrival_date_week_number]
-        ArrivalDate: [arrival_date_year, arrival_date_month, arrival_date_week_number]
-    constraints:
-      forbid_nulls: [hotel, lead_time, arrival_date_year, arrival_date_month, arrival_date_week_number, arrival_date_day_of_month, stays_in_weekend_nights, stays_in_week_nights, meal, deposit_type, days_in_waiting_list]
-      max_cardinality: 
+      max_cardinality:
         hotel: 2
         arrival_date_month: 12
         arrival_date_week_number: 53
@@ -397,189 +508,226 @@ booking_context_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
 customer_history_features:
   v1:
     type: tabular
-    description: >
-      Features describing the past behavior of the customer making the booking.
+    description: 'Features describing the past behavior of the customer making the
+      booking.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/customer_history_features/v1
     columns:
+    - is_repeated_guest
+    - previous_cancellations
+    - previous_bookings_not_canceled
+    - customer_type
+    feature_roles:
+      categorical:
+      - customer_type
+      numerical:
+      - is_repeated_guest
+      - previous_cancellations
+      - previous_bookings_not_canceled
+      datetime: []
+    operators: null
+    constraints:
+      forbid_nulls:
       - is_repeated_guest
       - previous_cancellations
       - previous_bookings_not_canceled
       - customer_type
-    feature_roles:
-      categorical:
-        - customer_type
-      numerical:
-        - is_repeated_guest
-        - previous_cancellations
-        - previous_bookings_not_canceled
-      datetime: []
-    operators: null
-    constraints:
-      forbid_nulls: [is_repeated_guest, previous_cancellations, previous_bookings_not_canceled, customer_type]
-      max_cardinality: 
+      max_cardinality:
         customer_type: 4
     storage:
       format: parquet
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: >
-      Updated version of customer history features, which doesn't include is_repeated_guest. Useful for adr, lead_time, and special_requests prediction, where whether the guest is a repeated guest or not is not relevant.
+    description: 'Updated version of customer history features, which doesn''t include
+      is_repeated_guest. Useful for adr, lead_time, and special_requests prediction,
+      where whether the guest is a repeated guest or not is not relevant.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/customer_history_features/v2
     columns:
-      - previous_cancellations
-      - previous_bookings_not_canceled
-      - customer_type
+    - previous_cancellations
+    - previous_bookings_not_canceled
+    - customer_type
     feature_roles:
       categorical:
-        - customer_type
+      - customer_type
       numerical:
-        - previous_cancellations
-        - previous_bookings_not_canceled
+      - previous_cancellations
+      - previous_bookings_not_canceled
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [previous_cancellations, previous_bookings_not_canceled, customer_type]
-      max_cardinality: 
+      forbid_nulls:
+      - previous_cancellations
+      - previous_bookings_not_canceled
+      - customer_type
+      max_cardinality:
         customer_type: 4
     storage:
       format: parquet
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v3:
     type: tabular
-    description: >
-      Updated version of customer history features, which only includes customer_type. Useful for repeated guest prediction, where the customer type is relevant, but the number of previous cancellations and previous bookings not canceled are not. Whether a guest is a repeated guest or not has to be excluded, since it is the target for repeated guest prediction.
+    description: 'Updated version of customer history features, which only includes
+      customer_type. Useful for repeated guest prediction, where the customer type
+      is relevant, but the number of previous cancellations and previous bookings
+      not canceled are not. Whether a guest is a repeated guest or not has to be excluded,
+      since it is the target for repeated guest prediction.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/customer_history_features/v3
     columns:
-      - customer_type
+    - customer_type
     feature_roles:
       categorical:
-        - customer_type
+      - customer_type
       numerical: []
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [customer_type]
-      max_cardinality: 
+      forbid_nulls:
+      - customer_type
+      max_cardinality:
         customer_type: 4
     storage:
       format: parquet
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v4:
     type: tabular
-    description: >
-      Features describing the past behavior of the customer, using hotel_bookings v2 dataset; includes reservation_status for deriving no_show target.
+    description: 'Features describing the past behavior of the customer, using hotel_bookings
+      v2 dataset; includes reservation_status for deriving no_show target.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v2
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v2
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/customer_history_features/v4
     columns:
+    - is_repeated_guest
+    - previous_cancellations
+    - previous_bookings_not_canceled
+    - customer_type
+    feature_roles:
+      categorical:
+      - customer_type
+      numerical:
+      - is_repeated_guest
+      - previous_cancellations
+      - previous_bookings_not_canceled
+      datetime: []
+    operators: null
+    constraints:
+      forbid_nulls:
       - is_repeated_guest
       - previous_cancellations
       - previous_bookings_not_canceled
       - customer_type
-    feature_roles:
-      categorical:
-        - customer_type
-      numerical:
-        - is_repeated_guest
-        - previous_cancellations
-        - previous_bookings_not_canceled
-      datetime: []
-    operators: null
-    constraints:
-      forbid_nulls: [is_repeated_guest, previous_cancellations, previous_bookings_not_canceled, customer_type]
-      max_cardinality: 
+      max_cardinality:
         customer_type: 4
     storage:
       format: parquet
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
 pricing_party_features:
   v1:
     type: tabular
-    description: >
-      Features describing the pricing of the booking, as well as the number of people in the booking, which is relevant for pricing. They answer the question "How much did the booking cost and how many people were in the booking?".
+    description: 'Features describing the pricing of the booking, as well as the number
+      of people in the booking, which is relevant for pricing. They answer the question
+      "How much did the booking cost and how many people were in the booking?".
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/pricing_party_features/v1
     columns:
+    - adr
+    - required_car_parking_spaces
+    - total_of_special_requests
+    - adults
+    - children
+    - babies
+    feature_roles:
+      categorical: []
+      numerical:
       - adr
       - required_car_parking_spaces
       - total_of_special_requests
       - adults
       - children
       - babies
-    feature_roles:
-      categorical: []
-      numerical:
-        - adr
-        - required_car_parking_spaces
-        - total_of_special_requests
-        - adults
-        - children
-        - babies
       datetime: []
     operators:
       mode: logical
       names:
-        - AdrPerPerson
+      - AdrPerPerson
       hash: fcd1d9ce4bbf0654b13d21aca2ba1b32
       required_features:
-        AdrPerPerson: [adr, adults, children, babies]
+        AdrPerPerson:
+        - adr
+        - adults
+        - children
+        - babies
     constraints:
-      forbid_nulls: [adr, adults, children, babies, required_car_parking_spaces, total_of_special_requests]
-      max_cardinality: 
+      forbid_nulls:
+      - adr
+      - adults
+      - children
+      - babies
+      - required_car_parking_spaces
+      - total_of_special_requests
+      max_cardinality:
         required_car_parking_spaces: 10
         total_of_special_requests: 5
     storage:
@@ -587,79 +735,99 @@ pricing_party_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: >
-      Updated version of pricing party features, which doesn't include required_car_parking_spaces. Useful for models like room upgrade prediction, where the number of required car parking spaces is not relevant, but the other features are.
+    description: 'Updated version of pricing party features, which doesn''t include
+      required_car_parking_spaces. Useful for models like room upgrade prediction,
+      where the number of required car parking spaces is not relevant, but the other
+      features are.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/pricing_party_features/v2
     columns:
+    - adr
+    - total_of_special_requests
+    - adults
+    - children
+    - babies
+    feature_roles:
+      categorical: []
+      numerical:
       - adr
       - total_of_special_requests
       - adults
       - children
       - babies
-    feature_roles:
-      categorical: []
-      numerical:
-        - adr
-        - total_of_special_requests
-        - adults
-        - children
-        - babies
       datetime: []
     operators:
       mode: logical
       names:
-        - AdrPerPerson
+      - AdrPerPerson
       hash: fcd1d9ce4bbf0654b13d21aca2ba1b32
       required_features:
-        AdrPerPerson: [adr, adults, children, babies]
+        AdrPerPerson:
+        - adr
+        - adults
+        - children
+        - babies
     constraints:
-      forbid_nulls: [adr, adults, children, babies, total_of_special_requests]
-      max_cardinality: 
+      forbid_nulls:
+      - adr
+      - adults
+      - children
+      - babies
+      - total_of_special_requests
+      max_cardinality:
         total_of_special_requests: 5
     storage:
       format: parquet
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v3:
     type: tabular
-    description: >
-      Updated version of pricing party features, which only includes adults, children and babies. Useful for adr and lead_time prediction, where the number of people in the booking is relevant, but adr, required car parking spaces, and the number of special requests are leakage for the target.
+    description: 'Updated version of pricing party features, which only includes adults,
+      children and babies. Useful for adr and lead_time prediction, where the number
+      of people in the booking is relevant, but adr, required car parking spaces,
+      and the number of special requests are leakage for the target.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/pricing_party_features/v3
     columns:
-      - adults
-      - children
-      - babies
+    - adults
+    - children
+    - babies
     feature_roles:
       categorical: []
       numerical:
-        - adults
-        - children
-        - babies
+      - adults
+      - children
+      - babies
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [adults, children, babies]
+      forbid_nulls:
+      - adults
+      - children
+      - babies
       max_cardinality:
         adults: 20
         children: 15
@@ -669,80 +837,102 @@ pricing_party_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v4:
     type: tabular
-    description: >
-      Updated version of pricing party features, which only includes adr and total_of_special_requests. Useful for models like repeated guest prediction, where the number of people in the booking is not relevant, and neither are the required car parking spaces, but the price and the number of special requests are.
+    description: 'Updated version of pricing party features, which only includes adr
+      and total_of_special_requests. Useful for models like repeated guest prediction,
+      where the number of people in the booking is not relevant, and neither are the
+      required car parking spaces, but the price and the number of special requests
+      are.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/pricing_party_features/v4
     columns:
-      - adr
-      - total_of_special_requests
+    - adr
+    - total_of_special_requests
     feature_roles:
       categorical: []
       numerical:
-        - adr
-        - total_of_special_requests
+      - adr
+      - total_of_special_requests
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [adr, total_of_special_requests]
-      max_cardinality: 
+      forbid_nulls:
+      - adr
+      - total_of_special_requests
+      max_cardinality:
         total_of_special_requests: 5
     storage:
       format: parquet
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v5:
     type: tabular
-    description: >
-      Features describing the pricing of the booking, as well as the number of people in the booking, which is relevant for pricing. They answer the question "How much did the booking cost and how many people were in the booking?". Uses v2 of hotel_bookings dataset, which includes reservation_status for deriving no_show target.
+    description: 'Features describing the pricing of the booking, as well as the number
+      of people in the booking, which is relevant for pricing. They answer the question
+      "How much did the booking cost and how many people were in the booking?". Uses
+      v2 of hotel_bookings dataset, which includes reservation_status for deriving
+      no_show target.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v2
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v2
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/pricing_party_features/v5
     columns:
+    - adr
+    - required_car_parking_spaces
+    - total_of_special_requests
+    - adults
+    - children
+    - babies
+    feature_roles:
+      categorical: []
+      numerical:
       - adr
       - required_car_parking_spaces
       - total_of_special_requests
       - adults
       - children
       - babies
-    feature_roles:
-      categorical: []
-      numerical:
-        - adr
-        - required_car_parking_spaces
-        - total_of_special_requests
-        - adults
-        - children
-        - babies
       datetime: []
     operators:
       mode: logical
       names:
-        - AdrPerPerson
+      - AdrPerPerson
       hash: fcd1d9ce4bbf0654b13d21aca2ba1b32
       required_features:
-        AdrPerPerson: [adr, adults, children, babies]
+        AdrPerPerson:
+        - adr
+        - adults
+        - children
+        - babies
     constraints:
-      forbid_nulls: [adr, adults, children, babies, required_car_parking_spaces, total_of_special_requests]
-      max_cardinality: 
+      forbid_nulls:
+      - adr
+      - adults
+      - children
+      - babies
+      - required_car_parking_spaces
+      - total_of_special_requests
+      max_cardinality:
         required_car_parking_spaces: 10
         total_of_special_requests: 5
     storage:
@@ -750,38 +940,41 @@ pricing_party_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
 channel_and_agent_features:
   v1:
     type: tabular
-    description: >
-      Features describing how the booking came in.
+    description: 'Features describing how the booking came in.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/channel_and_agent_features/v1
     columns:
+    - country
+    - agent
+    - market_segment
+    - distribution_channel
+    feature_roles:
+      categorical:
       - country
       - agent
       - market_segment
       - distribution_channel
-    feature_roles:
-      categorical:
-        - country
-        - agent
-        - market_segment
-        - distribution_channel
       numerical: []
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [market_segment, distribution_channel]
-      max_cardinality: 
+      forbid_nulls:
+      - market_segment
+      - distribution_channel
+      max_cardinality:
         country: 200
         agent: 500
         market_segment: 8
@@ -791,35 +984,41 @@ channel_and_agent_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: >
-      Updated version of channel and agent features, which doesn't include agent. Useful for models like room upgrade and repeated guest prediction, where the agent through which the booking came in is not relevant, but the country, market segment, and distribution channel are.
+    description: 'Updated version of channel and agent features, which doesn''t include
+      agent. Useful for models like room upgrade and repeated guest prediction, where
+      the agent through which the booking came in is not relevant, but the country,
+      market segment, and distribution channel are.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/channel_and_agent_features/v2
     columns:
+    - country
+    - market_segment
+    - distribution_channel
+    feature_roles:
+      categorical:
       - country
       - market_segment
       - distribution_channel
-    feature_roles:
-      categorical:
-        - country
-        - market_segment
-        - distribution_channel
       numerical: []
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [market_segment, distribution_channel]
-      max_cardinality: 
+      forbid_nulls:
+      - market_segment
+      - distribution_channel
+      max_cardinality:
         country: 200
         market_segment: 8
         distribution_channel: 5
@@ -828,37 +1027,40 @@ channel_and_agent_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v3:
     type: tabular
-    description: >
-      Features describing how the booking came in, using hotel_bookings v2 dataset; includes reservation_status for deriving no_show target.”
+    description: "Features describing how the booking came in, using hotel_bookings\
+      \ v2 dataset; includes reservation_status for deriving no_show target.\u201D\
+      \n"
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v2
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v2
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/channel_and_agent_features/v3
     columns:
+    - country
+    - agent
+    - market_segment
+    - distribution_channel
+    feature_roles:
+      categorical:
       - country
       - agent
       - market_segment
       - distribution_channel
-    feature_roles:
-      categorical:
-        - country
-        - agent
-        - market_segment
-        - distribution_channel
       numerical: []
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [market_segment, distribution_channel]
-      max_cardinality: 
+      forbid_nulls:
+      - market_segment
+      - distribution_channel
+      max_cardinality:
         country: 200
         agent: 500
         market_segment: 8
@@ -868,34 +1070,37 @@ channel_and_agent_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
 room_allocation_features:
   v1:
     type: tabular
-    description: >
-      Features describing the allocation of rooms in the booking.
+    description: 'Features describing the allocation of rooms in the booking.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/room_allocation_features/v1
     columns:
-      - reserved_room_type
-      - assigned_room_type
+    - reserved_room_type
+    - assigned_room_type
     feature_roles:
       categorical:
-        - reserved_room_type
-        - assigned_room_type
+      - reserved_room_type
+      - assigned_room_type
       numerical: []
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [reserved_room_type, assigned_room_type]
-      max_cardinality: 
+      forbid_nulls:
+      - reserved_room_type
+      - assigned_room_type
+      max_cardinality:
         reserved_room_type: 15
         assigned_room_type: 15
     storage:
@@ -903,35 +1108,40 @@ room_allocation_features:
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z
   v2:
     type: tabular
-    description: >
-      Updated version of room allocation features, which only includes reserved_room_type. Useful for models where assigned_room_type is leakage for the target, such as lead time, adr, and special requests prediction, where the assigned room type can be influenced by the target variable.
+    description: 'Updated version of room allocation features, which only includes
+      reserved_room_type. Useful for models where assigned_room_type is leakage for
+      the target, such as lead time, adr, and special requests prediction, where the
+      assigned room type can be influenced by the target variable.
+
+      '
     data:
-      - ref: data/processed
-        name: hotel_bookings
-        version: v1
-        format: parquet
-        merge_key: row_id
-        path_suffix: data.{format}
+    - ref: data/processed
+      name: hotel_bookings
+      version: v1
+      format: parquet
+      merge_key: row_id
+      path_suffix: data.{format}
     min_rows: 5000
     feature_store_path: feature_store/room_allocation_features/v2
     columns:
-      - reserved_room_type
+    - reserved_room_type
     feature_roles:
       categorical:
-        - reserved_room_type
+      - reserved_room_type
       numerical: []
       datetime: []
     operators: null
     constraints:
-      forbid_nulls: [reserved_room_type]
-      max_cardinality: 
+      forbid_nulls:
+      - reserved_room_type
+      max_cardinality:
         reserved_room_type: 15
     storage:
       format: parquet
       compression: snappy
     lineage:
       created_by: Sebastijan
-      created_at: "2026-02-27t23:53:30z"
+      created_at: 2026-02-27t23:53:30z

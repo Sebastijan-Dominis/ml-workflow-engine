@@ -1,7 +1,7 @@
 """Module for loading-related code within modeling configurations section of the ML service."""
 import yaml
 
-from ml_service.backend.configs.modeling.formatting.timestamp import add_timestamp
+from ml_service.backend.configs.formatting.timestamp import add_timestamp
 from ml_service.backend.configs.modeling.models.configs import RawConfigsWithLineage
 
 

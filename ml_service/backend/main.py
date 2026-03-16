@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 
 from ml_service.backend.limiter import limiter
+from ml_service.backend.routers.features import router as features_router
 from ml_service.backend.routers.modeling import router as modeling_router
 from ml_service.backend.routers.pipelines import router as pipelines_router
 
@@ -25,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-routers = [pipelines_router, modeling_router]
+routers = [pipelines_router, modeling_router, features_router]
 
 for router in routers:
     app.include_router(router)
