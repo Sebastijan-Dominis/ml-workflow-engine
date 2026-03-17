@@ -3,6 +3,7 @@ from ml_service.backend.pipelines.models.pipelines_cli_args import (
     BuildInterimDatasetInput,
     BuildProcessedDatasetInput,
     EvaluateInput,
+    ExecuteAllDataPreprocessingInput,
     ExecuteAllExperimentsWithLatestInput,
     ExecuteExperimentWithLatestInput,
     ExplainInput,
@@ -60,6 +61,11 @@ FRONTEND_PIPELINES_REGISTRY = [
         "name": "Promote",
         "endpoint": "pipelines/promote",
         "args_schema": PromoteInput
+    },
+    {
+        "name": "Execute All Data Preprocessing",
+        "endpoint": "pipelines/execute_all_data_preprocessing",
+        "args_schema": ExecuteAllDataPreprocessingInput
     },
     {
         "name": "Freeze All Feature Sets",

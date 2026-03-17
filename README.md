@@ -10,7 +10,7 @@
     - originally from https://www.kaggle.com/datasets/mojtaba142/hotel-booking 
 - Current architecture expanded to support many datasets.
 - The ml workflow covers everything from the registration of a raw data snapshot to model promotion.
-> Note: the repo was previously named `hotel_management`, so you will see that name; changed for clarity on what the project does
+> Note: the repo was previously named `hotel_management`, so you will see that name around the repo; renamed for clarity on what the project does
 
 ## Features
 
@@ -30,62 +30,29 @@
 
 See the [setup guide](docs/setup.md) for installation instructions.
 
+### Brief version
+
+Two options:
+- **Docker**
+  - requires `docker`
+  - operate the workflow through a `browser`
+- **Manual use**
+  - requires `python` and `conda` (preferably)
+  - operate the workflow through a `browser` or `cli + manual` (configs)
+
 ## Usage
 
 See the [usage guide](docs/usage.md) for instructions on running the workflow.
 
-### Examples
+### Usage examples (via `ml_service` and `Docker`):
 
-**Quick example - training**
+#### Pipelines
 
-1. Run the training pipeline:
-```bash
-python -m pipelines.runners.train --problem cancellation --segment global --version v1 --env dev --logging-level INFO
-```
+!["Gif portrayal of pipelines app from ml_service"](assets/gifs/ml_service_pipelines_v2.gif)
 
-2. Inspect the produced artifacts in `experiments/cancellation/global/v1/{experiment_id}/training/{train_run_id}/`.
-    - Optional: Read the logs found within the same file.
+#### Modeling Configs
 
-3. Use the artifacts from this run for evaluation and explainability runs.
-
-Note -> this assumes:
-- Environment set up properly
-- `data/raw/hotel_bookings/v1/{snapshot_id}/data.csv` exists and is uncorrupted (default)
-- proper configurations are in place
-- previous relevant pipelines have been executed.
-
-**Quick example to try with less setup - raw snapshot registration**
-
-1. Run the pipeline for registering a raw snapshot:
-```bash
-python -m pipelines.data.register_raw_snapshot --data hotel_bookings --version v1
-```
-
-2. Inspect the produced artifact (metadata) in `data/raw/hotel_bookings/v1/{snapshot_id}/metadata.json`
-    - Optional: Read the logs found within the same file.
-
-3. Use the artifact from this run for building interim datasets.
-
-Note -> this still assumes:
-- Environment set up properly
-- `data/raw/hotel_bookings/v1/{snapshot_id}/data.csv` exists and is uncorrupted (default)
-
-### ML Service
-
-Use apps located within `ml_service`, if preferred.
-- Dashboard apps written with `Dash` and `FastAPI` as the main packages
-- Wrappers for pipelines with friendly UI
-- Configuration writing with proper validation
-
-#### Usage examples:
-
-##### Pipelines
-
-!["Gif portrayal of pipelines app from ml_service"](assets/gifs/ml_service_pipelines.gif)
-
-##### Modeling Configs
-
-!["Gif portrayal of modeling configs app from ml_service"](assets/gifs/ml_service_modeling_configs.gif)
+!["Gif portrayal of modeling configs app from ml_service"](assets/gifs/ml_service_modeling_configs_v2.gif)
 
 ## Architecture
 

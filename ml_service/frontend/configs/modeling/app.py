@@ -23,11 +23,11 @@ app.layout = dbc.Container(
         html.H2(
             "Modeling Config Editor",
             style={
-                "text-align": "center",
+                "textAlign": "center",
                 "color": "#050525",
-                "font-weight": "bold",
-                "font-size": "2.5rem",
-                "margin-bottom": "40px",
+                "fontWeight": "bold",
+                "fontSize": "2.5rem",
+                "marginBottom": "40px",
             }
         ),
         dbc.Row(
@@ -37,10 +37,10 @@ app.layout = dbc.Container(
                     html.H2(
                         name,
                         style={
-                            "text-align": "center",
+                            "textAlign": "center",
                             "color": "#050525",
-                            "font-weight": "bold",
-                            "font-size": "2rem",
+                            "fontWeight": "bold",
+                            "fontSize": "2rem",
                         }
                     ),
                     dash_ace.DashAceEditor
@@ -58,7 +58,7 @@ app.layout = dbc.Container(
                       style={
                           "margin": "30px auto 30px auto",
                           "display": "block",
-                          "background-color": "#f8f9fa",
+                          "backgroundColor": "#f8f9fa",
                       },
                       value=content
                     )
@@ -73,13 +73,13 @@ app.layout = dbc.Container(
                 "Validate",
                 id="validate-btn",
                 color="primary",
-                style={"width": "150px", "font-size": "20px"}
+                style={"width": "150px", "fontSize": "20px"}
             ),
             style={
                 "margin": "0 auto",
                 "width": "50%",
-                "margin-top": "20px",
-                "justify-content": "center",
+                "marginTop": "20px",
+                "justifyContent": "center",
             }
         ),
 
@@ -99,10 +99,10 @@ app.layout = dbc.Container(
     ],
     fluid=True,
     style={
-        "background-color": "#8fa0d8",
-        "min-height": "100vh",
-        "padding-top": "45px",
-        "padding-bottom": "50px",
+        "backgroundColor": "#8fa0d8",
+        "minHeight": "100vh",
+        "paddingTop": "45px",
+        "paddingBottom": "50px",
     }
 )
 

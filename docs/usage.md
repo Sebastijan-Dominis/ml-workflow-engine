@@ -8,6 +8,36 @@ How to use the hotel_management project for typical workflows.
 - Orchestrators were created almost exclusively for dev/test convenience and efficiency in single-owner, single-dev work
 - `skip-if-existing` flag determines whether an orchestrator will run the given pipelines if it notices at least one snapshot in the target location (e.g. if set to true and `feature_store/{feature_set_name}/{feature_set_version}/{snapshot_id}/` already exists, it will not freeze that feature set; otherwise it will - new snapshot gets created)
 
+## Docker
+
+If you use docker, parts of the remainder of this file will be less relevant to you. Read regardless for more clarity.
+
+For quick use with docker:
+
+- Run the following command whenever the code is updated:
+
+```bash
+docker compose build
+```
+
+- Add `--no-cache` when environment changes:
+
+```bash
+docker compose build --no-cache
+```
+
+- Run this command to operate the ml workflow from your browser:
+
+```bash
+docker compose up
+```
+
+- Simply press `ctrl+c` stop running the container
+    - Ideally avoid doing this while pipelines are mid-execution
+
+- Backend is now on localhost:8000 by default
+- Frontend dashboards are on localhost:{8050-8055}
+
 ## ML Service
 
 ### Overview

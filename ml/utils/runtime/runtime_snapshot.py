@@ -123,7 +123,7 @@ def build_runtime_snapshot(timestamp: str, hardware_info: HardwareConfig, start_
             "execution": {
                 "created_at": timestamp,
                 "git_commit": git_commit,
-                "python_executable": python_executable,
+                "python_executable": Path(python_executable).as_posix(),
                 "duration_seconds": duration
             },
             "runtime": runtime_info,

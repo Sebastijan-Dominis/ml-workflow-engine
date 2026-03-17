@@ -68,13 +68,13 @@ def persist_training_run(
         },
         "artifacts": {
             "model_hash": model_hash,
-            "model_path": str(model_path),
+            "model_path": model_path.as_posix(),
         }
     }
 
     if pipeline_cfg_hash and pipeline_path and pipeline_hash:
         metadata_raw["config_fingerprint"]["pipeline_cfg_hash"] = pipeline_cfg_hash
-        metadata_raw["artifacts"]["pipeline_path"] = str(pipeline_path)
+        metadata_raw["artifacts"]["pipeline_path"] = pipeline_path.as_posix()
         metadata_raw["artifacts"]["pipeline_hash"] = pipeline_hash
 
     metadata = validate_training_metadata(metadata_raw)

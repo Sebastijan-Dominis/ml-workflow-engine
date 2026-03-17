@@ -53,7 +53,7 @@ def test_load_config_sets_meta_sources_and_clears_extends_before_overlay(
     assert out["overlay"] is True
     assert out["_meta"]["validation_status"] == "missing"
     assert out["_meta"]["env"] == "dev"
-    assert out["_meta"]["sources"] == {"main": str(cfg_path), "extends": ["base.yaml"]}
+    assert out["_meta"]["sources"] == {"main": Path(cfg_path).as_posix(), "extends": ["base.yaml"]}
     assert "extends" not in captured["cfg"]
     assert captured["env"] == "dev"
     assert captured["env_path"].name == "dev.yaml"

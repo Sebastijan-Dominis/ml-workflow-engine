@@ -1,6 +1,5 @@
 """Helpers for resolving feature snapshot directories for data loading."""
 
-# TODO: Adjust the rest of the code to actually enable snapshot binding
 import logging
 from pathlib import Path
 

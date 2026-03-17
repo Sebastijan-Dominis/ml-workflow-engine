@@ -43,11 +43,11 @@ class SearchInput(BaseModel):
     version: str
     experiment_id: str | None = None
     env: str | None = "default"
-    strict: bool | None = True
+    strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
-    clean_up_failure_management: bool | None = True
-    overwrite_existing: bool | None = False
+    clean_up_failure_management: bool = True
+    overwrite_existing: bool = False
 
 class TrainInput(BaseModel):
     """Model for the input of the train pipeline."""
@@ -57,10 +57,10 @@ class TrainInput(BaseModel):
     train_run_id: str | None = None
     experiment_id: str | None = None
     env: str | None = "default"
-    strict: bool | None = True
+    strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"
-    clean_up_failure_management: bool | None = True
-    overwrite_existing: bool | None = False
+    clean_up_failure_management: bool = True
+    overwrite_existing: bool = False
 
 class EvaluateInput(BaseModel):
     """Model for the input of the evaluate pipeline."""
@@ -70,7 +70,7 @@ class EvaluateInput(BaseModel):
     experiment_id: str | None = None
     train_id: str | None = None
     env: str | None = "default"
-    strict: bool | None = True
+    strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"
 
 class ExplainInput(BaseModel):
@@ -82,7 +82,7 @@ class ExplainInput(BaseModel):
     train_id: str | None = None
     top_k: int | None = None
     env: str | None = "default"
-    strict: bool | None = True
+    strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"
 
 class PromoteInput(BaseModel):
@@ -112,23 +112,23 @@ class ExecuteExperimentWithLatestInput(BaseModel):
     problem: str
     segment: str
     env: str | None = "default"
-    strict: bool | None = True
+    strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
-    clean_up_failure_management: bool | None = True
+    clean_up_failure_management: bool = True
     version: str
     experiment_id: str | None = None
-    overwrite_existing: bool | None = False
+    overwrite_existing: bool = False
     top_k: int | None = None
 
 class ExecuteAllExperimentsWithLatestInput(BaseModel):
     """Model for the input of the execute_all_experiments_with_latest_input pipeline."""
     env: str | None = "dev"
-    strict: bool | None = True
+    strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
-    clean_up_failure_management: bool | None = True
-    overwrite_existing: bool | None = False
+    clean_up_failure_management: bool = True
+    overwrite_existing: bool = False
     top_k: int | None = None
     skip_if_existing: bool = True
 

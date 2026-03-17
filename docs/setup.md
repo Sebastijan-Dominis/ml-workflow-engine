@@ -10,7 +10,13 @@ This document contains the instructions for setting up the development environme
    - This does not affect the code
 - Conda (recommended)
 
+**OR**
+
+- Docker
+
 ## Installation
+
+### No Docker
 
 1. Clone the repository
 
@@ -35,8 +41,28 @@ pip install -r requirements.txt # for packages that can't be installed with cond
 4. Set up environment variables
 
 In `{repo_root}/.env`.
+[Click here](#environment-variables)
 
-### Descriptions
+### Docker
+
+1. Pull the required image
+
+```bash
+docker pull pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
+```
+
+2. Build the image
+
+```bash
+docker compose build --no-cache
+```
+
+3. Set up environment variables
+
+In `{repo_root}/.env`.
+[Click here](#environment-variables)
+
+### Environment Variables
 
 `ML_SERVICE_BACKEND_URL` = URL in which you want to run the `FastAPI` backend from `ml_service`
 `ML_SERVICE_FRONTEND_URLS` = URLS you want to allow access in the backend
@@ -47,9 +73,18 @@ Notes:
 
 ### Defaults
 
-`ML_SERVICE_BACKEND_URL`= http://127.0.0.1:8000
+`ML_SERVICE_BACKEND_URL`= http://localhost:8000
 `ML_SERVICE_FRONTEND_URLS`= [http://localhost:8050, http://localhost:8051, http://localhost:8052, http://localhost:8053, http://localhost:8054, http://localhost:8055]
 
+## Post-installation
+
+You can now operate the ml workflow in following ways
+- using `ml_service` in browser
+   - backend on localhost:8000 (default)
+   - frontend on localhost:{8050-8055} (split for easier maintenance; `Dash` scales poorly)
+- manually
+   - cli for pipelines
+   - manual writing of configs
 
 ## Additional Notes
 

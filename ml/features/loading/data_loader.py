@@ -73,7 +73,7 @@ def load_and_validate_data(input_lineage: Iterable[DataLineageEntry]) -> pd.Data
             logger.error(msg)
             raise ConfigError(msg)
 
-        dataset_path = Path(dataset.path)
+        dataset_path = Path(dataset.path.replace("\\", "/"))
         if not dataset_path.exists():
             msg = f"Dataset file not found at expected path: {dataset_path}"
             logger.error(msg)

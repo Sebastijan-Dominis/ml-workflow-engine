@@ -461,11 +461,11 @@
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
 </span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the train pipeline.&quot;&quot;&quot;</span>
@@ -475,10 +475,10 @@
 </span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
 </span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="k">class</span><span class="w"> </span><span class="nc">EvaluateInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the evaluate pipeline.&quot;&quot;&quot;</span>
@@ -488,7 +488,7 @@
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExplainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -500,7 +500,7 @@
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
 </span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PromoteInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -530,23 +530,23 @@
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllExperimentsWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_experiments_with_latest_input pipeline.&quot;&quot;&quot;</span>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
@@ -921,11 +921,11 @@
 </span><span id="SearchInput-44"><a href="#SearchInput-44"><span class="linenos">44</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="SearchInput-45"><a href="#SearchInput-45"><span class="linenos">45</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="SearchInput-46"><a href="#SearchInput-46"><span class="linenos">46</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="SearchInput-47"><a href="#SearchInput-47"><span class="linenos">47</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="SearchInput-47"><a href="#SearchInput-47"><span class="linenos">47</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="SearchInput-48"><a href="#SearchInput-48"><span class="linenos">48</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span><span id="SearchInput-49"><a href="#SearchInput-49"><span class="linenos">49</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="SearchInput-50"><a href="#SearchInput-50"><span class="linenos">50</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="SearchInput-51"><a href="#SearchInput-51"><span class="linenos">51</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="SearchInput-50"><a href="#SearchInput-50"><span class="linenos">50</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="SearchInput-51"><a href="#SearchInput-51"><span class="linenos">51</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -995,7 +995,7 @@
                             </div>
                             <div id="SearchInput.strict" class="classattr">
                                 <div class="attr variable">
-            <span class="name">strict</span><span class="annotation">: bool | None</span>        =
+            <span class="name">strict</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1031,7 +1031,7 @@
                             </div>
                             <div id="SearchInput.clean_up_failure_management" class="classattr">
                                 <div class="attr variable">
-            <span class="name">clean_up_failure_management</span><span class="annotation">: bool | None</span>        =
+            <span class="name">clean_up_failure_management</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1043,7 +1043,7 @@
                             </div>
                             <div id="SearchInput.overwrite_existing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">overwrite_existing</span><span class="annotation">: bool | None</span>        =
+            <span class="name">overwrite_existing</span><span class="annotation">: bool</span>        =
 <span class="default_value">False</span>
 
         
@@ -1073,10 +1073,10 @@
 </span><span id="TrainInput-58"><a href="#TrainInput-58"><span class="linenos">58</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="TrainInput-59"><a href="#TrainInput-59"><span class="linenos">59</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="TrainInput-60"><a href="#TrainInput-60"><span class="linenos">60</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="TrainInput-61"><a href="#TrainInput-61"><span class="linenos">61</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="TrainInput-61"><a href="#TrainInput-61"><span class="linenos">61</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="TrainInput-62"><a href="#TrainInput-62"><span class="linenos">62</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="TrainInput-63"><a href="#TrainInput-63"><span class="linenos">63</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="TrainInput-64"><a href="#TrainInput-64"><span class="linenos">64</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="TrainInput-63"><a href="#TrainInput-63"><span class="linenos">63</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="TrainInput-64"><a href="#TrainInput-64"><span class="linenos">64</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -1158,7 +1158,7 @@
                             </div>
                             <div id="TrainInput.strict" class="classattr">
                                 <div class="attr variable">
-            <span class="name">strict</span><span class="annotation">: bool | None</span>        =
+            <span class="name">strict</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1182,7 +1182,7 @@
                             </div>
                             <div id="TrainInput.clean_up_failure_management" class="classattr">
                                 <div class="attr variable">
-            <span class="name">clean_up_failure_management</span><span class="annotation">: bool | None</span>        =
+            <span class="name">clean_up_failure_management</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1194,7 +1194,7 @@
                             </div>
                             <div id="TrainInput.overwrite_existing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">overwrite_existing</span><span class="annotation">: bool | None</span>        =
+            <span class="name">overwrite_existing</span><span class="annotation">: bool</span>        =
 <span class="default_value">False</span>
 
         
@@ -1224,7 +1224,7 @@
 </span><span id="EvaluateInput-71"><a href="#EvaluateInput-71"><span class="linenos">71</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="EvaluateInput-72"><a href="#EvaluateInput-72"><span class="linenos">72</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="EvaluateInput-73"><a href="#EvaluateInput-73"><span class="linenos">73</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="EvaluateInput-74"><a href="#EvaluateInput-74"><span class="linenos">74</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="EvaluateInput-74"><a href="#EvaluateInput-74"><span class="linenos">74</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="EvaluateInput-75"><a href="#EvaluateInput-75"><span class="linenos">75</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span></pre></div>
 
@@ -1307,7 +1307,7 @@
                             </div>
                             <div id="EvaluateInput.strict" class="classattr">
                                 <div class="attr variable">
-            <span class="name">strict</span><span class="annotation">: bool | None</span>        =
+            <span class="name">strict</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1350,7 +1350,7 @@
 </span><span id="ExplainInput-83"><a href="#ExplainInput-83"><span class="linenos">83</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="ExplainInput-84"><a href="#ExplainInput-84"><span class="linenos">84</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="ExplainInput-85"><a href="#ExplainInput-85"><span class="linenos">85</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="ExplainInput-86"><a href="#ExplainInput-86"><span class="linenos">86</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExplainInput-86"><a href="#ExplainInput-86"><span class="linenos">86</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="ExplainInput-87"><a href="#ExplainInput-87"><span class="linenos">87</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span></pre></div>
 
@@ -1445,7 +1445,7 @@
                             </div>
                             <div id="ExplainInput.strict" class="classattr">
                                 <div class="attr variable">
-            <span class="name">strict</span><span class="annotation">: bool | None</span>        =
+            <span class="name">strict</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1716,13 +1716,13 @@
 </span><span id="ExecuteExperimentWithLatestInput-113"><a href="#ExecuteExperimentWithLatestInput-113"><span class="linenos">113</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="ExecuteExperimentWithLatestInput-114"><a href="#ExecuteExperimentWithLatestInput-114"><span class="linenos">114</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="ExecuteExperimentWithLatestInput-115"><a href="#ExecuteExperimentWithLatestInput-115"><span class="linenos">115</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
-</span><span id="ExecuteExperimentWithLatestInput-116"><a href="#ExecuteExperimentWithLatestInput-116"><span class="linenos">116</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExecuteExperimentWithLatestInput-116"><a href="#ExecuteExperimentWithLatestInput-116"><span class="linenos">116</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="ExecuteExperimentWithLatestInput-117"><a href="#ExecuteExperimentWithLatestInput-117"><span class="linenos">117</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span><span id="ExecuteExperimentWithLatestInput-118"><a href="#ExecuteExperimentWithLatestInput-118"><span class="linenos">118</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="ExecuteExperimentWithLatestInput-119"><a href="#ExecuteExperimentWithLatestInput-119"><span class="linenos">119</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExecuteExperimentWithLatestInput-119"><a href="#ExecuteExperimentWithLatestInput-119"><span class="linenos">119</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="ExecuteExperimentWithLatestInput-120"><a href="#ExecuteExperimentWithLatestInput-120"><span class="linenos">120</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="ExecuteExperimentWithLatestInput-121"><a href="#ExecuteExperimentWithLatestInput-121"><span class="linenos">121</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ExecuteExperimentWithLatestInput-122"><a href="#ExecuteExperimentWithLatestInput-122"><span class="linenos">122</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="ExecuteExperimentWithLatestInput-122"><a href="#ExecuteExperimentWithLatestInput-122"><span class="linenos">122</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="ExecuteExperimentWithLatestInput-123"><a href="#ExecuteExperimentWithLatestInput-123"><span class="linenos">123</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
@@ -1769,7 +1769,7 @@
                             </div>
                             <div id="ExecuteExperimentWithLatestInput.strict" class="classattr">
                                 <div class="attr variable">
-            <span class="name">strict</span><span class="annotation">: bool | None</span>        =
+            <span class="name">strict</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1805,7 +1805,7 @@
                             </div>
                             <div id="ExecuteExperimentWithLatestInput.clean_up_failure_management" class="classattr">
                                 <div class="attr variable">
-            <span class="name">clean_up_failure_management</span><span class="annotation">: bool | None</span>        =
+            <span class="name">clean_up_failure_management</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1841,7 +1841,7 @@
                             </div>
                             <div id="ExecuteExperimentWithLatestInput.overwrite_existing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">overwrite_existing</span><span class="annotation">: bool | None</span>        =
+            <span class="name">overwrite_existing</span><span class="annotation">: bool</span>        =
 <span class="default_value">False</span>
 
         
@@ -1878,11 +1878,11 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteAllExperimentsWithLatestInput-125"><a href="#ExecuteAllExperimentsWithLatestInput-125"><span class="linenos">125</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllExperimentsWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 </span><span id="ExecuteAllExperimentsWithLatestInput-126"><a href="#ExecuteAllExperimentsWithLatestInput-126"><span class="linenos">126</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_experiments_with_latest_input pipeline.&quot;&quot;&quot;</span>
 </span><span id="ExecuteAllExperimentsWithLatestInput-127"><a href="#ExecuteAllExperimentsWithLatestInput-127"><span class="linenos">127</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-128"><a href="#ExecuteAllExperimentsWithLatestInput-128"><span class="linenos">128</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-128"><a href="#ExecuteAllExperimentsWithLatestInput-128"><span class="linenos">128</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span id="ExecuteAllExperimentsWithLatestInput-129"><a href="#ExecuteAllExperimentsWithLatestInput-129"><span class="linenos">129</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span><span id="ExecuteAllExperimentsWithLatestInput-130"><a href="#ExecuteAllExperimentsWithLatestInput-130"><span class="linenos">130</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-131"><a href="#ExecuteAllExperimentsWithLatestInput-131"><span class="linenos">131</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-132"><a href="#ExecuteAllExperimentsWithLatestInput-132"><span class="linenos">132</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-131"><a href="#ExecuteAllExperimentsWithLatestInput-131"><span class="linenos">131</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-132"><a href="#ExecuteAllExperimentsWithLatestInput-132"><span class="linenos">132</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="ExecuteAllExperimentsWithLatestInput-133"><a href="#ExecuteAllExperimentsWithLatestInput-133"><span class="linenos">133</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="ExecuteAllExperimentsWithLatestInput-134"><a href="#ExecuteAllExperimentsWithLatestInput-134"><span class="linenos">134</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 </span></pre></div>
@@ -1906,7 +1906,7 @@
                             </div>
                             <div id="ExecuteAllExperimentsWithLatestInput.strict" class="classattr">
                                 <div class="attr variable">
-            <span class="name">strict</span><span class="annotation">: bool | None</span>        =
+            <span class="name">strict</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1942,7 +1942,7 @@
                             </div>
                             <div id="ExecuteAllExperimentsWithLatestInput.clean_up_failure_management" class="classattr">
                                 <div class="attr variable">
-            <span class="name">clean_up_failure_management</span><span class="annotation">: bool | None</span>        =
+            <span class="name">clean_up_failure_management</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
@@ -1954,7 +1954,7 @@
                             </div>
                             <div id="ExecuteAllExperimentsWithLatestInput.overwrite_existing" class="classattr">
                                 <div class="attr variable">
-            <span class="name">overwrite_existing</span><span class="annotation">: bool | None</span>        =
+            <span class="name">overwrite_existing</span><span class="annotation">: bool</span>        =
 <span class="default_value">False</span>
 
         

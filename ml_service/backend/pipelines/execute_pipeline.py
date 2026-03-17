@@ -26,6 +26,8 @@ def execute_pipeline(
     Returns:
         dict: A dictionary containing the exit code, status, stdout, and stderr of the executed pipeline.
     """
+    print(f"Executing pipeline with payload: {payload}")
+
     boolean_args = boolean_args or []
 
     cmd = [

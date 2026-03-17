@@ -18,33 +18,33 @@ app.layout = dbc.Container([
     html.H2(
         "Pipeline Config Editor",
         style={
-            "text-align": "center",
+            "textAlign": "center",
             "color": "#050525",
-            "font-weight": "bold",
-            "font-size": "2.5rem",
-            "margin-bottom": "40px",
+            "fontWeight": "bold",
+            "fontSize": "2.5rem",
+            "marginBottom": "40px",
         },
     ),
 
     dbc.Row([
                 dbc.Col([
-                    dbc.Label("Data Type", style={"font-weight": "bold", "font-size": "1.1rem"}),
+                    dbc.Label("Data Type", style={"fontWeight": "bold", "fontSize": "1.1rem"}, html_for="data-type-input"),
                     dbc.Input(id="data-type-input", placeholder="Enter data type...", type="text"),
                 ]),
                 dbc.Col(
                     [
-                        dbc.Label("Algorithm", style={"font-weight": "bold", "font-size": "1.1rem"}),
+                        dbc.Label("Algorithm", style={"fontWeight": "bold", "fontSize": "1.1rem"}, html_for="algorithm-input"),
                         dbc.Input(id="algorithm-input", placeholder="Enter algorithm...", type="text"),
                     ],
                     style={
-                        "margin-bottom": "20px",
+                        "marginBottom": "20px",
                     }
                 ),
             ],
             style={
                 "width": "40%",
                 "margin": "0 auto",
-                "margin-bottom": "20px",
+                "marginBottom": "20px",
                 "display": "flex",
                 "gap": "2rem",
             }
@@ -59,12 +59,12 @@ app.layout = dbc.Container([
         fontSize=20,
         height="700px",
         setOptions={"showLineNumbers": True, "highlightActiveLine": True},
-        style={"margin": "30px auto", "background-color": "#f8f9fa"},
+        style={"margin": "30px auto", "backgroundColor": "#f8f9fa"},
     ),
 
     dbc.Row(
-        dbc.Button("Validate", id="validate-btn", color="primary", style={"width": "150px", "font-size": "20px"}),
-        style={"margin": "0 auto", "width": "50%", "margin-top": "20px", "justify-content": "center"},
+        dbc.Button("Validate", id="validate-btn", color="primary", style={"width": "150px", "fontSize": "20px"}),
+        style={"margin": "0 auto", "width": "50%", "marginTop": "20px", "justifyContent": "center"},
     ),
 
     html.Div(id="validation-result"),
@@ -75,7 +75,7 @@ app.layout = dbc.Container([
         dbc.ModalFooter(dbc.Button("Confirm", id="confirm-write", color="danger")),
     ], id="confirm-modal", is_open=False),
 
-], fluid=True, style={"background-color": "#8fa0d8", "min-height": "100vh", "padding-top": "45px", "padding-bottom": "50px"})
+], fluid=True, style={"backgroundColor": "#8fa0d8", "minHeight": "100vh", "paddingTop": "45px", "paddingBottom": "50px"})
 
 
 # Validate pipeline config
@@ -168,4 +168,4 @@ def write_config(_, data_type, algorithm, yaml_text):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8054)
+    app.run(debug=True, port=8054, host="0.0.0.0")

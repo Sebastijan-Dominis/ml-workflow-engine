@@ -52,25 +52,25 @@ def persist_explainability_run(
 
     explainability_artifacts_raw = {
         "model_hash": artifacts.model_hash,
-        "model_path": artifacts.model_path,
+        "model_path": Path(artifacts.model_path).as_posix(),
     }
 
     if artifacts.pipeline_path and artifacts.pipeline_hash:
-        explainability_artifacts_raw["pipeline_path"] = artifacts.pipeline_path
+        explainability_artifacts_raw["pipeline_path"] = Path(artifacts.pipeline_path).as_posix()
         explainability_artifacts_raw["pipeline_hash"] = artifacts.pipeline_hash
 
     if explainability_metrics.top_k_feature_importances is not None:
         feature_importances_file = explain_run_dir / "top_k_feature_importances.csv"
         save_metrics_csv(explainability_metrics.top_k_feature_importances, target_file=feature_importances_file, name="Feature importances")
-        explainability_artifacts_raw["top_k_feature_importances_path"] = str(feature_importances_file)
-        feature_importances_hash = hash_artifact(feature_importances_file)
+        explainability_artifacts_raw["top_k_feature_importances_path"] = Path(feature_importances_file).as_posix()
+        feature_importances_hash = hash_artifact(Path(feature_importances_file))
         explainability_artifacts_raw["top_k_feature_importances_hash"] = feature_importances_hash
 
     if explainability_metrics.top_k_shap_importances is not None:
         shap_importances_file = explain_run_dir / "top_k_shap_importances.csv"
         save_metrics_csv(explainability_metrics.top_k_shap_importances, target_file=shap_importances_file, name="SHAP importances")
-        explainability_artifacts_raw["top_k_shap_importances_path"] = str(shap_importances_file)
-        shap_importances_hash = hash_artifact(shap_importances_file)
+        explainability_artifacts_raw["top_k_shap_importances_path"] = Path(shap_importances_file).as_posix()
+        shap_importances_hash = hash_artifact(Path(shap_importances_file))
         explainability_artifacts_raw["top_k_shap_importances_hash"] = shap_importances_hash
 
     explainability_artifacts = validate_explainability_artifacts(explainability_artifacts_raw)

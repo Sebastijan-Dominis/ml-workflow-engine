@@ -18,33 +18,33 @@ app.layout = dbc.Container([
     html.H2(
         "Promotion Thresholds Editor",
         style={
-            "text-align": "center",
+            "textAlign": "center",
             "color": "#050525",
-            "font-weight": "bold",
-            "font-size": "2.5rem",
-            "margin-bottom": "40px",
+            "fontWeight": "bold",
+            "fontSize": "2.5rem",
+            "marginBottom": "40px",
         },
     ),
 
     dbc.Row([
                 dbc.Col([
-                    dbc.Label("Problem Type", style={"font-weight": "bold", "font-size": "1.1rem"}),
-                    dbc.Input(id="data-type-input", placeholder="Enter problem type...", type="text"),
+                    dbc.Label("Problem Type", style={"fontWeight": "bold", "fontSize": "1.1rem"}, html_for="problem-type-input"),
+                    dbc.Input(id="problem-type-input", placeholder="Enter problem type...", type="text"),
                 ]),
                 dbc.Col(
                     [
-                        dbc.Label("Segment", style={"font-weight": "bold", "font-size": "1.1rem"}),
+                        dbc.Label("Segment", style={"fontWeight": "bold", "fontSize": "1.1rem"}, html_for="segment-input"),
                         dbc.Input(id="segment-input", placeholder="Enter segment...", type="text"),
                     ],
                     style={
-                        "margin-bottom": "20px",
+                        "marginBottom": "20px",
                     }
                 ),
             ],
             style={
                 "width": "40%",
                 "margin": "0 auto",
-                "margin-bottom": "20px",
+                "marginBottom": "20px",
                 "display": "flex",
                 "gap": "2rem",
             }
@@ -59,12 +59,12 @@ app.layout = dbc.Container([
         fontSize=20,
         height="700px",
         setOptions={"showLineNumbers": True, "highlightActiveLine": True},
-        style={"margin": "30px auto", "background-color": "#f8f9fa"},
+        style={"margin": "30px auto", "backgroundColor": "#f8f9fa"},
     ),
 
     dbc.Row(
-        dbc.Button("Validate", id="validate-btn", color="primary", style={"width": "150px", "font-size": "20px"}),
-        style={"margin": "0 auto", "width": "50%", "margin-top": "20px", "justify-content": "center"},
+        dbc.Button("Validate", id="validate-btn", color="primary", style={"width": "150px", "fontSize": "20px"}),
+        style={"margin": "0 auto", "width": "50%", "marginTop": "20px", "justifyContent": "center"},
     ),
 
     html.Div(id="validation-result"),
@@ -75,7 +75,7 @@ app.layout = dbc.Container([
         dbc.ModalFooter(dbc.Button("Confirm", id="confirm-write", color="danger")),
     ], id="confirm-modal", is_open=False),
 
-], fluid=True, style={"background-color": "#8fa0d8", "min-height": "100vh", "padding-top": "45px", "padding-bottom": "50px"})
+], fluid=True, style={"background-color": "#8fa0d8", "min-height": "100vh", "paddingTop": "45px", "paddingBottom": "50px"})
 
 
 # Validate pipeline config
@@ -84,7 +84,7 @@ app.layout = dbc.Container([
     Output("confirm-modal", "is_open"),
     Output("config-editor", "value", allow_duplicate=True),
     Input("validate-btn", "n_clicks"),
-    State("data-type-input", "value"),
+    State("problem-type-input", "value"),
     State("segment-input", "value"),
     State("config-editor", "value"),
     prevent_initial_call=True
@@ -121,7 +121,7 @@ def validate_config(_, problem_type, segment, yaml_text):
     Output("validation-result", "children", allow_duplicate=True),
     Output("confirm-modal", "is_open", allow_duplicate=True),
     Input("confirm-write", "n_clicks"),
-    State("data-type-input", "value"),
+    State("problem-type-input", "value"),
     State("segment-input", "value"),
     State("config-editor", "value"),
     prevent_initial_call=True
@@ -150,4 +150,4 @@ def write_config(_, problem_type, segment, yaml_text):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8055)
+    app.run(debug=True, port=8055, host="0.0.0.0")

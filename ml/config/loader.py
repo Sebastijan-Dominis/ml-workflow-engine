@@ -55,7 +55,7 @@ def load_config(
         raise ConfigError(msg) from e
 
     cfg.setdefault("_meta", {})["sources"] = {
-        "main": str(path),
+        "main": path.as_posix(),
         "extends": cfg.get("extends", []),
     }
     cfg.pop("extends", None)  # merge directive, not model content

@@ -61,14 +61,14 @@ def persist_evaluation_run(
         stage="evaluation"
     )
     evaluation_artifacts_raw = {
-        "model_path": artifacts.model_path,
+        "model_path": Path(artifacts.model_path).as_posix(),
         "model_hash": artifacts.model_hash,
-        "metrics_path": metrics_file,
+        "metrics_path": Path(metrics_file).as_posix(),
         "metrics_hash": hash_artifact(Path(metrics_file))
     }
 
     if artifacts.pipeline_hash and artifacts.pipeline_path:
-        evaluation_artifacts_raw["pipeline_path"] = artifacts.pipeline_path
+        evaluation_artifacts_raw["pipeline_path"] = Path(artifacts.pipeline_path).as_posix()
         evaluation_artifacts_raw["pipeline_hash"] = artifacts.pipeline_hash
 
     predictions_paths = save_predictions(prediction_dfs, target_dir=eval_run_dir)

@@ -59,22 +59,42 @@ def delete_failure_management_folder(
         run_name = "experiment" if stage == "search" else "training"
         logger.info(f"Successfully deleted failure management folder for {run_name} {folder_path.name} at {folder_path}.")
     if stage == "search":
-        if folder_path.parent.exists() and folder_path.parent.is_dir() and not any(folder_path.parent.iterdir()):
-            folder_path.parent.rmdir()
-            logger.info(f"Deleted the main failure management directory, as it is now empty: {folder_path.parent.name}.")
+        if stage == "search":
+            parent = folder_path.parent
+            if parent.exists() and parent.is_dir() and not any(parent.iterdir()):
+                try:
+                    parent.rmdir()
+                    logger.info(
+                        "Deleted the main failure management directory, as it is now empty: %s.",
+                        parent.name,
+                    )
+                except OSError:
+                    logger.debug(
+                        "Skipping deletion of %s (possibly a Docker mount or busy directory).",
+                        parent,
+                    )
     elif stage == "train":
 
         training_failure_management_dir = folder_path.parent
         if training_failure_management_dir.exists() and training_failure_management_dir.is_dir() and not any(training_failure_management_dir.iterdir()):
-            training_failure_management_dir.rmdir()
-            logger.info(f"Deleted the training failure management directory, as it is now empty: {training_failure_management_dir.name}.")
+            try:
+                training_failure_management_dir.rmdir()
+                logger.info(f"Deleted the training failure management directory, as it is now empty: {training_failure_management_dir.name}.")
+            except OSError:
+                logger.debug(f"Skipping deletion of {training_failure_management_dir} (possibly a Docker mount or busy directory).")
 
         experiment_failure_management_dir = training_failure_management_dir.parent
         if experiment_failure_management_dir.exists() and experiment_failure_management_dir.is_dir() and not any(experiment_failure_management_dir.iterdir()):
-            experiment_failure_management_dir.rmdir()
-            logger.info(f"Deleted the experiment failure management directory, as it is now empty: {experiment_failure_management_dir.name}.")
+            try:
+                experiment_failure_management_dir.rmdir()
+                logger.info(f"Deleted the experiment failure management directory, as it is now empty: {experiment_failure_management_dir.name}.")
+            except OSError:
+                logger.debug(f"Skipping deletion of {experiment_failure_management_dir} (possibly a Docker mount or busy directory).")
 
         main_failure_management_dir = experiment_failure_management_dir.parent
         if main_failure_management_dir.exists() and main_failure_management_dir.is_dir() and not any(main_failure_management_dir.iterdir()):
-            main_failure_management_dir.rmdir()
-            logger.info(f"Deleted the main failure management directory, as it is now empty: {main_failure_management_dir.name}.")
+            try:
+                main_failure_management_dir.rmdir()
+                logger.info(f"Deleted the main failure management directory, as it is now empty: {main_failure_management_dir.name}.")
+            except OSError:
+                logger.debug(f"Skipping deletion of {main_failure_management_dir} (possibly a Docker mount or busy directory).")

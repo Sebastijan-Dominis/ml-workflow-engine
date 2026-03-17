@@ -79,7 +79,7 @@ def search(payload: Annotated[SearchInput, Body(...)], request: Request): # type
 def train(payload: Annotated[TrainInput, Body(...)], request: Request): # type: ignore
     """Trains a model by executing the corresponding pipeline."""
     return execute_pipeline(
-        module_path="pipelines.runners.training.train",
+        module_path="pipelines.runners.train",
         payload=payload,
         boolean_args=["strict", "clean_up_failure_management", "overwrite_existing"],
     )
@@ -89,7 +89,7 @@ def train(payload: Annotated[TrainInput, Body(...)], request: Request): # type: 
 def evaluate(payload: Annotated[EvaluateInput, Body(...)], request: Request): # type: ignore
     """Evaluates a model by executing the corresponding pipeline."""
     return execute_pipeline(
-        module_path="pipelines.runners.evaluation.evaluate",
+        module_path="pipelines.runners.evaluate",
         payload=payload,
         boolean_args=["strict", "clean_up_failure_management", "overwrite_existing"],
     )
@@ -99,7 +99,7 @@ def evaluate(payload: Annotated[EvaluateInput, Body(...)], request: Request): # 
 def explain(payload: Annotated[ExplainInput, Body(...)], request: Request): # type: ignore
     """Explains a model by executing the corresponding pipeline."""
     return execute_pipeline(
-        module_path="pipelines.runners.explainability.explain",
+        module_path="pipelines.runners.explain",
         payload=payload,
         boolean_args=["strict", "clean_up_failure_management", "overwrite_existing"],
     )
@@ -159,7 +159,7 @@ def execute_all_experiments_with_latest(payload: Annotated[ExecuteAllExperiments
 def run_all_workflows(payload: Annotated[RunAllWorkflowsInput, Body(...)], request: Request): # type: ignore
     """Executes the run all workflows pipeline."""
     return execute_pipeline(
-        module_path="pipelines.orchestration.run_all_workflows",
+        module_path="pipelines.orchestration.master.run_all_workflows",
         payload=payload,
         boolean_args=[],
     )

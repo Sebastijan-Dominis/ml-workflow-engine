@@ -1,0 +1,27 @@
+services:
+  ml-workflow:
+    build:
+      context: .
+    tty: true
+    stdin_open: true
+    # ===== GPU support =====
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    volumes:
+      - ./configs:/app/configs
+      - ./data:/app/data
+      - ./feature_store:/app/feature_store
+      - ./experiments:/app/experiments
+      - ./failure_management:/app/failure_management
+      - ./orchestration_logs:/app/orchestration_logs
+    ports:
+      - "8000:8000"
+      - "8050-8055:8050-8055"
+    env_file:
+      - .env
+    restart: unless-stopped

@@ -62,9 +62,9 @@ def test_persist_evaluation_run_happy_path_calls_all_persistence_steps(
         persist_module,
         "save_predictions",
         lambda prediction_dfs, target_dir: SimpleNamespace(
-            train_predictions_path=str(target_dir / "predictions_train.parquet"),
-            val_predictions_path=str(target_dir / "predictions_val.parquet"),
-            test_predictions_path=str(target_dir / "predictions_test.parquet"),
+            train_predictions_path=Path(target_dir / "predictions_train.parquet").as_posix(),
+            val_predictions_path=Path(target_dir / "predictions_val.parquet").as_posix(),
+            test_predictions_path=Path(target_dir / "predictions_test.parquet").as_posix(),
         ),
     )
     monkeypatch.setattr(
@@ -121,7 +121,7 @@ def test_persist_evaluation_run_happy_path_calls_all_persistence_steps(
         eval_run_dir / "predictions_val.parquet",
         eval_run_dir / "predictions_test.parquet",
     ]
-    assert validate_raw["metrics_path"] == str(metrics_file)
+    assert validate_raw["metrics_path"] == Path(metrics_file).as_posix()
     assert validate_raw["metrics_hash"] == "hash::metrics.json"
     assert validate_raw["pipeline_path"] == "pipeline.joblib"
     assert validate_raw["pipeline_hash"] == "pipeline-hash"

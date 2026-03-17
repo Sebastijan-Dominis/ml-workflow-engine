@@ -61,7 +61,7 @@ def prepare_metadata(
         "source_data": {
             "name": config.data.name,
             "snapshot_id": source_data_path.parent.name,
-            "path": str(source_data_path),
+            "path": source_data_path.as_posix(),
             "format": source_data_format,
             "version": config.raw_data_version,
         },

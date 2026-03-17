@@ -48,9 +48,9 @@ def test_save_predictions_writes_all_split_parquets_and_returns_paths(
     assert len(written_paths) == 3
     assert all(path.parent == target_dir for path in written_paths)
     assert all(path.name.endswith(".parquet.tmp") for path in written_paths)
-    assert result.train_predictions_path == str(expected_train)
-    assert result.val_predictions_path == str(expected_val)
-    assert result.test_predictions_path == str(expected_test)
+    assert result.train_predictions_path == Path(expected_train).as_posix()
+    assert result.val_predictions_path == Path(expected_val).as_posix()
+    assert result.test_predictions_path == Path(expected_test).as_posix()
 
 
 def test_save_predictions_wraps_parquet_failures_as_persistence_error(

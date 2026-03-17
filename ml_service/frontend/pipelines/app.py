@@ -16,28 +16,36 @@ for pipeline in FRONTEND_PIPELINES:
     form_inputs = []
     for field in pipeline["fields"]:
         input_id = f"{pipeline['name']}-{field['name']}"
-        label = dbc.Label(field["name"], html_for=input_id, className="fw-bold")
+        label = dbc.Label(f"{field['name']}", html_for=input_id, className="fw-bold")
         if field["type"] == "text":
-            input_component = dbc.Input(id=input_id, placeholder=field.get("placeholder", ""), type="text")
+            input_component = dbc.Input(id=input_id, placeholder=field.get("placeholder", ""), type="text", name=input_id)
         elif field["type"] == "number":
-            input_component = dbc.Input(id=input_id, placeholder=field.get("placeholder", ""), type="number")
+            input_component = dbc.Input(id=input_id, placeholder=field.get("placeholder", ""), type="number", name=input_id)
         elif field["type"] == "boolean":
-            input_component = dbc.Checklist(
-                options=[{"label": "Enable", "value": True}],
-                value=[field["value"]] if field.get("value") else [],
-                id=input_id,
-                inline=True
-            )
+            input_component = dbc.Checkbox(
+                    id=input_id,
+                    name=input_id,
+                    label=field.get("label", field["name"]),
+                    value=field.get("value", False),  # default False
+                )
         elif field["type"] == "dropdown":
-            input_component = dcc.Dropdown(
-                id=input_id,
-                options=[{"label": opt, "value": opt} for opt in field["options"]],
-                value=field.get("value", None),
-                clearable=False
-            )
+            input_component = html.Div([
+                dbc.Label([
+                    "logging_level" if field["name"] == "logging_level" else field.get("label", field["name"]),
+                    dcc.Dropdown(
+                        id=input_id,
+                        options=[{"label": opt, "value": opt} for opt in field["options"]],
+                        value=field.get("value", None),
+                        clearable=False,
+                    )]
+                )
+            ])
         else:
-            input_component = dbc.Input(id=input_id, placeholder=field.get("placeholder", ""), type="text")
-        form_inputs.append(dbc.Form([label, input_component], className="mb-3"))
+            input_component = dbc.Input(id=f"{input_id}", placeholder=field.get("placeholder", ""), type="text", name=input_id)
+        if field["type"] not in ["dropdown"]:
+            form_inputs.append(dbc.Form([label, input_component], className="mb-3"))
+        else:
+            form_inputs.append(input_component)
 
     run_btn_id = f"{pipeline['name']}-submit"
     form_inputs.append(dbc.Button(
@@ -112,8 +120,8 @@ app.layout = dbc.Container([
     style={
         "backgroundColor": "#8fa0d8",
         "minHeight": "100vh",
-        "padding-top": "25px",
-        "padding-bottom": "30px",
+        "paddingTop": "25px",
+        "paddingBottom": "30px",
     }
 )
 
@@ -160,13 +168,21 @@ def create_pipeline_callbacks(pipeline):
         payload = {}
         field_names = [f["name"] for f in pipeline["fields"]]
         for k, v, f in zip(field_names, values, pipeline["fields"], strict=True):
-            payload[k] = bool(v) if f["type"] == "boolean" else v
+            if f["type"] == "boolean":
+                payload[k] = bool(v) if v is not None else False
+            elif f["type"] == "number":
+                payload[k] = int(v) if v not in [None, ''] else None
+            elif f["type"] == "text":
+                payload[k] = v if v not in [None, ''] else None  # Use None for optional
+            elif f["type"] == "dropdown":
+                payload[k] = v if v not in [None, ''] else None
+        print("Payload sent:", payload)
         result = call_pipeline(pipeline["endpoint"], payload)
-        return dbc.Textarea(value=str(result), style={"width": "100%", "height": "200px"}, className="mt-2")
+        return dbc.Textarea(value=str(result), style={"width": "100%", "height": "200px"}, className="mt-2", id=f"{pipeline['name']}-result", name=f"{pipeline['name']}-result")
 
 
 for p in FRONTEND_PIPELINES:
     create_pipeline_callbacks(p)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=8050)
