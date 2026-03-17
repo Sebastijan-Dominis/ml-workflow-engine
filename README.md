@@ -60,10 +60,6 @@ See the [usage guide](docs/usage.md) for instructions on running the workflow.
 
 ![Artifact Lineage Diagram](docs/architecture/img/artifact_lineage_v2.png)
 
-### Config Resolution
-
-![Config Resolution Diagram](docs/architecture/img/config_resolution_v3.png)
-
 ### Details
 
 See the [architecture overview](docs/architecture/overview.md) for details, including:
