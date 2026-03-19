@@ -4,9 +4,6 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
 
-from ml_service.backend.configs.features.loading.load_yaml_and_add_lineage import (
-    load_yaml_and_add_lineage,
-)
 from ml_service.backend.configs.features.persistence.save_feature_registry import (
     save_feature_registry,
 )
@@ -15,6 +12,7 @@ from ml_service.backend.configs.features.utils.registry import registry_entry_ex
 from ml_service.backend.configs.features.validation.validate_feature_config import (
     validate_feature_config,
 )
+from ml_service.backend.configs.loading.load_yaml_and_add_lineage import load_yaml_and_add_lineage
 from ml_service.backend.main import limiter
 
 router = APIRouter(prefix="/features", tags=["features"])

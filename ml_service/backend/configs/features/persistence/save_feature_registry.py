@@ -1,11 +1,12 @@
 """Atomic persistence for feature registry."""
 
-import tempfile
+import copy
 from pathlib import Path
 
-import yaml
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+
 from ml_service.backend.configs.features.utils.registry import load_registry
+from ml_service.backend.configs.persistence.save_config import save_config
 
 
 def save_feature_registry(
@@ -18,24 +19,16 @@ def save_feature_registry(
 
     registry = load_registry(registry_path)
 
-    if name not in registry:
-        registry[name] = {}
+    new_registry = copy.deepcopy(registry)
 
-    registry[name][version] = validated_config.model_dump(mode="json")
+    if name not in  new_registry:
+        new_registry[name] = {}
+
+    new_registry[name][version] = validated_config.model_dump(mode="json")
 
     registry_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with tempfile.NamedTemporaryFile(
-        "w",
-        delete=False,
-        dir=registry_path.parent,
-    ) as tmp:
-
-        yaml.safe_dump(registry, tmp, sort_keys=False)
-
-        tmp_path = Path(tmp.name)
-
-    tmp_path.replace(registry_path)
+    save_config(new_registry, registry_path)
 
     return {
         "status": "written",

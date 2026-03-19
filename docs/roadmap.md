@@ -1,4 +1,4 @@
-_Last updated: 2026-03-14_
+_Last updated: 2026-03-19_
 # Roadmap
 
 - This document outlines the planned development roadmap for the project.
@@ -11,27 +11,30 @@ _Last updated: 2026-03-14_
     - importance (low/medium/high/crucial)
 
 ## Short Term (less than 1 month)
-- [x] Write the main project README.md
-    - Status: planned
-    - Importance: done (2026-03-12)
-- [x] Set up a proper environment for contributors
-    - Status: done (2026-03-12)
-    - Importance: high
 - [x] Add a document describing each of the configs
     - Status: done (2026-03-13)
     - Importance: high
-- [ ] Create an ml service that wraps pipelines and allows config writing using Dash and FastAPI
-    - Status: in progress (2026-03-14)
+- [x] Create an ml service that wraps pipelines and allows config writing using Dash and FastAPI
+    - Status: done (2026-03-19)
     - Importance: medium
 - [x] Add pipeline config validation to the training pipeline
     - Status: done (2026-03-13)
     - Importance: medium
+- [ ] Create dataset + feature set snapshot binding logic and configs
+    - Status: planned
+    - Importance: medium
+- [ ] Create infer.py
+    - Status: planned
+    - Importance: medium
+- [ ] Create monitor.py
+    - Status: planned
+    - Importance: medium
 - [ ] Create tools for an LLM that leverage model_registry + explainability artifacts to provide users with useful feedback
     - Status: planned
-    - Importance: medium
+    - Importance: low
 - [ ] Create a Dash + FastAPI app that implements that LLM, where users can interact with it
     - Status: planned
-    - Importance: medium
+    - Importance: low
 
 ## Mid Term (1-6 months)
 - [ ] Add time-series logic, starting with Prophet algorithm
