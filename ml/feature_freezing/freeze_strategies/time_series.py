@@ -17,7 +17,8 @@ class FreezeTimeSeries(FreezeStrategy):
         snapshot_id: str,
         timestamp: str,
         start_time: float,
-        owner: str
+        owner: str,
+        snapshot_binding_key: str | None
     ) -> FreezeOutput:
         """Execute time-series freeze workflow (not yet implemented).
 
@@ -27,6 +28,7 @@ class FreezeTimeSeries(FreezeStrategy):
             snapshot_id: Unique snapshot identifier.
             start_time: Process start time used for runtime metadata.
             owner: Owner identifier stored in snapshot metadata.
+            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
         Returns:
             Freeze output containing persisted snapshot path and metadata.
         """

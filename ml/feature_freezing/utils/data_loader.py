@@ -8,6 +8,7 @@ import pandas as pd
 from ml.data.merge.merge_dataset_into_main import merge_dataset_into_main
 from ml.exceptions import ConfigError, DataError
 from ml.feature_freezing.freeze_strategies.tabular.config.models import TabularFeaturesConfig
+from ml.snapshot_bindings.extraction.get_snapshot_binding import get_and_validate_snapshot_binding
 from ml.types import DataLineageEntry
 from ml.utils.hashing.service import HASH_LOADER_REGISTRY
 from ml.utils.loaders import read_data
@@ -15,7 +16,10 @@ from ml.utils.snapshots.latest_snapshot import get_latest_snapshot_path
 
 logger = logging.getLogger(__name__)
 
-def load_data_with_lineage(config: TabularFeaturesConfig) -> tuple[pd.DataFrame, list[DataLineageEntry]]:
+def load_data_with_lineage(
+        config: TabularFeaturesConfig,
+        snapshot_binding_key: str | None
+    ) -> tuple[pd.DataFrame, list[DataLineageEntry]]:
     """Load configured datasets, merge them, and build lineage entries.
 
     Args:
@@ -34,9 +38,22 @@ def load_data_with_lineage(config: TabularFeaturesConfig) -> tuple[pd.DataFrame,
         logger.error(msg)
         raise ConfigError(msg)
 
+    datasets_binding = None
+    if snapshot_binding_key:
+        snapshot_binding_config = get_and_validate_snapshot_binding(
+            snapshot_binding_key,
+            expect_dataset_bindings=True
+        )
+        datasets_binding = snapshot_binding_config.datasets
+
     for dataset in config.data:
-        dataset_path = Path(dataset.ref) / dataset.name / dataset.version
-        dataset_snapshot_path = get_latest_snapshot_path(dataset_path)
+        dataset_binding = datasets_binding.get(dataset.name) if datasets_binding else None
+        if dataset_binding:
+            dataset_snapshot = dataset_binding.snapshot
+            dataset_snapshot_path = Path(dataset.ref) / dataset.name / dataset_snapshot
+        else:
+            dataset_path = Path(dataset.ref) / dataset.name / dataset.version
+            dataset_snapshot_path = get_latest_snapshot_path(dataset_path)
 
         if dataset.format not in HASH_LOADER_REGISTRY:
             msg = f"Unsupported data format for loading and hashing: {dataset.format}"

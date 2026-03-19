@@ -26,6 +26,7 @@ class FreezeTabular(FreezeStrategy):
         self,
         config: TabularFeaturesConfig,
         *,
+        snapshot_binding_key: str | None,
         timestamp: str,
         snapshot_id: str,
         start_time: float,
@@ -39,7 +40,7 @@ class FreezeTabular(FreezeStrategy):
             snapshot_id: Unique snapshot identifier.
             start_time: Process start time used for runtime metadata.
             owner: Owner identifier stored in snapshot metadata.
-
+            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
         Returns:
             Freeze output containing persisted snapshot path and metadata.
         """
@@ -50,7 +51,8 @@ class FreezeTabular(FreezeStrategy):
             timestamp=timestamp,
             snapshot_id=snapshot_id,
             start_time=start_time,
-            owner=owner
+            owner=owner,
+            snapshot_binding_key=snapshot_binding_key
         )
         runner = PipelineRunner[FreezeContext](steps=[
             IngestionStep(),

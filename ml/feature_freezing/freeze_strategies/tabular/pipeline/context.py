@@ -21,6 +21,7 @@ class FreezeContext:
     snapshot_id: str
     start_time: float
     owner: str
+    snapshot_binding_key: str | None
 
     data: pd.DataFrame | None = None
     data_lineage: list[DataLineageEntry] | None = None

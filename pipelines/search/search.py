@@ -69,6 +69,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--snapshot-binding-key",
+        type=str,
+        help="Optional key for a snapshot binding to define which snapshot to load for each dataset. Snapshots should be defined in configs/snapshot_bindings_registry/bindings.yaml. Example value: 'binding_inference_2026_05_09'",
+        default=None
+    )
+
+    parser.add_argument(
         "--env",
         choices=["dev", "test", "prod", "default"],
         default="default",

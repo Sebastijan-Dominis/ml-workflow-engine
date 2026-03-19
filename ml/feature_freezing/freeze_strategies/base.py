@@ -17,6 +17,7 @@ class FreezeStrategy(ABC):
         *,
         timestamp: str,
         snapshot_id: str,
+        snapshot_binding_key: str | None,
         start_time: float,
         owner: str
     ) -> FreezeOutput:
@@ -26,6 +27,7 @@ class FreezeStrategy(ABC):
             config: Feature-freezing configuration.
             timestamp: Snapshot creation timestamp.
             snapshot_id: Snapshot identifier.
+            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
             start_time: Monotonic start timestamp.
             owner: Snapshot owner identifier.
 
