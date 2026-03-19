@@ -4,25 +4,32 @@ from pydantic import BaseModel, Field, RootModel
 
 
 class DatasetSnapshotBinding(BaseModel):
-    """Defines the snapshot binding for a specific dataset."""
-    snapshot: str = Field(..., description="The identifier of the snapshot to use for this dataset.")
+    """Defines the snapshot binding for a specific dataset version."""
+    snapshot: str = Field(..., description="The identifier of the snapshot to use for this dataset version.")
 
-# Intentionally redundant with DatasetSnapshotBinding for clarity and potential future divergence in structure or metadata.
+
 class FeatureSetSnapshotBinding(BaseModel):
-    """Defines the snapshot binding for a specific feature set."""
-    snapshot: str = Field(..., description="The identifier of the snapshot to use for this feature set.")
+    """Defines the snapshot binding for a specific feature set version."""
+    snapshot: str = Field(..., description="The identifier of the snapshot to use for this feature set version.")
 
-# Datasets and feature sets intentionally not required at the SnapshotBinding level to allow for flexible configurations that may include only one type of binding. Validation will ensure that if a snapshot binding is used, the necessary dataset or feature set bindings are present.
+
 class SnapshotBinding(BaseModel):
-    """Defines the overall snapshot binding configuration, including dataset and feature bindings."""
-    datasets: dict[str, DatasetSnapshotBinding] = Field(
+    """Defines the overall snapshot binding configuration, including dataset and feature set bindings, with versions."""
+    datasets: dict[str, dict[str, DatasetSnapshotBinding]] = Field(
         default_factory=dict,
-        description="Mapping of dataset names to their respective snapshot bindings."
+        description=(
+            "Mapping of dataset names to versions, which then map to their respective snapshot bindings.\n"
+            "Example: datasets[dataset_name][dataset_version].snapshot"
+        )
     )
-    feature_sets: dict[str, FeatureSetSnapshotBinding] = Field(
+    feature_sets: dict[str, dict[str, FeatureSetSnapshotBinding]] = Field(
         default_factory=dict,
-        description="Mapping of feature set names to their respective snapshot bindings."
+        description=(
+            "Mapping of feature set names to versions, which then map to their respective snapshot bindings.\n"
+            "Example: feature_sets[feature_set_name][feature_set_version].snapshot"
+        )
     )
+
 
 class SnapshotBindingsRegistry(RootModel[dict[str, SnapshotBinding]]):
     """Defines the registry of snapshot bindings, mapping binding keys to their configurations."""

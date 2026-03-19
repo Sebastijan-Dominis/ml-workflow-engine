@@ -47,9 +47,14 @@ def load_data_with_lineage(
         datasets_binding = snapshot_binding_config.datasets
 
     for dataset in config.data:
-        dataset_binding = datasets_binding.get(dataset.name) if datasets_binding else None
-        if dataset_binding:
-            dataset_snapshot = dataset_binding.snapshot
+        dataset_versions = datasets_binding.get(dataset.name) if datasets_binding else None
+        dataset_snapshot_binding = dataset_versions.get(dataset.version) if dataset_versions else None
+        if snapshot_binding_key:
+            if not dataset_snapshot_binding:
+                msg = f"No snapshot binding found for dataset {dataset.name} version {dataset.version} under snapshot binding key {snapshot_binding_key}."
+                logger.error(msg)
+                raise ConfigError(msg)
+            dataset_snapshot = dataset_snapshot_binding.snapshot
             dataset_snapshot_path = Path(dataset.ref) / dataset.name / dataset_snapshot
         else:
             dataset_path = Path(dataset.ref) / dataset.name / dataset.version

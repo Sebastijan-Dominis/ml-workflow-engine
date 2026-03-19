@@ -39,11 +39,12 @@ def resolve_feature_snapshots(
 
     for i, fs in enumerate(feature_sets):
         version_path = feature_store_path / fs.name / fs.version
+        feature_sets_binding = snapshot_binding_config.feature_sets if snapshot_binding_config is not None else None
         if snapshot_binding_config:
-            feature_sets_binding = snapshot_binding_config.feature_sets
-            feature_set_binding = feature_sets_binding.get(fs.name) if feature_sets_binding else None
+            version_bindings = feature_sets_binding.get(fs.name) if feature_sets_binding else None
+            feature_set_binding = version_bindings.get(fs.version) if version_bindings else None
             if not feature_set_binding:
-                msg = f"Snapshot binding for feature set {fs.name} not found in snapshot binding configuration."
+                msg = f"Snapshot binding for feature set {fs.name} version {fs.version} under snapshot binding key {snapshot_binding_key} not found in snapshot binding configuration."
                 logger.error(msg)
                 raise ConfigError(msg)
             snapshot_id = feature_set_binding.snapshot
