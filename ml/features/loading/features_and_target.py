@@ -186,11 +186,11 @@ def load_features_and_target(
 
     validate_feature_target_row_id(X=X, y_with_row_id=y_with_row_id)
 
-    validate_min_rows(X, model_cfg.min_rows)
-
     full_df = X.merge(y_with_row_id, on="row_id", how="inner", suffixes=("", "_target"))
 
     y = full_df[target_name].copy()
+
+    validate_min_rows(full_df, model_cfg.min_rows)
 
     validate_target(
         y=y,
