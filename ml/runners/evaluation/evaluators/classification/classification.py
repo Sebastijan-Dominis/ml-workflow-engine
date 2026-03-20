@@ -92,7 +92,8 @@ class ClassificationEvaluator(Evaluator):
         snapshot_selection = resolve_feature_snapshots(
             feature_store_path=Path(model_cfg.feature_store.path),
             feature_sets=model_cfg.feature_store.feature_sets,
-            snapshot_binding=snapshot_binding
+            snapshot_binding=snapshot_binding,
+            snapshot_binding_key=None
         )
         X, y, feature_lineage = load_features_and_target(
             model_cfg,

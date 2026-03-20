@@ -55,7 +55,7 @@ def load_data_with_lineage(
                 logger.error(msg)
                 raise ConfigError(msg)
             dataset_snapshot = dataset_snapshot_binding.snapshot
-            dataset_snapshot_path = Path(dataset.ref) / dataset.name / dataset_snapshot
+            dataset_snapshot_path = Path(dataset.ref) / dataset.name / dataset.version / dataset_snapshot
         else:
             dataset_path = Path(dataset.ref) / dataset.name / dataset.version
             dataset_snapshot_path = get_latest_snapshot_path(dataset_path)

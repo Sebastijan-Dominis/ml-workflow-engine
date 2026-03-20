@@ -90,6 +90,7 @@ class EvaluateRegression(Evaluator):
             feature_store_path=Path(model_cfg.feature_store.path),
             feature_sets=model_cfg.feature_store.feature_sets,
             snapshot_binding=snapshot_binding,
+            snapshot_binding_key=None
         )
 
         X, y, feature_lineage = load_features_and_target(
@@ -97,6 +98,7 @@ class EvaluateRegression(Evaluator):
             snapshot_selection=snapshot_selection,
             drop_row_id=False,
             strict=strict,
+            snapshot_binding_key=None
         )
 
         validate_snapshot_ids(feature_lineage, snapshot_selection)

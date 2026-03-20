@@ -24,6 +24,8 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
+from sklearn.pipeline import Pipeline
+
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
@@ -51,7 +53,6 @@ from ml.search.utils.failure_management.delete_failure_management_folder import 
 from ml.types import AllowedModels, LatestSnapshot
 from ml.utils.hashing.service import hash_artifact
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
-from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +83,13 @@ def parse_args() -> argparse.Namespace:
         type=str,
         required=True,
         help="Model version, e.g., 'v1'"
+    )
+
+    parser.add_argument(
+        "--snapshot-binding-key",
+        type=str,
+        help="Optional key for a snapshot binding to define which snapshot to load for each dataset. Snapshots should be defined in configs/snapshot_bindings_registry/bindings.yaml. Example value: '2026-03-20T02-54-47_61509023'",
+        default=None
     )
 
     parser.add_argument(
@@ -120,7 +128,7 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--clean_up-failure-management",
+        "--clean-up-failure-management",
         type=str_to_bool,
         default=True,
         help="Whether to clean up failure management folder after successful run (default: True)"
@@ -227,6 +235,7 @@ def main() -> int:
         output = trainer.train(
             model_cfg,
             strict=args.strict,
+            snapshot_binding_key=args.snapshot_binding_key,
             failure_management_dir=failure_management_dir,
             search_dir=search_dir
         )

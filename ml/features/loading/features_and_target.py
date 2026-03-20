@@ -29,6 +29,7 @@ def load_features_and_target(
     model_cfg: SearchModelConfig | TrainModelConfig,
     *,
     snapshot_selection: list[dict] | None,
+    snapshot_binding_key: str | None = None,
     drop_row_id: bool = True,
     strict: bool = True
 ) -> tuple[pd.DataFrame, pd.Series, list[FeatureLineage]]:
@@ -37,6 +38,7 @@ def load_features_and_target(
     Args:
         model_cfg: Validated model configuration driving data loading and validation behavior.
         snapshot_selection: Optional pre-resolved snapshot selection descriptors.
+        snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
         drop_row_id: Whether to drop `row_id` from output features.
         strict: Whether strict hash/integrity checks should be enforced.
 
@@ -65,7 +67,11 @@ def load_features_and_target(
     feature_sets = model_cfg.feature_store.feature_sets
 
     if not snapshot_selection:
-        snapshot_selection = resolve_feature_snapshots(feature_store_path, feature_sets)
+        snapshot_selection = resolve_feature_snapshots(
+            feature_store_path, 
+            feature_sets,
+            snapshot_binding_key=snapshot_binding_key
+        )
 
     dfs_X = []
     feature_types = set()

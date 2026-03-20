@@ -42,6 +42,7 @@ class CatBoostTrainer(Trainer):
         self,
         model_cfg: TrainModelConfig,
         *,
+        snapshot_binding_key: str | None = None,
         strict: bool,
         failure_management_dir: Path,
         search_dir: Path
@@ -72,7 +73,12 @@ class CatBoostTrainer(Trainer):
 
         stats: DataStats
 
-        X, y, lineage = load_features_and_target(model_cfg, snapshot_selection=None, strict=strict)
+        X, y, lineage = load_features_and_target(
+            model_cfg, 
+            snapshot_selection=None, 
+            snapshot_binding_key=snapshot_binding_key,
+            strict=strict
+        )
         splits, splits_info = get_splits(
             X=X,
             y=y,

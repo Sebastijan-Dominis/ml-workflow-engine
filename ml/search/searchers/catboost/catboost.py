@@ -22,6 +22,7 @@ class CatBoostSearcher(Searcher):
         self,
         model_cfg: SearchModelConfig,
         *,
+        snapshot_binding_key: str | None = None,
         strict: bool,
         failure_management_dir: Path,
     ) -> SearchOutput:
@@ -29,6 +30,7 @@ class CatBoostSearcher(Searcher):
 
         Args:
             model_cfg: Validated search configuration.
+            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
             strict: Whether loading and validation stages should fail strictly.
             failure_management_dir: Directory for persisting failure-management artifacts.
 
@@ -37,6 +39,7 @@ class CatBoostSearcher(Searcher):
         """
         ctx = SearchContext(
             model_cfg=model_cfg,
+            snapshot_binding_key=snapshot_binding_key,
             strict=strict,
             failure_management_dir=failure_management_dir
         )
