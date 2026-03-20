@@ -28,7 +28,6 @@ def _as_any_config(config: SimpleNamespace) -> Any:
     """Cast minimal config stubs for invoking the typed loader function."""
     return cast(Any, config)
 
-
 def _dataset_stub(
     *,
     ref: str,
@@ -54,7 +53,7 @@ def test_load_data_with_lineage_raises_when_no_datasets_specified() -> None:
     cfg = SimpleNamespace(data=[])
 
     with pytest.raises(ConfigError, match="No datasets specified"):
-        load_data_with_lineage(_as_any_config(cfg))
+        load_data_with_lineage(_as_any_config(cfg), snapshot_binding_key=None)
 
 
 def test_load_data_with_lineage_raises_for_unsupported_dataset_format(
@@ -78,7 +77,7 @@ def test_load_data_with_lineage_raises_for_unsupported_dataset_format(
     )
 
     with pytest.raises(ConfigError, match="Unsupported data format"):
-        load_data_with_lineage(_as_any_config(cfg))
+        load_data_with_lineage(_as_any_config(cfg), snapshot_binding_key=None)
 
 
 def test_load_data_with_lineage_raises_when_dataset_file_missing(
@@ -103,7 +102,7 @@ def test_load_data_with_lineage_raises_when_dataset_file_missing(
     )
 
     with pytest.raises(DataError, match="Dataset file not found"):
-        load_data_with_lineage(_as_any_config(cfg))
+        load_data_with_lineage(_as_any_config(cfg), snapshot_binding_key=None)
 
 
 def test_load_data_with_lineage_returns_merged_data_and_lineage_entry(
@@ -144,7 +143,7 @@ def test_load_data_with_lineage_returns_merged_data_and_lineage_entry(
     )
     monkeypatch.setitem(_data_loader_module.HASH_LOADER_REGISTRY, fmt, lambda path: "loader-hash-abc")
 
-    merged, lineage = load_data_with_lineage(_as_any_config(cfg))
+    merged, lineage = load_data_with_lineage(_as_any_config(cfg), snapshot_binding_key=None)
 
     assert merged.equals(df_loaded)
     assert len(lineage) == 1

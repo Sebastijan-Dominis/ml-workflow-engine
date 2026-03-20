@@ -68,7 +68,7 @@ def load_features_and_target(
 
     if not snapshot_selection:
         snapshot_selection = resolve_feature_snapshots(
-            feature_store_path, 
+            feature_store_path,
             feature_sets,
             snapshot_binding_key=snapshot_binding_key
         )

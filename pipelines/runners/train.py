@@ -24,8 +24,6 @@ from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
-from sklearn.pipeline import Pipeline
-
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config
@@ -53,6 +51,7 @@ from ml.search.utils.failure_management.delete_failure_management_folder import 
 from ml.types import AllowedModels, LatestSnapshot
 from ml.utils.hashing.service import hash_artifact
 from ml.utils.snapshots.snapshot_path import get_snapshot_path
+from sklearn.pipeline import Pipeline
 
 logger = logging.getLogger(__name__)
 

@@ -36,9 +36,11 @@ def test_train_main_executes_end_to_end_control_flow_with_cli_args(
             "true",
             "--experiment-id",
             "exp_100",
+            "--snapshot-binding-key",
+            "snapshot_100",
             "--logging-level",
             "INFO",
-            "--clean_up-failure-management",
+            "--clean-up-failure-management",
             "false",
             "--overwrite-existing",
             "false",
@@ -66,7 +68,7 @@ def test_train_main_executes_end_to_end_control_flow_with_cli_args(
         lineage=[],
         metrics={"auc": 0.81},
     )
-    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir, search_dir: training_output)
+    trainer = SimpleNamespace(train=lambda *args, **kwargs: training_output)
     monkeypatch.setattr(train_module, "get_trainer", lambda algorithm: trainer)
 
     monkeypatch.setattr(

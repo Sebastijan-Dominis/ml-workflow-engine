@@ -171,7 +171,7 @@ def test_load_features_and_target_resolves_snapshots_and_drops_row_id_on_success
 
     called: dict[str, object] = {}
 
-    def _resolve(feature_store_path: Path, feature_sets: list[SimpleNamespace]) -> list[dict[str, object]]:
+    def _resolve(feature_store_path: Path, feature_sets: list[SimpleNamespace], snapshot_binding_key: str | None = None) -> list[dict[str, object]]:
         called["feature_store_path"] = feature_store_path
         called["feature_sets"] = feature_sets
         return resolved_snapshot

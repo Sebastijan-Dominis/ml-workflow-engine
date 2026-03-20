@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from ml import snapshot_bindings
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.hashing import add_config_hash
 from ml.config.loader import load_and_validate_config

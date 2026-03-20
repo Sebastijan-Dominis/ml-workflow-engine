@@ -26,6 +26,7 @@ class _FakeContext:
         self.__dict__.update(kwargs)
         self.snapshot_path = Path("snapshot/path")
         self.metadata = {"ok": True}
+        self.snapshot_binding_key = "snapshot_key_123"
 
     @property
     def require_snapshot_path(self) -> Path:
@@ -179,6 +180,7 @@ def test_freeze_tabular_uses_config_directly_when_already_validated(strategy_mod
         snapshot_id="s1",
         start_time=0.0,
         owner="tests",
+        snapshot_binding_key=None,
     )
 
     assert out.snapshot_path == Path("snapshot/path")
@@ -207,6 +209,7 @@ def test_freeze_tabular_validates_non_tabular_config_before_running(strategy_mod
         snapshot_id="s1",
         start_time=0.0,
         owner="tests",
+        snapshot_binding_key=None,
     )
 
     assert calls["raw"] == {"type": "tabular", "x": 1}

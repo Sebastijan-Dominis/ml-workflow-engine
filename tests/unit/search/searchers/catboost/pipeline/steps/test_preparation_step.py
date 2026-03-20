@@ -98,6 +98,7 @@ def _make_context(tmp_path: Path, *, task_type: str) -> SimpleNamespace:
         ),
         strict=True,
         class_weights=None,
+        snapshot_binding_key=None,
     )
 
 

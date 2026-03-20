@@ -31,7 +31,8 @@ def ingestion_module(monkeypatch: pytest.MonkeyPatch):
 
     min_rows_module.validate_min_rows = lambda data, min_rows: None
     row_id_module.validate_row_id = lambda data: None
-    data_loader_module.load_data_with_lineage = lambda config: (pd.DataFrame(), [])
+    # accept optional snapshot_binding_key for compatibility with updated signature
+    data_loader_module.load_data_with_lineage = lambda *args, **kwargs: (pd.DataFrame(), [])
     operators_module.validate_operators = lambda names, op_hash: None
     context_module.FreezeContext = object
 
@@ -58,7 +59,7 @@ def test_ingestion_step_loads_data_validates_and_sets_context(ingestion_module) 
 
     called = {"row_id": False, "min_rows": False, "operators": False}
 
-    ingestion_module.load_data_with_lineage = lambda cfg: (loaded_df, loaded_lineage)
+    ingestion_module.load_data_with_lineage = lambda *args, **kwargs: (loaded_df, loaded_lineage)
 
     def _validate_row_id(data: pd.DataFrame) -> None:
         called["row_id"] = True
@@ -82,6 +83,7 @@ def test_ingestion_step_loads_data_validates_and_sets_context(ingestion_module) 
         config=SimpleNamespace(min_rows=100, operators=SimpleNamespace(names=["op1"], hash="hash-1")),
         data=None,
         data_lineage=None,
+        snapshot_binding_key="snapshot_key_123",
     )
 
     out = step.run(ctx)
@@ -99,7 +101,7 @@ def test_ingestion_step_skips_operator_validation_when_no_operators(ingestion_mo
 
     called = {"operators": False}
 
-    ingestion_module.load_data_with_lineage = lambda cfg: (loaded_df, [])
+    ingestion_module.load_data_with_lineage = lambda *args, **kwargs: (loaded_df, [])
     ingestion_module.validate_row_id = lambda data: None
     ingestion_module.validate_min_rows = lambda data, min_rows: None
 
@@ -112,6 +114,7 @@ def test_ingestion_step_skips_operator_validation_when_no_operators(ingestion_mo
         config=SimpleNamespace(min_rows=1, operators=None),
         data=None,
         data_lineage=None,
+        snapshot_binding_key="snapshot_key_123",
     )
 
     step.run(ctx)

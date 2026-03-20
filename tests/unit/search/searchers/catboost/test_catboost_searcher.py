@@ -39,10 +39,11 @@ def _import_searcher_module_with_stubs() -> types.ModuleType:
     fake_context_module = types.ModuleType(context_module_name)
 
     class _FakeContext:
-        def __init__(self, *, model_cfg: Any, strict: bool, failure_management_dir: Path) -> None:
+        def __init__(self, *, model_cfg: Any, strict: bool, failure_management_dir: Path, snapshot_binding_key: str | None = None) -> None:
             self.model_cfg = model_cfg
             self.strict = strict
             self.failure_management_dir = failure_management_dir
+            self.snapshot_binding_key = snapshot_binding_key
             self.feature_lineage = []
             self.pipeline_hash = ""
             self.scoring = ""
