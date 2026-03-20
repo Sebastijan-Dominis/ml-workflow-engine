@@ -16,6 +16,7 @@ class Trainer(Protocol):
         self,
         model_cfg: TrainModelConfig,
         *,
+        snapshot_binding_key: str | None = None,
         strict: bool,
         failure_management_dir: Path,
         search_dir: Path
@@ -26,7 +27,7 @@ class Trainer(Protocol):
             model_cfg: Validated training model configuration.
             strict: Whether data/validation loading should fail strictly.
             failure_management_dir: Directory for failure-management artifacts.
-
+            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
         Returns:
             Standardized training output.
         """

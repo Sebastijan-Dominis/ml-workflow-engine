@@ -57,6 +57,7 @@ def test_main_returns_one_when_provided_experiment_dir_is_missing(
             owner="Sebastijan",
             clean_up_failure_management=True,
             overwrite_existing=False,
+            snapshot_binding_key=None,
         ),
     )
 
@@ -90,6 +91,7 @@ def test_main_returns_one_when_search_dir_has_files_and_no_overwrite(
             owner="Sebastijan",
             clean_up_failure_management=True,
             overwrite_existing=False,
+            snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "setup_logging", lambda *args, **kwargs: None)
@@ -120,6 +122,7 @@ def test_main_runs_search_and_persists_outputs_on_success(
             owner="CI",
             clean_up_failure_management=False,
             overwrite_existing=True,
+            snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260306T200000")
@@ -139,7 +142,7 @@ def test_main_runs_search_and_persists_outputs_on_success(
         scoring_method="roc_auc",
         splits_info={"cv": 5},
     )
-    searcher = SimpleNamespace(search=lambda model_cfg, strict, failure_management_dir: search_output)
+    searcher = SimpleNamespace(search=lambda *args, **kwargs: search_output)
     monkeypatch.setattr(module, "get_searcher", lambda key: searcher)
 
     persisted: dict[str, Any] = {}
@@ -186,6 +189,7 @@ def test_main_maps_user_error_through_resolve_exit_code(
             owner="Sebastijan",
             clean_up_failure_management=True,
             overwrite_existing=False,
+            snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260306T200500")
@@ -230,6 +234,7 @@ def test_main_maps_unexpected_error_through_resolve_exit_code(
             owner="Sebastijan",
             clean_up_failure_management=True,
             overwrite_existing=False,
+            snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260307T150000")

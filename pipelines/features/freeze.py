@@ -51,6 +51,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--snapshot-binding-key",
+        type=str,
+        help="Optional key for a snapshot binding to define which snapshot to load for each dataset. Snapshots should be defined in configs/snapshot_bindings_registry/bindings.yaml. Example value: '2026-03-20T02-54-47_61509023'",
+        default=None
+    )
+
+    parser.add_argument(
         "--owner",
         type=str,
         default="Sebastijan",
@@ -133,6 +140,7 @@ def main() -> int:
 
         output = strategy.freeze(
             config,
+            snapshot_binding_key=args.snapshot_binding_key,
             snapshot_id=snapshot_id,
             timestamp=timestamp,
             start_time=start_time,

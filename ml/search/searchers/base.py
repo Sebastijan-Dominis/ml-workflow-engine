@@ -16,6 +16,7 @@ class Searcher(Protocol):
         self,
         model_cfg: SearchModelConfig,
         *,
+        snapshot_binding_key: str | None = None,
         strict: bool,
         failure_management_dir: Path
     ) -> SearchOutput:

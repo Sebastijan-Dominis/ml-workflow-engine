@@ -47,7 +47,10 @@ class IngestionStep(PipelineStep[FreezeContext]):
         Returns:
             FreezeContext: Updated context with loaded data and lineage.
         """
-        data, data_lineage = load_data_with_lineage(ctx.config)
+        data, data_lineage = load_data_with_lineage(
+            ctx.config,
+            snapshot_binding_key=ctx.snapshot_binding_key
+        )
 
         validate_row_id(data)
 

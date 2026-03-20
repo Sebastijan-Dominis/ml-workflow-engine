@@ -54,6 +54,7 @@ def test_main_returns_resolved_code_when_experiment_lookup_fails(
             logging_level="INFO",
             clean_up_failure_management=True,
             overwrite_existing=False,
+            snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "bootstrap_logging", lambda level: None)
@@ -91,6 +92,7 @@ def test_main_returns_one_when_existing_train_run_has_files_and_no_overwrite(
             logging_level="INFO",
             clean_up_failure_management=True,
             overwrite_existing=False,
+            snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "bootstrap_logging", lambda level: None)
@@ -124,6 +126,7 @@ def test_main_runs_training_and_persists_outputs_on_success(
             logging_level="DEBUG",
             clean_up_failure_management=True,
             overwrite_existing=False,
+            snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260306T180000")
@@ -147,7 +150,7 @@ def test_main_runs_training_and_persists_outputs_on_success(
         lineage=[SimpleNamespace(feature="x")],
         metrics={"auc": 0.8},
     )
-    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir, search_dir: train_output)
+    trainer = SimpleNamespace(train=lambda *args, **kwargs: train_output)
     monkeypatch.setattr(module, "get_trainer", lambda algorithm: trainer)
 
     model_path = experiment_dir / "training" / "20260306T180000_abcdef01" / "model.pkl"
@@ -214,6 +217,7 @@ def test_main_maps_pipeline_contract_error_when_pipeline_hash_missing(
             logging_level="INFO",
             clean_up_failure_management=True,
             overwrite_existing=False,
+            snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260306T180500")
@@ -237,7 +241,7 @@ def test_main_maps_pipeline_contract_error_when_pipeline_hash_missing(
         lineage=[],
         metrics={},
     )
-    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir, search_dir: trainer_output)
+    trainer = SimpleNamespace(train=lambda *args, **kwargs: trainer_output)
     monkeypatch.setattr(module, "get_trainer", lambda algorithm: trainer)
     monkeypatch.setattr(module, "save_model", lambda model, train_run_dir: train_run_dir / "model.pkl")
     monkeypatch.setattr(module, "hash_artifact", lambda artifact_path: "hash-model")
@@ -318,7 +322,8 @@ def test_main_persists_pipeline_artifacts_when_pipeline_and_hash_are_present(
             experiment_id="exp_5",
             logging_level="INFO",
             clean_up_failure_management=False,
-            overwrite_existing=False,
+                overwrite_existing=False,
+                snapshot_binding_key=None,
         ),
     )
     monkeypatch.setattr(module, "iso_no_colon", lambda _dt: "20260307T130000")
@@ -343,7 +348,7 @@ def test_main_persists_pipeline_artifacts_when_pipeline_and_hash_are_present(
         lineage=[],
         metrics={"rmse": 1.23},
     )
-    trainer = SimpleNamespace(train=lambda model_cfg, strict, failure_management_dir, search_dir: trainer_output)
+    trainer = SimpleNamespace(train=lambda *args, **kwargs: trainer_output)
     monkeypatch.setattr(module, "get_trainer", lambda algorithm: trainer)
 
     model_path = experiment_dir / "training" / "20260307T130000_aabbccdd" / "model.cbm"

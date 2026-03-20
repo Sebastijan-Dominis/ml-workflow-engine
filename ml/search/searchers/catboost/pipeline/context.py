@@ -22,6 +22,7 @@ class SearchContext:
     model_cfg: SearchModelConfig
     strict: bool
     failure_management_dir: Path
+    snapshot_binding_key: str | None = None
 
     X_train: pd.DataFrame | None = None
     y_train: pd.Series | None = None

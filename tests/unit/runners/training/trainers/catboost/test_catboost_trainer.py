@@ -103,7 +103,7 @@ def test_train_executes_classification_flow_and_returns_expected_output(
     transformed_y_train = pd.Series([0], name="target")
     transformed_y_val = pd.Series([1], name="target")
 
-    monkeypatch.setattr(module, "load_features_and_target", lambda model_cfg, snapshot_selection, strict: (X, y, lineage))
+    monkeypatch.setattr(module, "load_features_and_target", lambda *args, **kwargs: (X, y, lineage))
     monkeypatch.setattr(module, "get_splits", lambda **kwargs: (splits, {"kind": "holdout"}))
 
     transform_calls: list[str] = []
@@ -195,7 +195,7 @@ def test_train_skips_class_weight_resolution_for_regression(monkeypatch: pytest.
         y_val=y.iloc[1:2],
     )
 
-    monkeypatch.setattr(module, "load_features_and_target", lambda model_cfg, snapshot_selection, strict: (X, y, []))
+    monkeypatch.setattr(module, "load_features_and_target", lambda *args, **kwargs: (X, y, []))
     monkeypatch.setattr(module, "get_splits", lambda **kwargs: (splits, {}))
     monkeypatch.setattr(module, "transform_target", lambda series, *, transform_config, split_name: series)
     monkeypatch.setattr(module, "load_schemas", lambda model_cfg, feature_lineage: ({}, []))

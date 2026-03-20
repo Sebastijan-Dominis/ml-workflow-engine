@@ -33,6 +33,7 @@ class FreezeFeaturesInput(BaseModel):
     """Model for the input of the freeze_features pipeline."""
     feature_set: str
     version: str
+    snapshot_binding_key: str | None = None
     owner: str | None = "Sebastijan"
     logging_level: LOGGING_LEVEL = "INFO"
 
@@ -42,6 +43,7 @@ class SearchInput(BaseModel):
     segment: str
     version: str
     experiment_id: str | None = None
+    snapshot_binding_key: str | None = None
     env: str | None = "default"
     strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"
@@ -56,6 +58,7 @@ class TrainInput(BaseModel):
     version: str
     train_run_id: str | None = None
     experiment_id: str | None = None
+    snapshot_binding_key: str | None = None
     env: str | None = "default"
     strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"

@@ -69,6 +69,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--snapshot-binding-key",
+        type=str,
+        help="Optional key for a snapshot binding to define which snapshot to load for each dataset. Snapshots should be defined in configs/snapshot_bindings_registry/bindings.yaml. Example value: '2026-03-20T02-54-47_61509023'",
+        default=None
+    )
+
+    parser.add_argument(
         "--env",
         choices=["dev", "test", "prod", "default"],
         default="default",
@@ -181,6 +188,7 @@ def main() -> int:
         search_output = searcher.search(
             model_cfg,
             strict=args.strict,
+            snapshot_binding_key=args.snapshot_binding_key,
             failure_management_dir=failure_management_dir,
         )
         logger.info("Search completed. Persisting search run...")

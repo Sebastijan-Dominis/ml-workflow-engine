@@ -75,6 +75,7 @@ class PreparationStep(PipelineStep[SearchContext]):
         X, y, lineage = load_features_and_target(
             ctx.model_cfg,
             snapshot_selection=None,
+            snapshot_binding_key=ctx.snapshot_binding_key,
             strict=ctx.strict
         )
         splits, splits_info = get_splits(

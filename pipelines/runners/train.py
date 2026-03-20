@@ -85,6 +85,13 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
+        "--snapshot-binding-key",
+        type=str,
+        help="Optional key for a snapshot binding to define which snapshot to load for each dataset. Snapshots should be defined in configs/snapshot_bindings_registry/bindings.yaml. Example value: '2026-03-20T02-54-47_61509023'",
+        default=None
+    )
+
+    parser.add_argument(
         "--train-run-id",
         type=str,
         default=None,
@@ -120,7 +127,7 @@ def parse_args() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--clean_up-failure-management",
+        "--clean-up-failure-management",
         type=str_to_bool,
         default=True,
         help="Whether to clean up failure management folder after successful run (default: True)"
@@ -227,6 +234,7 @@ def main() -> int:
         output = trainer.train(
             model_cfg,
             strict=args.strict,
+            snapshot_binding_key=args.snapshot_binding_key,
             failure_management_dir=failure_management_dir,
             search_dir=search_dir
         )

@@ -32,6 +32,7 @@ def _ctx_stub() -> Any:
         snapshot_id="snapshot-1",
         start_time=0.0,
         owner="tests",
+        snapshot_binding_key=None,
     )
 
 
@@ -46,6 +47,7 @@ def _ctx_stub() -> Any:
         ("data_path", "require_data_path", "Data path not set"),
         ("config_hash", "require_config_hash", "Config hash not computed yet"),
         ("metadata", "require_metadata", "Metadata not created yet"),
+        # snapshot_binding_key is a plain field on the context (no require_* accessor)
     ],
 )
 def test_context_require_properties_raise_when_unset(
@@ -73,10 +75,12 @@ def test_context_require_properties_return_values_when_set() -> None:
     data_path = Path("data.parquet")
     config_hash = "abc123"
     metadata = {"ok": True}
+    snapshot_binding_key = "snapshot_key_123"
 
     ctx.data = data
     ctx.data_lineage = lineage
     ctx.features = features
+    ctx.snapshot_binding_key = snapshot_binding_key
     ctx.snapshot_path = snapshot_path
     ctx.schema_path = schema_path
     ctx.data_path = data_path
@@ -91,3 +95,5 @@ def test_context_require_properties_return_values_when_set() -> None:
     assert ctx.require_data_path is data_path
     assert ctx.require_config_hash == config_hash
     assert ctx.require_metadata is metadata
+    # snapshot_binding_key is stored directly on the context
+    assert ctx.snapshot_binding_key == "snapshot_key_123"

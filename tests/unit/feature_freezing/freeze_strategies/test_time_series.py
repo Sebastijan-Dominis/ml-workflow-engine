@@ -17,4 +17,5 @@ def test_freeze_time_series_raises_not_implemented_error() -> None:
             timestamp="2026-03-05T00:00:00",
             start_time=0.0,
             owner="tests",
+            snapshot_binding_key=None,
         )
