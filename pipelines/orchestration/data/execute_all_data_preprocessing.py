@@ -49,7 +49,7 @@ def parse_args() -> argparse.Namespace:
         "--skip-if-existing",
         type=str_to_bool,
         default=True,
-        help="Whether to skip running a data preprocessing step if the expected output already exists (e.g., metadata.json for register_raw_snapshot) (default: True)"
+        help="Whether to skip running a data preprocessing pipeline if at least one run already exists for the dataset (default = True)"
     )
 
     return parser.parse_args()

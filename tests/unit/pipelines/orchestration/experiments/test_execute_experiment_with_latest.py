@@ -35,7 +35,7 @@ def test_parse_args_uses_expected_defaults(monkeypatch: pytest.MonkeyPatch) -> N
     assert args.problem == "no_show"
     assert args.segment == "global"
     assert args.version == "v1"
-    assert args.env == "default"
+    assert args.env == "dev"
     assert args.strict is True
     assert args.logging_level == "INFO"
     assert args.owner == "Sebastijan"

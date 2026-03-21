@@ -62,7 +62,7 @@ def parse_args() -> argparse.Namespace:
         "--owner",
         type=str,
         default="Sebastijan",
-        help="Owner of the metadata (default: Sebastijan)"
+        help="Owner of the run (default: Sebastijan)"
     )
 
     return parser.parse_args()

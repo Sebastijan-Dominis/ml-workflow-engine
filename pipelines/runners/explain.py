@@ -101,7 +101,7 @@ def parse_args() -> argparse.Namespace:
         "--top-k",
         type=int,
         default=None,
-        help="Number of top features to include in the explainability output (will programmatically default to settings-specific values if not provided, but can be overridden with this flag)"
+        help="Number of top features to include in the explainability output (will programmatically default to settings-specified value if not provided, but can be overridden with this flag)"
     )
 
     return parser.parse_args()

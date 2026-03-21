@@ -114,12 +114,12 @@ class ExecuteExperimentWithLatestInput(BaseModel):
     """Model for the input of the execute_experiment_with_latest_input pipeline."""
     problem: str
     segment: str
-    env: str | None = "default"
+    version: str
+    env: str | None = "dev"
     strict: bool = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
     clean_up_failure_management: bool = True
-    version: str
     experiment_id: str | None = None
     overwrite_existing: bool = False
     top_k: int | None = None
