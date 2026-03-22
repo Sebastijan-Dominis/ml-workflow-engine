@@ -477,9 +477,3 @@ Snapshots are immutable.
 - **Rationale:** Easier to operate the ml workflow, better UX, less error-prone
 - **Alternatives:** Stick to CLI-only (rejected - dashboards are convenient and not too difficult to create and maintain)
 - **Type:** Convenience (eveything still works fine without this code)
-
-### Singular backend, multiple frontends
-- **Decision:** Use one backend, but multiple dashboards for the frontend
-- **Rationale:** `FastAPI` scales well, but `Dash` scales poorly, so including all of the logic in one dashboard could easily become messy
-- **Alternatives:** Have a singular frontend (rejected - the code could easily become much more complex that it needs to be); write the frontend in `React.js` (rejected - too much complexity at this stage)
-- **Type:** Structural
