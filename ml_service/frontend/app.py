@@ -75,7 +75,7 @@ def home_layout() -> dbc.Container:
                             html.Li("Includes interim + processed configs."),
                             html.Li("Saves to: configs/data/{config_type}/{dataset_name}/{dataset_version}.yaml")
                         ])
-                    ]),
+                    ], style={"marginBottom": "1rem"}),
                     html.Li([
                         html.Strong("Feature Config:"),
                         html.Ul([
@@ -83,7 +83,7 @@ def home_layout() -> dbc.Container:
                             html.Li("Saves to the feature registry."),
                             html.Li("Registry path: configs/feature_registry/features.yaml")
                         ])
-                    ]),
+                    ], style={"marginBottom": "1rem"}),
                     html.Li([
                         html.Strong("Modeling Config:"),
                         html.Ul([
@@ -91,14 +91,14 @@ def home_layout() -> dbc.Container:
                             html.Li("Includes model specs, search, and training configs."),
                             html.Li("Saves to: configs/{config_type}/{problem}/{segment}/{version}.yaml")
                         ])
-                    ]),
+                    ], style={"marginBottom": "1rem"}),
                     html.Li([
                         html.Strong("Pipeline Config:"),
                         html.Ul([
                             html.Li("Create and save pipeline configurations."),
                             html.Li("Saves to: configs/pipelines/{data_type}/{algorithm}/{pipeline_version}.yaml")
                         ])
-                    ]),
+                    ], style={"marginBottom": "1rem"}),
                     html.Li([
                         html.Strong("Promotion Thresholds:"),
                         html.Ul([
@@ -106,12 +106,20 @@ def home_layout() -> dbc.Container:
                             html.Li("Saves to the promotion thresholds registry."),
                             html.Li("Registry path: configs/promotion/thresholds.yaml")
                         ])
-                    ]),
+                    ], style={"marginBottom": "1rem"}),
                     html.Li([
                         html.Strong("Pipelines:"),
                         html.Ul([
                             html.Li("Run ML pipelines."),
                             html.Li("Includes all of the pipelines found in the pipeline/ directory."),
+                            html.Li("Optional arguments have grey background, required arguments have white background."),
+                        ])
+                    ], style={"marginBottom": "1rem"}),
+                    html.Li([
+                        html.Strong("Scripts:"),
+                        html.Ul([
+                            html.Li("Run scripts."),
+                            html.Li("Includes all of the scripts found in the scripts/ directory."),
                             html.Li("Optional arguments have grey background, required arguments have white background."),
                         ])
                     ]),
@@ -120,7 +128,7 @@ def home_layout() -> dbc.Container:
                     "fontSize": "1.2rem",
                     "paddingTop": "5rem",
                     "textAlign": "left",
-                    "marginLeft": "10%"
+                    "marginLeft": "10%",
                 }
             )
         ],
