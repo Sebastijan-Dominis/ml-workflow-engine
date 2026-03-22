@@ -192,6 +192,9 @@ python -m ml_service.frontend.app
     - The script is not modularized, as it is not considered to be a core part of the repo, and the repo comes with some pre-generated synthetic
     data, so the need for the script is not high.
     - May be modularized in the future.
+    - The relationships between columns are likely not captured accurately, but that is considered acceptable at this stage.
+        - Adding relationship logic would increase complexity with questionable justification for it.
+        - The generated data is expected to be used for experimenting, rather than training production models.
     - This script requires extra setup steps to use, as mentioned in [setup.md](setup.md)
 - The `generate_operator_hash.py` script generates an operator hash, which is needed when writing into the feature registry.
     - Ensure that the operators exist, and write them in proper format (e.g. TotalStay)
