@@ -5,4 +5,11 @@ dash-bootstrap-components==2.0.4
 fastapi==0.135.1
 uvicorn==0.41.0
 python-dotenv==1.2.2
-sdv==1.35.0
+
+# NOTE: sdv is only needed if you want to generate fake data. If you don't need that, you can safely ignore this dependency and the related code in the project - scripts/generators/generate_fake_data.py.
+# sdv==1.35.0
+
+# If you decided to include sdv, you also need to install torch. The version below is compatible with Nvidia RTX 5070 Ti GPU. If you experience issues, change to a compatible version for your GPU.
+# torch==2.12.0.dev20260320+cu128
+
+# Note: If you want to train fake data generation models on gpu with Docker, make sure to also uncomment the torch installation line in the Dockerfile. For regular use, stick to the current image and dependencies.

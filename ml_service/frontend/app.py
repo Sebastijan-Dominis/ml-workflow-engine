@@ -18,6 +18,8 @@ from ml_service.frontend.configs.promotion_thresholds.page import get_layout as 
 from ml_service.frontend.configs.promotion_thresholds.page import register as promotion_register
 from ml_service.frontend.pipelines.page import get_layout as pipelines_layout
 from ml_service.frontend.pipelines.page import register as pipelines_register
+from ml_service.frontend.scripts.page import get_layout as scripts_layout
+from ml_service.frontend.scripts.page import register as scripts_register
 
 # Initialize Dash
 app = dash.Dash(
@@ -35,6 +37,7 @@ PAGES = {
     "Pipeline Config": pipeline_cfg_layout,
     "Promotion Thresholds": promotion_layout,
     "Pipelines": pipelines_layout,
+    "Scripts": scripts_layout
 }
 
 # Register page callbacks
@@ -45,6 +48,7 @@ for register_func in [
     pipeline_cfg_register,
     promotion_register,
     pipelines_register,
+    scripts_register
 ]:
     register_func(app)
 
@@ -137,7 +141,8 @@ def generate_page_links():
         "Modeling Config": "bar-chart",
         "Pipeline Config": "diagram-3",
         "Promotion Thresholds": "graph-up",
-        "Pipelines": "play-circle"
+        "Pipelines": "play-circle",
+        "Scripts": "terminal"
     }
     links = []
     for name in PAGES:

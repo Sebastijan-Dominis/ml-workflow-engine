@@ -92,7 +92,7 @@ def apply_env_overlay(cfg: dict[str, Any], env: str | None, env_path: Path, skip
         dict[str, Any]: Configuration after applying env overlay.
     """
 
-    if not env:
+    if not env or env.lower() == "default":
         if skip_missing:
             logger.warning("No environment specified; skipping env overlay.")
             return cfg

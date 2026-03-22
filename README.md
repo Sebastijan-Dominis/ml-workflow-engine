@@ -38,7 +38,7 @@ Two options:
   - operate the workflow through a `browser`
 - **Manual use**
   - requires `python` and `conda` (preferably)
-  - operate the workflow through a `browser` or `cli + manual` (configs)
+  - operate the workflow through a `browser` or `cli + manual (configs)`
 
 ## Usage
 

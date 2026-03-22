@@ -90,18 +90,10 @@ In order to use the ml service:
 uvicorn ml_service.backend.main:app --reload
 ```
 
-2. Launch the desired frontend with
+2. Launch the frontend with
 
 ```bash
-python -m ml_service.frontend.{specific_part}.app
-```
-
-where `specific_part` will depend on which service you wish to use.
-
-For example, this launches the pipeline-focused dashboard (enables running all pipelines from the browser):
-
-```bash
-python -m ml_service.frontend.pipelines.app
+python -m ml_service.frontend.app
 ```
 
 3. Open the dashboard in your browser at the specified port and use it.
@@ -134,7 +126,7 @@ python -m ml_service.frontend.pipelines.app
 - The `pipelines/data/build_processed_dataset.py` pipeline builds a processed dataset from one of the interim datasets, based on the interaction between cli arguments and configs from `configs/data/processed/{dataset_name}/{dataset_version}.yaml`
 - The `pipelines/orchestration/data/execute_all_data_preprocessing.py` orchestrator executes all of the three pipelines for all of the available raw snapshots and interim and processed configs
 
-### Feature Freezing
+### Feature Set Freezing
 
 - The `pipelines/features/freeze.py` pipelines freezes a feature set based on the interaction of cli arguments with feature registry (`configs/feature_registry/features.yaml`)
 - The `pipelines/orchestration/features/freeze_all_feature_sets.py` orchestrator freezes all of the feature sets found in the feature registry (`configs/feature_registry/features.yaml`)
@@ -181,6 +173,45 @@ python -m ml_service.frontend.pipelines.app
 - All experiment-related artifacts can be found in `experiments/`
 - All promotion-related artifacts, as well as the model registry and archive, can be found in `model_registry/`
 
+## Scripts
+
+- Use CLI commands with python scripts found in `scripts/`
+- This section describes what each script does
+
+### Generators
+
+- The `generate_cols_for_row_id_fingerprint.py` script generates a fingerprint that ensures consistency in generating row_id of `hotel_bookings`
+    - Impossible to ensure perfect consistency in python code alone, but acts as an additional sanity check
+    - Good enough for local individual or small team use
+- The `generate_fake_data.py` script generates fake data that can then be used by pipelines. 
+    - The `data`, along with the `synthesizer_metadata` and a `quality_report`, is saved in 
+    `data/raw/{dataset_name}/{dataset_version}/{dataset_snapshot}/`.
+    - The trained model can be saved in `synthesizers/snapshot_id/`, named `ctgan_model.pkl` by default, and then reused, which greatly reduces
+    the scripts' runtime (by up to 99% - training is expensive).
+    - Data is stored in `csv` format by default. Alter the script if needs evolved.
+    - The script is not modularized, as it is not considered to be a core part of the repo, and the repo comes with some pre-generated synthetic
+    data, so the need for the script is not high.
+    - May be modularized in the future.
+    - This script requires extra setup steps to use, as mentioned in [setup.md](setup.md)
+- The `generate_operator_hash.py` script generates an operator hash, which is needed when writing into the feature registry.
+    - Ensure that the operators exist, and write them in proper format (e.g. TotalStay)
+    - In CLI, separate the operators with a space character (e.g. --operators TotalStay ArrivalDate)
+    - In GUI, use commas for separation (e.g. TotalStay, ArrivalDate)
+- The `generate_snapshot_binding.py` script generates a new snapshot of snapshot bindings in the snapshot binding registry.
+    - It always writes the latest snapshot for each existing dataset and feature set.
+    - Alter the results manually if you need older snapshots for specific datasets and/or feature sets.
+
+### Quality Scripts
+
+- These scripts are used by the `pre-commit` hook, as well as `GitHub Actions CI`, to ensure code quality.
+- The `check_import_layers.py` script checks import layers and dependencies across the codebase to enforce architectural boundaries (specified in [boundaries.md](architecture/boundaries.md))
+- The `check_naming_conventions.py` script checks the naming conventions across the codebase. 
+    - In order to satisfy the requirements:
+        - use `snake_case` for `modules` and `functions`
+        - use `PascalCase` for `classes`
+        - do not prefix `module names` with `_` (except `__init__` and `__all__`)
+    - The script also allows for ignoring certain folders, especially `tests/`
+
 ## Logging
 
 - All individual data pipelines' logs can be found in `data/`
@@ -192,6 +223,7 @@ python -m ml_service.frontend.pipelines.app
 - Expect detailed, informative logs from individual pipelines
 - Expect high-level, helpful logs from orchestration pipelines
 - Each pipeline run logs to a new location that is logically easy and intuitive to find
+- All scripts' logs can be found in `scripts_logs/`
 
 ## EDA
 
@@ -221,6 +253,7 @@ python -m ml_service.frontend.pipelines.app
 ### Feature Registry
 
 - Define configs for `freeze.py` in `configs/feature_registry/features.py`
+- Generate the operator hash with `scripts/generators/generate_operator_hash.py`
 
 ### Model-specific Configs
 

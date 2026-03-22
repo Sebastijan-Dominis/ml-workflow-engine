@@ -1,22 +1,22 @@
-"""Layout construction for ML pipelines dashboard."""
+"""Layout construction for ML scripts dashboard."""
 
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 
-from ml_service.frontend.pipelines.pipelines_metadata import FRONTEND_PIPELINES
+from ml_service.frontend.scripts.scripts_metadata import FRONTEND_SCRIPTS
 
-PAGE_PREFIX = "/pipelines"
+PAGE_PREFIX = "/scripts"
 
 def build_layout():
     """Builds the full layout including tabs and modals."""
     tabs = []
     modals = []
 
-    for pipeline in FRONTEND_PIPELINES:
+    for script in FRONTEND_SCRIPTS:
         form_inputs = []
 
-        for field in pipeline["fields"]:
-            input_id = f"{PAGE_PREFIX}-{pipeline['name']}-{field['name']}"
+        for field in script["fields"]:
+            input_id = f"{PAGE_PREFIX}-{script['name']}-{field['name']}"
             label = dbc.Label(f"{field['name']}", html_for=input_id, className="fw-bold")
 
             if field["type"] == "text":
@@ -70,11 +70,11 @@ def build_layout():
             else:
                 form_inputs.append(input_component)
 
-        run_btn_id = f"{PAGE_PREFIX}-{pipeline['name']}-submit"
+        run_btn_id = f"{PAGE_PREFIX}-{script['name']}-submit"
 
         form_inputs.append(
             dbc.Button(
-                "Run Pipeline",
+                "Run Script",
                 id=run_btn_id,
                 color="primary",
                 className="mt-2",
@@ -87,7 +87,7 @@ def build_layout():
             )
         )
 
-        output_id = f"{PAGE_PREFIX}-{pipeline['name']}-output"
+        output_id = f"{PAGE_PREFIX}-{script['name']}-output"
         form_inputs.append(html.Div(id=output_id, className="mt-3"))
 
         tabs.append(
@@ -100,7 +100,7 @@ def build_layout():
                         "marginTop": "3rem"
                     }
                 ),
-                label=pipeline["name"],
+                label=script["name"],
                 style={
                     "width": "50%",
                     "margin": "0 auto"
@@ -108,15 +108,15 @@ def build_layout():
             )
         )
 
-        modal_id = f"{PAGE_PREFIX}-{pipeline['name']}-modal"
-        confirm_id = f"{PAGE_PREFIX}-{pipeline['name']}-confirm"
-        cancel_id = f"{PAGE_PREFIX}-{pipeline['name']}-cancel"
+        modal_id = f"{PAGE_PREFIX}-{script['name']}-modal"
+        confirm_id = f"{PAGE_PREFIX}-{script['name']}-confirm"
+        cancel_id = f"{PAGE_PREFIX}-{script['name']}-cancel"
 
         modals.append(
             dbc.Modal(
                 [
                     dbc.ModalHeader(dbc.ModalTitle("Confirm Run")),
-                    dbc.ModalBody(f"Are you sure you want to run the '{pipeline['name']}' pipeline?"),
+                    dbc.ModalBody(f"Are you sure you want to run the '{script['name']}' script?"),
                     dbc.ModalFooter([
                         dbc.Button("Cancel", id=cancel_id, className="ms-auto", color="secondary"),
                         dbc.Button("Confirm", id=confirm_id, color="danger")
@@ -129,17 +129,16 @@ def build_layout():
 
     return dbc.Container(
         [
-            html.H1("ML Pipelines Dashboard", className="text-center"),
+            html.H1("ML Scripts Dashboard", className="text-center"),
             html.P(
-                "Select a pipeline to run. Declare the required arguments (and optional arguments if applicable) and click 'Run Pipeline'. You will be asked to confirm before the pipeline is executed. Read the documentation (docs/usage.md and docs/architecture/overview.md) for more details on what each pipeline does. Required arguments are highlighted in white, optional arguments are highlighted in light gray.",
-                style={
+                "Choose which script you want to run. Declare the required arguments (and optional arguments if applicable) and click 'Run Script'. You will be asked to confirm before the script is executed. Read the documentation (docs/usage.md) to understand the purpose and usage of each script. Required arguments are highlighted in white, optional arguments are highlighted in light gray.",
+                 style={
+                    "textAlign": "left",
                     "maxWidth": "50%",
                     "margin": "0 auto",
                     "fontSize": "1.25rem",
-                    "marginBottom": "40px",
-                    "marginTop": "40px",
-                    "textAlign": "left",
-                }
+                    "marginTop": "40px"
+                    }
             ),
             dbc.Tabs(
                 tabs,

@@ -18,6 +18,18 @@ def build_layout():
                     "marginBottom": "40px",
                 },
             ),
+            html.P(
+                "Edit the config to define new promotion thresholds for a model. " \
+                "Model is defined by problem type and segment. " \
+                "All versions and snapshots of the model will be evaluated with the same promotion thresholds. " \
+                "The content is pre-filled with an example config. Click validate to check if the config is valid, then confirm to save the config to disk. Read the documentation (docs/configs/promotion.md) for more details on each config field.",
+                style={
+                    "maxWidth": "50%",
+                    "margin": "0 auto",
+                    "fontSize": "1.25rem",
+                    "marginBottom": "40px",
+                }
+            ),
             dbc.Row([
                 dbc.Col([
                     dbc.Label(

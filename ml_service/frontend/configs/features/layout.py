@@ -19,6 +19,19 @@ def build_layout():
                     "marginBottom": "40px",
                 },
             ),
+            html.P(
+                [
+                    "Generate the operator hash with generate_operator_hash.py (found here in ",
+                    html.A('Scripts', href='/Scripts', className='text-decoration-underline'),
+                    " as well as the scripts/ directory in the repository) and paste it in the editor below, along with the feature definitions. The content is pre-filled with an example config. Click validate to check if the config is valid, then confirm to write to the registry. Read the documentation (docs/configs/feature_registry.md) for more details on each config field.",
+                ],
+                style={
+                    "maxWidth": "50%",
+                    "margin": "0 auto",
+                    "fontSize": "1.25rem",
+                    "marginBottom": "40px",
+                },
+            ),
             dbc.Row(
                 [
                     dbc.Col([

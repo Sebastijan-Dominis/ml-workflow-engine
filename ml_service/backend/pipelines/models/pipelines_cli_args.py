@@ -9,7 +9,7 @@ class RegisterRawSnapshotInput(BaseModel):
     """Model for the input of the register_raw_snapshot pipeline."""
     data: str
     version: str
-    snapshot_id: str | None = "latest"
+    snapshot_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
 
@@ -17,7 +17,7 @@ class BuildInterimDatasetInput(BaseModel):
     """Model for the input of the build_interim_dataset pipeline."""
     data: str
     version: str
-    raw_snapshot_id: str | None = "latest"
+    raw_snapshot_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
 
@@ -25,7 +25,7 @@ class BuildProcessedDatasetInput(BaseModel):
     """Model for the input of the build_processed_dataset pipeline."""
     data: str
     version: str
-    interim_snapshot_id: str | None = "latest"
+    interim_snapshot_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
 
@@ -44,12 +44,12 @@ class SearchInput(BaseModel):
     version: str
     experiment_id: str | None = None
     snapshot_binding_key: str | None = None
-    env: str | None = "default"
-    strict: bool = True
+    env: str | None = None
+    strict: bool | None = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
-    clean_up_failure_management: bool = True
-    overwrite_existing: bool = False
+    clean_up_failure_management: bool | None = True
+    overwrite_existing: bool | None = False
 
 class TrainInput(BaseModel):
     """Model for the input of the train pipeline."""
@@ -58,20 +58,20 @@ class TrainInput(BaseModel):
     version: str
     snapshot_binding_key: str | None = None
     train_run_id: str | None = None
-    env: str | None = "default"
-    strict: bool = True
+    env: str | None = None
+    strict: bool | None = True
     experiment_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
-    clean_up_failure_management: bool = True
-    overwrite_existing: bool = False
+    clean_up_failure_management: bool | None = True
+    overwrite_existing: bool | None = False
 
 class EvaluateInput(BaseModel):
     """Model for the input of the evaluate pipeline."""
     problem: str
     segment: str
     version: str
-    env: str | None = "default"
-    strict: bool = True
+    env: str | None = None
+    strict: bool | None = True
     experiment_id: str | None = None
     train_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
@@ -81,8 +81,8 @@ class ExplainInput(BaseModel):
     problem: str
     segment: str
     version: str
-    env: str | None = "default"
-    strict: bool = True
+    env: str | None = None
+    strict: bool | None = True
     experiment_id: str | None = None
     train_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
@@ -102,13 +102,13 @@ class PromoteInput(BaseModel):
 
 class ExecuteAllDataPreprocessingInput(BaseModel):
     """Model for the input of the execute_all_data_preprocessing pipeline."""
-    skip_if_existing: bool = True
+    skip_if_existing: bool | None = True
 
 class FreezeAllFeatureSetsInput(BaseModel):
     """Model for the input of the freeze_all_feature_sets pipeline."""
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
-    skip_if_existing: bool = True
+    skip_if_existing: bool | None = True
 
 class ExecuteExperimentWithLatestInput(BaseModel):
     """Model for the input of the execute_experiment_with_latest_input pipeline."""
@@ -116,28 +116,28 @@ class ExecuteExperimentWithLatestInput(BaseModel):
     segment: str
     version: str
     env: str | None = "dev"
-    strict: bool = True
+    strict: bool | None = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
-    clean_up_failure_management: bool = True
+    clean_up_failure_management: bool | None = True
     experiment_id: str | None = None
-    overwrite_existing: bool = False
+    overwrite_existing: bool | None = False
     top_k: int | None = None
 
 class ExecuteAllExperimentsWithLatestInput(BaseModel):
     """Model for the input of the execute_all_experiments_with_latest_input pipeline."""
     env: str | None = "dev"
-    strict: bool = True
+    strict: bool | None = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
-    clean_up_failure_management: bool = True
-    overwrite_existing: bool = False
+    clean_up_failure_management: bool | None = True
+    overwrite_existing: bool | None = False
     top_k: int | None = None
-    skip_if_existing: bool = True
+    skip_if_existing: bool | None = True
 
 class RunAllWorkflowsInput(BaseModel):
     """Model for the input of the run_all_workflows pipeline."""
     env: str | None = "dev"
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
-    skip_if_existing: bool = True
+    skip_if_existing: bool | None = True

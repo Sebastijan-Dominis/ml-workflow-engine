@@ -1,6 +1,6 @@
 # Promotion Thresholds
 
-Promotion thresholds defines the **minimum performance thresholds** a trained model must meet in order to be promoted (for example from candidate → production).
+Promotion thresholds registry defines the **minimum performance thresholds** a trained model must meet in order to be promoted (for example from candidate → production).
 
 Promotion rules act as a **safety gate** to prevent models with insufficient performance from being promoted.
 
@@ -27,15 +27,13 @@ General structure:
 ```text
 problem_type
   └─ segment
-       └─ promotion policy
+       └─ promotion_policy
 ```
 
 Example:
 
 ```yaml
-classification:
-
-  cancellation:
+cancellation:
 
     global:
 

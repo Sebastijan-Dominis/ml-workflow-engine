@@ -18,6 +18,7 @@ Examples:
 """
 
 import argparse
+import json
 import logging
 import pickle
 import random
@@ -79,7 +80,7 @@ def parse_args():
     parser.add_argument(
         "--num-rows",
         type=int,
-        default=500,
+        default=50000,
         help="Number of synthetic rows to generate. Defaults to 500.",
     )
 
@@ -88,6 +89,13 @@ def parse_args():
         type=str_to_bool,
         default=False,
         help="If true, final dataset will include original rows plus synthetic. If false, only synthetic rows are saved.",
+    )
+
+    parser.add_argument(
+        "--model-path",
+        type=str,
+        default="synthetizers/2026-03-21T02-18-36_b682275d/ctgan_model.pkl",
+        help="Path to a pre-trained CTGAN model to load. If not provided, uses a default path."
     )
 
     parser.add_argument(
@@ -133,13 +141,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--model-path",
-        type=str,
-        default=None,
-        help="Path to a pre-trained CTGAN model to load. If not provided, train a new model."
-    )
-
-    parser.add_argument(
         "--save-model",
         type=str_to_bool,
         default=True,
@@ -159,7 +160,7 @@ def _infer_format(file_path: Path) -> str:
 
 def _atomic_save(df: pd.DataFrame, path: Path, fmt: str) -> None:
     """Atomically save dataframe."""
-    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    tmp_path = path.with_name(path.name + f".{uuid4().hex}.tmp")
 
     try:
         if fmt == "csv":
@@ -170,9 +171,10 @@ def _atomic_save(df: pd.DataFrame, path: Path, fmt: str) -> None:
             raise ValueError(f"Unsupported format: {fmt}")
 
         tmp_path.replace(path)
-
     except Exception as e:
         logger.exception(f"Atomic save failed for {path}")
+        if tmp_path.exists():
+            tmp_path.unlink(missing_ok=True)
         raise RuntimeError(f"Failed saving {path}") from e
 
 
@@ -354,6 +356,16 @@ def _preprocess_for_sdv(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
+def sanitize(obj):
+    """Recursively replace NaN with None for JSON serialization."""
+    if isinstance(obj, float) and np.isnan(obj):
+        return None
+    elif isinstance(obj, dict):
+        return {k: sanitize(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [sanitize(v) for v in obj]
+    return obj
+
 # -------------------- MAIN -------------------- #
 
 def main() -> int:
@@ -527,6 +539,42 @@ def main() -> int:
             synthetic_data=synthetic_df,
             metadata=metadata
         )
+
+        # Save quality report as JSON with property-level details
+        quality_file = output_dir / "quality_report.json"
+
+        try:
+            # Get property-level scores table
+            props_df = quality_report.get_properties()
+
+            # Convert properties to dict
+            properties = props_df.to_dict(orient="records")
+
+            # Also save details for each property
+            details = {}
+            for prop in props_df["Property"]:
+                details[prop] = (
+                    quality_report.get_details(property_name=prop)
+                    .to_dict(orient="records")
+                )
+
+            # Build final dict
+            report_dict = {
+                "overall_score": quality_report.get_score(),
+                "properties": properties,
+                "details": details,
+            }
+
+            report_dict = sanitize(report_dict)
+
+            # Write JSON
+            with open(quality_file, "w") as f:
+                json.dump(report_dict, f, indent=4)
+
+            logger.info(f"Saved quality report to {quality_file}")
+
+        except Exception as e:
+            logger.warning(f"Failed to save quality report: {e}")
 
         score = quality_report.get_score()
         logger.info(f"Synthetic data quality score: {score:.4f}")

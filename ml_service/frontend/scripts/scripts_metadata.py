@@ -1,10 +1,10 @@
-"""A module to define the metadata for the frontend pipelines, which is then used to dynamically generate the UI components for each pipeline."""
+"""A module to define the metadata for the frontend script, which is then used to dynamically generate the UI components for each pipeline."""
 from types import UnionType
 from typing import Union, get_args, get_origin
 
-from ml_service.frontend.pipelines.pipelines_registry import FRONTEND_PIPELINES_REGISTRY
+from ml_service.frontend.scripts.scripts_registry import FRONTEND_SCRIPTS_REGISTRY
 
-FRONTEND_PIPELINES = []
+FRONTEND_SCRIPTS = []
 
 def is_boolean_field(model_field) -> bool:
     ann = model_field.annotation
@@ -35,7 +35,7 @@ def is_number_field(model_field):
 
     return False
 
-for p in FRONTEND_PIPELINES_REGISTRY:
+for p in FRONTEND_SCRIPTS_REGISTRY:
     fields = []
     field_meta = p.get("field_metadata", {})
 
@@ -45,6 +45,7 @@ for p in FRONTEND_PIPELINES_REGISTRY:
 
         type_hint = str(model_field.annotation).replace("typing.", "")
 
+        # For future use
         if field_name == "logging_level":
             fields.append({
                 "name": field_name,
@@ -54,6 +55,7 @@ for p in FRONTEND_PIPELINES_REGISTRY:
                 "bold": True,
                 "optional": is_optional
             })
+
         elif is_boolean_field(model_field):
             fields.append({
                 "name": field_name,
@@ -62,6 +64,7 @@ for p in FRONTEND_PIPELINES_REGISTRY:
                 "label": meta.get("label", field_name),
                 "optional": is_optional
             })
+
         elif is_number_field(model_field):
             fields.append({
                 "name": field_name,
@@ -69,6 +72,7 @@ for p in FRONTEND_PIPELINES_REGISTRY:
                 "placeholder": meta.get("placeholder", field_name),
                 "optional": is_optional
             })
+
         else:
             fields.append({
                 "name": field_name,
@@ -76,7 +80,7 @@ for p in FRONTEND_PIPELINES_REGISTRY:
                 "placeholder": meta.get("placeholder", field_name),
                 "optional": is_optional
             })
-    FRONTEND_PIPELINES.append({
+    FRONTEND_SCRIPTS.append({
         "name": p["name"],
         "endpoint": p["endpoint"],
         "fields": fields

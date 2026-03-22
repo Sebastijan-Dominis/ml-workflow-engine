@@ -150,6 +150,8 @@ Validation ensures that every column listed in columns appears exactly once acro
 
 Defines feature engineering operators applied during feature freezing.
 
+**Operator hash** is generated via a script found in `scripts/generators/generate_operator_hash.py`.
+
 Operators can either:
 - materialize features into the dataset
 - define logical feature relationships

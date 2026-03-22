@@ -1,25 +1,25 @@
-"""Callbacks for ML pipelines dashboard."""
+"""Callbacks for ML scripts dashboard."""
 
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State
 
-from ml_service.frontend.pipelines.layout import PAGE_PREFIX
-from ml_service.frontend.pipelines.pipelines_metadata import FRONTEND_PIPELINES
-from ml_service.frontend.pipelines.utils import call_pipeline
+from ml_service.frontend.scripts.layout import PAGE_PREFIX
+from ml_service.frontend.scripts.scripts_metadata import FRONTEND_SCRIPTS
+from ml_service.frontend.scripts.utils import call_script
 
 
 def register_callbacks(app):
-    """Registers all pipeline callbacks on the given Dash app."""
+    """Registers all script callbacks on the given Dash app."""
 
-    def create_pipeline_callbacks(pipeline):
-        """Creates callbacks for a given pipeline to handle modal toggling and pipeline execution."""
-        input_ids = [f"{PAGE_PREFIX}-{pipeline['name']}-{f['name']}" for f in pipeline["fields"]]
-        submit_id = f"{PAGE_PREFIX}-{pipeline['name']}-submit"
-        output_id = f"{PAGE_PREFIX}-{pipeline['name']}-output"
-        modal_id = f"{PAGE_PREFIX}-{pipeline['name']}-modal"
-        confirm_id = f"{PAGE_PREFIX}-{pipeline['name']}-confirm"
-        cancel_id = f"{PAGE_PREFIX}-{pipeline['name']}-cancel"
+    def create_script_callbacks(script):
+        """Creates callbacks for a given script to handle modal toggling and script execution."""
+        input_ids = [f"{PAGE_PREFIX}-{script['name']}-{f['name']}" for f in script["fields"]]
+        submit_id = f"{PAGE_PREFIX}-{script['name']}-submit"
+        output_id = f"{PAGE_PREFIX}-{script['name']}-output"
+        modal_id = f"{PAGE_PREFIX}-{script['name']}-modal"
+        confirm_id = f"{PAGE_PREFIX}-{script['name']}-confirm"
+        cancel_id = f"{PAGE_PREFIX}-{script['name']}-cancel"
 
         @app.callback(
             Output(modal_id, "is_open"),
@@ -53,10 +53,13 @@ def register_callbacks(app):
                 return dash.no_update
 
             payload = {}
-            field_names = [f["name"] for f in pipeline["fields"]]
+            field_names = [f["name"] for f in script["fields"]]
 
-            for k, v, f in zip(field_names, values, pipeline["fields"], strict=True):
-                if f["type"] == "boolean":
+            for k, v, f in zip(field_names, values, script["fields"], strict=True):
+                if f["name"] == "operators" and isinstance(v, str):
+                    payload[k] = [x.strip() for x in v.split(",")] if v else []
+
+                elif f["type"] == "boolean":
                     payload[k] = bool(v) if v is not None else False
 
                 elif f["type"] == "number":
@@ -71,15 +74,15 @@ def register_callbacks(app):
                     payload[k] = v if v not in [None, ''] else None
 
             print("Payload sent:", payload)
-            result = call_pipeline(pipeline["endpoint"], payload)
+            result = call_script(script["endpoint"], payload)
 
             return dbc.Textarea(
                 value=str(result),
                 style={"width": "100%", "height": "200px"},
                 className="mt-2",
-                id=f"{PAGE_PREFIX}-{pipeline['name']}-result",
-                name=f"{PAGE_PREFIX}-{pipeline['name']}-result"
+                id=f"{PAGE_PREFIX}-{script['name']}-result",
+                name=f"{PAGE_PREFIX}-{script['name']}-result"
             )
 
-    for p in FRONTEND_PIPELINES:
-        create_pipeline_callbacks(p)
+    for s in FRONTEND_SCRIPTS:
+        create_script_callbacks(s)

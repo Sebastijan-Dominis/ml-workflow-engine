@@ -1,6 +1,7 @@
 # ===== Base image with GPU support =====
-# FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
-FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
+FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
+# NOTE: Uncomment the line below and comment out the line above only if you want to generate fake data. For regular use, stick to the current image. If you use the image below, make sure to also uncomment the torch installation line in this Dockerfile. Likewise, uncomment the sdv dependency in requirements.txt.
+# FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
 
 # ===== Set working directory =====
 WORKDIR /app
@@ -23,27 +24,28 @@ ENV PATH="/opt/conda/bin:$PATH"
 RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
     conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 
-# ===== Copy dependency files first for faster rebuilds =====
+# ===== Copy environment.yml first for faster rebuilds =====
 COPY environment.yml /tmp/environment.yml
-COPY requirements.txt /tmp/requirements.txt
-COPY setup.py .
-COPY pyproject.toml .
 
 # ===== Create Conda environment =====
 # Create env
 RUN conda env create -f /tmp/environment.yml -n hotel_management
 
+# Copy the rest of the files needed for installation
+COPY requirements.txt /tmp/requirements.txt
+COPY setup.py .
+COPY pyproject.toml .
+
 # Install torch (nightly CUDA 12.8)
 # This version works with Nvidia RTX 5070 Ti GPU. If you experience issues, change to a compatible version for your GPU.
-RUN conda run -n hotel_management pip install --pre \
-    torch==2.12.0.dev20260320+cu128 \
-    --index-url https://download.pytorch.org/whl/nightly/cu128
+
+# NOTE: Uncomment this only if you want to generate fake data. In that case, use the commented out base image at the top of this file. Likewise, uncomment the sdv dependency in requirements.txt. For regular use, stick to the current image.
+# RUN conda run -n hotel_management pip install --pre \
+#     torch==2.12.0.dev20260320+cu128 \
+#     --index-url https://download.pytorch.org/whl/nightly/cu128
 
 # Install rest
 RUN conda run -n hotel_management pip install -r /tmp/requirements.txt
-
-# Install your package
-RUN conda run -n hotel_management pip install -e .
 
 # ===== Use the environment for all container commands =====
 SHELL ["conda", "run", "-n", "hotel_management", "/bin/bash", "-c"]
@@ -53,6 +55,9 @@ COPY ml ./ml
 COPY pipelines ./pipelines
 COPY scripts ./scripts
 COPY ml_service ./ml_service
+
+# Install the package
+RUN conda run -n hotel_management pip install -e .
 
 # ===== Expose ports =====
 EXPOSE 8000

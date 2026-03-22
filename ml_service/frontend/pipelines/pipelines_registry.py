@@ -31,7 +31,7 @@ FRONTEND_PIPELINES_REGISTRY = [
                 "optional": False
             },
             "snapshot_id": {
-                "placeholder": "Snapshot ID for tracking the data version (default = latest)",
+                "placeholder": "Snapshot ID for the raw data to be registered (default = latest)",
                 "optional": True
             },
             "logging_level": {

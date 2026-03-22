@@ -65,23 +65,37 @@ In `{repo_root}/.env`.
 ### Environment Variables
 
 `ML_SERVICE_BACKEND_URL` = URL in which you want to run the `FastAPI` backend from `ml_service`
-`ML_SERVICE_FRONTEND_URLS` = URLS you want to allow access in the backend
+`ML_SERVICE_FRONTEND_URL` = URL in which you want to run the `Dash` frontend from `ml_service`
 
 Notes:
 - keep default frontend urls unless you change them in the frontend as well, or want to add more
-- frontend ports currently explicitly defined in the frontend code -> change if security becomes an issue
+- frontend port currently explicitly defined in the frontend code -> change if security becomes a concern
 
 ### Defaults
 
-`ML_SERVICE_BACKEND_URL`= http://localhost:8000
-`ML_SERVICE_FRONTEND_URLS`= [http://localhost:8050, http://localhost:8051, http://localhost:8052, http://localhost:8053, http://localhost:8054, http://localhost:8055]
+`ML_SERVICE_BACKEND_URL`=http://localhost:8000
+`ML_SERVICE_FRONTEND_URL`=http://localhost:8050
+
+## Fake data generation
+
+Fake data can be generated using a script found in `scripts/generators/generate_fake_data.py`.
+If you want to do so, make sure to either:
+1. uncomment and install the two commented-out packages in `requirements.txt`
+2. uncomment `sdv` in `requirements.txt` and the relevant parts of the `Dockerfile` (if using `Docker`)
+
+> Note: the code in that script is not modularized, as this repo does not focus on fake data generation,
+> and instead uses fake data generation only as a utility for quick and easy simulation and testing.
+
+- The repo should include some fake data at any given point, along with a trained fake data generation model.
+- Only use this feature if necessary - the packages (sdv + torch) can act oddly depending on hardware, and
+tend to take a while to install.
 
 ## Post-installation
 
 You can now operate the ml workflow in following ways
 - using `ml_service` in browser
    - backend on localhost:8000 (default)
-   - frontend on localhost:{8050-8055} (split for easier maintenance; `Dash` scales poorly)
+   - frontend on localhost:8050
 - manually
    - cli for pipelines
    - manual writing of configs

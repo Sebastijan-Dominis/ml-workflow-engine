@@ -18,6 +18,18 @@ def build_layout():
                     "marginBottom": "40px",
                 },
             ),
+            html.P(
+                "Edit the config to define a new pipeline. " \
+                "Data type defines the type of data the pipeline will process. Currently, only tabular data is supported. " \
+                "Algorithm defines which algorithm the pipeline will use. Currently, only CatBoost is supported. " \
+                "The content is pre-filled with an example config. Click validate to check if the config is valid, then confirm to save the config to disk. Read the documentation (docs/configs/pipelines.md) for more details on each config field.",
+                style={
+                    "maxWidth": "50%",
+                    "margin": "0 auto",
+                    "fontSize": "1.25rem",
+                    "marginBottom": "40px",
+                }
+            ),
             dbc.Row([
                 dbc.Col([
                     dbc.Label(
