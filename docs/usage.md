@@ -36,7 +36,7 @@ docker compose up
     - Ideally avoid doing this while pipelines are mid-execution
 
 - Backend is now on localhost:8000 by default
-- Frontend dashboards are on localhost:{8050-8055}
+- Frontend is now on localhost:8050 by default
 
 ## ML Service
 
