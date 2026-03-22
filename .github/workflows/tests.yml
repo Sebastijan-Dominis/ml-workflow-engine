@@ -30,8 +30,11 @@ jobs:
           use-mamba: true
           auto-activate-base: false
 
-      - name: Install additional pip dependencies
-        run: conda run -n hotel_management pip install -r requirements.txt coverage
+      - name: Install additional pip dependencies (CPU-safe version of torch)
+        run: |
+          conda run -n hotel_management pip install torch==2.10.0
+          conda run -n hotel_management pip install -r requirements.txt
+          conda run -n hotel_management pip install coverage
 
       - name: Show environment
         run: conda run -n hotel_management conda list

@@ -21,7 +21,7 @@ services:
       - ./orchestration_logs:/app/orchestration_logs
     ports:
       - "8000:8000"
-      - "8050-8055:8050-8055"
+      - "8050:8050"
     env_file:
       - .env
     restart: unless-stopped

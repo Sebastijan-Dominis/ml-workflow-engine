@@ -1,5 +1,6 @@
 # ===== Base image with GPU support =====
-FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
+# FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
+FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
 
 # ===== Set working directory =====
 WORKDIR /app
@@ -29,9 +30,20 @@ COPY setup.py .
 COPY pyproject.toml .
 
 # ===== Create Conda environment =====
-RUN conda env create -f /tmp/environment.yml -n hotel_management && \
-    conda run -n hotel_management pip install -r /tmp/requirements.txt && \
-    conda run -n hotel_management pip install -e .
+# Create env
+RUN conda env create -f /tmp/environment.yml -n hotel_management
+
+# Install torch (nightly CUDA 12.8)
+# This version works with Nvidia RTX 5070 Ti GPU. If you experience issues, change to a compatible version for your GPU.
+RUN conda run -n hotel_management pip install --pre \
+    torch==2.12.0.dev20260320+cu128 \
+    --index-url https://download.pytorch.org/whl/nightly/cu128
+
+# Install rest
+RUN conda run -n hotel_management pip install -r /tmp/requirements.txt
+
+# Install your package
+RUN conda run -n hotel_management pip install -e .
 
 # ===== Use the environment for all container commands =====
 SHELL ["conda", "run", "-n", "hotel_management", "/bin/bash", "-c"]
@@ -44,15 +56,10 @@ COPY ml_service ./ml_service
 
 # ===== Expose ports =====
 EXPOSE 8000
-EXPOSE 8050-8055
+EXPOSE 8050
 
 # ===== Run all services =====
 CMD bash -c "\
     uvicorn ml_service.backend.main:app --reload --host 0.0.0.0 --port 8000 & \
-    python -m ml_service.frontend.pipelines.app --host 0.0.0.0 --port 8050 & \
-    python -m ml_service.frontend.configs.modeling.app --host 0.0.0.0 --port 8051 & \
-    python -m ml_service.frontend.configs.data.app --host 0.0.0.0 --port 8052 & \
-    python -m ml_service.frontend.configs.features.app --host 0.0.0.0 --port 8053 & \
-    python -m ml_service.frontend.configs.pipeline_cfg.app --host 0.0.0.0 --port 8054 & \
-    python -m ml_service.frontend.configs.promotion_thresholds.app --host 0.0.0.0 --port 8055 & \
+    python -m ml_service.frontend.app --host 0.0.0.0 --port 8050 & \
     wait"

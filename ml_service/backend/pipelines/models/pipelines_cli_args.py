@@ -56,11 +56,11 @@ class TrainInput(BaseModel):
     problem: str
     segment: str
     version: str
-    train_run_id: str | None = None
-    experiment_id: str | None = None
     snapshot_binding_key: str | None = None
+    train_run_id: str | None = None
     env: str | None = "default"
     strict: bool = True
+    experiment_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
     clean_up_failure_management: bool = True
     overwrite_existing: bool = False
@@ -70,10 +70,10 @@ class EvaluateInput(BaseModel):
     problem: str
     segment: str
     version: str
-    experiment_id: str | None = None
-    train_id: str | None = None
     env: str | None = "default"
     strict: bool = True
+    experiment_id: str | None = None
+    train_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
 
 class ExplainInput(BaseModel):
@@ -81,12 +81,12 @@ class ExplainInput(BaseModel):
     problem: str
     segment: str
     version: str
-    experiment_id: str | None = None
-    train_id: str | None = None
-    top_k: int | None = None
     env: str | None = "default"
     strict: bool = True
+    experiment_id: str | None = None
+    train_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
+    top_k: int | None = None
 
 class PromoteInput(BaseModel):
     """Model for the input of the promote pipeline."""

@@ -58,8 +58,9 @@ def home_layout() -> dbc.Container:
             ),
             html.P(
                 "Welcome to the ML Service Frontend Dashboard. "
-                "Use the sidebar to navigate through different pages.",
-                style={"fontSize": "1.5rem", "marginTop": "4rem"}
+                "Use the sidebar to navigate through different pages. "
+                "Read the docs to understand what each element of each config does.",
+                style={"fontSize": "1.5rem", "marginTop": "4rem", "maxWidth": "50%", "marginLeft": "auto", "marginRight": "auto"}
             ),
             html.Ul(
                 [
@@ -111,11 +112,21 @@ def home_layout() -> dbc.Container:
                         ])
                     ]),
                 ],
-                style={"fontSize": "1.2rem", "marginTop": "5rem", "textAlign": "left", "marginLeft": "10%"}
+                style={
+                    "fontSize": "1.2rem",
+                    "paddingTop": "5rem",
+                    "textAlign": "left",
+                    "marginLeft": "10%"
+                }
             )
         ],
         fluid=True,
-        style={"minHeight": "100vh", "paddingTop": "50px", "backgroundColor": "#8fa0d8", "textAlign": "center"}
+        style={
+            "minHeight": "100%",
+            "paddingTop": "50px",
+            "backgroundColor": "#8fa0d8",
+            "textAlign": "center"
+        }
     )
 
 # Sidebar links (excluding Home)
@@ -146,7 +157,14 @@ app.layout = dbc.Container(
                 dbc.Col(
                     [
                         # Separate Home button
-                        dbc.Button("Home", href="/", color="secondary", className="mb-3", style={"width": "100%"}),
+                        dbc.Button(
+                            "Home",
+                            id="home-button",
+                            href="/",
+                            color="secondary",
+                            className="mb-3",
+                            style={"width": "100%"}
+                        ),
 
                         # Sidebar toggle button (hamburger icon)
                         dbc.Button("☰", id="sidebar-toggle", color="primary", className="mb-3", n_clicks=0, style={"width": "100%"}),
@@ -163,24 +181,36 @@ app.layout = dbc.Container(
                         ),
                     ],
                     width=2,
-                    style={"position": "sticky", "marginTop": "5rem", "padding": "10px"}
+                    style={"position": "sticky", "marginTop": "5rem"}
                 ),
                 dbc.Col(
-                    html.Div(id="page-content-container", style={"padding": "20px"}),
+                    html.Div(id="page-content-container", style={
+                        "padding": "20px",
+                        "height": "98vh",
+                        "overflowY": "auto",
+                    }),
                     width=10,
                 )
             ],
-            style={"minHeight": "100vh", "backgroundColor": "#c1cbda"}
-        )
+            style={
+                "minHeight": "100vh",
+                "backgroundColor": "#c1cbda",
+                "overflow": "hidden"
+            }
+        ),
     ],
-    fluid=True
+    fluid=True,
+    style={
+        "overflow": "hidden",
+    }
 )
 
 # Callback to toggle sidebar collapse
 @app.callback(
-    Output("sidebar-collapse", "is_open"),
+    Output("sidebar-collapse", "is_open", allow_duplicate=True),
     Input("sidebar-toggle", "n_clicks"),
-    State("sidebar-collapse", "is_open")
+    State("sidebar-collapse", "is_open"),
+    prevent_initial_call=True
 )
 def toggle_sidebar(n, is_open):
     if n:
@@ -211,6 +241,18 @@ def update_active_links(pathname):
         pathname = "/"
     current_page = pathname.lstrip("/").replace("_", " ")
     return [name == current_page for name in PAGES]
+
+# Callback to close sidebar when Home is clicked
+@app.callback(
+    Output("sidebar-collapse", "is_open", allow_duplicate=True),
+    Input("home-button", "n_clicks"),
+    State("sidebar-collapse", "is_open"),
+    prevent_initial_call=True
+)
+def close_sidebar_on_home(n_clicks, is_open):
+    if n_clicks:
+        return False
+    return is_open
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8050)

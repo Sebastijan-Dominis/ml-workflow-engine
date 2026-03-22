@@ -12,43 +12,54 @@ def build_layout():
 
     return dbc.Container(
         [
-            html.H2(
+            html.H1(
                 "Feature Registry Editor",
                 style={
                     "textAlign": "center",
-                    "color": "#050525",
-                    "fontWeight": "bold",
-                    "fontSize": "2.5rem",
                     "marginBottom": "40px",
                 },
             ),
-            dbc.Col(
+            dbc.Row(
                 [
-                    dbc.Input(
-                        id=f"{PAGE_PREFIX}-feature-name",
-                        placeholder="Feature set name",
-                        style={
-                            "fontSize": "1.25rem",
-                            "padding": "10px",
-                            "marginRight": "10px",
-                        }
-                    ),
-                    dbc.Input(
-                        id=f"{PAGE_PREFIX}-feature-version",
-                        placeholder="Version (e.g. v1)",
-                        style={
-                            "fontSize": "1.25rem",
-                            "padding": "10px",
-                            "marginLeft": "10px",
-                        }
-                    )
+                    dbc.Col([
+                        dbc.Label(
+                            "Feature Set Name",
+                            style={"fontWeight": "bold", "fontSize": "1.25rem"},
+                            html_for=f"{PAGE_PREFIX}-feature-name",
+                        ),
+                        dbc.Input(
+                            id=f"{PAGE_PREFIX}-feature-name",
+                            placeholder="e.g. booking_context_features",
+                            type="text",
+                            style={
+                                "fontSize": "1.25rem",
+                                "padding": "10px",
+                            }
+                        ),
+                    ]),
+                    dbc.Col([
+                        dbc.Label(
+                            "Feature Set Version",
+                            style={"fontWeight": "bold", "fontSize": "1.25rem"},
+                            html_for=f"{PAGE_PREFIX}-feature-version",
+                        ),
+                        dbc.Input(
+                            id=f"{PAGE_PREFIX}-feature-version",
+                            placeholder="e.g. v1",
+                            type="text",
+                            style={
+                                "fontSize": "1.25rem",
+                                "padding": "10px",
+                            }
+                        )
+                    ], style={"marginBottom": "20px"}),
                 ],
-                width=4,
                 style={
+                    "width": "40%",
                     "margin": "0 auto",
                     "marginBottom": "20px",
                     "display": "flex",
-                    "gap": "10px",
+                    "gap": "2rem",
                 }
             ),
             dash_ace.DashAceEditor(
@@ -98,7 +109,7 @@ def build_layout():
         fluid=True,
         style={
             "backgroundColor": "#8fa0d8",
-            "minHeight": "100vh",
+            "minHeight": "100%",
             "paddingTop": "45px",
             "paddingBottom": "50px",
         },

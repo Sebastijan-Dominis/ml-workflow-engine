@@ -11,13 +11,10 @@ def build_layout():
     """Builds the layout for the promotion thresholds editor page."""
     return dbc.Container(
         [
-            html.H2(
+            html.H1(
                 "Promotion Thresholds Editor",
                 style={
                     "textAlign": "center",
-                    "color": "#050525",
-                    "fontWeight": "bold",
-                    "fontSize": "2.5rem",
                     "marginBottom": "40px",
                 },
             ),
@@ -25,18 +22,34 @@ def build_layout():
                 dbc.Col([
                     dbc.Label(
                         "Problem Type",
-                        style={"fontWeight": "bold", "fontSize": "1.1rem"},
+                        style={"fontWeight": "bold", "fontSize": "1.25rem"},
                         html_for=f"{PAGE_PREFIX}-problem-type-input"
                     ),
-                    dbc.Input(id=f"{PAGE_PREFIX}-problem-type-input", placeholder="Enter problem type...", type="text"),
+                    dbc.Input(
+                        id=f"{PAGE_PREFIX}-problem-type-input",
+                        placeholder="Enter problem type...",
+                        type="text",
+                        style={
+                            "fontSize": "1.25rem",
+                            "padding": "10px",
+                        }
+                    ),
                 ]),
                 dbc.Col([
                     dbc.Label(
                         "Segment",
-                        style={"fontWeight": "bold", "fontSize": "1.1rem"},
+                        style={"fontWeight": "bold", "fontSize": "1.25rem"},
                         html_for=f"{PAGE_PREFIX}-segment-input"
                     ),
-                    dbc.Input(id=f"{PAGE_PREFIX}-segment-input", placeholder="Enter segment...", type="text"),
+                    dbc.Input(
+                        id=f"{PAGE_PREFIX}-segment-input",
+                        placeholder="Enter segment...",
+                        type="text",
+                        style={
+                            "fontSize": "1.25rem",
+                            "padding": "10px",
+                        }
+                    ),
                 ], style={"marginBottom": "20px"})
             ],
             style={
@@ -69,5 +82,10 @@ def build_layout():
             ], id=f"{PAGE_PREFIX}-confirm-modal", is_open=False),
         ],
         fluid=True,
-        style={"backgroundColor": "#8fa0d8", "minHeight": "100vh", "paddingTop": "45px", "paddingBottom": "50px"}
+        style={
+            "backgroundColor": "#8fa0d8",
+            "minHeight": "100%",
+            "paddingTop": "45px",
+            "paddingBottom": "50px"
+        }
     )

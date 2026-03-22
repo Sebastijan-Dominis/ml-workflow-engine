@@ -17,9 +17,7 @@ def build_layout():
                     name,
                     style={
                         "textAlign": "center",
-                        "color": "#050525",
-                        "fontWeight": "bold",
-                        "fontSize": "2rem",
+                        "marginBottom": "40px",
                     }
                 ),
                 dash_ace.DashAceEditor(
@@ -47,13 +45,10 @@ def build_layout():
 
     layout = dbc.Container(
         [
-            html.H2(
+            html.H1(
                 "Modeling Config Editor",
                 style={
                     "textAlign": "center",
-                    "color": "#050525",
-                    "fontWeight": "bold",
-                    "fontSize": "2.5rem",
                     "marginBottom": "40px",
                 }
             ),
@@ -88,7 +83,7 @@ def build_layout():
         fluid=True,
         style={
             "backgroundColor": "#8fa0d8",
-            "minHeight": "100vh",
+            "minHeight": "100%",
             "paddingTop": "45px",
             "paddingBottom": "50px",
         }

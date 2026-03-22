@@ -11,28 +11,41 @@ def build_layout():
     """Builds the layout for the pipeline config editor page."""
     return dbc.Container(
         [
-            html.H2(
+            html.H1(
                 "Pipeline Config Editor",
                 style={
                     "textAlign": "center",
-                    "color": "#050525",
-                    "fontWeight": "bold",
-                    "fontSize": "2.5rem",
                     "marginBottom": "40px",
                 },
             ),
             dbc.Row([
                 dbc.Col([
                     dbc.Label(
-                        "Data Type", style={"fontWeight": "bold", "fontSize": "1.1rem"}, html_for=f"{PAGE_PREFIX}-data-type-input"
+                        "Data Type", style={"fontWeight": "bold", "fontSize": "1.25rem"}, html_for=f"{PAGE_PREFIX}-data-type-input"
                     ),
-                    dbc.Input(id=f"{PAGE_PREFIX}-data-type-input", placeholder="Enter data type...", type="text"),
+                    dbc.Input(
+                        id=f"{PAGE_PREFIX}-data-type-input",
+                        placeholder="Enter data type...",
+                        type="text",
+                        style={
+                                "fontSize": "1.25rem",
+                                "padding": "10px",
+                            }
+                    ),
                 ]),
                 dbc.Col([
                     dbc.Label(
-                        "Algorithm", style={"fontWeight": "bold", "fontSize": "1.1rem"}, html_for=f"{PAGE_PREFIX}-algorithm-input"
+                        "Algorithm", style={"fontWeight": "bold", "fontSize": "1.25rem"}, html_for=f"{PAGE_PREFIX}-algorithm-input"
                     ),
-                    dbc.Input(id=f"{PAGE_PREFIX}-algorithm-input", placeholder="Enter algorithm...", type="text"),
+                    dbc.Input(
+                        id=f"{PAGE_PREFIX}-algorithm-input",
+                        placeholder="Enter algorithm...",
+                        type="text",
+                        style={
+                            "fontSize": "1.25rem",
+                            "padding": "10px",
+                        }
+                    ),
                 ], style={"marginBottom": "20px"})
             ],
             style={
@@ -65,5 +78,10 @@ def build_layout():
             ], id=f"{PAGE_PREFIX}-confirm-modal", is_open=False),
         ],
         fluid=True,
-        style={"backgroundColor": "#8fa0d8", "minHeight": "100vh", "paddingTop": "45px", "paddingBottom": "50px"}
+        style={
+            "backgroundColor": "#8fa0d8", ""
+            "minHeight": "100%",
+            "paddingTop": "45px",
+            "paddingBottom": "50px"
+        }
     )

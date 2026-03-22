@@ -42,6 +42,7 @@ def build_layout():
                     options=[{"label": opt, "value": opt} for opt in field["options"]],
                     value=field.get("value", None),
                     clearable=False,
+                    className="mb-3",
                 )
                 label = dbc.Label(field.get("label", field["name"]), html_for=input_id, className="fw-bold")
                 input_component = html.Div([label, input_component])
@@ -92,7 +93,7 @@ def build_layout():
                 label=pipeline["name"],
                 style={
                     "width": "50%",
-                    "margin": "0 auto   "
+                    "margin": "0 auto"
                 }
             )
         )
@@ -137,8 +138,8 @@ def build_layout():
         fluid=True,
         style={
             "backgroundColor": "#8fa0d8",
-            "minHeight": "100vh",
-            "paddingTop": "25px",
-            "paddingBottom": "30px",
+            "minHeight": "100%",
+            "paddingTop": "45px",
+            "paddingBottom": "50px",
         }
     )
