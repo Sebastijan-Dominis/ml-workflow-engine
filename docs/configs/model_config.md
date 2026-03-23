@@ -248,12 +248,14 @@ Environment-specific values can be applied during loading.
 Example environments:
 
 ```text
-configs/env/default.yaml
-configs/env/local.yaml
-configs/env/production.yaml
+configs/env/dev.yaml
+configs/env/test.yaml
+configs/env/prod.yaml
 ```
 
 These overlays modify configuration values without changing the base config.
+
+In the source code, `"default"` is equivalent to `none`.
 
 ### Best Parameter Injection
 

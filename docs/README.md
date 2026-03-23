@@ -6,6 +6,7 @@ This directory contains detailed documentation for the hotel_management project.
 - [Setup](setup.md)
 - [Usage](usage.md)
 - [API Reference](api/README.md)
+- [Configuration Reference](configuration_reference.md)
 - [Testing](testing.md)
 - [Maintenance](maintenance.md)
 - [Roadmap](roadmap.md)

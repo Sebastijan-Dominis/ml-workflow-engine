@@ -23,7 +23,9 @@ def build_layout():
                 [
                     "Generate the operator hash with generate_operator_hash.py (found here in ",
                     html.A('Scripts', href='/Scripts', className='text-decoration-underline'),
-                    " as well as the scripts/ directory in the repository) and paste it in the editor below, along with the feature definitions. The content is pre-filled with an example config. Click validate to check if the config is valid, then confirm to write to the registry. Read the documentation (docs/configs/feature_registry.md) for more details on each config field.",
+                    " as well as the scripts/ directory in the repository) and paste it in the editor below, along with the feature definitions. The content is pre-filled with an example config. Click validate to check if the config is valid, then confirm to write to the registry. Read the ",
+                    html.A('feature registry documentation', href='/Docs?doc=configs/feature_registry.md', className='text-decoration-underline'),
+                    " (docs/configs/feature_registry.md) for more details on each config field.",
                 ],
                 style={
                     "maxWidth": "50%",

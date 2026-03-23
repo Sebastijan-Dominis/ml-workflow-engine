@@ -28,7 +28,7 @@ This approach ensures reproducibility, traceability, and safe experimentation.
 - Modeling relies on configuration resolution during the search (hyperparameter) and train (model training) pipelines.
 - The following diagram explains how configurations get resolved at runtime:
 
-![Config Resolution Architecture Diagram](architecture/img/config_resolution_v3.png)
+![Config Resolution Architecture Diagram](/assets/img/docs/architecture/config_resolution_v3.png)
 
 - For more information on why this resolution logic 
 was decided upon, please consult the [`decisions.md` document](architecture/decisions.md)

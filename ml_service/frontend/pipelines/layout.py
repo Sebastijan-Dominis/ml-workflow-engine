@@ -130,12 +130,16 @@ def build_layout():
     return dbc.Container(
         [
             html.H1("ML Pipelines Dashboard", className="text-center"),
-            html.P(
-                "Select a pipeline to run. Declare the required arguments (and optional arguments if applicable) and click 'Run Pipeline'. You will be asked to confirm before the pipeline is executed. Read the documentation (docs/usage.md and docs/architecture/overview.md) for more details on what each pipeline does. Required arguments are highlighted in white, optional arguments are highlighted in light gray.",
-                style={
-                    "maxWidth": "50%",
-                    "margin": "0 auto",
-                    "fontSize": "1.25rem",
+            html.P([
+                "Select a pipeline to run. Declare the required arguments (and optional arguments if applicable) and click 'Run Pipeline'. You will be asked to confirm before the pipeline is executed. Read the ",
+                html.A("usage documentation", href="/Docs?doc=usage.md"),
+                " (docs/usage.md) and the ",
+                html.A("architecture overview", href="/Docs?doc=architecture/overview.md"),
+                " (docs/architecture/overview.md) for more details on what each pipeline does. Required arguments are highlighted in white, optional arguments are highlighted in light gray.",
+            ], style={
+                "maxWidth": "50%",
+                "margin": "0 auto",
+                "fontSize": "1.25rem",
                     "marginBottom": "40px",
                     "marginTop": "40px",
                     "textAlign": "left",

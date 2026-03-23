@@ -52,15 +52,20 @@ def build_layout():
                     "marginBottom": "40px",
                 }
             ),
-            html.P(
-                "Edit all of the modeling configs to define a new model. The content is pre-filled with example configs. Click validate to check if the configs are valid, then confirm to save them to disk. Read the documentation (docs/configs/model_specs.md and docs/configs/model_config.md) for more details on each config field.",
+            html.P([
+                "Edit all of the modeling configs to define a new model. The content is pre-filled with example configs. Click validate to check if the configs are valid, then confirm to save them to disk. Read the ",
+                html.A('model specs documentation', href='/Docs?doc=configs/model_specs.md', className='text-decoration-underline'),
+                " (docs/configs/model_specs.md) and ",
+                html.A('model config documentation', href='/Docs?doc=configs/model_config.md', className='text-decoration-underline'),
+                " (docs/configs/model_config.md) for more details on each config field.",
+            ],
                 style={
                     "maxWidth": "50%",
                     "margin": "0 auto",
                     "fontSize": "1.25rem",
                     "marginBottom": "40px",
                 }
-            ),
+        ),
             dbc.Row(rows),
             dbc.Row(
                 dbc.Button(

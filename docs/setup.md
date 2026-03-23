@@ -74,13 +74,17 @@ Notes:
 ### Defaults
 
 `ML_SERVICE_BACKEND_URL`=http://localhost:8000
+
 `ML_SERVICE_FRONTEND_URL`=http://localhost:8050
 
 ## Fake data generation
 
 Fake data can be generated using a script found in `scripts/generators/generate_fake_data.py`.
+
 If you want to do so, make sure to either:
+
 1. uncomment and install the two commented-out packages in `requirements.txt`
+
 2. uncomment `sdv` in `requirements.txt` and the relevant parts of the `Dockerfile` (if using `Docker`)
 
 > Note: the code in that script is not modularized, as this repo does not focus on fake data generation,

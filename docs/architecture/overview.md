@@ -12,63 +12,63 @@ This document provides a high-level overview of the system architecture, includi
 
 ### Artifact Lineage (high-level overview)
 
-![Artifact Lineage Diagram](img/artifact_lineage_v2.png)
+![Artifact Lineage Diagram](/assets/img/docs/architecture/artifact_lineage_v2.png)
 
 ### Orchestration (high-level overview)
 
-![Orchestration Architecture Diagram](img/orchestration_v2.png)
+![Orchestration Architecture Diagram](/assets/img/docs/architecture/orchestration_v2.png)
 
 ### Config Resolution
 
 - Applied in search.py and train.py
 
-![Config Resolution Architecture Diagram](img/config_resolution_v3.png)
+![Config Resolution Architecture Diagram](/assets/img/docs/architecture/config_resolution_v3.png)
 
 ### Data Preprocessing
 
 #### Raw Snapshot Registration
 
-![register_raw_snapshot.py Architecture Diagram](img/register_raw_snapshot_v2.png)
+![register_raw_snapshot.py Architecture Diagram](/assets/img/docs/architecture/register_raw_snapshot_v2.png)
 
 #### Interim Dataset Building
 
-![build_interim_dataset.py Architecture Diagram](img/build_interim_dataset_v2.png)
+![build_interim_dataset.py Architecture Diagram](/assets/img/docs/architecture/build_interim_dataset_v2.png)
 
 #### Processed Dataset Building
 
-![build_processed_dataset.py Architecture Diagram](img/build_processed_dataset_v2.png)
+![build_processed_dataset.py Architecture Diagram](/assets/img/docs/architecture/build_processed_dataset_v2.png)
 
 ### Feature Freezing
 
 #### Feature Set Freezing
 
-![freeze.py Architecture Diagram](img/freeze_v2.png)
+![freeze.py Architecture Diagram](/assets/img/docs/architecture/freeze_v2.png)
 
 ### Search
 
 #### Hyperparameter Search
 
-![search.py Architecture Diagram](img/search_v2.png)
+![search.py Architecture Diagram](/assets/img/docs/architecture/search_v2.png)
 
 ### Runners
 
 #### Training
 
-![train.py Architecture Diagram](img/train_v2.png)
+![train.py Architecture Diagram](/assets/img/docs/architecture/train_v2.png)
 
 #### Evaluation
 
-![evaluate.py Architecture Diagram](img/evaluate_v2.png)
+![evaluate.py Architecture Diagram](/assets/img/docs/architecture/evaluate_v2.png)
 
 #### Explainability
 
-![explain.py Architecture Diagram](img/explain_v2.png)
+![explain.py Architecture Diagram](/assets/img/docs/architecture/explain_v2.png)
 
 ### Promotion
 
 #### Model Staging, Promotion and Archiving
 
-![promote.py Architecture Diagram](img/promote_v2.png)
+![promote.py Architecture Diagram](/assets/img/docs/architecture/promote_v2.png)
 
 ## Design Decisions
 - See [decisions.md](decisions.md) for rationale behind architectural choices.

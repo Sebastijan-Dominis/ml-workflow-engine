@@ -1,5 +1,7 @@
 """Main multi-page Dash app with collapsible sidebar and separate Home button."""
 
+import os
+
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
@@ -16,14 +18,17 @@ from ml_service.frontend.configs.pipeline_cfg.page import get_layout as pipeline
 from ml_service.frontend.configs.pipeline_cfg.page import register as pipeline_cfg_register
 from ml_service.frontend.configs.promotion_thresholds.page import get_layout as promotion_layout
 from ml_service.frontend.configs.promotion_thresholds.page import register as promotion_register
+from ml_service.frontend.docs.page import get_layout as docs_layout
 from ml_service.frontend.pipelines.page import get_layout as pipelines_layout
 from ml_service.frontend.pipelines.page import register as pipelines_register
 from ml_service.frontend.scripts.page import get_layout as scripts_layout
 from ml_service.frontend.scripts.page import register as scripts_register
 
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 # Initialize Dash
 app = dash.Dash(
     __name__,
+    assets_folder=os.path.join(REPO_ROOT, "assets"),
     external_stylesheets=[dbc.themes.BOOTSTRAP, "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"],
     suppress_callback_exceptions=True
 )
@@ -37,7 +42,8 @@ PAGES = {
     "Pipeline Config": pipeline_cfg_layout,
     "Promotion Thresholds": promotion_layout,
     "Pipelines": pipelines_layout,
-    "Scripts": scripts_layout
+    "Scripts": scripts_layout,
+    "Docs": docs_layout
 }
 
 # Register page callbacks
@@ -122,7 +128,17 @@ def home_layout() -> dbc.Container:
                             html.Li("Includes all of the scripts found in the scripts/ directory."),
                             html.Li("Optional arguments have grey background, required arguments have white background."),
                         ])
-                    ]),
+                    ], style={"marginBottom": "1rem"}),
+                    html.Li([
+                        html.Strong("Docs:"),
+                        html.Ul([
+                            html.Li("View documentation."),
+                            html.Li("Includes all markdown files found in the docs/ directory."),
+                            html.Li("Click links to navigate between docs."),
+                            html.Li("Internal links to parts of the same markdown file don't work yet, but links to other markdown files do work."),
+                            html.Li("Some md elements may render oddly, but all content should be there. Read directly from the md file if something looks off."),
+                        ])
+                    ], style={"marginBottom": "1rem"}),
                 ],
                 style={
                     "fontSize": "1.2rem",
@@ -137,7 +153,8 @@ def home_layout() -> dbc.Container:
             "minHeight": "100%",
             "paddingTop": "50px",
             "backgroundColor": "#8fa0d8",
-            "textAlign": "center"
+            "textAlign": "center",
+            "overflowY": "auto",
         }
     )
 
@@ -150,7 +167,8 @@ def generate_page_links():
         "Pipeline Config": "diagram-3",
         "Promotion Thresholds": "graph-up",
         "Pipelines": "play-circle",
-        "Scripts": "terminal"
+        "Scripts": "terminal",
+        "Docs": "book"
     }
     links = []
     for name in PAGES:

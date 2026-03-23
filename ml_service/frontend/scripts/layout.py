@@ -130,9 +130,11 @@ def build_layout():
     return dbc.Container(
         [
             html.H1("ML Scripts Dashboard", className="text-center"),
-            html.P(
-                "Choose which script you want to run. Declare the required arguments (and optional arguments if applicable) and click 'Run Script'. You will be asked to confirm before the script is executed. Read the documentation (docs/usage.md) to understand the purpose and usage of each script. Required arguments are highlighted in white, optional arguments are highlighted in light gray.",
-                 style={
+            html.P([
+                "Choose which script you want to run. Declare the required arguments (and optional arguments if applicable) and click 'Run Script'. You will be asked to confirm before the script is executed. Read the ",
+                html.A("usage documentation", href="/Docs?doc=usage.md"),
+                " (docs/usage.md) to understand the purpose and usage of each script. Required arguments are highlighted in white, optional arguments are highlighted in light gray.",
+            ], style={
                     "textAlign": "left",
                     "maxWidth": "50%",
                     "margin": "0 auto",
