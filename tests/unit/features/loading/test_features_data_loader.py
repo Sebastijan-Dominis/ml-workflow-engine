@@ -11,6 +11,7 @@ from typing import Any, cast
 import pandas as pd
 import pytest
 from ml.exceptions import ConfigError, DataError
+from ml.feature_freezing.freeze_strategies.tabular.config.models import MergeHow, MergeValidate
 from ml.types import DataLineageEntry
 
 pytestmark = pytest.mark.unit
@@ -34,6 +35,8 @@ def _entry(
     merge_key: str = "row_id",
     loader_hash: str = "loader-hash",
     data_hash: str = "data-hash",
+    merge_how: str = "inner",
+    merge_validate: str = "m:m",
 ) -> DataLineageEntry:
     """Build a minimal lineage entry accepted by the data-loading helper."""
     return DataLineageEntry(
@@ -43,6 +46,8 @@ def _entry(
         format=fmt,
         path_suffix=f"features.{fmt}",
         merge_key=merge_key,
+        merge_how=cast(MergeHow, merge_how),
+        merge_validate=cast(MergeValidate, merge_validate),
         snapshot_id="snapshot-1",
         path=str(path),
         loader_validation_hash=loader_hash,
@@ -65,6 +70,8 @@ def test_lineage_identity_returns_expected_comparison_tuple() -> None:
         "data-hash",
         "loader-hash",
         "row_id",
+        "inner",
+        "m:m",
     )
 
 

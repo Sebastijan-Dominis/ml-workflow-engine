@@ -38,6 +38,8 @@ def _lineage_entry_payload() -> dict:
         "format": "parquet",
         "path_suffix": "data.parquet",
         "merge_key": "row_id",
+        "merge_how": "inner",
+        "merge_validate": "m:m",
         "snapshot_id": "20260305T120000_abcd",
         "path": "data/processed/hotel_bookings/v1/data.parquet",
         "loader_validation_hash": "loader-hash",

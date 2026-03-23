@@ -47,6 +47,8 @@ def _lineage_dict() -> dict[str, object]:
         "format": "csv",
         "path_suffix": "features.{format}",
         "merge_key": "row_id",
+        "merge_how": "inner",
+        "merge_validate": "m:m",
         "snapshot_id": "snap_001",
         "path": "feature_store/booking_context_features/v1/snap_001/features.csv",
         "loader_validation_hash": "loader-hash",

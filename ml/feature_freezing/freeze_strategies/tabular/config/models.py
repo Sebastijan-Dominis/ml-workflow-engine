@@ -11,6 +11,19 @@ from ml.exceptions import ConfigError
 
 logger = logging.getLogger(__name__)
 
+MergeHow = Literal["left", "right", "inner", "outer", "cross"]
+
+MergeValidate = Literal[
+    "one_to_one",
+    "1:1",
+    "one_to_many",
+    "1:m",
+    "many_to_one",
+    "m:1",
+    "many_to_many",
+    "m:m",
+]
+
 class DatasetConfig(BaseModel):
     """Source dataset definition used for feature freezing ingestion."""
 
@@ -18,8 +31,50 @@ class DatasetConfig(BaseModel):
     name: str = Field(..., description="Name of the dataset, e.g., 'hotel_bookings'")
     version: str = Field(..., description="Version of the dataset, e.g., 'v1'")
     format: Literal["csv", "parquet"]
-    merge_key: str = Field("row_id", description="Key to merge datasets on, default is 'row_id'")
-    path_suffix: str = Field("data.{format}", description="Suffix for the dataset file, supports {format} placeholder")
+    merge_key: str | list[str] = Field(
+        "row_id", description="Key(s) to merge datasets on, default is 'row_id'"
+    )
+    merge_how: MergeHow = Field(
+        "inner", description="Merge type, default 'inner'"
+    )
+    merge_validate: MergeValidate = Field(
+        "m:m", description="Merge validation for row explosion protection"
+    )
+    path_suffix: str = Field(
+        "data.{format}", description="Suffix for the dataset file, supports {format} placeholder"
+    )
+
+    @field_validator("merge_key", mode="before")
+    def ensure_merge_key_list(cls, v):
+        """Always convert merge_key to a list internally."""
+        if isinstance(v, str):
+            return [v]
+        if isinstance(v, list) and all(isinstance(i, str) for i in v):
+            return v
+        raise ConfigError("merge_key must be a string or a list of strings")
+
+    @field_validator("merge_how")
+    def validate_merge_how(cls, v):
+        if v not in {"inner", "left", "right", "outer"}:
+            raise ConfigError(f"Invalid merge_how: {v}")
+        return v
+
+    @field_validator("merge_validate")
+    def normalize_merge_validate(cls, v):
+        """Normalize merge_validate to pandas-compatible strings."""
+        mapping = {
+            "one_to_one": "1:1",
+            "1:1": "1:1",
+            "one_to_many": "1:m",
+            "1:m": "1:m",
+            "many_to_one": "m:1",
+            "m:1": "m:1",
+            "many_to_many": "m:m",
+            "m:m": "m:m",
+        }
+        if v not in mapping:
+            raise ConfigError(f"Invalid merge_validate: {v}")
+        return mapping[v]
 
 class FeatureRolesConfig(BaseModel):
     """Feature role partitioning for validation and downstream usage."""

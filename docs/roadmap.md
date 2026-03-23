@@ -24,7 +24,7 @@ _Last updated: 2026-03-23_
     - Status: done (2026-03-23)
     - Importance: medium
 - [ ] Improve dataset and feature set merging logic
-    - Status: planned
+    - Status: in progress
     - Importance: medium
 - [ ] Create infer.py
     - Status: planned

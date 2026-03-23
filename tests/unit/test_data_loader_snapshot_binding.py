@@ -48,6 +48,8 @@ def test_load_data_with_lineage_uses_snapshot_binding(tmp_path, monkeypatch):
         version=ds_version,
         format="csv",
         merge_key="id",
+        merge_how="inner",
+        merge_validate="m:m",
         path_suffix=path_suffix,
     )
 
@@ -82,7 +84,7 @@ def test_load_data_with_lineage_uses_snapshot_binding(tmp_path, monkeypatch):
     monkeypatch.setattr(
         dl_mod,
         "merge_dataset_into_main",
-        lambda data, df, merge_key, dataset_name, dataset_version, dataset_snapshot_path, dataset_path: (df, "datahash"),
+        lambda **kwargs: (kwargs["df"], "datahash"),
     )
 
     # Run the function under test

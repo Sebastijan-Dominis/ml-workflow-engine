@@ -1,3 +1,4 @@
+"""A module defining the layout and callbacks for the documentation viewer page in the frontend Dash app."""
 import os
 import re
 from pathlib import Path

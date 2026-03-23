@@ -107,7 +107,7 @@ FRONTEND_PIPELINES_REGISTRY = [
         "args_schema": FreezeFeaturesInput,
         "field_metadata": {
             "feature_set": {
-                "placeholder": "Feature set name, e.g., base_features",
+                "placeholder": "Feature set name, e.g., booking_context_features",
                 "optional": False
             },
             "version": {

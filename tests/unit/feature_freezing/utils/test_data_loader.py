@@ -45,6 +45,8 @@ def _dataset_stub(
         format=fmt,
         path_suffix=path_suffix,
         merge_key=merge_key,
+        merge_how="inner",
+        merge_validate="m:m",
     )
 
 
@@ -75,6 +77,10 @@ def test_load_data_with_lineage_raises_for_unsupported_dataset_format(
         "ml.feature_freezing.utils.data_loader.get_latest_snapshot_path",
         lambda path: tmp_path,
     )
+
+    # Ensure a resolved dataset file exists so the loader proceeds to
+    # format validation rather than failing on missing file first.
+    (tmp_path / f"data.{dataset.format}").write_text("placeholder", encoding="utf-8")
 
     with pytest.raises(ConfigError, match="Unsupported data format"):
         load_data_with_lineage(_as_any_config(cfg), snapshot_binding_key=None)

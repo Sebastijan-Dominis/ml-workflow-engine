@@ -3,11 +3,13 @@
 import logging
 from collections.abc import Iterable
 from pathlib import Path
+from typing import cast
 
 import pandas as pd
 
-from ml.data.merge.merge_dataset_into_main import merge_dataset_into_main
+from ml.data.merge.merge_dataset_into_main import build_dataset_dag, merge_dataset_into_main
 from ml.exceptions import ConfigError, DataError
+from ml.feature_freezing.freeze_strategies.tabular.config.models import DatasetConfig
 from ml.types import DataLineageEntry
 from ml.utils.hashing.service import HASH_LOADER_REGISTRY
 from ml.utils.loaders import read_data
@@ -46,10 +48,13 @@ def lineage_identity(entry: DataLineageEntry) -> tuple:
         entry.data_hash,
         entry.loader_validation_hash,
         entry.merge_key,
+        entry.merge_how,
+        entry.merge_validate,
     )
 
 def load_and_validate_data(input_lineage: Iterable[DataLineageEntry]) -> pd.DataFrame:
-    """Load, merge, hash-validate, and lineage-validate datasets from lineage entries.
+    """Load, merge, hash-validate, and lineage-validate datasets from lineage entries
+    in DAG-based topological order to respect merge dependencies.
 
     Args:
         input_lineage: Iterable of dataset lineage entries to load and merge.
@@ -59,48 +64,79 @@ def load_and_validate_data(input_lineage: Iterable[DataLineageEntry]) -> pd.Data
     """
 
     input_lineage = list(input_lineage)
-    data = pd.DataFrame()
-    data_lineage: list[DataLineageEntry] = []
-
     if not input_lineage:
         msg = "No datasets specified in the input lineage."
         logger.error(msg)
         raise ConfigError(msg)
 
-    for dataset in input_lineage:
-        if dataset.format not in HASH_LOADER_REGISTRY:
-            msg = f"Unsupported data format for loading and hashing: {dataset.format}"
+    # Build dataset dict and normalize merge_key
+    dataset_dict = {}
+    for ds in input_lineage:
+        if ds.format not in HASH_LOADER_REGISTRY:
+            msg = f"Unsupported data format for loading and hashing: {ds.format}"
             logger.error(msg)
             raise ConfigError(msg)
 
-        dataset_path = Path(dataset.path.replace("\\", "/"))
+        # Normalize merge_key to list
+        merge_key = ds.merge_key
+        if isinstance(merge_key, str):
+            merge_key = [merge_key]
+        dataset_dict[ds.name] = (ds, merge_key)
+
+    # Determine merge order via DAG
+    datasets_for_dag = []
+    for ds, mk in dataset_dict.values():
+        # Prepare lightweight object for DAG: name + merge_key
+        class _DagDataset:
+            def __init__(self, name, merge_key):
+                self.name = name
+                self.merge_key = merge_key
+        datasets_for_dag.append(_DagDataset(ds.name, mk))
+
+    # datasets_for_dag is a lightweight runtime-only helper type; cast to the
+    # declared DatasetConfig list type so mypy understands the call without
+    # changing runtime behavior.
+    merge_order = build_dataset_dag(cast(list[DatasetConfig], datasets_for_dag))
+
+    data = pd.DataFrame()
+    data_lineage: list[DataLineageEntry] = []
+
+    for ds_name in merge_order:
+        ds, merge_key = dataset_dict[ds_name]
+        dataset_path = Path(ds.path.replace("\\", "/"))
         if not dataset_path.exists():
             msg = f"Dataset file not found at expected path: {dataset_path}"
             logger.error(msg)
             raise DataError(msg)
-        df = read_data(dataset.format, dataset_path)
-        merge_key = dataset.merge_key
 
+        df = read_data(ds.format, dataset_path)
+
+        # Merge dataset into main DataFrame
         data, data_hash = merge_dataset_into_main(
             data=data,
             df=df,
             merge_key=merge_key,
-            dataset_name=dataset.name,
-            dataset_version=dataset.version,
-            dataset_snapshot_path=Path(dataset.path).parent,
+            merge_how=ds.merge_how,
+            merge_validate=ds.merge_validate,
+            dataset_name=ds.name,
+            dataset_version=ds.version,
+            dataset_snapshot_path=Path(ds.path).parent,
             dataset_path=dataset_path,
         )
 
-        loader_validation_hash = HASH_LOADER_REGISTRY[dataset.format](dataset_path)
+        loader_validation_hash = HASH_LOADER_REGISTRY[ds.format](dataset_path)
 
+        # Append lineage
         data_lineage.append(DataLineageEntry(
-            ref=dataset.ref,
-            name=dataset.name,
-            version=dataset.version,
-            format=dataset.format,
-            path_suffix=dataset.path_suffix.format(format=dataset.format),
-            merge_key=dataset.merge_key,
-            snapshot_id=dataset.snapshot_id,
+            ref=ds.ref,
+            name=ds.name,
+            version=ds.version,
+            format=ds.format,
+            path_suffix=ds.path_suffix,
+            merge_key=ds.merge_key,  # keep original type for lineage
+            merge_how=ds.merge_how,
+            merge_validate=ds.merge_validate,
+            snapshot_id=ds.snapshot_id,
             path=str(dataset_path),
             loader_validation_hash=loader_validation_hash,
             data_hash=data_hash,
@@ -108,19 +144,12 @@ def load_and_validate_data(input_lineage: Iterable[DataLineageEntry]) -> pd.Data
             column_count=len(df.columns),
         ))
 
-        logger.debug(f"Loaded dataset {dataset.name} {dataset.version} snapshot {dataset.snapshot_id} "
-             f"file {dataset_path} loader hash {loader_validation_hash}")
-
-    logger.info(f"Completed loading {len(input_lineage)} datasets. Final merged dataset shape: {data.shape}. Lineage: {data_lineage}")
-
+    # Validate that the merged lineage matches expected
     expected = {lineage_identity(e) for e in input_lineage}
     actual = {lineage_identity(e) for e in data_lineage}
-
     if expected != actual:
-        msg = f"Data lineage mismatch after loading datasets. Expected lineage does not match actual lineage. Expected: {input_lineage}, Actual: {data_lineage}"
+        msg = f"Data lineage mismatch. Expected: {input_lineage}, Actual: {data_lineage}"
         logger.error(msg)
         raise DataError(msg)
-
-    logger.debug("Data lineage validation passed. All expected datasets are present in the actual lineage after loading.")
 
     return data
