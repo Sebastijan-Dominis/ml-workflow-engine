@@ -102,11 +102,11 @@ python -m ml_service.frontend.app
 
 #### Pipelines:
 
-!["Gif portrayal of pipelines app from ml_service"](assets/gifs/ml_service_pipelines.gif)
+!["Gif portrayal of pipelines app from ml_service"](/assets/gifs/ml_service_pipelines_v2.gif)
 
 #### Modeling Configs:
 
-!["Gif portrayal of modeling configs app from ml_service"](assets/gifs/ml_service_modeling_configs.gif)
+!["Gif portrayal of modeling configs app from ml_service"](/assets/gifs/ml_service_modeling_configs_v2.gif)
 
 ## Running Pipelines
 
