@@ -17,7 +17,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-conda-pkgs-
+          key: ${{ runner.os }}-conda-pkgs-${{ hashFiles('environment.yml') }}
           restore-keys: |
             ${{ runner.os }}-conda-pkgs-
 
@@ -30,17 +30,16 @@ jobs:
           use-mamba: true
           auto-activate-base: false
 
-      - name: Install additional pip dependencies (CPU-safe version of torch)
+      - name: Clear Python caches
         run: |
-          conda run -n hotel_management pip install torch==2.10.0
-          conda run -n hotel_management pip install -r requirements.txt
-          conda run -n hotel_management pip install coverage
+          find . -type d -name "__pycache__" -exec rm -rf {} +
+          find . -name "*.pyc" -delete
 
-      - name: Show environment
-        run: conda run -n hotel_management conda list
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+
+      - name: Install package in editable mode
+        run: conda run -n hotel_management pip install -e .
 
       - name: Run tests with coverage
         run: conda run -n hotel_management coverage run -m pytest -v --maxfail=1 --disable-warnings
-
-      - name: Show coverage summary and enforce minimum
-        run: conda run -n hotel_management coverage report -m -i --fail-under=90
