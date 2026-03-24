@@ -19,6 +19,7 @@ from ml_service.frontend.configs.pipeline_cfg.page import register as pipeline_c
 from ml_service.frontend.configs.promotion_thresholds.page import get_layout as promotion_layout
 from ml_service.frontend.configs.promotion_thresholds.page import register as promotion_register
 from ml_service.frontend.docs.page import get_layout as docs_layout
+from ml_service.frontend.docs.page import register as docs_register
 from ml_service.frontend.pipelines.page import get_layout as pipelines_layout
 from ml_service.frontend.pipelines.page import register as pipelines_register
 from ml_service.frontend.scripts.page import get_layout as scripts_layout
@@ -54,7 +55,8 @@ for register_func in [
     pipeline_cfg_register,
     promotion_register,
     pipelines_register,
-    scripts_register
+    scripts_register,
+    docs_register
 ]:
     register_func(app)
 
