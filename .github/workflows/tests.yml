@@ -34,6 +34,7 @@ jobs:
         run: |
           conda run -n hotel_management pip install torch==2.10.0
           conda run -n hotel_management pip install -r requirements.txt
+          conda run -n hotel_management pip install pytest
           conda run -n hotel_management pip install coverage
 
       - name: Show environment
