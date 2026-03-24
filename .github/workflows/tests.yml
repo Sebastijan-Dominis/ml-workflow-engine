@@ -13,6 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Remove existing Conda environment
+        run: conda env remove -n hotel_management || true
+
       - name: Cache Conda packages
         uses: actions/cache@v4
         with:
