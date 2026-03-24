@@ -32,13 +32,19 @@ conda env create -f environment.yml -n hotel_management # default name
 conda activate hotel_management # if you used the default name
 ```
 
-3. Install the rest of the packages:
+3. Add dev packages:
+
+```bash
+conda env update -n hotel_management -f environment.dev.yml
+```
+
+4. Install the rest of the packages:
 
 ```bash
 pip install -r requirements.txt # for packages that can't be installed with conda-forge
 ```
 
-4. Set up environment variables
+5. Set up environment variables
 
 In `{repo_root}/.env`.
 [Click here](#environment-variables)
@@ -114,7 +120,7 @@ You can now operate the ml workflow in following ways
 
 ## Expectations
 
-- `environment.yml` already includes `pytest` and `pytest-cov` packages for testing and coverage generation
-- `environment.yml` already includes `ruff`, `isort`, `mypy` and `pre-commit` packages for quality checks
-- `environment.yml` already includes `pdoc` package for API doc generation
+- `environment.dev.yml` already includes `pytest` and `pytest-cov` packages for testing and coverage generation
+- `environment.dev.yml` already includes `ruff`, `isort`, `mypy` and `pre-commit` packages for quality checks
+- `environment.dev.yml` already includes `pdoc` package for API doc generation
 - GPU hyperparameter searching and training will only work on your machine as expected if you use Nvidia GPU(s); otherwise please use CPU

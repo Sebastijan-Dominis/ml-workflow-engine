@@ -9,7 +9,7 @@ from ml_service.backend.configs.modeling.utils.paths import check_paths
 from ml_service.backend.configs.modeling.validation.validate_all_configs import validate_all_configs
 from ml_service.backend.main import limiter
 
-router = APIRouter(prefix="/modeling", tags=["modeling"])
+router: APIRouter = APIRouter(prefix="/modeling", tags=["modeling"])
 
 @router.post("/validate", status_code=200)
 @limiter.limit("1/15seconds")

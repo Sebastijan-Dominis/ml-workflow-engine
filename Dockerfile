@@ -1,6 +1,17 @@
+# conda-lock causes major issues, so it is avoided here.
+# Note that a docker build sometimes creates the environment from scratch,
+# even when it shouldn't, which is not ideal for development speed. 
+# However, it ensures that the environment is always clean and consistent with the environment.yml file. 
+# For faster development iterations, consider using a local Conda environment on your machine with the 
+# same environment.yml file.
+
 # ===== Base image with GPU support =====
 FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
-# NOTE: Uncomment the line below and comment out the line above only if you want to generate fake data. For regular use, stick to the current image. If you use the image below, make sure to also uncomment the torch installation line in this Dockerfile. Likewise, uncomment the sdv dependency in requirements.txt.
+# NOTE: Uncomment the line below and comment out the line above only if you want to generate fake data.
+# For regular use, stick to the current image. If you use the image below, make sure to also uncomment
+# the torch installation line in this Dockerfile. Likewise, uncomment the sdv dependency in 
+# requirements.txt.
+
 # FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
 
 # ===== Set working directory =====
@@ -39,7 +50,10 @@ COPY pyproject.toml .
 # Install torch (nightly CUDA 12.8)
 # This version works with Nvidia RTX 5070 Ti GPU. If you experience issues, change to a compatible version for your GPU.
 
-# NOTE: Uncomment this only if you want to generate fake data. In that case, use the commented out base image at the top of this file. Likewise, uncomment the sdv dependency in requirements.txt. For regular use, stick to the current image.
+# NOTE: Uncomment this only if you want to generate fake data. In that case, use the commented out base
+# image at the top of this file. Likewise, uncomment the sdv dependency in requirements.txt. For regular 
+# use, stick to the current image.
+
 # RUN conda run -n hotel_management pip install --pre \
 #     torch==2.12.0.dev20260320+cu128 \
 #     --index-url https://download.pytorch.org/whl/nightly/cu128

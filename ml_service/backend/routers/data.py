@@ -13,7 +13,7 @@ from ml_service.backend.configs.loading.load_yaml_and_add_lineage import load_ya
 from ml_service.backend.configs.persistence.save_config import save_config
 from ml_service.backend.main import limiter
 
-router = APIRouter(prefix="/data", tags=["data"])
+router: APIRouter = APIRouter(prefix="/data", tags=["data"])
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 env = os.environ.copy()

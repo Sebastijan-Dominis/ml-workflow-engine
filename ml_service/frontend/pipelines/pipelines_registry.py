@@ -1,4 +1,6 @@
 """A module that defines the registry of pipelines available in the frontend, including their names, endpoints, and argument schemas."""
+from typing import Any
+
 from ml_service.backend.pipelines.models.pipelines_cli_args import (
     BuildInterimDatasetInput,
     BuildProcessedDatasetInput,
@@ -16,7 +18,7 @@ from ml_service.backend.pipelines.models.pipelines_cli_args import (
     TrainInput,
 )
 
-FRONTEND_PIPELINES_REGISTRY = [
+FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
     {
         "name": "Register Raw Snapshot",
         "endpoint": "pipelines/register_raw_snapshot",

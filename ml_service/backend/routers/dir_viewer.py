@@ -10,7 +10,7 @@ from ml_service.backend.main import limiter
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-router = APIRouter(prefix="/dir_viewer", tags=["dir_viewer"])
+router: APIRouter = APIRouter(prefix="/dir_viewer", tags=["dir_viewer"])
 
 @router.post("/load", status_code=200)
 @limiter.limit("10/minute")

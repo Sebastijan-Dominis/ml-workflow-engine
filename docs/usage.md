@@ -20,7 +20,7 @@ For quick use with docker:
 docker compose build
 ```
 
-- Add `--no-cache` when environment changes:
+- Add `--no-cache` when you want to rebuild the image from scratch:
 
 ```bash
 docker compose build --no-cache

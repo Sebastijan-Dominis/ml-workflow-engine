@@ -22,12 +22,12 @@ from ml_service.frontend.dir_viewer.page import get_layout as dir_viewer_layout
 from ml_service.frontend.dir_viewer.page import register as dir_viewer_register
 from ml_service.frontend.docs.page import get_layout as docs_layout
 from ml_service.frontend.docs.page import register as docs_register
+from ml_service.frontend.file_viewer.page import get_layout as viewer_layout
+from ml_service.frontend.file_viewer.page import register as viewer_register
 from ml_service.frontend.pipelines.page import get_layout as pipelines_layout
 from ml_service.frontend.pipelines.page import register as pipelines_register
 from ml_service.frontend.scripts.page import get_layout as scripts_layout
 from ml_service.frontend.scripts.page import register as scripts_register
-from ml_service.frontend.viewer.page import get_layout as viewer_layout
-from ml_service.frontend.viewer.page import register as viewer_register
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 # Initialize Dash

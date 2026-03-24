@@ -122,7 +122,7 @@
 </span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">TrainInput</span><span class="p">,</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="p">)</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/pipelines&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pipelines&quot;</span><span class="p">])</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="n">router</span><span class="p">:</span> <span class="n">APIRouter</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/pipelines&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pipelines&quot;</span><span class="p">])</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/register_raw_snapshot&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="nd">@limiter</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;1/30seconds&quot;</span><span class="p">)</span>
@@ -269,7 +269,7 @@
             </section>
                 <section id="router">
                     <div class="attr variable">
-            <span class="name">router</span>        =
+            <span class="name">router</span><span class="annotation">: fastapi.routing.APIRouter</span>        =
 <span class="default_value">&lt;fastapi.routing.APIRouter object&gt;</span>
 
         

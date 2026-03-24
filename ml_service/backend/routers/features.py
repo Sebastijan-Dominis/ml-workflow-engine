@@ -15,7 +15,7 @@ from ml_service.backend.configs.features.validation.validate_feature_config impo
 from ml_service.backend.configs.loading.load_yaml_and_add_lineage import load_yaml_and_add_lineage
 from ml_service.backend.main import limiter
 
-router = APIRouter(prefix="/features", tags=["features"])
+router: APIRouter = APIRouter(prefix="/features", tags=["features"])
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 env = os.environ.copy()

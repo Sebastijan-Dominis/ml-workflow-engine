@@ -15,7 +15,7 @@ from ml_service.backend.configs.promotion_thresholds.validation.validate_config_
 )
 from ml_service.backend.main import limiter
 
-router = APIRouter(prefix="/promotion_thresholds", tags=["promotion_thresholds"])
+router: APIRouter = APIRouter(prefix="/promotion_thresholds", tags=["promotion_thresholds"])
 
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))

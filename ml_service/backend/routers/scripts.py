@@ -14,7 +14,7 @@ from ml_service.backend.scripts.models.script_cli_args import (
     GenerateSnapshotBindingInput,
 )
 
-router = APIRouter(prefix="/scripts", tags=["scripts"])
+router: APIRouter = APIRouter(prefix="/scripts", tags=["scripts"])
 
 @router.post("/generate_cols_for_row_id_fingerprint", status_code=200)
 @limiter.limit("1/15seconds")

@@ -73,7 +73,7 @@
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml_service.backend.configs.modeling.validation.validate_all_configs</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_all_configs</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">ml_service.backend.main</span><span class="w"> </span><span class="kn">import</span> <span class="n">limiter</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/modeling&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">])</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="n">router</span><span class="p">:</span> <span class="n">APIRouter</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;/modeling&quot;</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;modeling&quot;</span><span class="p">])</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="nd">@router</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/validate&quot;</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="nd">@limiter</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;1/15seconds&quot;</span><span class="p">)</span>
@@ -126,7 +126,7 @@
             </section>
                 <section id="router">
                     <div class="attr variable">
-            <span class="name">router</span>        =
+            <span class="name">router</span><span class="annotation">: fastapi.routing.APIRouter</span>        =
 <span class="default_value">&lt;fastapi.routing.APIRouter object&gt;</span>
 
         

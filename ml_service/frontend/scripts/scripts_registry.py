@@ -1,4 +1,6 @@
 """A module that defines the registry of scripts available in the frontend, including their names, endpoints, and argument schemas."""
+from typing import Any
+
 from ml_service.backend.scripts.models.script_cli_args import (
     CheckImportLayersInput,
     CheckNamingConventionsInput,
@@ -8,7 +10,7 @@ from ml_service.backend.scripts.models.script_cli_args import (
     GenerateSnapshotBindingInput,
 )
 
-FRONTEND_SCRIPTS_REGISTRY = [
+FRONTEND_SCRIPTS_REGISTRY: list[dict[str, Any]] = [
     {
         "name": "Check Import Layers",
         "endpoint": "/scripts/check_import_layers",

@@ -10,7 +10,7 @@ from ml_service.backend.configs.pipeline_cfg.validation.validate_config_payload 
 )
 from ml_service.backend.main import limiter
 
-router = APIRouter(prefix="/pipeline_cfg", tags=["pipeline_cfg"])
+router: APIRouter = APIRouter(prefix="/pipeline_cfg", tags=["pipeline_cfg"])
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 env = os.environ.copy()

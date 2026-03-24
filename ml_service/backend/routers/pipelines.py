@@ -22,7 +22,7 @@ from ml_service.backend.pipelines.models.pipelines_cli_args import (
     TrainInput,
 )
 
-router = APIRouter(prefix="/pipelines", tags=["pipelines"])
+router: APIRouter = APIRouter(prefix="/pipelines", tags=["pipelines"])
 
 @router.post("/register_raw_snapshot", status_code=200)
 @limiter.limit("1/30seconds")

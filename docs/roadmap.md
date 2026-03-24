@@ -1,4 +1,4 @@
-_Last updated: 2026-03-23_
+_Last updated: 2026-03-24_
 # Roadmap
 
 - This document outlines the planned development roadmap for the project.
@@ -23,8 +23,8 @@ _Last updated: 2026-03-23_
 - [x] Create dataset + feature set snapshot binding logic and configs
     - Status: done (2026-03-23)
     - Importance: medium
-- [ ] Improve dataset and feature set merging logic
-    - Status: in progress
+- [x] Improve dataset and feature set merging logic
+    - Status: done (2026-03-24)
     - Importance: medium
 - [ ] Create infer.py
     - Status: planned
