@@ -15,6 +15,7 @@ from ml_service.backend.routers.pipeline_cfg import router as pipeline_cfg_route
 from ml_service.backend.routers.pipelines import router as pipelines_router
 from ml_service.backend.routers.promotion_thresholds import router as promotion_thresholds_router
 from ml_service.backend.routers.scripts import router as scripts_router
+from ml_service.backend.routers.viewer import router as viewer_router
 
 dotenv.load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
 
@@ -30,7 +31,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-routers = [pipelines_router, modeling_router, features_router, data_router, pipeline_cfg_router, promotion_thresholds_router, scripts_router]
+routers = [pipelines_router, modeling_router, features_router, data_router, pipeline_cfg_router, promotion_thresholds_router, scripts_router, viewer_router]
 
 for router in routers:
     app.include_router(router)

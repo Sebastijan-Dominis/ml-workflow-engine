@@ -218,10 +218,10 @@ catboost_info/
 .vscodecounter/
 
 # Failure management folder that helps deal with failed search and train runs by storing relevant information at runtime (best params from each search, training model snapshots) and deleting if the run is successful. Irrelevant for version control.
-failure_management
+/failure_management/
 
 # Temporarily ignore all experiments, data, feature sets, and model registry files. These are all relevant for version control, but we want to temporarily ignore them while we work on the registry and experiment tracking features.
-experiments/
-data/
-feature_store/
-model_registry/
+/experiments/
+/data/
+/feature_store/
+/model_registry/

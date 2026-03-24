@@ -24,6 +24,8 @@ from ml_service.frontend.pipelines.page import get_layout as pipelines_layout
 from ml_service.frontend.pipelines.page import register as pipelines_register
 from ml_service.frontend.scripts.page import get_layout as scripts_layout
 from ml_service.frontend.scripts.page import register as scripts_register
+from ml_service.frontend.viewer.page import get_layout as viewer_layout
+from ml_service.frontend.viewer.page import register as viewer_register
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 # Initialize Dash
@@ -44,7 +46,8 @@ PAGES = {
     "Promotion Thresholds": promotion_layout,
     "Pipelines": pipelines_layout,
     "Scripts": scripts_layout,
-    "Docs": docs_layout
+    "Docs": docs_layout,
+    "Viewer": viewer_layout,
 }
 
 # Register page callbacks
@@ -56,7 +59,8 @@ for register_func in [
     promotion_register,
     pipelines_register,
     scripts_register,
-    docs_register
+    docs_register,
+    viewer_register,
 ]:
     register_func(app)
 
@@ -170,7 +174,8 @@ def generate_page_links():
         "Promotion Thresholds": "graph-up",
         "Pipelines": "play-circle",
         "Scripts": "terminal",
-        "Docs": "book"
+        "Docs": "book",
+        "Viewer": "eye",
     }
     links = []
     for name in PAGES:
