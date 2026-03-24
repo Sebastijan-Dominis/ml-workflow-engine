@@ -11,17 +11,24 @@ logger = logging.getLogger(__name__)
 
 class TargetStrategy(ABC):
     """Abstract strategy for building model targets from prepared data."""
+    def __init__(self, entity_key: str) -> None:
+        """Initialize the target strategy with a specified entity key column name.
 
-    REQUIRED_COLUMNS = {'row_id'}
+        Args:
+            entity_key: The name of the entity key column to use for traceability.
+        """
+        self.entity_key = entity_key
+        self.REQUIRED_COLUMNS = {self.entity_key}
 
     def build(self, data: pd.DataFrame) -> pd.DataFrame:
         """Validate input frame and delegate target construction to implementation.
 
         Args:
             data: Source dataframe containing target columns.
+            entity_key: The name of the entity key column to extract.
 
         Returns:
-            pd.DataFrame: Built target dataframe with `row_id`.
+            pd.DataFrame: Built target dataframe with `entity_key`.
         """
 
         self._validate(data)
@@ -45,13 +52,13 @@ class TargetStrategy(ABC):
 
     @abstractmethod
     def _build(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Build and return a target dataframe with `row_id` for traceability.
+        """Build and return a target dataframe with `entity_key` for traceability.
 
         Args:
             data: Source dataframe containing target inputs.
 
         Returns:
-            pd.DataFrame: Target dataframe including `row_id`.
+            pd.DataFrame: Target dataframe including `entity_key`.
         """
 
         pass

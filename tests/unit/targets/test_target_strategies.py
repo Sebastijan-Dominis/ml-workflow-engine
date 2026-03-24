@@ -22,7 +22,7 @@ class _EchoStrategy(TargetStrategy):
 
     def _build(self, data: pd.DataFrame) -> pd.DataFrame:
         """Return a simple projection so tests can assert build delegation."""
-        return data[["row_id"]].copy()
+        return data[[self.entity_key]].copy()
 
 
 @pytest.mark.parametrize(
@@ -42,15 +42,15 @@ def test_passthrough_target_strategies_return_expected_columns_and_copy(
     """Project the configured target column and isolate output from later input mutations."""
     source = pd.DataFrame(
         {
-            "row_id": ["r1", "r2"],
+            "entity_key": ["r1", "r2"],
             target_col: [10, 20],
             "unused": [0, 1],
         }
     )
 
-    result = strategy().build(source)
+    result = strategy(entity_key="entity_key").build(source)
 
-    assert result.columns.tolist() == [target_col, "row_id"]
+    assert result.columns.tolist() == [target_col, "entity_key"]
     assert result[target_col].tolist() == [10, 20]
     source.loc[0, target_col] = 999
     assert result[target_col].tolist() == [10, 20]
@@ -61,44 +61,44 @@ def test_target_strategy_base_validation_rejects_frames_without_row_id() -> None
     source = pd.DataFrame({"some_feature": [1, 2, 3]})
 
     with pytest.raises(UserError, match="Target data missing required columns"):
-        _EchoStrategy().build(source)
+        _EchoStrategy(entity_key="entity_key").build(source)
 
 
 def test_no_show_target_builds_binary_flags_from_reservation_status() -> None:
     """Map ``reservation_status`` to deterministic binary ``no_show`` labels."""
     source = pd.DataFrame(
         {
-            "row_id": ["a", "b", "c"],
+            "entity_key": ["a", "b", "c"],
             "reservation_status": ["No-Show", "Check-Out", "Canceled"],
         }
     )
 
-    result = NoShowTargetV1().build(source)
+    result = NoShowTargetV1(entity_key="entity_key").build(source)
 
-    assert result.columns.tolist() == ["no_show", "row_id"]
+    assert result.columns.tolist() == ["no_show", "entity_key"]
     assert result["no_show"].tolist() == [1, 0, 0]
-    assert result["row_id"].tolist() == ["a", "b", "c"]
+    assert result["entity_key"].tolist() == ["a", "b", "c"]
 
 
 def test_room_upgrade_target_compares_room_types_after_string_coercion() -> None:
     """Treat different raw dtypes equivalently by comparing string-normalized room values."""
     source = pd.DataFrame(
         {
-            "row_id": ["r1", "r2", "r3", "r4"],
+            "entity_key": ["r1", "r2", "r3", "r4"],
             "reserved_room_type": ["A", 1, None, "B"],
             "assigned_room_type": ["A", "1", "None", "C"],
         }
     )
 
-    result = RoomUpgradeTargetV1().build(source)
+    result = RoomUpgradeTargetV1(entity_key="entity_key").build(source)
 
-    assert result.columns.tolist() == ["room_upgrade", "row_id"]
+    assert result.columns.tolist() == ["room_upgrade", "entity_key"]
     assert result["room_upgrade"].tolist() == [0, 0, 0, 1]
 
 
 def test_target_strategies_surface_missing_strategy_specific_columns_as_key_error() -> None:
     """Bubble up pandas ``KeyError`` when strategy-specific target columns are absent."""
-    source = pd.DataFrame({"row_id": ["r1", "r2"]})
+    source = pd.DataFrame({"entity_key": ["r1", "r2"]})
 
     with pytest.raises(KeyError, match="is_canceled"):
-        CancellationTargetV1().build(source)
+        CancellationTargetV1(entity_key="entity_key").build(source)

@@ -76,7 +76,7 @@ def load_data_with_lineage(
         merged_data, data_hash = merge_dataset_into_main(
             data=merged_data,
             df=df,
-            merge_key=ds.merge_key,
+            merge_key=tuple(ds.merge_key),
             merge_how=ds.merge_how,
             merge_validate=ds.merge_validate,
             dataset_name=ds.name,
@@ -93,7 +93,7 @@ def load_data_with_lineage(
             version=ds.version,
             format=ds.format,
             path_suffix=ds.path_suffix,
-            merge_key=ds.merge_key,
+            merge_key=tuple(ds.merge_key),
             merge_how=ds.merge_how,
             merge_validate=ds.merge_validate,
             snapshot_id=dataset_snapshot_path.name,

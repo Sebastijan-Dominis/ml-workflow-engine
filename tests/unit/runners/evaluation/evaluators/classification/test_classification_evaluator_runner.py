@@ -88,7 +88,7 @@ def test_evaluate_warns_and_defaults_threshold_for_binary_when_missing(
     monkeypatch.setattr(
         module,
         "load_features_and_target",
-        lambda *_args, **_kwargs: (X, y, lineage),
+        lambda *_args, **_kwargs: (X, y, lineage, "entity_key"),
     )
     monkeypatch.setattr(
         module,
@@ -263,7 +263,7 @@ def test_evaluate_loads_artifacts_and_returns_evaluate_output(
     monkeypatch.setattr(
         module,
         "load_features_and_target",
-        lambda *_args, **_kwargs: (X, y, lineage),
+        lambda *_args, **_kwargs: (X, y, lineage, "entity_key"),
     )
 
     validate_snapshot_ids_calls: list[tuple[Any, Any]] = []

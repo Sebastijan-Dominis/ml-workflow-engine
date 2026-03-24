@@ -80,21 +80,22 @@
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>        <span class="n">model_cfg</span><span class="p">:</span> <span class="n">TrainModelConfig</span><span class="p">,</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">search_dir</span><span class="p">:</span> <span class="n">Path</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainOutput</span><span class="p">:</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Train model artifacts using provided configuration and runtime controls.</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        Args:</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">            model_cfg: Validated training model configuration.</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">            strict: Whether data/validation loading should fail strictly.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">            failure_management_dir: Directory for failure-management artifacts.</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        Returns:</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">            Standardized training output.</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="o">...</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="n">search_dir</span><span class="p">:</span> <span class="n">Path</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainOutput</span><span class="p">:</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Train model artifacts using provided configuration and runtime controls.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        Args:</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">            model_cfg: Validated training model configuration.</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">            strict: Whether data/validation loading should fail strictly.</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">            failure_management_dir: Directory for failure-management artifacts.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        Returns:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">            Standardized training output.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -118,21 +119,22 @@
 </span><span id="Trainer-17"><a href="#Trainer-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="Trainer-18"><a href="#Trainer-18"><span class="linenos">18</span></a>        <span class="n">model_cfg</span><span class="p">:</span> <span class="n">TrainModelConfig</span><span class="p">,</span>
 </span><span id="Trainer-19"><a href="#Trainer-19"><span class="linenos">19</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="Trainer-20"><a href="#Trainer-20"><span class="linenos">20</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-</span><span id="Trainer-21"><a href="#Trainer-21"><span class="linenos">21</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="Trainer-22"><a href="#Trainer-22"><span class="linenos">22</span></a>        <span class="n">search_dir</span><span class="p">:</span> <span class="n">Path</span>
-</span><span id="Trainer-23"><a href="#Trainer-23"><span class="linenos">23</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainOutput</span><span class="p">:</span>
-</span><span id="Trainer-24"><a href="#Trainer-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Train model artifacts using provided configuration and runtime controls.</span>
-</span><span id="Trainer-25"><a href="#Trainer-25"><span class="linenos">25</span></a>
-</span><span id="Trainer-26"><a href="#Trainer-26"><span class="linenos">26</span></a><span class="sd">        Args:</span>
-</span><span id="Trainer-27"><a href="#Trainer-27"><span class="linenos">27</span></a><span class="sd">            model_cfg: Validated training model configuration.</span>
-</span><span id="Trainer-28"><a href="#Trainer-28"><span class="linenos">28</span></a><span class="sd">            strict: Whether data/validation loading should fail strictly.</span>
-</span><span id="Trainer-29"><a href="#Trainer-29"><span class="linenos">29</span></a><span class="sd">            failure_management_dir: Directory for failure-management artifacts.</span>
-</span><span id="Trainer-30"><a href="#Trainer-30"><span class="linenos">30</span></a>
-</span><span id="Trainer-31"><a href="#Trainer-31"><span class="linenos">31</span></a><span class="sd">        Returns:</span>
-</span><span id="Trainer-32"><a href="#Trainer-32"><span class="linenos">32</span></a><span class="sd">            Standardized training output.</span>
-</span><span id="Trainer-33"><a href="#Trainer-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Trainer-34"><a href="#Trainer-34"><span class="linenos">34</span></a>        <span class="o">...</span>
+</span><span id="Trainer-20"><a href="#Trainer-20"><span class="linenos">20</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Trainer-21"><a href="#Trainer-21"><span class="linenos">21</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+</span><span id="Trainer-22"><a href="#Trainer-22"><span class="linenos">22</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="Trainer-23"><a href="#Trainer-23"><span class="linenos">23</span></a>        <span class="n">search_dir</span><span class="p">:</span> <span class="n">Path</span>
+</span><span id="Trainer-24"><a href="#Trainer-24"><span class="linenos">24</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainOutput</span><span class="p">:</span>
+</span><span id="Trainer-25"><a href="#Trainer-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Train model artifacts using provided configuration and runtime controls.</span>
+</span><span id="Trainer-26"><a href="#Trainer-26"><span class="linenos">26</span></a>
+</span><span id="Trainer-27"><a href="#Trainer-27"><span class="linenos">27</span></a><span class="sd">        Args:</span>
+</span><span id="Trainer-28"><a href="#Trainer-28"><span class="linenos">28</span></a><span class="sd">            model_cfg: Validated training model configuration.</span>
+</span><span id="Trainer-29"><a href="#Trainer-29"><span class="linenos">29</span></a><span class="sd">            strict: Whether data/validation loading should fail strictly.</span>
+</span><span id="Trainer-30"><a href="#Trainer-30"><span class="linenos">30</span></a><span class="sd">            failure_management_dir: Directory for failure-management artifacts.</span>
+</span><span id="Trainer-31"><a href="#Trainer-31"><span class="linenos">31</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="Trainer-32"><a href="#Trainer-32"><span class="linenos">32</span></a><span class="sd">        Returns:</span>
+</span><span id="Trainer-33"><a href="#Trainer-33"><span class="linenos">33</span></a><span class="sd">            Standardized training output.</span>
+</span><span id="Trainer-34"><a href="#Trainer-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Trainer-35"><a href="#Trainer-35"><span class="linenos">35</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -146,7 +148,7 @@
                     <div class="decorator decorator-abstractmethod">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">train</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="n"><a href="../../../config/schemas/model_cfg.html#TrainModelConfig">ml.config.schemas.model_cfg.TrainModelConfig</a></span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">search_dir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span></span><span class="return-annotation">) -> <span class="n"><a href="../constants/output.html#TrainOutput">ml.runners.training.constants.output.TrainOutput</a></span>:</span></span>
+        <span class="name">train</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="n"><a href="../../../config/schemas/model_cfg.html#TrainModelConfig">ml.config.schemas.model_cfg.TrainModelConfig</a></span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>,</span><span class="param">	<span class="n">search_dir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span></span><span class="return-annotation">) -> <span class="n"><a href="../constants/output.html#TrainOutput">ml.runners.training.constants.output.TrainOutput</a></span>:</span></span>
 
                 <label class="view-source-button" for="Trainer.train-view-source"><span>View Source</span></label>
 
@@ -157,21 +159,22 @@
 </span><span id="Trainer.train-17"><a href="#Trainer.train-17"><span class="linenos">17</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="Trainer.train-18"><a href="#Trainer.train-18"><span class="linenos">18</span></a>        <span class="n">model_cfg</span><span class="p">:</span> <span class="n">TrainModelConfig</span><span class="p">,</span>
 </span><span id="Trainer.train-19"><a href="#Trainer.train-19"><span class="linenos">19</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="Trainer.train-20"><a href="#Trainer.train-20"><span class="linenos">20</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-</span><span id="Trainer.train-21"><a href="#Trainer.train-21"><span class="linenos">21</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="Trainer.train-22"><a href="#Trainer.train-22"><span class="linenos">22</span></a>        <span class="n">search_dir</span><span class="p">:</span> <span class="n">Path</span>
-</span><span id="Trainer.train-23"><a href="#Trainer.train-23"><span class="linenos">23</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainOutput</span><span class="p">:</span>
-</span><span id="Trainer.train-24"><a href="#Trainer.train-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Train model artifacts using provided configuration and runtime controls.</span>
-</span><span id="Trainer.train-25"><a href="#Trainer.train-25"><span class="linenos">25</span></a>
-</span><span id="Trainer.train-26"><a href="#Trainer.train-26"><span class="linenos">26</span></a><span class="sd">        Args:</span>
-</span><span id="Trainer.train-27"><a href="#Trainer.train-27"><span class="linenos">27</span></a><span class="sd">            model_cfg: Validated training model configuration.</span>
-</span><span id="Trainer.train-28"><a href="#Trainer.train-28"><span class="linenos">28</span></a><span class="sd">            strict: Whether data/validation loading should fail strictly.</span>
-</span><span id="Trainer.train-29"><a href="#Trainer.train-29"><span class="linenos">29</span></a><span class="sd">            failure_management_dir: Directory for failure-management artifacts.</span>
-</span><span id="Trainer.train-30"><a href="#Trainer.train-30"><span class="linenos">30</span></a>
-</span><span id="Trainer.train-31"><a href="#Trainer.train-31"><span class="linenos">31</span></a><span class="sd">        Returns:</span>
-</span><span id="Trainer.train-32"><a href="#Trainer.train-32"><span class="linenos">32</span></a><span class="sd">            Standardized training output.</span>
-</span><span id="Trainer.train-33"><a href="#Trainer.train-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Trainer.train-34"><a href="#Trainer.train-34"><span class="linenos">34</span></a>        <span class="o">...</span>
+</span><span id="Trainer.train-20"><a href="#Trainer.train-20"><span class="linenos">20</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="Trainer.train-21"><a href="#Trainer.train-21"><span class="linenos">21</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+</span><span id="Trainer.train-22"><a href="#Trainer.train-22"><span class="linenos">22</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="Trainer.train-23"><a href="#Trainer.train-23"><span class="linenos">23</span></a>        <span class="n">search_dir</span><span class="p">:</span> <span class="n">Path</span>
+</span><span id="Trainer.train-24"><a href="#Trainer.train-24"><span class="linenos">24</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrainOutput</span><span class="p">:</span>
+</span><span id="Trainer.train-25"><a href="#Trainer.train-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Train model artifacts using provided configuration and runtime controls.</span>
+</span><span id="Trainer.train-26"><a href="#Trainer.train-26"><span class="linenos">26</span></a>
+</span><span id="Trainer.train-27"><a href="#Trainer.train-27"><span class="linenos">27</span></a><span class="sd">        Args:</span>
+</span><span id="Trainer.train-28"><a href="#Trainer.train-28"><span class="linenos">28</span></a><span class="sd">            model_cfg: Validated training model configuration.</span>
+</span><span id="Trainer.train-29"><a href="#Trainer.train-29"><span class="linenos">29</span></a><span class="sd">            strict: Whether data/validation loading should fail strictly.</span>
+</span><span id="Trainer.train-30"><a href="#Trainer.train-30"><span class="linenos">30</span></a><span class="sd">            failure_management_dir: Directory for failure-management artifacts.</span>
+</span><span id="Trainer.train-31"><a href="#Trainer.train-31"><span class="linenos">31</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="Trainer.train-32"><a href="#Trainer.train-32"><span class="linenos">32</span></a><span class="sd">        Returns:</span>
+</span><span id="Trainer.train-33"><a href="#Trainer.train-33"><span class="linenos">33</span></a><span class="sd">            Standardized training output.</span>
+</span><span id="Trainer.train-34"><a href="#Trainer.train-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Trainer.train-35"><a href="#Trainer.train-35"><span class="linenos">35</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -180,9 +183,9 @@
 <p>Args:
     model_cfg: Validated training model configuration.
     strict: Whether data/validation loading should fail strictly.
-    failure_management_dir: Directory for failure-management artifacts.</p>
-
-<p>Returns:
+    failure_management_dir: Directory for failure-management artifacts.
+    snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
+Returns:
     Standardized training output.</p>
 </div>
 

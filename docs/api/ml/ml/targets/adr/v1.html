@@ -70,16 +70,16 @@
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the ADR regression target from booking records.&quot;&quot;&quot;</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return ADR target values with stable row identifiers.</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return ADR target values with stable entity keys.</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">        Args:</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">            data: Input booking dataframe containing ``adr`` and ``row_id``.</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">            data: Input booking dataframe containing ``adr`` and ``entity_key``.</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">        Returns:</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">            Dataframe with ADR target values and corresponding row identifiers.</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">            Dataframe with ADR target values and corresponding entity keys.</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;adr&quot;</span><span class="p">,</span> <span class="s2">&quot;row_id&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;adr&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_key</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -99,16 +99,16 @@
 </span><span id="AdrTargetV1-10"><a href="#AdrTargetV1-10"><span class="linenos">10</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the ADR regression target from booking records.&quot;&quot;&quot;</span>
 </span><span id="AdrTargetV1-11"><a href="#AdrTargetV1-11"><span class="linenos">11</span></a>
 </span><span id="AdrTargetV1-12"><a href="#AdrTargetV1-12"><span class="linenos">12</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="AdrTargetV1-13"><a href="#AdrTargetV1-13"><span class="linenos">13</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return ADR target values with stable row identifiers.</span>
+</span><span id="AdrTargetV1-13"><a href="#AdrTargetV1-13"><span class="linenos">13</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return ADR target values with stable entity keys.</span>
 </span><span id="AdrTargetV1-14"><a href="#AdrTargetV1-14"><span class="linenos">14</span></a>
 </span><span id="AdrTargetV1-15"><a href="#AdrTargetV1-15"><span class="linenos">15</span></a><span class="sd">        Args:</span>
-</span><span id="AdrTargetV1-16"><a href="#AdrTargetV1-16"><span class="linenos">16</span></a><span class="sd">            data: Input booking dataframe containing ``adr`` and ``row_id``.</span>
+</span><span id="AdrTargetV1-16"><a href="#AdrTargetV1-16"><span class="linenos">16</span></a><span class="sd">            data: Input booking dataframe containing ``adr`` and ``entity_key``.</span>
 </span><span id="AdrTargetV1-17"><a href="#AdrTargetV1-17"><span class="linenos">17</span></a>
 </span><span id="AdrTargetV1-18"><a href="#AdrTargetV1-18"><span class="linenos">18</span></a><span class="sd">        Returns:</span>
-</span><span id="AdrTargetV1-19"><a href="#AdrTargetV1-19"><span class="linenos">19</span></a><span class="sd">            Dataframe with ADR target values and corresponding row identifiers.</span>
+</span><span id="AdrTargetV1-19"><a href="#AdrTargetV1-19"><span class="linenos">19</span></a><span class="sd">            Dataframe with ADR target values and corresponding entity keys.</span>
 </span><span id="AdrTargetV1-20"><a href="#AdrTargetV1-20"><span class="linenos">20</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="AdrTargetV1-21"><a href="#AdrTargetV1-21"><span class="linenos">21</span></a>
-</span><span id="AdrTargetV1-22"><a href="#AdrTargetV1-22"><span class="linenos">22</span></a>        <span class="k">return</span> <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;adr&quot;</span><span class="p">,</span> <span class="s2">&quot;row_id&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span id="AdrTargetV1-22"><a href="#AdrTargetV1-22"><span class="linenos">22</span></a>        <span class="k">return</span> <span class="n">data</span><span class="p">[[</span><span class="s2">&quot;adr&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">entity_key</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -120,7 +120,9 @@
                                 <h5>Inherited Members</h5>
                                 <dl>
                                     <div><dt><a href="../base.html#TargetStrategy">ml.targets.base.TargetStrategy</a></dt>
-                                <dd id="AdrTargetV1.REQUIRED_COLUMNS" class="variable"><a href="../base.html#TargetStrategy.REQUIRED_COLUMNS">REQUIRED_COLUMNS</a></dd>
+                                <dd id="AdrTargetV1.__init__" class="function"><a href="../base.html#TargetStrategy.__init__">TargetStrategy</a></dd>
+                <dd id="AdrTargetV1.entity_key" class="variable"><a href="../base.html#TargetStrategy.entity_key">entity_key</a></dd>
+                <dd id="AdrTargetV1.REQUIRED_COLUMNS" class="variable"><a href="../base.html#TargetStrategy.REQUIRED_COLUMNS">REQUIRED_COLUMNS</a></dd>
                 <dd id="AdrTargetV1.build" class="function"><a href="../base.html#TargetStrategy.build">build</a></dd>
 
             </div>

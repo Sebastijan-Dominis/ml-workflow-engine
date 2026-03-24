@@ -19,7 +19,7 @@ def test_merge_dataset_into_main_raises_when_merge_key_missing_in_dataset() -> N
         merge_dataset_into_main(
             main_df,
             incoming_df,
-            merge_key=["row_id"],
+            merge_key="row_id",
             dataset_name="booking_context_features",
             dataset_version="v1",
             dataset_snapshot_path=Path("snapshot"),
@@ -36,7 +36,7 @@ def test_merge_dataset_into_main_raises_when_main_lacks_merge_key_and_not_empty(
         merge_dataset_into_main(
             main_df,
             incoming_df,
-            merge_key=["row_id"],
+            merge_key="row_id",
             dataset_name="pricing_party_features",
             dataset_version="v2",
             dataset_snapshot_path=Path("snapshot"),
@@ -63,7 +63,7 @@ def test_merge_dataset_into_main_returns_incoming_data_when_main_is_empty(
     merged, data_hash = merge_dataset_into_main(
         main_df,
         incoming_df,
-        merge_key=["row_id"],
+        merge_key="row_id",
         dataset_name="customer_history_features",
         dataset_version="v1",
         dataset_snapshot_path=Path("snapshot-001"),
@@ -99,7 +99,7 @@ def test_merge_dataset_into_main_drops_overlapping_non_key_columns_before_merge(
     merged, data_hash = merge_dataset_into_main(
         main_df,
         incoming_df,
-        merge_key=["row_id"],
+        merge_key="row_id",
         dataset_name="room_allocation_features",
         dataset_version="v3",
         dataset_snapshot_path=Path("snapshot-003"),
@@ -128,7 +128,7 @@ def test_merge_dataset_into_main_raises_when_inner_merge_result_is_empty(
     merged, data_hash = merge_dataset_into_main(
         main_df,
         incoming_df,
-        merge_key=["row_id"],
+        merge_key="row_id",
         dataset_name="channel_features",
         dataset_version="v5",
         dataset_snapshot_path=Path("snapshot-005"),

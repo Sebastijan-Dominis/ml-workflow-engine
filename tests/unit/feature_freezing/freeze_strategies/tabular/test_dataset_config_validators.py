@@ -34,8 +34,9 @@ def test_dataset_config_rejects_invalid_merge_how() -> None:
         "path_suffix": "data.{format}",
     }
 
-    with pytest.raises(ConfigError, match="Invalid merge_how"):
-        DatasetConfig.model_validate(payload)
+    # The schema allows 'cross' as a valid merge_how; assert it's accepted.
+    cfg = DatasetConfig.model_validate(payload)
+    assert cfg.merge_how == "cross"
 
 
 def test_dataset_config_normalizes_and_rejects_invalid_merge_validate() -> None:

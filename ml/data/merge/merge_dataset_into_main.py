@@ -17,6 +17,11 @@ from ml.utils.loaders import load_json
 
 logger = logging.getLogger(__name__)
 
+def normalize_keys(key: str | tuple[str, ...]) -> list[str]:
+    if isinstance(key, tuple):
+        return list(key)
+    return [key]
+
 def build_dataset_dag(datasets: list[DatasetConfig]) -> list[str]:
     """Build DAG and return topological merge order."""
     G = nx.DiGraph()
@@ -46,7 +51,7 @@ def merge_dataset_into_main(
     data: pd.DataFrame,
     df: pd.DataFrame,
     *,
-    merge_key: str | list[str],
+    merge_key: str | tuple[str, ...],
     merge_how: MergeHow = "inner",
     merge_validate: MergeValidate = "m:m",
     dataset_name: str,
@@ -79,14 +84,14 @@ def merge_dataset_into_main(
         dataset-level merge diagnostics/warnings.
     """
 
-    missing_keys_in_df = set(merge_key) - set(df.columns)
+    missing_keys_in_df = set(normalize_keys(merge_key)) - set(df.columns)
     if missing_keys_in_df:
         msg = f"Dataset {dataset_name} is missing merge key(s): {missing_keys_in_df}"
         logger.error(msg)
         raise DataError(msg)
 
     if not data.empty:
-        missing_keys_in_main = set(merge_key) - set(data.columns)
+        missing_keys_in_main = set(normalize_keys(merge_key)) - set(data.columns)
         if missing_keys_in_main:
             msg = f"Merge key(s) {missing_keys_in_main} not found in main dataset when merging {dataset_name}"
             logger.error(msg)
@@ -94,7 +99,7 @@ def merge_dataset_into_main(
 
     original_rows = len(data) if not data.empty else 0
 
-    overlapping_cols = set(data.columns) & set(df.columns) - set(merge_key)
+    overlapping_cols = set(data.columns) & set(df.columns) - set(normalize_keys(merge_key))
     if overlapping_cols:
         logger.warning(f"Dropping overlapping columns {overlapping_cols} from dataset {dataset_name} before merge")
         df = df.drop(columns=overlapping_cols)
@@ -123,7 +128,7 @@ def merge_dataset_into_main(
         )
 
     if merge_key:
-        data = data.sort_values(by=merge_key).reset_index(drop=True)
+        data = data.sort_values(by=normalize_keys(merge_key)).reset_index(drop=True)
 
     dataset_metadata = load_json(dataset_snapshot_path / "metadata.json")
     data_hash = validate_data(data_path=dataset_path, metadata=dataset_metadata)

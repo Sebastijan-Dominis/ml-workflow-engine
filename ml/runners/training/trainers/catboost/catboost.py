@@ -73,7 +73,7 @@ class CatBoostTrainer(Trainer):
 
         stats: DataStats
 
-        X, y, lineage = load_features_and_target(
+        X, y, lineage, _ = load_features_and_target(
             model_cfg,
             snapshot_selection=None,
             snapshot_binding_key=snapshot_binding_key,

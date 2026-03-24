@@ -18,7 +18,7 @@ from ml.exceptions import EvaluationError
 from ml.features.transforms.transform_target import inverse_transform_target
 from ml.runners.evaluation.constants.data_splits import DataSplits
 from ml.runners.evaluation.models.predictions import PredictionArtifacts
-from ml.runners.evaluation.utils.get_row_ids import get_row_ids
+from ml.runners.evaluation.utils.get_entity_keys import get_entity_keys
 from ml.runners.shared.formatting.ensure_1d_array import ensure_1d_array
 
 logger = logging.getLogger(__name__)
@@ -63,9 +63,10 @@ def evaluate_split(
     X: pd.DataFrame,
     y: pd.Series,
     *,
-    split_row_ids: pd.Series,
+    split_entity_keys: pd.Series,
     split_name: str,
     transform_cfg: TargetTransformConfig,
+    entity_key: str,
 ) -> tuple[dict[str, float], pd.DataFrame]:
     """Evaluate one split and return metrics and per-row prediction output.
 
@@ -73,9 +74,10 @@ def evaluate_split(
         pipeline: Fitted model pipeline.
         X: Split features.
         y: Split target values.
-        split_row_ids: Row identifiers for split records.
+        split_entity_keys: Row identifiers for split records.
         split_name: Split label.
         transform_cfg: Target-transform configuration for inverse transform.
+        entity_key: The name of the entity key column to extract.
 
     Returns:
         tuple[dict[str, float], pd.DataFrame]: Split metrics and prediction dataframe.
@@ -100,7 +102,7 @@ def evaluate_split(
 
     # Create prediction dataframe
     df_preds = pd.DataFrame({
-        "row_id": split_row_ids,
+        "entity_key": split_entity_keys,
         "split": split_name,
         "y_true": y,
         "y_pred": y_pred,
@@ -115,6 +117,7 @@ def evaluate_model(
     pipeline: Pipeline,
     data_splits: DataSplits,
     transform_cfg: TargetTransformConfig,
+    entity_key: str,
 ) -> tuple[dict[str, dict[str, float]], PredictionArtifacts]:
     """Evaluate all splits and aggregate regression metrics/predictions.
 
@@ -132,10 +135,10 @@ def evaluate_model(
 
     for split_name, (X, y) in data_splits.__dict__.items():
 
-        split_row_ids = get_row_ids(X)
+        split_entity_keys = get_entity_keys(X, entity_key=entity_key)
 
-        if "row_id" in X.columns:
-            X = X.drop(columns=["row_id"])
+        if entity_key in X.columns:
+            X = X.drop(columns=[entity_key])
 
         logger.debug(
             f"Evaluating regression split '{split_name}' with {len(y)} samples."
@@ -145,9 +148,10 @@ def evaluate_model(
             pipeline=pipeline,
             X=X,
             y=y,
-            split_row_ids=split_row_ids,
+            split_entity_keys=split_entity_keys,
             split_name=split_name,
             transform_cfg=transform_cfg,
+            entity_key=entity_key
         )
 
         evaluation_metrics[split_name] = metrics

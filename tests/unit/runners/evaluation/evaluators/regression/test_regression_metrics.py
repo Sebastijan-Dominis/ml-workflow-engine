@@ -64,15 +64,16 @@ def test_evaluate_split_applies_inverse_transform_and_builds_predictions_df(
         cast(Pipeline, pipeline),
         X,
         y,
-        split_row_ids=pd.Series(["r1", "r2"]),
+        split_entity_keys=pd.Series(["r1", "r2"]),
         split_name="val",
         transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
+        entity_key="entity_key",
     )
 
     # After inverse transform (+1), predictions become [1.0, 2.0] for y_true [2.0, 3.0].
     assert metrics["mae"] == pytest.approx(1.0)
     assert metrics["rmse"] == pytest.approx(1.0)
-    assert df_preds.columns.tolist() == ["row_id", "split", "y_true", "y_pred", "residual"]
+    assert df_preds.columns.tolist() == ["entity_key", "split", "y_true", "y_pred", "residual"]
     assert df_preds["split"].tolist() == ["val", "val"]
     assert df_preds["y_pred"].tolist() == [1.0, 2.0]
     assert df_preds["residual"].tolist() == [1.0, 1.0]
@@ -82,17 +83,17 @@ def test_evaluate_model_aggregates_splits_and_prediction_artifacts(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Evaluate train/val/test splits and return typed prediction artifacts."""
-    X = pd.DataFrame({"row_id": ["r1", "r2"], "f": [1.0, 2.0]})
+    X = pd.DataFrame({"entity_key": ["r1", "r2"], "f": [1.0, 2.0]})
     y = pd.Series([1.0, 2.0])
     splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
 
-    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+    monkeypatch.setattr(module, "get_entity_keys", lambda frame, entity_key: frame[entity_key].copy())
 
     def _eval_split(**kwargs: Any) -> tuple[dict[str, float], pd.DataFrame]:
         split_name = kwargs["split_name"]
         df = pd.DataFrame(
             {
-                "row_id": ["r1", "r2"],
+                "entity_key": ["r1", "r2"],
                 "split": [split_name, split_name],
                 "y_true": [1.0, 2.0],
                 "y_pred": [1.0, 2.0],
@@ -107,6 +108,7 @@ def test_evaluate_model_aggregates_splits_and_prediction_artifacts(
         pipeline=cast(Pipeline, SimpleNamespace()),
         data_splits=splits,
         transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
+        entity_key="entity_key",
     )
 
     assert set(metrics.keys()) == {"train", "val", "test"}
@@ -119,15 +121,14 @@ def test_evaluate_model_wraps_prediction_artifact_type_errors(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Wrap ``PredictionArtifacts`` constructor type errors as ``EvaluationError``."""
-    X = pd.DataFrame({"row_id": ["r1"], "f": [1.0]})
+    X = pd.DataFrame({"entity_key": ["r1"], "f": [1.0]})
     y = pd.Series([1.0])
     splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
-
-    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+    monkeypatch.setattr(module, "get_entity_keys", lambda frame, entity_key: frame[entity_key].copy())
     monkeypatch.setattr(
         module,
         "evaluate_split",
-        lambda **kwargs: ({"rmse": 0.0}, pd.DataFrame({"row_id": ["r1"], "split": [kwargs["split_name"]]})),
+        lambda **kwargs: ({"rmse": 0.0}, pd.DataFrame({"entity_key": ["r1"], "split": [kwargs["split_name"]]})),
     )
 
     class _FailingArtifacts:
@@ -144,6 +145,7 @@ def test_evaluate_model_wraps_prediction_artifact_type_errors(
             pipeline=cast(Pipeline, SimpleNamespace()),
             data_splits=splits,
             transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
+            entity_key="entity_key",
         )
 
 
@@ -155,7 +157,7 @@ def test_evaluate_model_drops_row_id_before_split_evaluation(
     y = pd.Series([1.0, 2.0])
     splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
 
-    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+    monkeypatch.setattr(module, "get_entity_keys", lambda frame, entity_key: frame[entity_key].copy())
 
     seen_columns: dict[str, list[str]] = {}
 
@@ -171,6 +173,7 @@ def test_evaluate_model_drops_row_id_before_split_evaluation(
         pipeline=cast(Pipeline, SimpleNamespace()),
         data_splits=splits,
         transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
+        entity_key="row_id",
     )
 
     assert seen_columns == {"train": ["f"], "val": ["f"], "test": ["f"]}
@@ -180,15 +183,14 @@ def test_evaluate_model_wraps_prediction_artifact_runtime_errors(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Wrap non-``TypeError`` artifact-construction failures as ``EvaluationError``."""
-    X = pd.DataFrame({"row_id": ["r1"], "f": [1.0]})
+    X = pd.DataFrame({"entity_key": ["r1"], "f": [1.0]})
     y = pd.Series([1.0])
     splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
-
-    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+    monkeypatch.setattr(module, "get_entity_keys", lambda frame, entity_key: frame[entity_key].copy())
     monkeypatch.setattr(
         module,
         "evaluate_split",
-        lambda **kwargs: ({"rmse": 0.0}, pd.DataFrame({"row_id": ["r1"], "split": [kwargs["split_name"]]})),
+        lambda **kwargs: ({"rmse": 0.0}, pd.DataFrame({"entity_key": ["r1"], "split": [kwargs["split_name"]]})),
     )
 
     class _FailingArtifacts:
@@ -205,4 +207,5 @@ def test_evaluate_model_wraps_prediction_artifact_runtime_errors(
             pipeline=cast(Pipeline, SimpleNamespace()),
             data_splits=splits,
             transform_cfg=TargetTransformConfig(enabled=False, type=None, lambda_value=None),
+            entity_key="entity_key",
         )

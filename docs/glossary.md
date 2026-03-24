@@ -62,7 +62,7 @@ Definitions of domain-specific terms and abbreviations.
     2. A moment in time during model training (e.g. catboost training snapshot) - used to continue training from the last saved "checkpoint" (iteration) in case of an unexpected failure (like a power shutdown).
 - **Run**: An execution of a pipeline (python script). Usually each run generates a new snapshot, but search and training runs are allowed to continue in case they fail mid-way.
 - **Interim Dataset**: A dataset that is the same as the raw data, but has been optimized to be more memory-efficient.
-- **Processed Dataset**: A dataset that is ready for production (feature freezing, creating the target variable). Within this repo, that means row_id is present and the leaky columns are dropped (unless there is a specific reason to keep them).
+- **Processed Dataset**: A dataset that is ready for production (feature freezing, creating the target variable). Within this repo, that means row_id is present (if required) and the leaky columns are dropped (unless there is a specific reason to keep them).
 - **Feature Set**: A logically connected group of features that may come from one or more datasets.
 - **Feature Freezing**: A process of grouping features into a feature set based on given snapshot(s) of one or more datasets, then performing some operations on them, and then storing them. Frozen feature sets are not meant to ever be altered.
 - **Feature Engineering**: A process of creating new features, usually (and within this repo exclusively) based on the existing ones.

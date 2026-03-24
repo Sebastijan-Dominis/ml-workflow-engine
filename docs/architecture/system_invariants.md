@@ -56,9 +56,9 @@
 
 ## Feature Set Integrity
 
-### row_id Presence
+### Entity Key Presence
 
-- Each frozen feature set must contain a row_id column.
+- Each frozen feature set must contain a Entity Key column.
 
 ### Schema Integrity
 

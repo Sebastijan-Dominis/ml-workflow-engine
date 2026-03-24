@@ -82,7 +82,7 @@ class ExplainTreeModel(Explainer):
             snapshot_binding_key=None
         )
 
-        X, y, feature_lineage = load_features_and_target(model_cfg, snapshot_selection=snapshot_selection, strict=True)
+        X, y, feature_lineage, _ = load_features_and_target(model_cfg, snapshot_selection=snapshot_selection, strict=True)
         splits, splits_info = get_splits(
             X=X,
             y=y,

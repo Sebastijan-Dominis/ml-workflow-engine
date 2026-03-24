@@ -33,7 +33,7 @@ class ClassificationEvaluator(Evaluator):
         model_cfg: TrainModelConfig,
         strict: bool,
         best_threshold: float | None,
-        train_dir: Path
+        train_dir: Path,
     ) -> EvaluateOutput:
         """Load artifacts and data, run split-wise evaluation, return outputs.
 
@@ -42,6 +42,7 @@ class ClassificationEvaluator(Evaluator):
             strict: Whether data-loading checks should fail strictly.
             best_threshold: Optional decision threshold for binary classification.
             train_dir: Directory containing training artifacts and metadata.
+            entity_key: The name of the entity key column to extract.
 
         Returns:
             Evaluation output with metrics, predictions, and feature lineage.
@@ -95,10 +96,10 @@ class ClassificationEvaluator(Evaluator):
             snapshot_binding=snapshot_binding,
             snapshot_binding_key=None
         )
-        X, y, feature_lineage = load_features_and_target(
+        X, y, feature_lineage, entity_key = load_features_and_target(
             model_cfg,
             snapshot_selection=snapshot_selection,
-            drop_row_id=False,
+            drop_entity_key=False,
             strict=strict
         )
 
@@ -129,7 +130,8 @@ class ClassificationEvaluator(Evaluator):
             model_cfg,
             pipeline=pipeline,
             data_splits=data_splits,
-            best_threshold=best_threshold
+            best_threshold=best_threshold,
+            entity_key=entity_key
         )
 
         output = EvaluateOutput(

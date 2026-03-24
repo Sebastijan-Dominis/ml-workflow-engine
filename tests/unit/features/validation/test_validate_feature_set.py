@@ -13,6 +13,7 @@ pytestmark = pytest.mark.unit
 def _metadata(*, schema: str = "schema-ok", in_memory: str = "mem-ok", file_hash: str = "file-ok") -> dict:
     """Build metadata payloads used by feature-set validation tests."""
     return {
+        "entity_key": "entity_key",
         "feature_schema_hash": schema,
         "in_memory_hash": in_memory,
         "file_hash": file_hash,
@@ -20,10 +21,10 @@ def _metadata(*, schema: str = "schema-ok", in_memory: str = "mem-ok", file_hash
 
 
 def test_validate_feature_set_raises_when_row_id_column_missing() -> None:
-    """Reject feature sets that do not include the mandatory `row_id` column."""
+    """Reject feature sets that do not include the mandatory `entity_key` column."""
     feature_set = pd.DataFrame({"feature_a": [1, 2]})
 
-    with pytest.raises(DataError, match="missing required 'row_id' column"):
+    with pytest.raises(DataError, match="missing required 'entity_key' column"):
         validate_feature_set(
             feature_set,
             metadata=_metadata(),
@@ -36,7 +37,7 @@ def test_validate_feature_set_raises_on_schema_hash_mismatch(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Fail validation when computed schema hash differs from metadata contract."""
-    feature_set = pd.DataFrame({"row_id": [1, 2], "feature_a": [10.0, 20.0]})
+    feature_set = pd.DataFrame({"entity_key": [1, 2], "feature_a": [10.0, 20.0]})
 
     import pandas as _pd
     monkeypatch.setattr(
@@ -61,7 +62,7 @@ def test_validate_feature_set_strict_false_skips_in_memory_and_file_hash_checks(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Allow validation to pass with strict mode disabled after schema check succeeds."""
-    feature_set = pd.DataFrame({"row_id": [1, 2], "feature_a": [10.0, 20.0]})
+    feature_set = pd.DataFrame({"entity_key": [1, 2], "feature_a": [10.0, 20.0]})
 
     import pandas as _pd
     monkeypatch.setattr(
@@ -98,7 +99,7 @@ def test_validate_feature_set_logs_warning_for_in_memory_hash_mismatch_only(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Warn on in-memory hash mismatch but continue when file hash still matches."""
-    feature_set = pd.DataFrame({"row_id": [1, 2], "feature_a": [10.0, 20.0]})
+    feature_set = pd.DataFrame({"entity_key": [1, 2], "feature_a": [10.0, 20.0]})
 
 
     import pandas as _pd
@@ -134,7 +135,7 @@ def test_validate_feature_set_raises_on_file_hash_mismatch_in_strict_mode(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Raise DataError when strict validation detects persisted-file hash drift."""
-    feature_set = pd.DataFrame({"row_id": [1, 2], "feature_a": [10.0, 20.0]})
+    feature_set = pd.DataFrame({"entity_key": [1, 2], "feature_a": [10.0, 20.0]})
 
 
     import pandas as _pd

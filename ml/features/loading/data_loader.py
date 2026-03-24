@@ -70,18 +70,21 @@ def load_and_validate_data(input_lineage: Iterable[DataLineageEntry]) -> pd.Data
         raise ConfigError(msg)
 
     # Build dataset dict and normalize merge_key
-    dataset_dict = {}
+    dataset_dict: dict[str, tuple[DataLineageEntry, str | tuple[str, ...]]] = {}
     for ds in input_lineage:
         if ds.format not in HASH_LOADER_REGISTRY:
             msg = f"Unsupported data format for loading and hashing: {ds.format}"
             logger.error(msg)
             raise ConfigError(msg)
 
-        # Normalize merge_key to list
+        # Normalize merge_key to either `str` or `tuple[str, ...]` so the
+        # downstream calls and type-checking remain consistent. Keep the
+        # original `ds.merge_key` semantics but avoid using `list` here to
+        # satisfy mypy's expected types (tuple | str).
         merge_key = ds.merge_key
-        if isinstance(merge_key, str):
-            merge_key = [merge_key]
-        dataset_dict[ds.name] = (ds, merge_key)
+        normalized_merge_key: str | tuple[str, ...] = merge_key if isinstance(merge_key, str) else tuple(merge_key)
+
+        dataset_dict[ds.name] = (ds, normalized_merge_key)
 
     # Determine merge order via DAG
     datasets_for_dag = []

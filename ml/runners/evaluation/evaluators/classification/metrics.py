@@ -22,7 +22,7 @@ from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import EvaluationError, PipelineContractError, UserError
 from ml.runners.evaluation.constants.data_splits import DataSplits
 from ml.runners.evaluation.models.predictions import PredictionArtifacts
-from ml.runners.evaluation.utils.get_row_ids import get_row_ids
+from ml.runners.evaluation.utils.get_entity_keys import get_entity_keys
 
 logger = logging.getLogger(__name__)
 
@@ -153,7 +153,7 @@ def evaluate_split(
     X: pd.DataFrame,
     y: pd.Series,
     *,
-    split_row_ids: pd.Series,
+    split_entity_keys: pd.Series,
     split_name: str,
     best_threshold: float | None
 ) -> tuple[dict[str, float], pd.DataFrame]: # default threshold=0.5
@@ -163,7 +163,7 @@ def evaluate_split(
         pipeline: Fitted model pipeline.
         X: Split features.
         y: Split target labels.
-        split_row_ids: Row identifiers corresponding to split records.
+        split_entity_keys: Entity keys corresponding to split records.
         split_name: Split label (train/val/test).
         best_threshold: Decision threshold for positive-class prediction.
 
@@ -193,7 +193,7 @@ def evaluate_split(
     metrics = compute_metrics(y, y_pred, y_prob, threshold=best_threshold)
 
     df_preds = pd.DataFrame({
-        "row_id": split_row_ids,
+        "entity_key": split_entity_keys,
         "split": split_name,
         "y_true": y,
         "y_pred": y_pred,
@@ -207,7 +207,8 @@ def evaluate_model(
     *,
     pipeline: Pipeline,
     data_splits: DataSplits,
-    best_threshold: float | None
+    best_threshold: float | None,
+    entity_key: str
 ) -> tuple[dict[str, dict[str, float]], PredictionArtifacts]:
     """Evaluate all configured splits and aggregate metrics/prediction frames.
 
@@ -216,7 +217,7 @@ def evaluate_model(
         pipeline: Fitted model pipeline.
         data_splits: Data split container.
         best_threshold: Decision threshold for positive-class prediction.
-
+        entity_key: The name of the entity key column to extract.
     Returns:
         tuple[dict[str, dict[str, float]], PredictionArtifacts]: Metrics and predictions by split.
     """
@@ -228,15 +229,15 @@ def evaluate_model(
     # Evaluate each data split
     for split_name, (X, y) in data_splits.__dict__.items():
         if model_cfg.task.subtype and model_cfg.task.subtype.lower() == "binary":
-            split_row_ids = get_row_ids(X)
-            if "row_id" in X.columns:
-                X = X.drop(columns=["row_id"])
+            split_entity_keys = get_entity_keys(X, entity_key)
+            if entity_key in X.columns:
+                X = X.drop(columns=[entity_key])
             logger.debug(f"Evaluating split '{split_name}' with best_threshold={best_threshold} and {len(y)} samples.")
             metrics, df_preds = evaluate_split(
                 pipeline=pipeline,
                 X=X,
                 y=y,
-                split_row_ids=split_row_ids,
+                split_entity_keys=split_entity_keys,
                 split_name=split_name,
                 best_threshold=best_threshold
             )

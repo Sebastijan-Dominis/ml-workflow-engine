@@ -32,8 +32,9 @@ def validate_feature_set(
         None.
     """
 
-    if "row_id" not in feature_set.columns:
-        msg = f"Feature set loaded from {file_path} is missing required 'row_id' column."
+    entity_key = metadata.get("entity_key")
+    if entity_key not in feature_set.columns:
+        msg = f"Feature set loaded from {file_path} is missing required 'entity_key' column."
         logger.error(msg)
         raise DataError(msg)
 

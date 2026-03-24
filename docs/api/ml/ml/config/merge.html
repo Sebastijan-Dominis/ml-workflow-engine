@@ -159,7 +159,7 @@
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        dict[str, Any]: Configuration after applying env overlay.</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">env</span><span class="p">:</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">env</span> <span class="ow">or</span> <span class="n">env</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="k">if</span> <span class="n">skip_missing</span><span class="p">:</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No environment specified; skipping env overlay.&quot;</span><span class="p">)</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>            <span class="k">return</span> <span class="n">cfg</span>
@@ -341,7 +341,7 @@
 </span><span id="apply_env_overlay-93"><a href="#apply_env_overlay-93"><span class="linenos"> 93</span></a><span class="sd">        dict[str, Any]: Configuration after applying env overlay.</span>
 </span><span id="apply_env_overlay-94"><a href="#apply_env_overlay-94"><span class="linenos"> 94</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="apply_env_overlay-95"><a href="#apply_env_overlay-95"><span class="linenos"> 95</span></a>
-</span><span id="apply_env_overlay-96"><a href="#apply_env_overlay-96"><span class="linenos"> 96</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">env</span><span class="p">:</span>
+</span><span id="apply_env_overlay-96"><a href="#apply_env_overlay-96"><span class="linenos"> 96</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">env</span> <span class="ow">or</span> <span class="n">env</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;default&quot;</span><span class="p">:</span>
 </span><span id="apply_env_overlay-97"><a href="#apply_env_overlay-97"><span class="linenos"> 97</span></a>        <span class="k">if</span> <span class="n">skip_missing</span><span class="p">:</span>
 </span><span id="apply_env_overlay-98"><a href="#apply_env_overlay-98"><span class="linenos"> 98</span></a>            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No environment specified; skipping env overlay.&quot;</span><span class="p">)</span>
 </span><span id="apply_env_overlay-99"><a href="#apply_env_overlay-99"><span class="linenos"> 99</span></a>            <span class="k">return</span> <span class="n">cfg</span>

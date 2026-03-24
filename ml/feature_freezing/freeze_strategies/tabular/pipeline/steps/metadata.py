@@ -107,7 +107,8 @@ class MetadataStep(PipelineStep[FreezeContext]):
             runtime = runtime,
             features = features,
             duration = duration,
-            owner = ctx.owner
+            owner = ctx.owner,
+            entity_key = ctx.config.entity_key
         )
 
         ctx.metadata = metadata

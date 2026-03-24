@@ -55,7 +55,7 @@ class DatasetConfig(BaseModel):
 
     @field_validator("merge_how")
     def validate_merge_how(cls, v):
-        if v not in {"inner", "left", "right", "outer"}:
+        if v not in {"inner", "left", "right", "outer", "cross"}:
             raise ConfigError(f"Invalid merge_how: {v}")
         return v
 
@@ -114,6 +114,7 @@ class TabularFeaturesConfig(BaseModel):
 
     type: str = "tabular"
     description: str | None = None
+    entity_key: str = "row_id"
     data: list[DatasetConfig]
     min_rows: int = Field(default=1000, ge=0)
     feature_store_path: Path

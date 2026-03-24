@@ -29,15 +29,16 @@ TARGET_STRATEGIES: dict[
 
 logger = logging.getLogger(__name__)
 
-def get_target_with_row_id(data: pd.DataFrame, key: tuple[str, str]) -> pd.DataFrame:
-    """Build target dataframe with `row_id` using a registry-resolved strategy.
+def get_target_with_entity_key(data: pd.DataFrame, key: tuple[str, str], entity_key: str) -> pd.DataFrame:
+    """Build target dataframe with `entity_key` using a registry-resolved strategy.
 
     Args:
         data: Source dataframe containing raw columns required for target derivation.
         key: Target strategy registry key as ``(target_name, target_version)``.
+        entity_key: The name of the entity key column to use for traceability.
 
     Returns:
-        pd.DataFrame: Target dataframe including the `row_id` column.
+        pd.DataFrame: Target dataframe including the `entity_key` column.
     """
 
     if key not in TARGET_STRATEGIES:
@@ -46,5 +47,5 @@ def get_target_with_row_id(data: pd.DataFrame, key: tuple[str, str]) -> pd.DataF
         raise ConfigError(msg)
 
     target_strategy_cls = TARGET_STRATEGIES[key]
-    target_strategy = target_strategy_cls()
+    target_strategy = target_strategy_cls(entity_key=entity_key)
     return target_strategy.build(data)

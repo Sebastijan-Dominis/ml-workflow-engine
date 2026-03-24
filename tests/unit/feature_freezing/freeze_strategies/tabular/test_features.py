@@ -53,38 +53,38 @@ def features_module(monkeypatch: pytest.MonkeyPatch):
 
 def _config_stub(columns: list[str]) -> Any:
     """Create minimal config-like object exposing selected feature columns."""
-    return cast(Any, SimpleNamespace(columns=columns))
+    return cast(Any, SimpleNamespace(columns=columns, entity_key="entity_key"))
 
 
 def test_prepare_features_raises_when_row_id_missing(features_module) -> None:
-    """Reject source dataframes that do not include required `row_id` key."""
+    """Reject source dataframes that do not include required `entity_key` key."""
     data = pd.DataFrame({"x": [1, 2]})
 
-    with pytest.raises(DataError, match="must contain 'row_id'"):
+    with pytest.raises(DataError, match="must contain 'entity_key'"):
         features_module.prepare_features(data, _config_stub(columns=["x"]))
 
 
 def test_prepare_features_raises_when_required_columns_missing(features_module) -> None:
     """Reject source dataframes when configured feature columns are absent."""
-    data = pd.DataFrame({"row_id": [1, 2], "x": [1, 2]})
+    data = pd.DataFrame({"entity_key": [1, 2], "x": [1, 2]})
 
     with pytest.raises(DataError, match="Missing required columns"):
         features_module.prepare_features(data, _config_stub(columns=["x", "y"]))
 
 
 def test_prepare_features_returns_row_id_plus_configured_columns(features_module) -> None:
-    """Return copied frame containing row_id and ordered configured columns."""
-    data = pd.DataFrame({"row_id": [1, 2], "x": [10, 20], "z": [0, 0]})
+    """Return copied frame containing entity_key and ordered configured columns."""
+    data = pd.DataFrame({"entity_key": [1, 2], "x": [10, 20], "z": [0, 0]})
 
     out = features_module.prepare_features(data, _config_stub(columns=["x"]))
 
-    assert out.columns.tolist() == ["row_id", "x"]
-    assert out.equals(pd.DataFrame({"row_id": [1, 2], "x": [10, 20]}))
+    assert out.columns.tolist() == ["entity_key", "x"]
+    assert out.equals(pd.DataFrame({"entity_key": [1, 2], "x": [10, 20]}))
 
 
 def test_apply_operators_raises_when_required_features_are_missing(features_module) -> None:
     """Fail fast when required operator inputs are not present in feature frame."""
-    X = pd.DataFrame({"row_id": [1], "x": [5]})
+    X = pd.DataFrame({"entity_key": [1], "x": [5]})
 
     with pytest.raises(DataError, match="Missing required features"):
         features_module.apply_operators(
@@ -96,7 +96,7 @@ def test_apply_operators_raises_when_required_features_are_missing(features_modu
 
 def test_apply_operators_raises_for_unknown_operator_name(features_module) -> None:
     """Reject operator names that are not registered in FEATURE_OPERATORS."""
-    X = pd.DataFrame({"row_id": [1], "x": [5]})
+    X = pd.DataFrame({"entity_key": [1], "x": [5]})
 
     with pytest.raises(UserError, match="Unknown operator"):
         features_module.apply_operators(
@@ -112,7 +112,7 @@ def test_apply_operators_applies_registered_operators_in_order(features_module) 
     features_module.FEATURE_OPERATORS.clear()
     features_module.FEATURE_OPERATORS.update(monkeypatch_dict)
 
-    X = pd.DataFrame({"row_id": [1, 2], "x": [2, 3]})
+    X = pd.DataFrame({"entity_key": [1, 2], "x": [2, 3]})
 
     out = features_module.apply_operators(
         X,

@@ -63,7 +63,7 @@ def test_persist_feature_snapshot_creates_snapshot_dir_and_returns_paths(
             storage=SimpleNamespace(format="parquet", compression="snappy"),
         ),
     )
-    features = pd.DataFrame({"row_id": [1], "x": [2]})
+    features = pd.DataFrame({"entity_key": [1], "x": [2]})
 
     def _fake_freeze_parquet(path: Path, *, features: pd.DataFrame, compression: str | None = None) -> Path:
         return path / "features.parquet"
@@ -187,7 +187,7 @@ def test_persist_feature_snapshot_raises_for_unknown_storage_format(
     with pytest.raises(KeyError, match="csv"):
         persistence_module.persist_feature_snapshot(
             cfg,
-            features=pd.DataFrame({"row_id": [1], "x": [2]}),
+            features=pd.DataFrame({"entity_key": [1], "x": [2]}),
             snapshot_id="snapshot-unknown",
         )
 
@@ -223,6 +223,7 @@ def test_create_metadata_returns_validated_model_dump(
         features=pd.DataFrame({"x": [1, 2]}),
         duration=1.234,
         owner="tests",
+        entity_key="entity_key",
     )
 
     assert metadata == {"validated": True, "exclude_none": True}

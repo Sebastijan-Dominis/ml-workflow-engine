@@ -14,7 +14,7 @@ class DataLineageEntry:
     version: str
     format: str
     path_suffix: str
-    merge_key: list[str] | str
+    merge_key: tuple[str, ...] | str
     merge_how: MergeHow
     merge_validate: MergeValidate
     snapshot_id: str
@@ -23,3 +23,7 @@ class DataLineageEntry:
     data_hash: str
     row_count: int
     column_count: int
+
+    def __post_init__(self):
+        if isinstance(self.merge_key, list):
+            object.__setattr__(self, "merge_key", tuple(self.merge_key))

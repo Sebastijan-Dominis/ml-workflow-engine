@@ -84,20 +84,22 @@
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>        <span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>        <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FreezeOutput</span><span class="p">:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute time-series freeze workflow (not yet implemented).</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        Args:</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">            config: Time-series feature-freezing configuration.</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">            timestamp: Run timestamp string used for metadata and paths.</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">            snapshot_id: Unique snapshot identifier.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">            start_time: Process start time used for runtime metadata.</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">            owner: Owner identifier stored in snapshot metadata.</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        Returns:</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">            Freeze output containing persisted snapshot path and metadata.</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Time-series freeze not implemented yet&quot;</span><span class="p">)</span> <span class="c1"># To be implemented in the future</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FreezeOutput</span><span class="p">:</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute time-series freeze workflow (not yet implemented).</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        Args:</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">            config: Time-series feature-freezing configuration.</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">            timestamp: Run timestamp string used for metadata and paths.</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">            snapshot_id: Unique snapshot identifier.</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">            start_time: Process start time used for runtime metadata.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">            owner: Owner identifier stored in snapshot metadata.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        Returns:</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">            Freeze output containing persisted snapshot path and metadata.</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Time-series freeze not implemented yet&quot;</span><span class="p">)</span> <span class="c1"># To be implemented in the future</span>
 </span></pre></div>
 
 
@@ -135,20 +137,22 @@
 </span><span id="FreezeTimeSeries-18"><a href="#FreezeTimeSeries-18"><span class="linenos">18</span></a>        <span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="FreezeTimeSeries-19"><a href="#FreezeTimeSeries-19"><span class="linenos">19</span></a>        <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="FreezeTimeSeries-20"><a href="#FreezeTimeSeries-20"><span class="linenos">20</span></a>        <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="FreezeTimeSeries-21"><a href="#FreezeTimeSeries-21"><span class="linenos">21</span></a>        <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="FreezeTimeSeries-22"><a href="#FreezeTimeSeries-22"><span class="linenos">22</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FreezeOutput</span><span class="p">:</span>
-</span><span id="FreezeTimeSeries-23"><a href="#FreezeTimeSeries-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute time-series freeze workflow (not yet implemented).</span>
-</span><span id="FreezeTimeSeries-24"><a href="#FreezeTimeSeries-24"><span class="linenos">24</span></a>
-</span><span id="FreezeTimeSeries-25"><a href="#FreezeTimeSeries-25"><span class="linenos">25</span></a><span class="sd">        Args:</span>
-</span><span id="FreezeTimeSeries-26"><a href="#FreezeTimeSeries-26"><span class="linenos">26</span></a><span class="sd">            config: Time-series feature-freezing configuration.</span>
-</span><span id="FreezeTimeSeries-27"><a href="#FreezeTimeSeries-27"><span class="linenos">27</span></a><span class="sd">            timestamp: Run timestamp string used for metadata and paths.</span>
-</span><span id="FreezeTimeSeries-28"><a href="#FreezeTimeSeries-28"><span class="linenos">28</span></a><span class="sd">            snapshot_id: Unique snapshot identifier.</span>
-</span><span id="FreezeTimeSeries-29"><a href="#FreezeTimeSeries-29"><span class="linenos">29</span></a><span class="sd">            start_time: Process start time used for runtime metadata.</span>
-</span><span id="FreezeTimeSeries-30"><a href="#FreezeTimeSeries-30"><span class="linenos">30</span></a><span class="sd">            owner: Owner identifier stored in snapshot metadata.</span>
-</span><span id="FreezeTimeSeries-31"><a href="#FreezeTimeSeries-31"><span class="linenos">31</span></a><span class="sd">        Returns:</span>
-</span><span id="FreezeTimeSeries-32"><a href="#FreezeTimeSeries-32"><span class="linenos">32</span></a><span class="sd">            Freeze output containing persisted snapshot path and metadata.</span>
-</span><span id="FreezeTimeSeries-33"><a href="#FreezeTimeSeries-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FreezeTimeSeries-34"><a href="#FreezeTimeSeries-34"><span class="linenos">34</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Time-series freeze not implemented yet&quot;</span><span class="p">)</span> <span class="c1"># To be implemented in the future</span>
+</span><span id="FreezeTimeSeries-21"><a href="#FreezeTimeSeries-21"><span class="linenos">21</span></a>        <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="FreezeTimeSeries-22"><a href="#FreezeTimeSeries-22"><span class="linenos">22</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="FreezeTimeSeries-23"><a href="#FreezeTimeSeries-23"><span class="linenos">23</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FreezeOutput</span><span class="p">:</span>
+</span><span id="FreezeTimeSeries-24"><a href="#FreezeTimeSeries-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute time-series freeze workflow (not yet implemented).</span>
+</span><span id="FreezeTimeSeries-25"><a href="#FreezeTimeSeries-25"><span class="linenos">25</span></a>
+</span><span id="FreezeTimeSeries-26"><a href="#FreezeTimeSeries-26"><span class="linenos">26</span></a><span class="sd">        Args:</span>
+</span><span id="FreezeTimeSeries-27"><a href="#FreezeTimeSeries-27"><span class="linenos">27</span></a><span class="sd">            config: Time-series feature-freezing configuration.</span>
+</span><span id="FreezeTimeSeries-28"><a href="#FreezeTimeSeries-28"><span class="linenos">28</span></a><span class="sd">            timestamp: Run timestamp string used for metadata and paths.</span>
+</span><span id="FreezeTimeSeries-29"><a href="#FreezeTimeSeries-29"><span class="linenos">29</span></a><span class="sd">            snapshot_id: Unique snapshot identifier.</span>
+</span><span id="FreezeTimeSeries-30"><a href="#FreezeTimeSeries-30"><span class="linenos">30</span></a><span class="sd">            start_time: Process start time used for runtime metadata.</span>
+</span><span id="FreezeTimeSeries-31"><a href="#FreezeTimeSeries-31"><span class="linenos">31</span></a><span class="sd">            owner: Owner identifier stored in snapshot metadata.</span>
+</span><span id="FreezeTimeSeries-32"><a href="#FreezeTimeSeries-32"><span class="linenos">32</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="FreezeTimeSeries-33"><a href="#FreezeTimeSeries-33"><span class="linenos">33</span></a><span class="sd">        Returns:</span>
+</span><span id="FreezeTimeSeries-34"><a href="#FreezeTimeSeries-34"><span class="linenos">34</span></a><span class="sd">            Freeze output containing persisted snapshot path and metadata.</span>
+</span><span id="FreezeTimeSeries-35"><a href="#FreezeTimeSeries-35"><span class="linenos">35</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FreezeTimeSeries-36"><a href="#FreezeTimeSeries-36"><span class="linenos">36</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Time-series freeze not implemented yet&quot;</span><span class="p">)</span> <span class="c1"># To be implemented in the future</span>
 </span></pre></div>
 
 
@@ -161,7 +165,7 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">freeze</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">config</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">owner</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n"><a href="../constants/output.html#FreezeOutput">ml.feature_freezing.constants.output.FreezeOutput</a></span>:</span></span>
+        <span class="name">freeze</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">config</span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span>,</span><span class="param">	<span class="n">owner</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n"><a href="../constants/output.html#FreezeOutput">ml.feature_freezing.constants.output.FreezeOutput</a></span>:</span></span>
 
                 <label class="view-source-button" for="FreezeTimeSeries.freeze-view-source"><span>View Source</span></label>
 
@@ -174,20 +178,22 @@
 </span><span id="FreezeTimeSeries.freeze-18"><a href="#FreezeTimeSeries.freeze-18"><span class="linenos">18</span></a>        <span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="FreezeTimeSeries.freeze-19"><a href="#FreezeTimeSeries.freeze-19"><span class="linenos">19</span></a>        <span class="n">timestamp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 </span><span id="FreezeTimeSeries.freeze-20"><a href="#FreezeTimeSeries.freeze-20"><span class="linenos">20</span></a>        <span class="n">start_time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="FreezeTimeSeries.freeze-21"><a href="#FreezeTimeSeries.freeze-21"><span class="linenos">21</span></a>        <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="FreezeTimeSeries.freeze-22"><a href="#FreezeTimeSeries.freeze-22"><span class="linenos">22</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FreezeOutput</span><span class="p">:</span>
-</span><span id="FreezeTimeSeries.freeze-23"><a href="#FreezeTimeSeries.freeze-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute time-series freeze workflow (not yet implemented).</span>
-</span><span id="FreezeTimeSeries.freeze-24"><a href="#FreezeTimeSeries.freeze-24"><span class="linenos">24</span></a>
-</span><span id="FreezeTimeSeries.freeze-25"><a href="#FreezeTimeSeries.freeze-25"><span class="linenos">25</span></a><span class="sd">        Args:</span>
-</span><span id="FreezeTimeSeries.freeze-26"><a href="#FreezeTimeSeries.freeze-26"><span class="linenos">26</span></a><span class="sd">            config: Time-series feature-freezing configuration.</span>
-</span><span id="FreezeTimeSeries.freeze-27"><a href="#FreezeTimeSeries.freeze-27"><span class="linenos">27</span></a><span class="sd">            timestamp: Run timestamp string used for metadata and paths.</span>
-</span><span id="FreezeTimeSeries.freeze-28"><a href="#FreezeTimeSeries.freeze-28"><span class="linenos">28</span></a><span class="sd">            snapshot_id: Unique snapshot identifier.</span>
-</span><span id="FreezeTimeSeries.freeze-29"><a href="#FreezeTimeSeries.freeze-29"><span class="linenos">29</span></a><span class="sd">            start_time: Process start time used for runtime metadata.</span>
-</span><span id="FreezeTimeSeries.freeze-30"><a href="#FreezeTimeSeries.freeze-30"><span class="linenos">30</span></a><span class="sd">            owner: Owner identifier stored in snapshot metadata.</span>
-</span><span id="FreezeTimeSeries.freeze-31"><a href="#FreezeTimeSeries.freeze-31"><span class="linenos">31</span></a><span class="sd">        Returns:</span>
-</span><span id="FreezeTimeSeries.freeze-32"><a href="#FreezeTimeSeries.freeze-32"><span class="linenos">32</span></a><span class="sd">            Freeze output containing persisted snapshot path and metadata.</span>
-</span><span id="FreezeTimeSeries.freeze-33"><a href="#FreezeTimeSeries.freeze-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="FreezeTimeSeries.freeze-34"><a href="#FreezeTimeSeries.freeze-34"><span class="linenos">34</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Time-series freeze not implemented yet&quot;</span><span class="p">)</span> <span class="c1"># To be implemented in the future</span>
+</span><span id="FreezeTimeSeries.freeze-21"><a href="#FreezeTimeSeries.freeze-21"><span class="linenos">21</span></a>        <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="FreezeTimeSeries.freeze-22"><a href="#FreezeTimeSeries.freeze-22"><span class="linenos">22</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="FreezeTimeSeries.freeze-23"><a href="#FreezeTimeSeries.freeze-23"><span class="linenos">23</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FreezeOutput</span><span class="p">:</span>
+</span><span id="FreezeTimeSeries.freeze-24"><a href="#FreezeTimeSeries.freeze-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute time-series freeze workflow (not yet implemented).</span>
+</span><span id="FreezeTimeSeries.freeze-25"><a href="#FreezeTimeSeries.freeze-25"><span class="linenos">25</span></a>
+</span><span id="FreezeTimeSeries.freeze-26"><a href="#FreezeTimeSeries.freeze-26"><span class="linenos">26</span></a><span class="sd">        Args:</span>
+</span><span id="FreezeTimeSeries.freeze-27"><a href="#FreezeTimeSeries.freeze-27"><span class="linenos">27</span></a><span class="sd">            config: Time-series feature-freezing configuration.</span>
+</span><span id="FreezeTimeSeries.freeze-28"><a href="#FreezeTimeSeries.freeze-28"><span class="linenos">28</span></a><span class="sd">            timestamp: Run timestamp string used for metadata and paths.</span>
+</span><span id="FreezeTimeSeries.freeze-29"><a href="#FreezeTimeSeries.freeze-29"><span class="linenos">29</span></a><span class="sd">            snapshot_id: Unique snapshot identifier.</span>
+</span><span id="FreezeTimeSeries.freeze-30"><a href="#FreezeTimeSeries.freeze-30"><span class="linenos">30</span></a><span class="sd">            start_time: Process start time used for runtime metadata.</span>
+</span><span id="FreezeTimeSeries.freeze-31"><a href="#FreezeTimeSeries.freeze-31"><span class="linenos">31</span></a><span class="sd">            owner: Owner identifier stored in snapshot metadata.</span>
+</span><span id="FreezeTimeSeries.freeze-32"><a href="#FreezeTimeSeries.freeze-32"><span class="linenos">32</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="FreezeTimeSeries.freeze-33"><a href="#FreezeTimeSeries.freeze-33"><span class="linenos">33</span></a><span class="sd">        Returns:</span>
+</span><span id="FreezeTimeSeries.freeze-34"><a href="#FreezeTimeSeries.freeze-34"><span class="linenos">34</span></a><span class="sd">            Freeze output containing persisted snapshot path and metadata.</span>
+</span><span id="FreezeTimeSeries.freeze-35"><a href="#FreezeTimeSeries.freeze-35"><span class="linenos">35</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="FreezeTimeSeries.freeze-36"><a href="#FreezeTimeSeries.freeze-36"><span class="linenos">36</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Time-series freeze not implemented yet&quot;</span><span class="p">)</span> <span class="c1"># To be implemented in the future</span>
 </span></pre></div>
 
 
@@ -199,6 +205,7 @@
     snapshot_id: Unique snapshot identifier.
     start_time: Process start time used for runtime metadata.
     owner: Owner identifier stored in snapshot metadata.
+    snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
 Returns:
     Freeze output containing persisted snapshot path and metadata.</p>
 </div>

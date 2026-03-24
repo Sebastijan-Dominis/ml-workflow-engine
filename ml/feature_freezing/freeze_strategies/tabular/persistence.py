@@ -153,6 +153,7 @@ def create_metadata(
     runtime: dict,
     features: pd.DataFrame,
     duration: float,
+    entity_key: str,
     owner: str
 ) -> dict:
     """Build final metadata payload for a frozen tabular feature snapshot.
@@ -181,6 +182,7 @@ def create_metadata(
         "created_at": timestamp,
         "owner": owner,
         "feature_type": "tabular",
+        "entity_key": entity_key,
         "snapshot_path": str(snapshot_path),
         "snapshot_id": snapshot_path.name,
         "schema_path": str(schema_path),

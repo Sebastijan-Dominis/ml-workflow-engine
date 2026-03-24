@@ -121,7 +121,7 @@ def test_evaluate_loads_artifacts_and_returns_evaluate_output(tmp_path: Path, mo
     lineage = [SimpleNamespace(feature_set="booking_context_features")]
     monkeypatch.setattr(
         "ml.runners.evaluation.evaluators.regression.regression.load_features_and_target",
-        lambda *_args, **_kwargs: (X, y, lineage),
+        lambda *_args, **_kwargs: (X, y, lineage, "entity_key"),
     )
 
     validate_snapshot_ids_calls: list[tuple[Any, Any]] = []

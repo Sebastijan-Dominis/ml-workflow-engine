@@ -61,14 +61,14 @@ class PersistenceStep(PipelineStep[FreezeContext]):
 
         schema_path = config.feature_store_path
 
-        if "row_id" in features.columns:
-            features_without_row_id = features.drop(columns=["row_id"])
+        if config.entity_key in features.columns:
+            features_without_entity_key = features.drop(columns=[config.entity_key])
         else:
-            msg = "Expected 'row_id' column in features, but it was not found."
+            msg = f"Expected '{config.entity_key}' column in features, but it was not found."
             logger.error(msg)
             raise PersistenceError(msg)
         try:
-            save_input_schema(schema_path, features_without_row_id)
+            save_input_schema(schema_path, features_without_entity_key)
         except Exception as e:
             logger.exception("Failed to save input schema")
             raise PersistenceError(
@@ -79,7 +79,7 @@ class PersistenceStep(PipelineStep[FreezeContext]):
             if config.operators:
                 save_derived_schema(
                     schema_path,
-                    features=features_without_row_id,
+                    features=features_without_entity_key,
                     operator_names=config.operators.names,
                     mode=config.operators.mode,
                 )

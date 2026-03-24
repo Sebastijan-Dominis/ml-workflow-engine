@@ -280,10 +280,10 @@ Snapshots are immutable.
 ### Snapshots for feature sets
 - reference [Snapshot policy](#snapshot-policy-applies-to-rawinterimprocessedfeatures)
 
-### Keeping of the row_id in frozen features
-- **Decision:** Keep row_id column when freezing any given feature set
+### Keeping of the entity key in frozen features
+- **Decision:** Keep entity key column when freezing any given feature set
 - **Rationale:** Allows for seamless merging of many feature sets at runtime, regardless of their respective row counts
-- **Alternatives:** Drop row_id while freezing a feature set (rejected - makes proper merging at runtime impossible)
+- **Alternatives:** Drop entity key while freezing a feature set (rejected - makes proper merging at runtime impossible)
 - **Type:** Foundational (impossible to implement the modeling pipelines without it)
 
 ### Saving of input and derived schemas at the version level
@@ -292,10 +292,10 @@ Snapshots are immutable.
 - **Alternatives:** Save new schemas for each snapshot (rejected - redundant, could be more error prone if the code did not include all of the validations that it already does)
 - **Type:** Structural (changing the validation logic is simple enough, but changing sklearn pipeline building logic would break all of the existing pipelines that assumed the existing architecture; technically possible to keep old logic for older ones, and create new for the newer ones - but a lot of work)
 
-### The disinclusion of row_id in input_schema
-- **Decision:** Do not include row_id in feature set's input schema
+### The disinclusion of entity key in input_schema
+- **Decision:** Do not include entity key in feature set's input schema
 - **Rationale:** Row id is only used for merging, should never reach the model, and does not provide any value outside of merging; this decision aligns well with the rest of the code logic
-- **Alternatives:** Include row_id in input schema (rejected - it is only a technical feature)
+- **Alternatives:** Include entity key in input schema (rejected - it is only a technical feature)
 - **Type:** Structural (implies changes to sklearn pipeline building logic - would impact older pipelines)
 
 ### Not saving derived schema when no operators in configs

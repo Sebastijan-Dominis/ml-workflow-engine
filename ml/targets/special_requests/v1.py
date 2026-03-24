@@ -9,13 +9,13 @@ class SpecialRequestsTargetV1(TargetStrategy):
     """Build the special-requests count target from booking records."""
 
     def _build(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Return special-request counts with stable row identifiers.
+        """Return special-request counts with stable entity keys.
 
         Args:
-            data: Input booking dataframe containing ``total_of_special_requests`` and ``row_id``.
+            data: Input booking dataframe containing ``total_of_special_requests`` and ``entity_key``.
 
         Returns:
-            Dataframe with special-request target values and row identifiers.
+            Dataframe with special-request target values and entity keys.
         """
 
-        return data[["total_of_special_requests", "row_id"]].copy()
+        return data[["total_of_special_requests", self.entity_key]].copy()

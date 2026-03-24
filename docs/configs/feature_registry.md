@@ -51,6 +51,7 @@ Each feature set configuration produces immutable feature snapshots stored in th
 | -------------------- | ------------ | ---------------------------------------------------------- |
 | `type`               | string       | Feature set type (currently `tabular`)                     |
 | `description`        | string       | Optional human-readable description                        |
+| `entity_key`         | string       | Primary, unique key of the feature set                     |
 | `data`               | list         | Source dataset definitions                                 |
 | `min_rows`           | int          | Minimum number of rows required after feature construction |
 | `feature_store_path` | path         | Destination path for frozen feature snapshots              |
@@ -83,14 +84,14 @@ Defines the datasets used to build the feature set.
 
 Multiple datasets can be specified and merged during feature freezing.
 
-| Field         | Type   | Description                         |
-| ------------- | ------ | ----------------------------------- |
-| `ref`         | string | Base path reference for the dataset |
-| `name`        | string | Dataset name                        |
-| `version`     | string | Dataset version                     |
-| `format`      | string | File format (`csv` or `parquet`)    |
-| `merge_key`   | string | Key used to merge datasets          |
-| `path_suffix` | string | Dataset file suffix                 |
+| Field         | Type                   | Description                         |
+| ------------- | ---------------------- | ----------------------------------- |
+| `ref`         | string                 | Base path reference for the dataset |
+| `name`        | string                 | Dataset name                        |
+| `version`     | string                 | Dataset version                     |
+| `format`      | string                 | File format (`csv` or `parquet`)    |
+| `merge_key`   | string or list[string] | Key(s) used to merge datasets       |
+| `path_suffix` | string                 | Dataset file suffix                 |
 
 
 Example:
@@ -262,6 +263,8 @@ booking_context_features:
   v1:
     type: tabular
     description: Features describing the booking itself.
+
+    entity_key: row_id
 
     data:
       - ref: data/processed

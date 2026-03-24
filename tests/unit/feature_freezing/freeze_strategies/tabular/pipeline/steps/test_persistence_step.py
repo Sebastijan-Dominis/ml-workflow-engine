@@ -56,7 +56,7 @@ def test_persistence_step_persists_artifacts_and_updates_context(persistence_ste
     """Persist snapshot/schemas and store resulting artifact paths on context."""
     step = persistence_step_module.PersistenceStep()
 
-    features = pd.DataFrame({"row_id": [1], "x": [2.0], "y": [3.0]})
+    features = pd.DataFrame({"entity_key": [1], "x": [2.0], "y": [3.0]})
     schema_save: dict[str, list[str] | None] = {"columns": None}
 
     persistence_step_module.persist_feature_snapshot = (
@@ -70,7 +70,7 @@ def test_persistence_step_persists_artifacts_and_updates_context(persistence_ste
     persistence_step_module.save_derived_schema = lambda path, *, features, operator_names, mode: None
 
     ctx = SimpleNamespace(
-        config=SimpleNamespace(feature_store_path=Path("feature_store"), operators=None),
+        config=SimpleNamespace(feature_store_path=Path("feature_store"), operators=None, entity_key="entity_key"),
         snapshot_id="s1",
         require_features=features,
         snapshot_path=None,
@@ -91,12 +91,12 @@ def test_persistence_step_raises_when_row_id_missing_from_features(persistence_s
     """Reject persistence when required row_id column is absent from features."""
     step = persistence_step_module.PersistenceStep()
     ctx = SimpleNamespace(
-        config=SimpleNamespace(feature_store_path=Path("feature_store"), operators=None),
+        config=SimpleNamespace(feature_store_path=Path("feature_store"), operators=None, entity_key="entity_key"),
         snapshot_id="s1",
         require_features=pd.DataFrame({"x": [1]}),
     )
 
-    with pytest.raises(PersistenceError, match="Expected 'row_id' column"):
+    with pytest.raises(PersistenceError, match="Expected 'entity_key' column"):
         step.run(ctx)
 
 
@@ -114,9 +114,9 @@ def test_persistence_step_wraps_input_schema_failures(persistence_step_module) -
     persistence_step_module.save_input_schema = _raise_input_schema
 
     ctx = SimpleNamespace(
-        config=SimpleNamespace(feature_store_path=Path("feature_store"), operators=None),
+        config=SimpleNamespace(feature_store_path=Path("feature_store"), operators=None, entity_key="entity_key"),
         snapshot_id="s1",
-        require_features=pd.DataFrame({"row_id": [1], "x": [2]}),
+        require_features=pd.DataFrame({"entity_key": [1], "x": [2]}),
     )
 
     with pytest.raises(PersistenceError, match="Could not save input schema"):
@@ -143,9 +143,10 @@ def test_persistence_step_wraps_derived_schema_failures_when_operators_enabled(
         config=SimpleNamespace(
             feature_store_path=Path("feature_store"),
             operators=SimpleNamespace(names=["op"], mode="materialized"),
+            entity_key="entity_key",
         ),
         snapshot_id="s1",
-        require_features=pd.DataFrame({"row_id": [1], "x": [2]}),
+        require_features=pd.DataFrame({"entity_key": [1], "x": [2]}),
     )
 
     with pytest.raises(PersistenceError, match="Could not save derived schema"):

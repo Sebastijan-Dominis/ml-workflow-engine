@@ -14,6 +14,7 @@ class FreezeMetadata(BaseModel):
     snapshot_path: str
     snapshot_id: str
     schema_path: str
+    entity_key: str
     data_lineage: list[DataLineageEntry]
     in_memory_hash: str
     file_hash: str

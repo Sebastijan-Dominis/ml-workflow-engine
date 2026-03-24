@@ -89,38 +89,41 @@
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>        <span class="n">model_cfg</span><span class="p">:</span> <span class="n">SearchModelConfig</span><span class="p">,</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SearchOutput</span><span class="p">:</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute CatBoost hyperparameter search and return structured output.</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        Args:</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">            model_cfg: Validated search configuration.</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">            strict: Whether loading and validation stages should fail strictly.</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">            failure_management_dir: Directory for persisting failure-management artifacts.</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">        Returns:</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">            Search output containing search results, lineage, and run metadata.</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">SearchContext</span><span class="p">(</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>            <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>            <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="n">failure_management_dir</span><span class="o">=</span><span class="n">failure_management_dir</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="p">)</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="n">runner</span> <span class="o">=</span> <span class="n">PipelineRunner</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>            <span class="n">PreparationStep</span><span class="p">(),</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>            <span class="n">BroadSearchStep</span><span class="p">(),</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>            <span class="n">NarrowSearchStep</span><span class="p">()</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="p">])</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="n">search_results</span> <span class="o">=</span> <span class="n">create_search_results</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="k">return</span> <span class="n">SearchOutput</span><span class="p">(</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>            <span class="n">search_results</span><span class="o">=</span><span class="n">search_results</span><span class="p">,</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_feature_lineage</span><span class="p">,</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_pipeline_hash</span><span class="p">,</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>            <span class="n">scoring_method</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_scoring</span><span class="p">,</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>            <span class="n">splits_info</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_splits_info</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="p">)</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SearchOutput</span><span class="p">:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute CatBoost hyperparameter search and return structured output.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        Args:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">            model_cfg: Validated search configuration.</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">            strict: Whether loading and validation stages should fail strictly.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">            failure_management_dir: Directory for persisting failure-management artifacts.</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">        Returns:</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">            Search output containing search results, lineage, and run metadata.</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">SearchContext</span><span class="p">(</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>            <span class="n">snapshot_binding_key</span><span class="o">=</span><span class="n">snapshot_binding_key</span><span class="p">,</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>            <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>            <span class="n">failure_management_dir</span><span class="o">=</span><span class="n">failure_management_dir</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="p">)</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="n">runner</span> <span class="o">=</span> <span class="n">PipelineRunner</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>            <span class="n">PreparationStep</span><span class="p">(),</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>            <span class="n">BroadSearchStep</span><span class="p">(),</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>            <span class="n">NarrowSearchStep</span><span class="p">()</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>        <span class="p">])</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="n">search_results</span> <span class="o">=</span> <span class="n">create_search_results</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="k">return</span> <span class="n">SearchOutput</span><span class="p">(</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>            <span class="n">search_results</span><span class="o">=</span><span class="n">search_results</span><span class="p">,</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_feature_lineage</span><span class="p">,</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_pipeline_hash</span><span class="p">,</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>            <span class="n">scoring_method</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_scoring</span><span class="p">,</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>            <span class="n">splits_info</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_splits_info</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -155,38 +158,41 @@
 </span><span id="CatBoostSearcher-23"><a href="#CatBoostSearcher-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="CatBoostSearcher-24"><a href="#CatBoostSearcher-24"><span class="linenos">24</span></a>        <span class="n">model_cfg</span><span class="p">:</span> <span class="n">SearchModelConfig</span><span class="p">,</span>
 </span><span id="CatBoostSearcher-25"><a href="#CatBoostSearcher-25"><span class="linenos">25</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-26"><a href="#CatBoostSearcher-26"><span class="linenos">26</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-27"><a href="#CatBoostSearcher-27"><span class="linenos">27</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-28"><a href="#CatBoostSearcher-28"><span class="linenos">28</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SearchOutput</span><span class="p">:</span>
-</span><span id="CatBoostSearcher-29"><a href="#CatBoostSearcher-29"><span class="linenos">29</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute CatBoost hyperparameter search and return structured output.</span>
-</span><span id="CatBoostSearcher-30"><a href="#CatBoostSearcher-30"><span class="linenos">30</span></a>
-</span><span id="CatBoostSearcher-31"><a href="#CatBoostSearcher-31"><span class="linenos">31</span></a><span class="sd">        Args:</span>
-</span><span id="CatBoostSearcher-32"><a href="#CatBoostSearcher-32"><span class="linenos">32</span></a><span class="sd">            model_cfg: Validated search configuration.</span>
-</span><span id="CatBoostSearcher-33"><a href="#CatBoostSearcher-33"><span class="linenos">33</span></a><span class="sd">            strict: Whether loading and validation stages should fail strictly.</span>
-</span><span id="CatBoostSearcher-34"><a href="#CatBoostSearcher-34"><span class="linenos">34</span></a><span class="sd">            failure_management_dir: Directory for persisting failure-management artifacts.</span>
-</span><span id="CatBoostSearcher-35"><a href="#CatBoostSearcher-35"><span class="linenos">35</span></a>
-</span><span id="CatBoostSearcher-36"><a href="#CatBoostSearcher-36"><span class="linenos">36</span></a><span class="sd">        Returns:</span>
-</span><span id="CatBoostSearcher-37"><a href="#CatBoostSearcher-37"><span class="linenos">37</span></a><span class="sd">            Search output containing search results, lineage, and run metadata.</span>
-</span><span id="CatBoostSearcher-38"><a href="#CatBoostSearcher-38"><span class="linenos">38</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CatBoostSearcher-39"><a href="#CatBoostSearcher-39"><span class="linenos">39</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">SearchContext</span><span class="p">(</span>
-</span><span id="CatBoostSearcher-40"><a href="#CatBoostSearcher-40"><span class="linenos">40</span></a>            <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-41"><a href="#CatBoostSearcher-41"><span class="linenos">41</span></a>            <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-42"><a href="#CatBoostSearcher-42"><span class="linenos">42</span></a>            <span class="n">failure_management_dir</span><span class="o">=</span><span class="n">failure_management_dir</span>
-</span><span id="CatBoostSearcher-43"><a href="#CatBoostSearcher-43"><span class="linenos">43</span></a>        <span class="p">)</span>
-</span><span id="CatBoostSearcher-44"><a href="#CatBoostSearcher-44"><span class="linenos">44</span></a>        <span class="n">runner</span> <span class="o">=</span> <span class="n">PipelineRunner</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
-</span><span id="CatBoostSearcher-45"><a href="#CatBoostSearcher-45"><span class="linenos">45</span></a>            <span class="n">PreparationStep</span><span class="p">(),</span>
-</span><span id="CatBoostSearcher-46"><a href="#CatBoostSearcher-46"><span class="linenos">46</span></a>            <span class="n">BroadSearchStep</span><span class="p">(),</span>
-</span><span id="CatBoostSearcher-47"><a href="#CatBoostSearcher-47"><span class="linenos">47</span></a>            <span class="n">NarrowSearchStep</span><span class="p">()</span>
-</span><span id="CatBoostSearcher-48"><a href="#CatBoostSearcher-48"><span class="linenos">48</span></a>        <span class="p">])</span>
-</span><span id="CatBoostSearcher-49"><a href="#CatBoostSearcher-49"><span class="linenos">49</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-</span><span id="CatBoostSearcher-50"><a href="#CatBoostSearcher-50"><span class="linenos">50</span></a>        <span class="n">search_results</span> <span class="o">=</span> <span class="n">create_search_results</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-</span><span id="CatBoostSearcher-51"><a href="#CatBoostSearcher-51"><span class="linenos">51</span></a>        <span class="k">return</span> <span class="n">SearchOutput</span><span class="p">(</span>
-</span><span id="CatBoostSearcher-52"><a href="#CatBoostSearcher-52"><span class="linenos">52</span></a>            <span class="n">search_results</span><span class="o">=</span><span class="n">search_results</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-53"><a href="#CatBoostSearcher-53"><span class="linenos">53</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_feature_lineage</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-54"><a href="#CatBoostSearcher-54"><span class="linenos">54</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_pipeline_hash</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-55"><a href="#CatBoostSearcher-55"><span class="linenos">55</span></a>            <span class="n">scoring_method</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_scoring</span><span class="p">,</span>
-</span><span id="CatBoostSearcher-56"><a href="#CatBoostSearcher-56"><span class="linenos">56</span></a>            <span class="n">splits_info</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_splits_info</span>
-</span><span id="CatBoostSearcher-57"><a href="#CatBoostSearcher-57"><span class="linenos">57</span></a>        <span class="p">)</span>
+</span><span id="CatBoostSearcher-26"><a href="#CatBoostSearcher-26"><span class="linenos">26</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-27"><a href="#CatBoostSearcher-27"><span class="linenos">27</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-28"><a href="#CatBoostSearcher-28"><span class="linenos">28</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-29"><a href="#CatBoostSearcher-29"><span class="linenos">29</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SearchOutput</span><span class="p">:</span>
+</span><span id="CatBoostSearcher-30"><a href="#CatBoostSearcher-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute CatBoost hyperparameter search and return structured output.</span>
+</span><span id="CatBoostSearcher-31"><a href="#CatBoostSearcher-31"><span class="linenos">31</span></a>
+</span><span id="CatBoostSearcher-32"><a href="#CatBoostSearcher-32"><span class="linenos">32</span></a><span class="sd">        Args:</span>
+</span><span id="CatBoostSearcher-33"><a href="#CatBoostSearcher-33"><span class="linenos">33</span></a><span class="sd">            model_cfg: Validated search configuration.</span>
+</span><span id="CatBoostSearcher-34"><a href="#CatBoostSearcher-34"><span class="linenos">34</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="CatBoostSearcher-35"><a href="#CatBoostSearcher-35"><span class="linenos">35</span></a><span class="sd">            strict: Whether loading and validation stages should fail strictly.</span>
+</span><span id="CatBoostSearcher-36"><a href="#CatBoostSearcher-36"><span class="linenos">36</span></a><span class="sd">            failure_management_dir: Directory for persisting failure-management artifacts.</span>
+</span><span id="CatBoostSearcher-37"><a href="#CatBoostSearcher-37"><span class="linenos">37</span></a>
+</span><span id="CatBoostSearcher-38"><a href="#CatBoostSearcher-38"><span class="linenos">38</span></a><span class="sd">        Returns:</span>
+</span><span id="CatBoostSearcher-39"><a href="#CatBoostSearcher-39"><span class="linenos">39</span></a><span class="sd">            Search output containing search results, lineage, and run metadata.</span>
+</span><span id="CatBoostSearcher-40"><a href="#CatBoostSearcher-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CatBoostSearcher-41"><a href="#CatBoostSearcher-41"><span class="linenos">41</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">SearchContext</span><span class="p">(</span>
+</span><span id="CatBoostSearcher-42"><a href="#CatBoostSearcher-42"><span class="linenos">42</span></a>            <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-43"><a href="#CatBoostSearcher-43"><span class="linenos">43</span></a>            <span class="n">snapshot_binding_key</span><span class="o">=</span><span class="n">snapshot_binding_key</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-44"><a href="#CatBoostSearcher-44"><span class="linenos">44</span></a>            <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-45"><a href="#CatBoostSearcher-45"><span class="linenos">45</span></a>            <span class="n">failure_management_dir</span><span class="o">=</span><span class="n">failure_management_dir</span>
+</span><span id="CatBoostSearcher-46"><a href="#CatBoostSearcher-46"><span class="linenos">46</span></a>        <span class="p">)</span>
+</span><span id="CatBoostSearcher-47"><a href="#CatBoostSearcher-47"><span class="linenos">47</span></a>        <span class="n">runner</span> <span class="o">=</span> <span class="n">PipelineRunner</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+</span><span id="CatBoostSearcher-48"><a href="#CatBoostSearcher-48"><span class="linenos">48</span></a>            <span class="n">PreparationStep</span><span class="p">(),</span>
+</span><span id="CatBoostSearcher-49"><a href="#CatBoostSearcher-49"><span class="linenos">49</span></a>            <span class="n">BroadSearchStep</span><span class="p">(),</span>
+</span><span id="CatBoostSearcher-50"><a href="#CatBoostSearcher-50"><span class="linenos">50</span></a>            <span class="n">NarrowSearchStep</span><span class="p">()</span>
+</span><span id="CatBoostSearcher-51"><a href="#CatBoostSearcher-51"><span class="linenos">51</span></a>        <span class="p">])</span>
+</span><span id="CatBoostSearcher-52"><a href="#CatBoostSearcher-52"><span class="linenos">52</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</span><span id="CatBoostSearcher-53"><a href="#CatBoostSearcher-53"><span class="linenos">53</span></a>        <span class="n">search_results</span> <span class="o">=</span> <span class="n">create_search_results</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</span><span id="CatBoostSearcher-54"><a href="#CatBoostSearcher-54"><span class="linenos">54</span></a>        <span class="k">return</span> <span class="n">SearchOutput</span><span class="p">(</span>
+</span><span id="CatBoostSearcher-55"><a href="#CatBoostSearcher-55"><span class="linenos">55</span></a>            <span class="n">search_results</span><span class="o">=</span><span class="n">search_results</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-56"><a href="#CatBoostSearcher-56"><span class="linenos">56</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_feature_lineage</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-57"><a href="#CatBoostSearcher-57"><span class="linenos">57</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_pipeline_hash</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-58"><a href="#CatBoostSearcher-58"><span class="linenos">58</span></a>            <span class="n">scoring_method</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_scoring</span><span class="p">,</span>
+</span><span id="CatBoostSearcher-59"><a href="#CatBoostSearcher-59"><span class="linenos">59</span></a>            <span class="n">splits_info</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_splits_info</span>
+</span><span id="CatBoostSearcher-60"><a href="#CatBoostSearcher-60"><span class="linenos">60</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -199,7 +205,7 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">search</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="n"><a href="../../../config/schemas/model_cfg.html#SearchModelConfig">ml.config.schemas.model_cfg.SearchModelConfig</a></span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span></span><span class="return-annotation">) -> <span class="n"><a href="../output.html#SearchOutput">ml.search.searchers.output.SearchOutput</a></span>:</span></span>
+        <span class="name">search</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model_cfg</span><span class="p">:</span> <span class="n"><a href="../../../config/schemas/model_cfg.html#SearchModelConfig">ml.config.schemas.model_cfg.SearchModelConfig</a></span>,</span><span class="param">	<span class="o">*</span>,</span><span class="param">	<span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span>,</span><span class="param">	<span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span></span><span class="return-annotation">) -> <span class="n"><a href="../output.html#SearchOutput">ml.search.searchers.output.SearchOutput</a></span>:</span></span>
 
                 <label class="view-source-button" for="CatBoostSearcher.search-view-source"><span>View Source</span></label>
 
@@ -209,38 +215,41 @@
 </span><span id="CatBoostSearcher.search-23"><a href="#CatBoostSearcher.search-23"><span class="linenos">23</span></a>        <span class="bp">self</span><span class="p">,</span>
 </span><span id="CatBoostSearcher.search-24"><a href="#CatBoostSearcher.search-24"><span class="linenos">24</span></a>        <span class="n">model_cfg</span><span class="p">:</span> <span class="n">SearchModelConfig</span><span class="p">,</span>
 </span><span id="CatBoostSearcher.search-25"><a href="#CatBoostSearcher.search-25"><span class="linenos">25</span></a>        <span class="o">*</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-26"><a href="#CatBoostSearcher.search-26"><span class="linenos">26</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-27"><a href="#CatBoostSearcher.search-27"><span class="linenos">27</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-28"><a href="#CatBoostSearcher.search-28"><span class="linenos">28</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SearchOutput</span><span class="p">:</span>
-</span><span id="CatBoostSearcher.search-29"><a href="#CatBoostSearcher.search-29"><span class="linenos">29</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute CatBoost hyperparameter search and return structured output.</span>
-</span><span id="CatBoostSearcher.search-30"><a href="#CatBoostSearcher.search-30"><span class="linenos">30</span></a>
-</span><span id="CatBoostSearcher.search-31"><a href="#CatBoostSearcher.search-31"><span class="linenos">31</span></a><span class="sd">        Args:</span>
-</span><span id="CatBoostSearcher.search-32"><a href="#CatBoostSearcher.search-32"><span class="linenos">32</span></a><span class="sd">            model_cfg: Validated search configuration.</span>
-</span><span id="CatBoostSearcher.search-33"><a href="#CatBoostSearcher.search-33"><span class="linenos">33</span></a><span class="sd">            strict: Whether loading and validation stages should fail strictly.</span>
-</span><span id="CatBoostSearcher.search-34"><a href="#CatBoostSearcher.search-34"><span class="linenos">34</span></a><span class="sd">            failure_management_dir: Directory for persisting failure-management artifacts.</span>
-</span><span id="CatBoostSearcher.search-35"><a href="#CatBoostSearcher.search-35"><span class="linenos">35</span></a>
-</span><span id="CatBoostSearcher.search-36"><a href="#CatBoostSearcher.search-36"><span class="linenos">36</span></a><span class="sd">        Returns:</span>
-</span><span id="CatBoostSearcher.search-37"><a href="#CatBoostSearcher.search-37"><span class="linenos">37</span></a><span class="sd">            Search output containing search results, lineage, and run metadata.</span>
-</span><span id="CatBoostSearcher.search-38"><a href="#CatBoostSearcher.search-38"><span class="linenos">38</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CatBoostSearcher.search-39"><a href="#CatBoostSearcher.search-39"><span class="linenos">39</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">SearchContext</span><span class="p">(</span>
-</span><span id="CatBoostSearcher.search-40"><a href="#CatBoostSearcher.search-40"><span class="linenos">40</span></a>            <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-41"><a href="#CatBoostSearcher.search-41"><span class="linenos">41</span></a>            <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-42"><a href="#CatBoostSearcher.search-42"><span class="linenos">42</span></a>            <span class="n">failure_management_dir</span><span class="o">=</span><span class="n">failure_management_dir</span>
-</span><span id="CatBoostSearcher.search-43"><a href="#CatBoostSearcher.search-43"><span class="linenos">43</span></a>        <span class="p">)</span>
-</span><span id="CatBoostSearcher.search-44"><a href="#CatBoostSearcher.search-44"><span class="linenos">44</span></a>        <span class="n">runner</span> <span class="o">=</span> <span class="n">PipelineRunner</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
-</span><span id="CatBoostSearcher.search-45"><a href="#CatBoostSearcher.search-45"><span class="linenos">45</span></a>            <span class="n">PreparationStep</span><span class="p">(),</span>
-</span><span id="CatBoostSearcher.search-46"><a href="#CatBoostSearcher.search-46"><span class="linenos">46</span></a>            <span class="n">BroadSearchStep</span><span class="p">(),</span>
-</span><span id="CatBoostSearcher.search-47"><a href="#CatBoostSearcher.search-47"><span class="linenos">47</span></a>            <span class="n">NarrowSearchStep</span><span class="p">()</span>
-</span><span id="CatBoostSearcher.search-48"><a href="#CatBoostSearcher.search-48"><span class="linenos">48</span></a>        <span class="p">])</span>
-</span><span id="CatBoostSearcher.search-49"><a href="#CatBoostSearcher.search-49"><span class="linenos">49</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-</span><span id="CatBoostSearcher.search-50"><a href="#CatBoostSearcher.search-50"><span class="linenos">50</span></a>        <span class="n">search_results</span> <span class="o">=</span> <span class="n">create_search_results</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
-</span><span id="CatBoostSearcher.search-51"><a href="#CatBoostSearcher.search-51"><span class="linenos">51</span></a>        <span class="k">return</span> <span class="n">SearchOutput</span><span class="p">(</span>
-</span><span id="CatBoostSearcher.search-52"><a href="#CatBoostSearcher.search-52"><span class="linenos">52</span></a>            <span class="n">search_results</span><span class="o">=</span><span class="n">search_results</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-53"><a href="#CatBoostSearcher.search-53"><span class="linenos">53</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_feature_lineage</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-54"><a href="#CatBoostSearcher.search-54"><span class="linenos">54</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_pipeline_hash</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-55"><a href="#CatBoostSearcher.search-55"><span class="linenos">55</span></a>            <span class="n">scoring_method</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_scoring</span><span class="p">,</span>
-</span><span id="CatBoostSearcher.search-56"><a href="#CatBoostSearcher.search-56"><span class="linenos">56</span></a>            <span class="n">splits_info</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_splits_info</span>
-</span><span id="CatBoostSearcher.search-57"><a href="#CatBoostSearcher.search-57"><span class="linenos">57</span></a>        <span class="p">)</span>
+</span><span id="CatBoostSearcher.search-26"><a href="#CatBoostSearcher.search-26"><span class="linenos">26</span></a>        <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-27"><a href="#CatBoostSearcher.search-27"><span class="linenos">27</span></a>        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-28"><a href="#CatBoostSearcher.search-28"><span class="linenos">28</span></a>        <span class="n">failure_management_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-29"><a href="#CatBoostSearcher.search-29"><span class="linenos">29</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SearchOutput</span><span class="p">:</span>
+</span><span id="CatBoostSearcher.search-30"><a href="#CatBoostSearcher.search-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute CatBoost hyperparameter search and return structured output.</span>
+</span><span id="CatBoostSearcher.search-31"><a href="#CatBoostSearcher.search-31"><span class="linenos">31</span></a>
+</span><span id="CatBoostSearcher.search-32"><a href="#CatBoostSearcher.search-32"><span class="linenos">32</span></a><span class="sd">        Args:</span>
+</span><span id="CatBoostSearcher.search-33"><a href="#CatBoostSearcher.search-33"><span class="linenos">33</span></a><span class="sd">            model_cfg: Validated search configuration.</span>
+</span><span id="CatBoostSearcher.search-34"><a href="#CatBoostSearcher.search-34"><span class="linenos">34</span></a><span class="sd">            snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.</span>
+</span><span id="CatBoostSearcher.search-35"><a href="#CatBoostSearcher.search-35"><span class="linenos">35</span></a><span class="sd">            strict: Whether loading and validation stages should fail strictly.</span>
+</span><span id="CatBoostSearcher.search-36"><a href="#CatBoostSearcher.search-36"><span class="linenos">36</span></a><span class="sd">            failure_management_dir: Directory for persisting failure-management artifacts.</span>
+</span><span id="CatBoostSearcher.search-37"><a href="#CatBoostSearcher.search-37"><span class="linenos">37</span></a>
+</span><span id="CatBoostSearcher.search-38"><a href="#CatBoostSearcher.search-38"><span class="linenos">38</span></a><span class="sd">        Returns:</span>
+</span><span id="CatBoostSearcher.search-39"><a href="#CatBoostSearcher.search-39"><span class="linenos">39</span></a><span class="sd">            Search output containing search results, lineage, and run metadata.</span>
+</span><span id="CatBoostSearcher.search-40"><a href="#CatBoostSearcher.search-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CatBoostSearcher.search-41"><a href="#CatBoostSearcher.search-41"><span class="linenos">41</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">SearchContext</span><span class="p">(</span>
+</span><span id="CatBoostSearcher.search-42"><a href="#CatBoostSearcher.search-42"><span class="linenos">42</span></a>            <span class="n">model_cfg</span><span class="o">=</span><span class="n">model_cfg</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-43"><a href="#CatBoostSearcher.search-43"><span class="linenos">43</span></a>            <span class="n">snapshot_binding_key</span><span class="o">=</span><span class="n">snapshot_binding_key</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-44"><a href="#CatBoostSearcher.search-44"><span class="linenos">44</span></a>            <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-45"><a href="#CatBoostSearcher.search-45"><span class="linenos">45</span></a>            <span class="n">failure_management_dir</span><span class="o">=</span><span class="n">failure_management_dir</span>
+</span><span id="CatBoostSearcher.search-46"><a href="#CatBoostSearcher.search-46"><span class="linenos">46</span></a>        <span class="p">)</span>
+</span><span id="CatBoostSearcher.search-47"><a href="#CatBoostSearcher.search-47"><span class="linenos">47</span></a>        <span class="n">runner</span> <span class="o">=</span> <span class="n">PipelineRunner</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[</span>
+</span><span id="CatBoostSearcher.search-48"><a href="#CatBoostSearcher.search-48"><span class="linenos">48</span></a>            <span class="n">PreparationStep</span><span class="p">(),</span>
+</span><span id="CatBoostSearcher.search-49"><a href="#CatBoostSearcher.search-49"><span class="linenos">49</span></a>            <span class="n">BroadSearchStep</span><span class="p">(),</span>
+</span><span id="CatBoostSearcher.search-50"><a href="#CatBoostSearcher.search-50"><span class="linenos">50</span></a>            <span class="n">NarrowSearchStep</span><span class="p">()</span>
+</span><span id="CatBoostSearcher.search-51"><a href="#CatBoostSearcher.search-51"><span class="linenos">51</span></a>        <span class="p">])</span>
+</span><span id="CatBoostSearcher.search-52"><a href="#CatBoostSearcher.search-52"><span class="linenos">52</span></a>        <span class="n">ctx</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</span><span id="CatBoostSearcher.search-53"><a href="#CatBoostSearcher.search-53"><span class="linenos">53</span></a>        <span class="n">search_results</span> <span class="o">=</span> <span class="n">create_search_results</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+</span><span id="CatBoostSearcher.search-54"><a href="#CatBoostSearcher.search-54"><span class="linenos">54</span></a>        <span class="k">return</span> <span class="n">SearchOutput</span><span class="p">(</span>
+</span><span id="CatBoostSearcher.search-55"><a href="#CatBoostSearcher.search-55"><span class="linenos">55</span></a>            <span class="n">search_results</span><span class="o">=</span><span class="n">search_results</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-56"><a href="#CatBoostSearcher.search-56"><span class="linenos">56</span></a>            <span class="n">feature_lineage</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_feature_lineage</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-57"><a href="#CatBoostSearcher.search-57"><span class="linenos">57</span></a>            <span class="n">pipeline_hash</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_pipeline_hash</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-58"><a href="#CatBoostSearcher.search-58"><span class="linenos">58</span></a>            <span class="n">scoring_method</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_scoring</span><span class="p">,</span>
+</span><span id="CatBoostSearcher.search-59"><a href="#CatBoostSearcher.search-59"><span class="linenos">59</span></a>            <span class="n">splits_info</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">require_splits_info</span>
+</span><span id="CatBoostSearcher.search-60"><a href="#CatBoostSearcher.search-60"><span class="linenos">60</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -248,6 +257,7 @@
 
 <p>Args:
     model_cfg: Validated search configuration.
+    snapshot_binding_key: Optional key for a snapshot binding to define which snapshot to load for each dataset.
     strict: Whether loading and validation stages should fail strictly.
     failure_management_dir: Directory for persisting failure-management artifacts.</p>
 

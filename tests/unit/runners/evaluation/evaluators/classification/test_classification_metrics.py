@@ -141,13 +141,13 @@ def test_evaluate_split_returns_predictions_dataframe_for_valid_binary_probabili
         cast(Pipeline, pipeline),
         X,
         y,
-        split_row_ids=pd.Series(["r1", "r2"]),
+        split_entity_keys=pd.Series(["r1", "r2"]),
         split_name="val",
         best_threshold=0.5,
     )
 
     assert "accuracy" in metrics
-    assert df_preds.columns.tolist() == ["row_id", "split", "y_true", "y_pred", "y_proba"]
+    assert df_preds.columns.tolist() == ["entity_key", "split", "y_true", "y_pred", "y_proba"]
     assert df_preds["split"].tolist() == ["val", "val"]
     assert df_preds["y_pred"].tolist() == [0, 1]
 
@@ -163,7 +163,7 @@ def test_evaluate_split_raises_when_predict_proba_is_not_binary_matrix() -> None
             cast(Pipeline, pipeline),
             X,
             y,
-            split_row_ids=pd.Series(["r1", "r2"]),
+            split_entity_keys=pd.Series(["r1", "r2"]),
             split_name="train",
             best_threshold=0.5,
         )
@@ -173,17 +173,17 @@ def test_evaluate_model_binary_aggregates_split_metrics_and_predictions(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Evaluate train/val/test splits for binary subtype and return artifacts."""
-    X = pd.DataFrame({"row_id": ["r1", "r2"], "f": [1.0, 2.0]})
+    X = pd.DataFrame({"entity_key": ["r1", "r2"], "f": [1.0, 2.0]})
     y = pd.Series([0, 1])
     splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
 
-    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+    monkeypatch.setattr(module, "get_entity_keys", lambda frame, entity_key: frame[entity_key].copy())
 
     def _eval_split(**kwargs: Any) -> tuple[dict[str, float], pd.DataFrame]:
         split_name = kwargs["split_name"]
         df = pd.DataFrame(
             {
-                "row_id": ["r1", "r2"],
+                "entity_key": ["r1", "r2"],
                 "split": [split_name, split_name],
                 "y_true": [0, 1],
                 "y_pred": [0, 1],
@@ -201,6 +201,7 @@ def test_evaluate_model_binary_aggregates_split_metrics_and_predictions(
         pipeline=cast(Pipeline, SimpleNamespace()),
         data_splits=splits,
         best_threshold=0.5,
+        entity_key="entity_key",
     )
 
     assert set(metrics.keys()) == {"train", "val", "test"}
@@ -213,11 +214,11 @@ def test_evaluate_model_binary_drops_row_id_before_split_evaluation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Drop ``row_id`` column from split features before invoking split evaluator."""
-    X = pd.DataFrame({"row_id": ["r1", "r2"], "f": [1.0, 2.0]})
+    X = pd.DataFrame({"entity_key": ["r1", "r2"], "f": [1.0, 2.0]})
     y = pd.Series([0, 1])
     splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
 
-    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+    monkeypatch.setattr(module, "get_entity_keys", lambda frame, entity_key: frame[entity_key].copy())
 
     seen_columns: dict[str, list[str]] = {}
 
@@ -225,7 +226,7 @@ def test_evaluate_model_binary_drops_row_id_before_split_evaluation(
         split_name = cast(str, kwargs["split_name"])
         split_frame = cast(pd.DataFrame, kwargs["X"])
         seen_columns[split_name] = split_frame.columns.tolist()
-        return {"accuracy": 1.0}, pd.DataFrame({"row_id": ["r1"], "split": [split_name]})
+        return {"accuracy": 1.0}, pd.DataFrame({"entity_key": ["r1"], "split": [split_name]})
 
     monkeypatch.setattr(module, "evaluate_split", _eval_split)
 
@@ -236,6 +237,7 @@ def test_evaluate_model_binary_drops_row_id_before_split_evaluation(
         pipeline=cast(Pipeline, SimpleNamespace()),
         data_splits=splits,
         best_threshold=0.5,
+        entity_key="entity_key",
     )
 
     assert seen_columns == {"train": ["f"], "val": ["f"], "test": ["f"]}
@@ -250,7 +252,7 @@ def test_evaluate_model_raises_for_multiclass_subtype() -> None:
     model_cfg = cast(TrainModelConfig, SimpleNamespace(task=SimpleNamespace(type="classification", subtype="multiclass")))
 
     with pytest.raises(UserError, match="not yet implemented"):
-        module.evaluate_model(model_cfg, pipeline=cast(Pipeline, SimpleNamespace()), data_splits=splits, best_threshold=0.5)
+        module.evaluate_model(model_cfg, pipeline=cast(Pipeline, SimpleNamespace()), data_splits=splits, best_threshold=0.5, entity_key="entity_key")
 
 
 def test_evaluate_model_raises_for_unsupported_subtype() -> None:
@@ -262,22 +264,21 @@ def test_evaluate_model_raises_for_unsupported_subtype() -> None:
     model_cfg = cast(TrainModelConfig, SimpleNamespace(task=SimpleNamespace(type="classification", subtype="ordinal")))
 
     with pytest.raises(PipelineContractError, match="Unsupported task subtype"):
-        module.evaluate_model(model_cfg, pipeline=cast(Pipeline, SimpleNamespace()), data_splits=splits, best_threshold=0.5)
+        module.evaluate_model(model_cfg, pipeline=cast(Pipeline, SimpleNamespace()), data_splits=splits, best_threshold=0.5, entity_key="entity_key")
 
 
 def test_evaluate_model_wraps_prediction_artifact_construction_errors(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Wrap prediction artifact construction failures as ``EvaluationError``."""
-    X = pd.DataFrame({"row_id": ["r1"], "f": [1.0]})
+    X = pd.DataFrame({"entity_key": ["r1"], "f": [1.0]})
     y = pd.Series([0])
     splits = DataSplits(train=(X, y), val=(X, y), test=(X, y))
-
-    monkeypatch.setattr(module, "get_row_ids", lambda frame: frame["row_id"].copy())
+    monkeypatch.setattr(module, "get_entity_keys", lambda frame, entity_key: frame[entity_key].copy())
     monkeypatch.setattr(
         module,
         "evaluate_split",
-        lambda **kwargs: ({"accuracy": 1.0}, pd.DataFrame({"row_id": ["r1"], "split": [kwargs["split_name"]]})),
+        lambda **kwargs: ({"accuracy": 1.0}, pd.DataFrame({"entity_key": ["r1"], "split": [kwargs["split_name"]]})),
     )
 
     class _FailingArtifacts:
@@ -297,4 +298,5 @@ def test_evaluate_model_wraps_prediction_artifact_construction_errors(
             pipeline=cast(Pipeline, SimpleNamespace()),
             data_splits=splits,
             best_threshold=0.5,
+            entity_key="entity_key",
         )

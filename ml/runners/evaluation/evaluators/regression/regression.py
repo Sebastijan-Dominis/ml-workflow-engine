@@ -34,7 +34,7 @@ class EvaluateRegression(Evaluator):
         model_cfg: TrainModelConfig,
         strict: bool,
         best_threshold: float | None,  # unused, kept for interface consistency
-        train_dir: Path
+        train_dir: Path,
     ) -> EvaluateOutput:
         """Load artifacts and data, run split-wise regression evaluation.
 
@@ -43,7 +43,7 @@ class EvaluateRegression(Evaluator):
             strict: Whether data-loading checks should fail strictly.
             best_threshold: Unused threshold parameter kept for interface parity.
             train_dir: Directory containing training artifacts and metadata.
-
+            entity_key: The name of the entity key column to extract.
         Returns:
             Evaluation output with metrics, predictions, and feature lineage.
 
@@ -93,10 +93,10 @@ class EvaluateRegression(Evaluator):
             snapshot_binding_key=None
         )
 
-        X, y, feature_lineage = load_features_and_target(
+        X, y, feature_lineage, entity_key = load_features_and_target(
             model_cfg,
             snapshot_selection=snapshot_selection,
-            drop_row_id=False,
+            drop_entity_key=False,
             strict=strict,
             snapshot_binding_key=None
         )
@@ -130,6 +130,7 @@ class EvaluateRegression(Evaluator):
             pipeline=pipeline,
             data_splits=data_splits,
             transform_cfg=model_cfg.target.transform,
+            entity_key=entity_key
         )
 
         output = EvaluateOutput(

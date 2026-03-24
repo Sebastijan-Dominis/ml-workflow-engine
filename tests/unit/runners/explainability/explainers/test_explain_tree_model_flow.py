@@ -121,6 +121,7 @@ def test_explain_runs_full_orchestration_and_returns_expected_output(
             pd.DataFrame({"adr": [100.0, 120.0], "lead_time": [5, 7]}),
             pd.Series([1, 0]),
             feature_lineage,
+            "entity_key",
         )
 
     def _get_splits(**kwargs: Any):
@@ -136,7 +137,7 @@ def test_explain_runs_full_orchestration_and_returns_expected_output(
         _ = (pipeline, x_test)
         calls.append("get_feature_names_and_transformed_features")
         return (
-            np.array(["adr", "lead_time"], dtype=np.str_),
+            np.array(["adr", "lead_time"], dtype=str),
             pd.DataFrame({"adr": [100.0, 120.0], "lead_time": [5, 7]}),
         )
 

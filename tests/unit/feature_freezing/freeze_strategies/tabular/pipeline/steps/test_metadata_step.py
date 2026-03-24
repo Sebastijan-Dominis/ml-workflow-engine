@@ -63,12 +63,12 @@ class _Ctx:
     """Minimal context stub exposing attributes/properties consumed by MetadataStep."""
 
     def __init__(self, *, operators: Any | None) -> None:
-        self.config = SimpleNamespace(operators=operators)
+        self.config = SimpleNamespace(operators=operators, entity_key="entity_key")
         self.start_time = 10.0
         self.timestamp = "2026-03-05T00:00:00"
         self.owner = "tests"
 
-        self._features = pd.DataFrame({"row_id": [1], "x": [2.0]})
+        self._features = pd.DataFrame({"entity_key": [1], "x": [2.0]})
         self._data_path = Path("features.parquet")
         self._snapshot_path = Path("snapshot")
         self._schema_path = Path("schema")
