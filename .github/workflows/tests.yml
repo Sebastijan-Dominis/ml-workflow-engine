@@ -7,23 +7,25 @@ on:
 
 jobs:
   tests:
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
+      # Nuke everything: remove cached Conda environment and Conda package cache
       - name: Remove existing Conda environment
         run: conda env remove -n hotel_management || true
 
-      - name: Cache Conda packages
-        uses: actions/cache@v4
-        with:
-          path: ~/conda_pkgs_dir
-          key: ${{ runner.os }}-conda-pkgs-${{ hashFiles('environment.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-conda-pkgs-
+      - name: Remove Conda package cache
+        run: rm -rf ~/conda_pkgs_dir || true
 
+      # Remove any old Python bytecode
+      - name: Remove Python caches
+        run: |
+          find . -type d -name "__pycache__" -exec rm -rf {} +
+          find . -name "*.pyc" -delete
+
+      # Recreate environment completely
       - name: Set up conda
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -33,16 +35,10 @@ jobs:
           use-mamba: true
           auto-activate-base: false
 
-      - name: Clear Python caches
-        run: |
-          find . -type d -name "__pycache__" -exec rm -rf {} +
-          find . -name "*.pyc" -delete
-
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
-
+      # Install the package in editable mode
       - name: Install package in editable mode
         run: conda run -n hotel_management pip install -e .
 
+      # Run tests with coverage
       - name: Run tests with coverage
         run: conda run -n hotel_management coverage run -m pytest -v --maxfail=1 --disable-warnings
