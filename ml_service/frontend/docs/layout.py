@@ -37,4 +37,10 @@ def build_layout():
             ),
         ],
         fluid=True,
+        style={
+            "backgroundColor": "#8fa0d8",
+            "minHeight": "100%",
+            "paddingTop": "45px",
+            "paddingBottom": "50px",
+        },
     )

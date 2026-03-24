@@ -9,6 +9,7 @@ from slowapi.errors import RateLimitExceeded
 
 from ml_service.backend.limiter import limiter
 from ml_service.backend.routers.data import router as data_router
+from ml_service.backend.routers.dir_viewer import router as dir_viewer_router
 from ml_service.backend.routers.features import router as features_router
 from ml_service.backend.routers.modeling import router as modeling_router
 from ml_service.backend.routers.pipeline_cfg import router as pipeline_cfg_router
@@ -31,7 +32,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-routers = [pipelines_router, modeling_router, features_router, data_router, pipeline_cfg_router, promotion_thresholds_router, scripts_router, viewer_router]
+routers = [pipelines_router, modeling_router, features_router, data_router, pipeline_cfg_router, promotion_thresholds_router, scripts_router, viewer_router, dir_viewer_router]
 
 for router in routers:
     app.include_router(router)

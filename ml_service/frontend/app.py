@@ -18,6 +18,8 @@ from ml_service.frontend.configs.pipeline_cfg.page import get_layout as pipeline
 from ml_service.frontend.configs.pipeline_cfg.page import register as pipeline_cfg_register
 from ml_service.frontend.configs.promotion_thresholds.page import get_layout as promotion_layout
 from ml_service.frontend.configs.promotion_thresholds.page import register as promotion_register
+from ml_service.frontend.dir_viewer.page import get_layout as dir_viewer_layout
+from ml_service.frontend.dir_viewer.page import register as dir_viewer_register
 from ml_service.frontend.docs.page import get_layout as docs_layout
 from ml_service.frontend.docs.page import register as docs_register
 from ml_service.frontend.pipelines.page import get_layout as pipelines_layout
@@ -47,7 +49,8 @@ PAGES = {
     "Pipelines": pipelines_layout,
     "Scripts": scripts_layout,
     "Docs": docs_layout,
-    "Viewer": viewer_layout,
+    "File Viewer": viewer_layout,
+    "Directory Viewer": dir_viewer_layout,
 }
 
 # Register page callbacks
@@ -61,6 +64,7 @@ for register_func in [
     scripts_register,
     docs_register,
     viewer_register,
+    dir_viewer_register,
 ]:
     register_func(app)
 
@@ -145,12 +149,29 @@ def home_layout() -> dbc.Container:
                             html.Li("Some md elements may render oddly, but all content should be there. Read directly from the md file if something looks off."),
                         ])
                     ], style={"marginBottom": "1rem"}),
+                    html.Li([
+                        html.Strong("File Viewer:"),
+                        html.Ul([
+                            html.Li("View contents of files in the repository."),
+                            html.Li("Supports .yaml and .json files."),
+                            html.Li("Useful for quickly checking .yaml and .json files without leaving the dashboard."),
+                        ])
+                    ], style={"marginBottom": "1rem"}),
+                    html.Li([
+                        html.Strong("Directory Viewer:"),
+                        html.Ul([
+                            html.Li("View directory structure from a chosen directory in the repository."),
+                            html.Li("Specify the directory to view by entering a path relative to the repository root (e.g. 'configs/data')."),
+                            html.Li("Input box allows to write and copy paths without leaving the page."),
+                        ])
+                    ], style={"marginBottom": "1rem"}),
                 ],
                 style={
                     "fontSize": "1.2rem",
                     "paddingTop": "5rem",
                     "textAlign": "left",
                     "marginLeft": "10%",
+                    "marginBottom": "5rem",
                 }
             )
         ],
@@ -175,7 +196,8 @@ def generate_page_links():
         "Pipelines": "play-circle",
         "Scripts": "terminal",
         "Docs": "book",
-        "Viewer": "eye",
+        "File Viewer": "eye",
+        "Directory Viewer": "folder",
     }
     links = []
     for name in PAGES:
@@ -205,7 +227,14 @@ app.layout = dbc.Container(
                         ),
 
                         # Sidebar toggle button (hamburger icon)
-                        dbc.Button("☰", id="sidebar-toggle", color="primary", className="mb-3", n_clicks=0, style={"width": "100%"}),
+                        dbc.Button(
+                            "☰",
+                            id="sidebar-toggle",
+                            color="primary",
+                            className="mb-3",
+                            n_clicks=0,
+                            style={"width": "100%"}
+                        ),
 
                         # Collapsible sidebar with page links
                         dbc.Collapse(
@@ -222,11 +251,14 @@ app.layout = dbc.Container(
                     style={"position": "sticky", "marginTop": "5rem"}
                 ),
                 dbc.Col(
-                    html.Div(id="page-content-container", style={
-                        "padding": "20px",
-                        "height": "98vh",
-                        "overflowY": "auto",
-                    }),
+                    html.Div(
+                        id="page-content-container",
+                        style={
+                            "padding": "20px",
+                            "height": "98vh",
+                            "overflowY": "auto",
+                        }
+                    ),
                     width=10,
                 )
             ],

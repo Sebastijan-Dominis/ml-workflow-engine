@@ -1,3 +1,4 @@
+"""A FastAPI router for viewing file contents on the backend, used by the frontend for visualization."""
 from pathlib import Path
 
 import yaml
