@@ -153,7 +153,7 @@ drop_duplicates: true
 
 drop_missing_ints: true
 
-min_rows: 100000
+min_rows: 5000
 
 lineage:
   created_by: Sebastijan

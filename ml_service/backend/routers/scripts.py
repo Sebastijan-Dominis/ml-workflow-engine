@@ -27,7 +27,7 @@ def generate_cols_for_row_id_fingerprint(payload: Annotated[GenerateColsForRowId
     )
 
 @router.post("/generate_fake_data", status_code=200)
-@limiter.limit("1/5minutes")
+@limiter.limit("10/minute")
 def generate_fake_data(payload: Annotated[GenerateFakeDataInput, Body(...)], request: Request): # type: ignore
     """Generates fake data by executing the corresponding script."""
     return execute_script(
