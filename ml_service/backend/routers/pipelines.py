@@ -105,7 +105,7 @@ def explain(payload: Annotated[ExplainInput, Body(...)], request: Request): # ty
     )
 
 @router.post("/promote", status_code=200)
-@limiter.limit("1/minute")
+@limiter.limit("3/minute")
 def promote(payload: Annotated[PromoteInput, Body(...)], request: Request): # type: ignore
     """Executes the promotion pipeline."""
     return execute_pipeline(

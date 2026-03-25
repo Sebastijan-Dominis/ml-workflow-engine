@@ -4,6 +4,8 @@ from typing import Literal
 from pydantic import BaseModel
 
 LOGGING_LEVEL = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+ENV = Literal["dev", "test", "prod", "default"]
+STAGE = Literal["staging", "production"]
 
 class RegisterRawSnapshotInput(BaseModel):
     """Model for the input of the register_raw_snapshot pipeline."""
@@ -44,7 +46,7 @@ class SearchInput(BaseModel):
     version: str
     experiment_id: str | None = None
     snapshot_binding_key: str | None = None
-    env: str | None = None
+    env: ENV = "default"
     strict: bool | None = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
@@ -58,7 +60,7 @@ class TrainInput(BaseModel):
     version: str
     snapshot_binding_key: str | None = None
     train_run_id: str | None = None
-    env: str | None = None
+    env: ENV = "default"
     strict: bool | None = True
     experiment_id: str | None = None
     logging_level: LOGGING_LEVEL = "INFO"
@@ -70,7 +72,7 @@ class EvaluateInput(BaseModel):
     problem: str
     segment: str
     version: str
-    env: str | None = None
+    env: ENV = "default"
     strict: bool | None = True
     experiment_id: str | None = None
     train_id: str | None = None
@@ -81,7 +83,7 @@ class ExplainInput(BaseModel):
     problem: str
     segment: str
     version: str
-    env: str | None = None
+    env: ENV = "default"
     strict: bool | None = True
     experiment_id: str | None = None
     train_id: str | None = None
@@ -97,7 +99,7 @@ class PromoteInput(BaseModel):
     train_run_id: str
     eval_run_id: str
     explain_run_id: str
-    stage: str
+    stage: STAGE = "production"
     logging_level: LOGGING_LEVEL = "INFO"
 
 class ExecuteAllDataPreprocessingInput(BaseModel):
@@ -115,7 +117,7 @@ class ExecuteExperimentWithLatestInput(BaseModel):
     problem: str
     segment: str
     version: str
-    env: str | None = "dev"
+    env: ENV = "dev"
     strict: bool | None = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
@@ -126,7 +128,7 @@ class ExecuteExperimentWithLatestInput(BaseModel):
 
 class ExecuteAllExperimentsWithLatestInput(BaseModel):
     """Model for the input of the execute_all_experiments_with_latest_input pipeline."""
-    env: str | None = "dev"
+    env: ENV = "dev"
     strict: bool | None = True
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
@@ -137,7 +139,7 @@ class ExecuteAllExperimentsWithLatestInput(BaseModel):
 
 class RunAllWorkflowsInput(BaseModel):
     """Model for the input of the run_all_workflows pipeline."""
-    env: str | None = "dev"
+    env: ENV = "dev"
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
     skip_if_existing: bool | None = True

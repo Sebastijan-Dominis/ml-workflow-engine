@@ -157,7 +157,6 @@ FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
                 "optional": True
             },
             "env": {
-                "placeholder": "Environment to run the script in (dev/test/prod) (default = default ~ none)",
                 "optional": True,
                 "value": "default"
             },
@@ -213,7 +212,6 @@ FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
                 "optional": True
             },
             "env": {
-                "placeholder": "Environment to run the script in (dev/test/prod) (default = default ~ none)",
                 "optional": True,
                 "value": "default"
             },
@@ -260,7 +258,6 @@ FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
                 "optional": False
             },
             "env": {
-                "placeholder": "Environment to run the script in (dev/test/prod) (default = default ~ none)",
                 "optional": True,
                 "value": "default"
             },
@@ -301,7 +298,6 @@ FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
                 "optional": False
             },
             "env": {
-                "placeholder": "Environment to run the script in (dev/test/prod) (default = default ~ none)",
                 "optional": True,
                 "value": "default"
             },
@@ -362,8 +358,8 @@ FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
                 "optional": False
             },
             "stage": {
-                "placeholder": "Stage of the promotion (staging or production)",
-                "optional": False
+                "optional": False,
+                "value": "production"
             },
             "logging_level": {
                 "optional": True,
@@ -466,7 +462,6 @@ FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
         "args_schema": ExecuteAllExperimentsWithLatestInput,
         "field_metadata": {
             "env": {
-                "placeholder": "Environment to run the script in (dev/test/prod) (default = dev)",
                 "optional": True,
                 "value": "dev"
             },
@@ -511,7 +506,6 @@ FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
         "args_schema": RunAllWorkflowsInput,
         "field_metadata": {
             "env": {
-                "placeholder": "Environment to run the script in (dev/test/prod) (default = dev)",
                 "optional": True,
                 "value": "dev"
             },

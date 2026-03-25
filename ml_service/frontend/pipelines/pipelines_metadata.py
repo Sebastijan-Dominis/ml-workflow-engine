@@ -54,6 +54,26 @@ for p in FRONTEND_PIPELINES_REGISTRY:
                 "bold": True,
                 "optional": is_optional
             })
+        elif field_name == "env":
+            fields.append({
+                "name": field_name,
+                "type": "dropdown",
+                "options": ["dev", "test", "prod", "default"],
+                "value": model_field.default if model_field.default is not None else "default",
+                "bold": True,
+                "optional": is_optional,
+                "label": "env (default ~ none)"
+            })
+        elif field_name == "stage":
+            fields.append({
+                "name": field_name,
+                "type": "dropdown",
+                "options": ["staging", "production"],
+                "value": model_field.default if model_field.default is not None else "production",
+                "bold": True,
+                "optional": is_optional,
+                "label": "stage"
+            })
         elif is_boolean_field(model_field):
             fields.append({
                 "name": field_name,
