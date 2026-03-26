@@ -27,7 +27,7 @@ _Last updated: 2026-03-24_
     - Status: done (2026-03-24)
     - Importance: medium
 - [ ] Create infer.py
-    - Status: planned
+    - Status: in progress
     - Importance: medium
 - [ ] Create monitor.py
     - Status: planned

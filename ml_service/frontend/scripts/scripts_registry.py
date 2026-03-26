@@ -44,7 +44,7 @@ FRONTEND_SCRIPTS_REGISTRY: list[dict[str, Any]] = [
                 "optional": True
             },
             "num_rows": {
-                "placeholder": "Number of rows to generate (default: 1000)",
+                "placeholder": "Number of rows to generate (default: 10000)",
                 "optional": True
             },
             "include_old": {

@@ -2,7 +2,7 @@
 import copy
 from pathlib import Path
 
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 
 from ml_service.backend.configs.persistence.save_config import save_config
 

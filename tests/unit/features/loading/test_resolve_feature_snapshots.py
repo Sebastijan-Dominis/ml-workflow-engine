@@ -22,6 +22,8 @@ def _lineage(snapshot_id: str) -> FeatureLineage:
         feature_schema_hash="schema-hash",
         operator_hash="op-hash",
         feature_type="tabular",
+        file_name="features.py",
+        data_format="parquet",
     )
 
 

@@ -3,7 +3,7 @@
 import logging
 
 from ml.exceptions import ConfigError, UserError
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 from ml.promotion.constants.constants import COMPARISON_DIRECTIONS, ThresholdComparisonResult
 
 logger = logging.getLogger(__name__)

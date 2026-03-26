@@ -119,7 +119,12 @@ def test_preparation_step_populates_context_and_resolves_classification_weights(
     derived_schema = pd.DataFrame({"feature": [], "source_operator": []})
     stats_obj = object()
 
-    monkeypatch.setattr(preparation_module, "load_features_and_target", lambda *_args, **_kwargs: (x_raw, y_raw, lineage, "entity_key"))
+    import sys as _sys
+    monkeypatch.setattr(
+        _sys.modules["ml.features.loading.features_and_target"],
+        "load_features_and_target",
+        lambda *_args, **_kwargs: (x_raw, y_raw, lineage, "entity_key"),
+    )
     monkeypatch.setattr(preparation_module, "get_splits", lambda *_args, **_kwargs: (splits, splits_info))
     monkeypatch.setattr(preparation_module, "load_schemas", lambda *_args, **_kwargs: (input_schema, derived_schema))
     monkeypatch.setattr(preparation_module, "load_yaml", lambda _path: {
@@ -172,7 +177,12 @@ def test_preparation_step_skips_class_weighting_for_non_classification(
     y_raw = pd.Series([10.0, 20.0])
     splits = SimpleNamespace(X_train=pd.DataFrame({"x": [1.0]}), y_train=pd.Series([10.0]))
 
-    monkeypatch.setattr(preparation_module, "load_features_and_target", lambda *_args, **_kwargs: (x_raw, y_raw, [], "entity_key"))
+    import sys as _sys
+    monkeypatch.setattr(
+        _sys.modules["ml.features.loading.features_and_target"],
+        "load_features_and_target",
+        lambda *_args, **_kwargs: (x_raw, y_raw, [], "entity_key"),
+    )
     monkeypatch.setattr(preparation_module, "get_splits", lambda *_args, **_kwargs: (splits, {"train_rows": 1}))
     monkeypatch.setattr(preparation_module, "load_schemas", lambda *_args, **_kwargs: (pd.DataFrame(), pd.DataFrame()))
     from datetime import datetime

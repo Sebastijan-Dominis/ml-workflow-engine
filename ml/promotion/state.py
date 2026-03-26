@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 from ml.promotion.constants.constants import (
     PreviousProductionRunIdentity,
     ThresholdComparisonResult,

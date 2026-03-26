@@ -26,6 +26,8 @@ def _feature_lineage_payload() -> dict[str, str]:
         "feature_schema_hash": "schema-hash-123",
         "operator_hash": "operator-hash-123",
         "feature_type": "tabular",
+        "file_name": "features.py",
+        "data_format": "parquet",
     }
 
 

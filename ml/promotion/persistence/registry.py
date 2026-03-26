@@ -9,6 +9,7 @@ import yaml
 
 from ml.exceptions import PersistenceError
 from ml.promotion.constants.constants import Stage
+from ml.promotion.validation.registry_entry import validate_registry_entry
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,8 @@ def update_registry_and_archive(
     Returns:
         dict: Updated active registry dictionary.
     """
+
+    validate_registry_entry(run_info)
 
     new_registry = copy.deepcopy(model_registry, {})
 

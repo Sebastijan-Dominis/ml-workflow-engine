@@ -120,7 +120,7 @@ def test_evaluate_loads_artifacts_and_returns_evaluate_output(tmp_path: Path, mo
     y = pd.Series([1.0, 2.0, 3.0], name="target")
     lineage = [SimpleNamespace(feature_set="booking_context_features")]
     monkeypatch.setattr(
-        "ml.runners.evaluation.evaluators.regression.regression.load_features_and_target",
+        "ml.features.loading.features_and_target.load_features_and_target",
         lambda *_args, **_kwargs: (X, y, lineage, "entity_key"),
     )
 

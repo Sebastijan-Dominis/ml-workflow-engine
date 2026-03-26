@@ -3,7 +3,7 @@
 import pytest
 from ml.exceptions import ConfigError, UserError
 from ml.promotion.comparisons.production import compare_against_production_model
-from ml.promotion.config.models import Direction, MetricName, MetricSet
+from ml.promotion.config.promotion_thresholds import Direction, MetricName, MetricSet
 
 pytestmark = pytest.mark.unit
 

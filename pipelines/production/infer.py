@@ -1,195 +1,372 @@
-# """CLI for running production model inference with scalable batch storage.
+"""CLI for running model inference (production + staging) with monitoring-ready outputs."""
 
-# - Single-row or batch input.
-# - Updates daily/hourly prediction batch files.
-# - Designed so LLMs or other programs can call the core engine without storage or CLI logic.
-# """
+import argparse
+import hashlib
+import logging
+import sys
+import time
+import uuid
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any, Literal
+from uuid import uuid4
 
-# import argparse
-# import hashlib
-# import logging
-# import sys
-# from datetime import datetime
-# from pathlib import Path
-# from typing import Any
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
+import yaml
+from ml.cli.error_handling import resolve_exit_code
+from ml.config.loader import load_and_validate_config
+from ml.exceptions import PipelineContractError
+from ml.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
+from ml.logging_config import setup_logging
+from ml.metadata.validation.runners.training import validate_training_metadata
+from ml.metadata.validation.search.search import validate_search_record
+from ml.promotion.config.registry_entry import RegistryEntry
+from ml.promotion.validation.registry_entry import validate_registry_entry
+from ml.runners.shared.loading.pipeline import load_model_or_pipeline
+from ml.utils.hashing.service import hash_artifact
+from ml.utils.loaders import load_json
 
-# import numpy as np
-# import pandas as pd
-# import pyarrow as pa
-# import pyarrow.parquet as pq
-# import yaml
-# from ml.cli.error_handling import resolve_exit_code
-# from ml.exceptions import PipelineContractError
-# from ml.runners.shared.loading.pipeline import load_model_or_pipeline
-# from ml.utils.hashing.service import hash_artifact
+logger = logging.getLogger(__name__)
 
-# logger = logging.getLogger(__name__)
+SCHEMA_VERSION = "V1"
 
-# # -----------------------
-# # Core Prediction Engine
-# # -----------------------
-# class InferenceEngine:
-#     """Encapsulates model/pipeline loading, validation, and prediction logic."""
+EXPECTED_COLUMNS = [
+    "run_id",
+    "prediction_id",
+    "timestamp",
+    "model_stage",
+    "model_version",
+    "entity_id",
+    "input_hash",
+    "prediction",
+    "prediction_proba",
+    "schema_version"
+]
 
-#     def __init__(self, artifact_meta: dict[str, Any]):
-#         self.artifact_meta = artifact_meta
-#         self.pipeline_path = Path(artifact_meta["artifacts"].get("pipeline_path", ""))
-#         self.model_path = Path(artifact_meta["artifacts"].get("model_path", ""))
-#         self.expected_hash = artifact_meta["artifacts"].get(
-#             "pipeline_hash" if self.pipeline_path.exists() else "model_hash"
-#         )
-#         self._artifact: Any = None
-#         self._load_and_validate_artifact()
-#         self.feature_columns = [
-#             f["name"] for f in artifact_meta.get("feature_lineage", [])
-#         ]
+# =========================================================
+# Feature preparation
+# =========================================================
+def prepare_features(args: argparse.Namespace, model_metadata: RegistryEntry) -> tuple[pd.DataFrame, str]:
+    # Lazy import to avoid circular dependencies
+    from ml.features.loading.features_and_target import load_features_and_target
 
-#     def _load_and_validate_artifact(self) -> None:
-#         """Load pipeline or model and validate hash."""
-#         if self.pipeline_path.exists():
-#             self._artifact = load_model_or_pipeline(self.pipeline_path, target_type="pipeline")
-#             actual_hash = hash_artifact(self.pipeline_path)
-#         elif self.model_path.exists():
-#             self._artifact = load_model_or_pipeline(self.model_path, target_type="model")
-#             actual_hash = hash_artifact(self.model_path)
-#             pass  # non-pipeline model logic can be implemented here
-#         else:
-#             raise PipelineContractError("No valid model or pipeline artifact found.")
+    experiment_id = model_metadata.experiment_id
+    train_run_id = model_metadata.train_run_id
 
-#         if actual_hash != self.expected_hash:
-#             raise PipelineContractError(f"Artifact hash mismatch! Expected {self.expected_hash}, got {actual_hash}")
-#         logger.info("Artifact loaded and validated successfully.")
+    experiment_path = Path("experiments") / args.problem / args.segment / model_metadata.model_version / experiment_id
 
-#     def _normalize_input(self, X: Any) -> pd.DataFrame:
-#         """Normalize input into a DataFrame with expected columns."""
-#         if isinstance(X, pd.DataFrame):
-#             df = X.copy()
-#         elif isinstance(X, dict):
-#             df = pd.DataFrame([X])
-#         elif isinstance(X, list):
-#             if all(isinstance(r, dict) for r in X):
-#                 df = pd.DataFrame(X)
-#             else:
-#                 df = pd.DataFrame([X], columns=self.feature_columns)
-#         else:
-#             raise ValueError(f"Unsupported input type: {type(X)}")
-#         return df[self.feature_columns]
+    training_metadata_file = experiment_path / "training" / train_run_id / "metadata.json"
+    training_metadata = validate_training_metadata(load_json(training_metadata_file))
 
-#     def _hash_input_row(self, row: pd.Series) -> str:
-#         """Return SHA-256 hash for a row to trace predictions."""
-#         row_hash = pd.util.hash_pandas_object(row, index=True).values
-#         row_bytes = np.asarray(row_hash).tobytes()
-#         return hashlib.sha256(row_bytes).hexdigest()
+    feature_sets = training_metadata.lineage.feature_lineage
 
-#     # -----------------------
-#     # Public Prediction APIs
-#     # -----------------------
-#     def predict(self, X: Any) -> pd.Series:
-#         df = self._normalize_input(X)
-#         return pd.Series(self._artifact.predict(df), index=df.index)
+    resolved_snapshots = resolve_feature_snapshots(
+        feature_store_path=Path("feature_store"),
+        feature_sets=feature_sets,
+        snapshot_binding_key=args.snapshot_bindings_id
+    )
 
-#     def predict_proba(self, X: Any) -> pd.DataFrame:
-#         df = self._normalize_input(X)
-#         return pd.DataFrame(self._artifact.predict_proba(df), index=df.index)
+    search_metadata = validate_search_record(
+        load_json(experiment_path / "search" / "metadata.json")
+    )
 
-#     # -----------------------
-#     # Batch Storage (CLI only)
-#     # -----------------------
-#     def store_predictions(
-#         self,
-#         X: pd.DataFrame,
-#         predictions: pd.Series,
-#         probabilities: pd.DataFrame,
-#         output_dir: Path,
-#         time_window: str = "daily",
-#     ) -> Path:
-#         """
-#         Store predictions in daily/hourly Parquet batch file. Updates existing file if present.
+    model_version = search_metadata.metadata.version
+    env = search_metadata.metadata.env
 
-#         Args:
-#             X: Input DataFrame
-#             predictions: pd.Series of predictions
-#             probabilities: pd.DataFrame of probabilities
-#             output_dir: Directory to store batch files
-#             time_window: "hourly" or "daily"
+    model_cfg = load_and_validate_config(
+        path=Path("configs") / "search" / args.problem / args.segment / f"{model_version}.yaml",
+        search_dir=None,
+        cfg_type="search",
+        env=env
+    )
 
-#         Returns:
-#             Path to updated Parquet batch file
-#         """
-#         output_dir.mkdir(parents=True, exist_ok=True)
-#         now = datetime.utcnow()
-#         if time_window == "hourly":
-#             batch_file = output_dir / now.strftime("batch_%Y-%m-%d_%H.parquet")
-#         elif time_window == "daily":
-#             batch_file = output_dir / now.strftime("batch_%Y-%m-%d.parquet")
-#         else:
-#             raise ValueError("time_window must be 'hourly' or 'daily'")
+    X, _, _, entity_key = load_features_and_target(
+        model_cfg,
+        snapshot_selection=resolved_snapshots,
+        snapshot_binding_key=args.snapshot_bindings_id,
+        drop_entity_key=False,  # IMPORTANT: keep for monitoring joins
+        strict=True
+    )
 
-#         # Build new records
-#         new_df = X.copy()
-#         new_df["prediction"] = predictions.values
-#         new_df["prediction_proba"] = probabilities.apply(lambda row: row.tolist(), axis=1)
-#         new_df["input_hash"] = X.apply(self._hash_input_row, axis=1)
-#         new_df["timestamp"] = now.isoformat()
-
-#         # Append to existing Parquet file if exists
-#         if batch_file.exists():
-#             existing_table = pq.read_table(batch_file)
-#             existing_df = existing_table.to_pandas()
-#             combined_df = pd.concat([existing_df, new_df], ignore_index=True)
-#             pq.write_table(pa.Table.from_pandas(combined_df), batch_file)
-#         else:
-#             pq.write_table(pa.Table.from_pandas(new_df), batch_file)
-
-#         logger.info(f"Stored/updated Parquet batch predictions at {batch_file}")
-#         return batch_file
+    return X, entity_key
 
 
-# # -----------------------
-# # CLI Entry Point
-# # -----------------------
-# def parse_args() -> argparse.Namespace:
-#     parser = argparse.ArgumentParser(description="Run production inference and store batch predictions.")
-#     parser.add_argument("--problem_type", type=str, required=True)
-#     parser.add_argument("--segment", type=str, required=True)
-#     parser.add_argument("--output_dir", type=str, default="predictions")
-#     parser.add_argument("--logging-level", choices=["DEBUG","INFO","WARNING","ERROR","CRITICAL"], default="INFO")
-#     parser.add_argument("--features", type=str, nargs="*", help="Single-row features as key=value")
-#     parser.add_argument("--time_window", type=str, choices=["hourly","daily"], default="daily")
-#     return parser.parse_args()
+# =========================================================
+# Artifact loading
+# =========================================================
+def load_and_validate_artifact(model_metadata: RegistryEntry) -> Any:
+    pipeline_path = Path(model_metadata.artifacts.pipeline_path or "")
+    model_path = Path(model_metadata.artifacts.model_path)
+    expected_hash = model_metadata.artifacts.pipeline_hash
+
+    if pipeline_path.exists():
+        artifact = load_model_or_pipeline(pipeline_path, target_type="pipeline")
+        actual_hash = hash_artifact(pipeline_path)
+    elif model_path.exists():
+        artifact = load_model_or_pipeline(model_path, target_type="model")
+        actual_hash = hash_artifact(model_path)
+    else:
+        raise PipelineContractError("No valid artifact found.")
+
+    if actual_hash != expected_hash:
+        raise PipelineContractError(f"Hash mismatch! Expected {expected_hash}, got {actual_hash}")
+
+    return artifact
 
 
-# def main() -> int:
-#     args = parse_args()
-#     logging.basicConfig(level=getattr(logging, args.logging_level.upper(), logging.INFO),
-#                         format="%(asctime)s [%(levelname)s] %(message)s")
+# =========================================================
+# Prediction
+# =========================================================
+def predict(X: pd.DataFrame, artifact: Any) -> tuple[pd.Series, pd.DataFrame]:
+    preds = pd.Series(artifact.predict(X), index=X.index)
 
-#     try:
-#         # Load artifact metadata
-#         registry_path = Path("model_registry.yaml")
-#         if not registry_path.exists():
-#             raise PipelineContractError(f"Model registry not found at {registry_path}")
-#         with open(registry_path) as f:
-#             registry = yaml.safe_load(f)
-#         prod_meta = registry[args.problem_type][args.segment]["production"]
+    if hasattr(artifact, "predict_proba"):
+        proba = pd.DataFrame(artifact.predict_proba(X), index=X.index)
+    else:
+        proba = pd.DataFrame()
 
-#         engine = InferenceEngine(prod_meta)
+    return preds, proba
 
 
+# =========================================================
+# Stable hashing
+# =========================================================
+def hash_input_row(row: pd.Series) -> str:
+    row = row.sort_index()
 
-#         # Predictions
-#         preds = engine.predict(X_input)
-#         probs = engine.predict_proba(X_input)
+    normalized = []
+    for v in row.values:
+        if pd.isna(v):
+            normalized.append("NULL")
+        elif isinstance(v, float):
+            normalized.append(f"{v:.10g}")  # stable float format
+        else:
+            normalized.append(str(v))
 
-#         # Store predictions (CLI only)
-#         engine.store_predictions(X_input, preds, probs, Path(args.output_dir), time_window=args.time_window)
-
-#         return 0  # EXIT_SUCCESS
-
-#     except Exception as e:
-#         logger.exception("Inference failed")
-#         return resolve_exit_code(e)
+    row_str = "|".join(normalized)
+    return hashlib.sha256(row_str.encode()).hexdigest()
 
 
-# if __name__ == "__main__":
-#     sys.exit(main())
+# =========================================================
+# Storage (append-only, partitioned)
+# =========================================================
+def store_predictions(
+    *,
+    features: pd.DataFrame,
+    entity_key: str,
+    input_hash: pd.Series,
+    timestamp: datetime,
+    path: Path,
+    predictions: pd.Series,
+    probabilities: pd.DataFrame,
+    model_metadata: RegistryEntry,
+    stage: Literal["production", "staging"]
+) -> Path:
+
+
+    path.mkdir(parents=True, exist_ok=True)
+
+    file_path = path / f"{uuid.uuid4().hex}.parquet"
+
+    # Build schema-safe DataFrame
+    df = pd.DataFrame()
+
+    # --- identifiers ---
+    run_id = f"{timestamp}_{uuid4().hex[:8]}"
+    df["run_id"] = run_id
+    df["prediction_id"] = [uuid.uuid4().hex for _ in range(len(features))]
+    df["timestamp"] = timestamp.isoformat()
+
+    # --- model metadata ---
+    df["model_stage"] = stage
+    df["model_version"] = model_metadata.model_version
+
+    # --- entity key (assumes exists) ---
+    if entity_key not in features.columns:
+        msg = f"Entity key '{entity_key}' not found in features. Cannot store predictions without entity identifier for monitoring joins."
+        logger.error(msg)
+        raise PipelineContractError(msg)
+    df["entity_id"] = features[entity_key]
+
+    # --- hash for alignment ---
+    df["input_hash"] = input_hash
+
+    # --- predictions ---
+    df["prediction"] = predictions.values
+
+    if not probabilities.empty:
+        df["prediction_proba"] = probabilities.apply(lambda r: r.tolist(), axis=1)
+    else:
+        df["prediction_proba"] = pd.Series([None]*len(df), dtype="object")
+
+    df["schema_version"] = SCHEMA_VERSION
+
+    df = df.reindex(columns=EXPECTED_COLUMNS)
+
+    tmp_path = file_path.with_suffix(".tmp")
+    pq.write_table(pa.Table.from_pandas(df), tmp_path)
+    tmp_path.rename(file_path)
+
+    logger.info(f"Stored predictions at {file_path}")
+    return file_path
+
+
+# =========================================================
+# Inference execution
+# =========================================================
+def execute_inference(
+    *,
+    args: argparse.Namespace,
+    model_metadata: RegistryEntry,
+    stage: Literal["production", "staging"],
+    timestamp: datetime,
+    path: Path
+):
+    """Run inference for a given model and store predictions with monitoring-ready outputs.
+
+    Args:
+        args: Command-line arguments.
+        model_metadata: Metadata for the model to run inference with.
+        stage: "production" or "staging" - used for labeling predictions and monitoring.
+        timestamp: Current timestamp for partitioning and metadata.
+        path: Directory where predictions will be stored.
+    """
+
+    logger.info(f"Running inference for stage={stage} with model version={model_metadata.model_version}...")
+
+    features, entity_key = prepare_features(args, model_metadata)
+
+    artifact = load_and_validate_artifact(model_metadata)
+
+    features_for_prediction = features.drop(columns=[entity_key], errors="ignore")
+    features_for_prediction = features_for_prediction.sort_index(axis=1)
+
+    input_hash = features_for_prediction.apply(hash_input_row, axis=1)
+
+    start_time = time.perf_counter()
+
+    preds, proba = predict(features_for_prediction, artifact)
+
+    end_time = time.perf_counter()
+
+    logger.info(f"Inference completed in {end_time - start_time:.4f} seconds. Storing predictions...")
+
+    store_predictions(
+        features=features,
+        entity_key=entity_key,
+        timestamp=timestamp,
+        path=path,
+        predictions=preds,
+        probabilities=proba,
+        model_metadata=model_metadata,
+        stage=stage,
+        input_hash=input_hash
+    )
+
+
+# =========================================================
+# CLI
+# =========================================================
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run inference for production and staging models with monitoring-ready outputs.")
+
+    parser.add_argument(
+        "--problem",
+        type=str,
+        required=True,
+        help="Model problem, e.g., 'no_show'"
+    )
+
+    parser.add_argument(
+        "--segment",
+        type=str,
+        required=True,
+        help="Model segment name, e.g., 'city_hotel_online_ta'"
+    )
+
+    parser.add_argument(
+        "--snapshot-bindings-id",
+        required=True,
+        help = "A snapshot binding to define which snapshot to load for each feature set."
+    )
+
+    parser.add_argument(
+        "--logging-level",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        default="INFO",
+        help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL) (default: INFO)"
+    )
+
+    return parser.parse_args()
+
+
+# =========================================================
+# Main
+# =========================================================
+def main() -> int:
+    args = parse_args()
+
+    now = datetime.now(UTC)
+
+    base_path = Path("predictions") / args.problem / args.segment
+
+    partition_path = (
+        base_path
+        / f"date={now.strftime('%Y-%m-%d')}"
+        / f"hour={now.strftime('%H')}"
+    )
+
+    log_path = partition_path / "inference.log"
+
+    setup_logging(log_path, getattr(logging, args.logging_level, logging.INFO))
+
+    try:
+        model_registry = Path("model_registry/models.yaml")
+        with open(model_registry) as f:
+            registry = yaml.safe_load(f)
+
+        entry = registry.get(args.problem, {}).get(args.segment, {})
+
+        prod_meta_raw = entry.get("production")
+        stage_meta_raw = entry.get("staging")
+
+        if not prod_meta_raw and not stage_meta_raw:
+            msg = f"No production or staging model found in registry for problem '{args.problem}' and segment '{args.segment}'."
+            logger.error(msg)
+            raise PipelineContractError(msg)
+
+        prod_meta, stage_meta = None, None
+        if prod_meta_raw:
+            prod_meta = validate_registry_entry(prod_meta_raw)
+        if stage_meta_raw:
+            stage_meta = validate_registry_entry(stage_meta_raw)
+
+        if prod_meta is not None:
+            execute_inference(
+                args=args,
+                model_metadata=prod_meta,
+                stage="production",
+                timestamp=now,
+                path=partition_path / "production",
+            )
+
+        if stage_meta is not None:
+            execute_inference(
+                args=args,
+                model_metadata=stage_meta,
+                stage="staging",
+                timestamp=now,
+                path=partition_path / "staging",
+            )
+
+        return 0
+
+    except Exception as e:
+        logger.exception("Inference failed")
+        return resolve_exit_code(e)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

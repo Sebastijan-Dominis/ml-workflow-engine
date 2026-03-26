@@ -87,8 +87,8 @@ def parse_args():
     parser.add_argument(
         "--num-rows",
         type=int,
-        default=5000,
-        help="Number of synthetic rows to generate. Defaults to 5000.",
+        default=10000,
+        help="Number of synthetic rows to generate. Defaults to 10000.",
     )
 
     parser.add_argument(

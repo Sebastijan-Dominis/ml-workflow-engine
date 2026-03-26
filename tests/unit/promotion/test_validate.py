@@ -8,16 +8,15 @@ from typing import cast
 import pytest
 from ml.exceptions import ConfigError, UserError
 from ml.metadata.schemas.runners.explainability import ExplainabilityArtifacts
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 from ml.promotion.constants.constants import RunnersMetadata
-from ml.promotion.validation.validate import (
+from ml.promotion.validation.artifacts import (
     validate_artifacts_consistency,
     validate_explainability_artifacts,
     validate_optional_artifact,
-    validate_promotion_thresholds,
-    validate_run_dirs,
-    validate_run_ids,
 )
+from ml.promotion.validation.promotion_thresholds import validate_promotion_thresholds
+from ml.promotion.validation.runners import validate_run_dirs, validate_run_ids
 
 pytestmark = pytest.mark.unit
 
@@ -152,7 +151,7 @@ def test_validate_run_ids_raises_when_explain_not_linked_to_train() -> None:
 def _write_file(path: Path, content: str = "data") -> str:
     """Create file and return deterministic hash via hash_artifact."""
     path.write_text(content)
-    from ml.promotion.validation.validate import hash_artifact
+    from ml.promotion.validation.artifacts import hash_artifact
 
     return hash_artifact(path)
 
