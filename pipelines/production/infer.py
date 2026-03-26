@@ -6,6 +6,7 @@ import logging
 import sys
 import time
 import uuid
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
@@ -17,22 +18,25 @@ import pyarrow.parquet as pq
 import yaml
 from ml.cli.error_handling import resolve_exit_code
 from ml.config.loader import load_and_validate_config
-from ml.exceptions import PipelineContractError
+from ml.exceptions import PipelineContractError, RuntimeMLError
 from ml.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
+from ml.io.persistence.save_metadata import save_metadata
 from ml.logging_config import setup_logging
 from ml.metadata.validation.runners.training import validate_training_metadata
 from ml.metadata.validation.search.search import validate_search_record
+from ml.modeling.models.feature_lineage import FeatureLineage
 from ml.promotion.config.registry_entry import RegistryEntry
 from ml.promotion.validation.registry_entry import validate_registry_entry
 from ml.runners.shared.loading.pipeline import load_model_or_pipeline
 from ml.utils.hashing.service import hash_artifact
 from ml.utils.loaders import load_json
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
 SCHEMA_VERSION = "V1"
 
-EXPECTED_COLUMNS = [
+BASE_EXPECTED_COLUMNS = [
     "run_id",
     "prediction_id",
     "timestamp",
@@ -41,14 +45,41 @@ EXPECTED_COLUMNS = [
     "entity_id",
     "input_hash",
     "prediction",
-    "prediction_proba",
     "schema_version"
 ]
+
+PROBA_PREFIX = "proba_"
+
+def validate_columns(df: pd.DataFrame) -> list[str]:
+    cols = set(df.columns)
+
+    # Check required base columns
+    missing = set(BASE_EXPECTED_COLUMNS) - cols
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
+
+    # Check probability columns (optional but must follow pattern)
+    proba_cols = [c for c in cols if c.startswith(PROBA_PREFIX)]
+
+    if proba_cols:
+        # Ensure consistent indexing (proba_0, proba_1, ...)
+        expected = {f"{PROBA_PREFIX}{i}" for i in range(len(proba_cols))}
+        if set(proba_cols) != expected:
+            raise ValueError(f"Probability columns malformed: {proba_cols}")
+
+    return list(cols)
 
 # =========================================================
 # Feature preparation
 # =========================================================
-def prepare_features(args: argparse.Namespace, model_metadata: RegistryEntry) -> tuple[pd.DataFrame, str]:
+
+@dataclass
+class PrepareFeaturesReturn:
+    features: pd.DataFrame
+    entity_key: str
+    feature_lineage: list[FeatureLineage]
+
+def prepare_features(args: argparse.Namespace, model_metadata: RegistryEntry) -> PrepareFeaturesReturn:
     # Lazy import to avoid circular dependencies
     from ml.features.loading.features_and_target import load_features_and_target
 
@@ -90,13 +121,22 @@ def prepare_features(args: argparse.Namespace, model_metadata: RegistryEntry) ->
         strict=True
     )
 
-    return X, entity_key
+    return PrepareFeaturesReturn(
+        features=X,
+        entity_key=entity_key,
+        feature_lineage=training_metadata.lineage.feature_lineage
+    )
 
+@dataclass
+class ArtifactLoadingReturn:
+    artifact: Any
+    artifact_hash: str
+    artifact_type: Literal["pipeline", "model"]
 
 # =========================================================
 # Artifact loading
 # =========================================================
-def load_and_validate_artifact(model_metadata: RegistryEntry) -> Any:
+def load_and_validate_artifact(model_metadata: RegistryEntry) -> ArtifactLoadingReturn:
     pipeline_path = Path(model_metadata.artifacts.pipeline_path or "")
     model_path = Path(model_metadata.artifacts.model_path)
     expected_hash = model_metadata.artifacts.pipeline_hash
@@ -113,7 +153,11 @@ def load_and_validate_artifact(model_metadata: RegistryEntry) -> Any:
     if actual_hash != expected_hash:
         raise PipelineContractError(f"Hash mismatch! Expected {expected_hash}, got {actual_hash}")
 
-    return artifact
+    return ArtifactLoadingReturn(
+        artifact=artifact,
+        artifact_hash=actual_hash,
+        artifact_type="pipeline" if pipeline_path.exists() else "model"
+    )
 
 
 # =========================================================
@@ -149,6 +193,12 @@ def hash_input_row(row: pd.Series) -> str:
     return hashlib.sha256(row_str.encode()).hexdigest()
 
 
+@dataclass
+class PredictionStoringReturn:
+    file_path: Path
+    run_id: str
+    cols: list[str]
+
 # =========================================================
 # Storage (append-only, partitioned)
 # =========================================================
@@ -163,7 +213,7 @@ def store_predictions(
     probabilities: pd.DataFrame,
     model_metadata: RegistryEntry,
     stage: Literal["production", "staging"]
-) -> Path:
+) -> PredictionStoringReturn:
 
 
     path.mkdir(parents=True, exist_ok=True)
@@ -197,21 +247,89 @@ def store_predictions(
     df["prediction"] = predictions.values
 
     if not probabilities.empty:
-        df["prediction_proba"] = probabilities.apply(lambda r: r.tolist(), axis=1)
-    else:
-        df["prediction_proba"] = pd.Series([None]*len(df), dtype="object")
+        for i, col in enumerate(probabilities.columns):
+            df[f"proba_{i}"] = probabilities[col].astype(float)
 
     df["schema_version"] = SCHEMA_VERSION
 
-    df = df.reindex(columns=EXPECTED_COLUMNS)
+    cols = validate_columns(df)
 
     tmp_path = file_path.with_suffix(".tmp")
     pq.write_table(pa.Table.from_pandas(df), tmp_path)
     tmp_path.rename(file_path)
 
     logger.info(f"Stored predictions at {file_path}")
-    return file_path
 
+    return PredictionStoringReturn(
+        file_path=file_path,
+        run_id=run_id,
+        cols = cols
+    )
+
+class InferenceMetadata(BaseModel):
+    problem_type: str
+    segment: str
+    model_version: str
+    model_stage: str
+    run_id: str
+    timestamp: str
+    columns: list[str]
+    snapshot_bindings_id: str
+    feature_lineage: list[FeatureLineage]
+    artifact_type: Literal["pipeline", "model"]
+    artifact_hash: str
+    inference_latency_seconds: float
+
+def validate_inference_metadata(metadata: dict) -> InferenceMetadata:
+    """
+    Validate the inference metadata against the InferenceMetadata schema.
+
+    Args:
+        metadata (dict): The metadata dictionary to validate.
+
+    Returns:
+        InferenceMetadata: The validated metadata object.
+    """
+    try:
+        validated_metadata = InferenceMetadata.model_validate(metadata)
+        logger.debug("Successfully validated inference metadata.")
+        return validated_metadata
+    except Exception as e:
+        msg = "Error validating inference metadata."
+        logger.exception(msg)
+        raise RuntimeMLError(msg) from e
+
+
+def prepare_metadata(
+    *,
+    model_metadata: RegistryEntry,
+    args: argparse.Namespace,
+    run_id: str,
+    timestamp: datetime,
+    stage: Literal["production", "staging"],
+    cols: list[str],
+    snapshot_bindings_id: str,
+    feature_lineage: list[FeatureLineage],
+    artifact_type: Literal["pipeline", "model"],
+    artifact_hash: str,
+    inference_latency_seconds: float
+) -> dict:
+    metadata = {
+        "problem_type": args.problem,
+        "segment": args.segment,
+        "model_version": model_metadata.model_version,
+        "model_stage": stage,
+        "run_id": run_id,
+        "timestamp": timestamp.isoformat(),
+        "columns": cols,
+        "snapshot_bindings_id": snapshot_bindings_id,
+        "feature_lineage": [f.model_dump() for f in feature_lineage],
+        "artifact_type": artifact_type,
+        "artifact_hash": artifact_hash,
+        "inference_latency_seconds": inference_latency_seconds
+
+    }
+    return metadata
 
 # =========================================================
 # Inference execution
@@ -236,9 +354,17 @@ def execute_inference(
 
     logger.info(f"Running inference for stage={stage} with model version={model_metadata.model_version}...")
 
-    features, entity_key = prepare_features(args, model_metadata)
+    prepare_features_return = prepare_features(args, model_metadata)
 
-    artifact = load_and_validate_artifact(model_metadata)
+    features = prepare_features_return.features
+    entity_key = prepare_features_return.entity_key
+    feature_lineage = prepare_features_return.feature_lineage
+
+    artifact_loading_return = load_and_validate_artifact(model_metadata)
+
+    artifact = artifact_loading_return.artifact
+    artifact_hash = artifact_loading_return.artifact_hash
+    artifact_type = artifact_loading_return.artifact_type
 
     features_for_prediction = features.drop(columns=[entity_key], errors="ignore")
     features_for_prediction = features_for_prediction.sort_index(axis=1)
@@ -251,9 +377,11 @@ def execute_inference(
 
     end_time = time.perf_counter()
 
-    logger.info(f"Inference completed in {end_time - start_time:.4f} seconds. Storing predictions...")
+    duration = end_time - start_time
 
-    store_predictions(
+    logger.info(f"Inference completed in {duration:.4f} seconds. Storing predictions...")
+
+    prediction_return = store_predictions(
         features=features,
         entity_key=entity_key,
         timestamp=timestamp,
@@ -265,6 +393,29 @@ def execute_inference(
         input_hash=input_hash
     )
 
+    run_id = prediction_return.run_id
+    cols = prediction_return.cols
+
+    metadata_raw = prepare_metadata(
+        model_metadata=model_metadata,
+        args=args,
+        run_id=run_id,
+        timestamp=timestamp,
+        stage=stage,
+        snapshot_bindings_id=args.snapshot_bindings_id,
+        feature_lineage=feature_lineage,
+        artifact_hash=artifact_hash,
+        artifact_type=artifact_type,
+        inference_latency_seconds=duration,
+        cols=cols
+    )
+
+    metadata = validate_inference_metadata(metadata_raw)
+
+    save_metadata(
+        metadata = metadata.model_dump(exclude_none=True),
+        target_dir=path
+    )
 
 # =========================================================
 # CLI
