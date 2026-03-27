@@ -1,3 +1,4 @@
+"""A module for validating promotion metadata against Pydantic models for staging and production."""
 import logging
 from typing import Literal
 
