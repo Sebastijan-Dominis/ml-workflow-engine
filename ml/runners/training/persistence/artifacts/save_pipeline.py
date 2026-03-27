@@ -40,7 +40,10 @@ def save_pipeline(pipeline: Pipeline, path: Path) -> Path:
 
         joblib.dump(pipeline, temp_path)
         os.replace(temp_path, pipeline_file)
-        logger.info(f"Pipeline successfully saved to {pipeline_file}.")
+
+        msg = f"Pipeline successfully saved to {pipeline_file}."
+        logger.info(msg)
+        print(msg)
         return pipeline_file
     except Exception as e:
         if temp_path and temp_path.exists():

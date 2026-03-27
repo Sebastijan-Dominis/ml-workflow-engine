@@ -133,7 +133,9 @@ def main() -> int:
             try:
                 logger.info(f"Freezing feature set '{feature_set_name}' version '{feature_set_version}'...")
                 subprocess.run(cmd, check=True, capture_output=True, text=True, encoding="utf-8")
-                logger.info(f"Feature set '{feature_set_name}' succeeded.")
+                msg = f"Feature set '{feature_set_name}' succeeded."
+                logger.info(msg)
+                print(msg)
                 successes_count += 1
             except subprocess.CalledProcessError as e:
                 first_line = e.stderr.splitlines()[0] if e.stderr else ""

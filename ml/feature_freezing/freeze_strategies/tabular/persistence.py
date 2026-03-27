@@ -67,6 +67,10 @@ def persist_feature_snapshot(
         compression=config.storage.compression
     )
 
+    msg = f"Persisted feature set snapshot to {data_path} using format {config.storage.format}"
+    logger.info(msg)
+    print(msg)
+
     return path, data_path
 
 def save_input_schema(path: Path, features: pd.DataFrame):
@@ -93,7 +97,9 @@ def save_input_schema(path: Path, features: pd.DataFrame):
     })
 
     schema.to_csv(schema_path, index=False)
-    logger.info(f"Input schema saved to {schema_path}")
+    msg = f"Input schema saved to {schema_path}"
+    logger.info(msg)
+    print(msg)
 
 def save_derived_schema(
     path: Path,
@@ -137,7 +143,9 @@ def save_derived_schema(
 
     derived_schema = pd.DataFrame(derived_features)
     derived_schema.to_csv(schema_path, index=False)
-    logger.info(f"Derived schema saved to {schema_path}")
+    msg = f"Derived schema saved to {schema_path}"
+    logger.info(msg)
+    print(msg)
 
 def create_metadata(
     *,

@@ -38,7 +38,10 @@ def save_model(model, path: Path) -> Path:
 
         joblib.dump(model, temp_path)
         os.replace(temp_path, model_file)
-        logger.info(f"Model successfully saved to {model_file}.")
+
+        msg = f"Model successfully saved to {model_file}."
+        logger.info(msg)
+        print(msg)
         return model_file
     except Exception as e:
         if temp_path and temp_path.exists():

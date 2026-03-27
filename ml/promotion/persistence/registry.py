@@ -77,6 +77,12 @@ def update_registry_and_archive(
             yaml.safe_dump(new_registry, f, sort_keys=False)
         os.replace(temp_registry_path, registry_path)
 
+        msg = f"Model registry successfully updated at {registry_path}."
+        if new_archive is not None:
+            msg += f" Previous production model archived at {archive_path}."
+        logger.info(msg)
+        print(msg)
+
         return new_registry
     except Exception as e:
         msg = f"Failed to update model registry and archive. Run info: {run_info}"
@@ -108,6 +114,9 @@ def persist_registry_diff(
     try:
         with open(diff_path, "w", encoding="utf-8") as f:
             yaml.safe_dump(diff, f, sort_keys=False)
+        msg = f"Registry diff successfully saved to {diff_path}."
+        logger.info(msg)
+        print(msg)
     except Exception as e:
         msg = f"Failed to persist registry diff to {diff_path}"
         logger.exception(msg)

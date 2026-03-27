@@ -126,7 +126,9 @@ def main() -> int:
 
                         logger.info(f"Starting register_raw_snapshot for {data_name} {data_version} snapshot {snapshot_id}")
                         run_cmd(cmd)
-                        logger.info(f"Completed register_raw_snapshot for {data_name} {data_version} snapshot {snapshot_id}")
+                        msg = f"Completed register_raw_snapshot for {data_name} {data_version} snapshot {snapshot_id}"
+                        logger.info(msg)
+                        print(msg)
 
         interim_config_root = Path("configs/data/interim")
 
@@ -165,7 +167,9 @@ def main() -> int:
 
                     logger.info(f"Starting build_interim_dataset for {data_name} {version}")
                     run_cmd(cmd)
-                    logger.info(f"Completed build_interim_dataset for {data_name} {version}")
+                    msg = f"Completed build_interim_dataset for {data_name} {version}"
+                    logger.info(msg)
+                    print(msg)
 
         processed_config_root = Path("configs/data/processed")
 
@@ -204,7 +208,9 @@ def main() -> int:
 
                     logger.info(f"Starting build_processed_dataset for {data_name} {version}")
                     run_cmd(cmd)
-                    logger.info(f"Completed build_processed_dataset for {data_name} {version}")
+                    msg = f"Completed build_processed_dataset for {data_name} {version}"
+                    logger.info(msg)
+                    print(msg)
 
         log_completion(start_time=start_time, message="Full data preprocessing run completed successfully.")
         return 0

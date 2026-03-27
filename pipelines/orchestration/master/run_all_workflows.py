@@ -146,7 +146,9 @@ def main() -> int:
             log_completion(start_time, f"Run all workflows failed at step: {step_name}")
             return code
 
-    log_completion(start_time, "Run all workflows completed successfully.")
+    msg = "Run all workflows completed successfully."
+    log_completion(start_time, msg)
+    print(msg)
     return 0
 
 

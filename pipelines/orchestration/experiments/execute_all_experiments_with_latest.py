@@ -18,7 +18,6 @@ from uuid import uuid4
 from ml.io.formatting.iso_no_colon import iso_no_colon
 from ml.io.formatting.str_to_bool import str_to_bool
 from ml.logging_config import setup_logging
-
 from pipelines.orchestration.common.orchestration_logging import log_completion
 
 MODEL_SPECS_DIR = Path("configs/model_specs")
@@ -164,7 +163,9 @@ def run_model(
     if result.returncode != 0:
         log_completion(start_time, f"Experiments run failed with model problem={problem}, segment={segment}, version={version} with return code {result.returncode}")
     else:
-        log_completion(model_start_time, f"Experiment for model problem={problem}, segment={segment}, version={version} completed successfully")
+        msg = f"Experiment for model problem={problem}, segment={segment}, version={version} completed successfully"
+        print(msg)
+        log_completion(model_start_time, msg)
     return result.returncode
 
 def main() -> int:

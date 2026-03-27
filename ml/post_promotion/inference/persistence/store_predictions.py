@@ -88,7 +88,9 @@ def store_predictions(
     pq.write_table(pa.Table.from_pandas(df), tmp_path)
     tmp_path.rename(file_path)
 
-    logger.info(f"Stored predictions at {file_path}")
+    msg = f"Predictions successfully stored at {file_path} with columns: {cols}"
+    logger.info(msg)
+    print(msg)
 
     return PredictionStoringReturn(
         file_path=file_path,

@@ -49,7 +49,9 @@ def save_runtime_snapshot(
             os.fsync(tmp_file.fileno())
 
         os.replace(temp_path, snapshot_path)
-        logger.info("Runtime snapshot successfully saved to %s", snapshot_path)
+        msg = f"Runtime snapshot successfully saved to {snapshot_path}"
+        logger.info(msg)
+        print(msg)
     except Exception as e:
         if temp_path and Path(temp_path).exists():
             try:
