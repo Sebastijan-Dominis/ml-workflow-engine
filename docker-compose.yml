@@ -4,7 +4,7 @@ services:
       context: .
     tty: true
     stdin_open: true
-    # ===== GPU support =====
+    # GPU support
     deploy:
       resources:
         reservations:
