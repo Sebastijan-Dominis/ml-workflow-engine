@@ -11,6 +11,8 @@ from ml_service.backend.pipelines.models.pipelines_cli_args import (
     ExplainInput,
     FreezeAllFeatureSetsInput,
     FreezeFeaturesInput,
+    InferInput,
+    MonitorInput,
     PromoteInput,
     RegisterRawSnapshotInput,
     RunAllWorkflowsInput,
@@ -366,6 +368,61 @@ FRONTEND_PIPELINES_REGISTRY: list[dict[str, Any]] = [
                 "value": "INFO"
             }
         }
+    },
+    {
+        "name": "Infer",
+        "endpoint": "pipelines/infer",
+        "args_schema": InferInput,
+        "field_metadata": {
+            "problem": {
+                "placeholder": "Model problem, e.g., 'no_show'",
+                "optional": False
+            },
+            "segment": {
+                "placeholder": "Model segment name, e.g., 'city_hotel_online_ta'",
+                "optional": False
+            },
+            "version": {
+                "placeholder": "Model version, e.g., 'v1'",
+                "optional": False
+            },
+            "snapshot_bindings_id": {
+                "placeholder": "A snapshot binding ID to define which snapshot to load for each dataset",
+                "optional": False
+            },
+            "logging_level": {
+                "optional": True,
+                "value": "INFO"
+            }
+        }
+    },
+    {
+        "name": "Monitor",
+        "endpoint": "pipelines/monitor",
+        "args_schema": MonitorInput,
+        "field_metadata": {
+            "problem": {
+                "placeholder": "Model problem, e.g., 'no_show'",
+                "optional": False
+            },
+            "segment": {
+                "placeholder": "Model segment name, e.g., 'city_hotel_online_ta'",
+                "optional": False
+            },
+            "version": {
+                "placeholder":"Model version, e.g., 'v1'",
+                "optional": False
+            },
+           "inference_run_id": {
+                "placeholder":"Inference run id dir name under predictions/{problem}/{segment} (default = latest)",
+                "optional": True,
+            },
+           "logging_level": {
+                "optional": True,
+                "value":"INFO"
+            }
+        }
+
     },
     {
         "name": "Execute All Data Preprocessing",

@@ -143,3 +143,17 @@ class RunAllWorkflowsInput(BaseModel):
     logging_level: LOGGING_LEVEL = "INFO"
     owner: str | None = "Sebastijan"
     skip_if_existing: bool | None = True
+
+class InferInput(BaseModel):
+    """Model for the input of the inference pipeline."""
+    problem: str
+    segment: str
+    snapshot_bindings_id: str
+    logging_level: LOGGING_LEVEL = "INFO"
+
+class MonitorInput(BaseModel):
+    """Model for the input of the monitoring pipeline."""
+    problem: str
+    segment: str
+    inference_run_id: str | None = None
+    logging_level: LOGGING_LEVEL = "INFO"
