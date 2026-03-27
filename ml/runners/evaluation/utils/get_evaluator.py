@@ -18,14 +18,14 @@ def get_evaluator(key: str) -> Evaluator:
         Instantiated evaluator implementation.
     """
 
-    evaluator_cls = EVALUATORS.get(key)
+    evaluator_cls: type[Evaluator] | None = EVALUATORS.get(key)
 
-    if not evaluator_cls:
+    if evaluator_cls is None:
         msg = f"No evaluator found for algorithm '{key}'."
         logger.error(msg)
         raise PipelineContractError(msg)
 
-    evaluator = evaluator_cls()
+    evaluator: Evaluator = evaluator_cls()
 
     logger.debug(
         "Using evaluator %s for algorithm=%s",

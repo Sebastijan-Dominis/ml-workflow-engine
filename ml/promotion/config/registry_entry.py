@@ -40,5 +40,11 @@ class RegistryEntry(BaseModel):
     feature_lineage: list[RegistryFeatureSetLineage]
     metrics: RegistryEntryMetrics
     git_commit: str
+
+class ProductionRegistryEntry(RegistryEntry):
     promotion_id: str
     promoted_at: str
+
+class StagingRegistryEntry(RegistryEntry):
+    staging_id: str
+    staged_at: str

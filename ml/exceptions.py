@@ -39,3 +39,9 @@ class ExplainabilityError(RuntimeMLError):
 
 class PersistenceError(RuntimeMLError):
     """Experiment or artifact saving failure."""
+
+class InferenceError(RuntimeMLError):
+    """Inference or prediction failure."""
+
+class MonitoringError(RuntimeMLError):
+    """Monitoring or drift detection failure."""

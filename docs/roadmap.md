@@ -1,4 +1,4 @@
-_Last updated: 2026-03-24_
+_Last updated: 2026-03-27_
 # Roadmap
 
 - This document outlines the planned development roadmap for the project.
@@ -30,7 +30,7 @@ _Last updated: 2026-03-24_
     - Status: in progress
     - Importance: medium
 - [ ] Create monitor.py
-    - Status: planned
+    - Status: in progress
     - Importance: medium
 - [ ] Create tools for an LLM that leverage model_registry + explainability artifacts to provide users with useful feedback
     - Status: planned

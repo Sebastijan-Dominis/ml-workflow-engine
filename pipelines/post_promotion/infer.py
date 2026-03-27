@@ -5,9 +5,8 @@ import hashlib
 import logging
 import sys
 import time
-import uuid
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Literal
 from uuid import uuid4
@@ -15,21 +14,17 @@ from uuid import uuid4
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-import yaml
 from ml.cli.error_handling import resolve_exit_code
-from ml.config.loader import load_and_validate_config
-from ml.exceptions import PipelineContractError, RuntimeMLError
-from ml.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
+from ml.exceptions import InferenceError, PipelineContractError, RuntimeMLError
+from ml.io.formatting.iso_no_colon import iso_no_colon
 from ml.io.persistence.save_metadata import save_metadata
 from ml.logging_config import setup_logging
-from ml.metadata.validation.runners.training import validate_training_metadata
-from ml.metadata.validation.search.search import validate_search_record
 from ml.modeling.models.feature_lineage import FeatureLineage
+from ml.post_promotion.shared.loading.features import prepare_features
+from ml.post_promotion.shared.loading.model_registry import get_model_registry_info
 from ml.promotion.config.registry_entry import RegistryEntry
-from ml.promotion.validation.registry_entry import validate_registry_entry
 from ml.runners.shared.loading.pipeline import load_model_or_pipeline
 from ml.utils.hashing.service import hash_artifact
-from ml.utils.loaders import load_json
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
@@ -69,73 +64,12 @@ def validate_columns(df: pd.DataFrame) -> list[str]:
 
     return list(cols)
 
-# =========================================================
-# Feature preparation
-# =========================================================
-
-@dataclass
-class PrepareFeaturesReturn:
-    features: pd.DataFrame
-    entity_key: str
-    feature_lineage: list[FeatureLineage]
-
-def prepare_features(args: argparse.Namespace, model_metadata: RegistryEntry) -> PrepareFeaturesReturn:
-    # Lazy import to avoid circular dependencies
-    from ml.features.loading.features_and_target import load_features_and_target
-
-    experiment_id = model_metadata.experiment_id
-    train_run_id = model_metadata.train_run_id
-
-    experiment_path = Path("experiments") / args.problem / args.segment / model_metadata.model_version / experiment_id
-
-    training_metadata_file = experiment_path / "training" / train_run_id / "metadata.json"
-    training_metadata = validate_training_metadata(load_json(training_metadata_file))
-
-    feature_sets = training_metadata.lineage.feature_lineage
-
-    resolved_snapshots = resolve_feature_snapshots(
-        feature_store_path=Path("feature_store"),
-        feature_sets=feature_sets,
-        snapshot_binding_key=args.snapshot_bindings_id
-    )
-
-    search_metadata = validate_search_record(
-        load_json(experiment_path / "search" / "metadata.json")
-    )
-
-    model_version = search_metadata.metadata.version
-    env = search_metadata.metadata.env
-
-    model_cfg = load_and_validate_config(
-        path=Path("configs") / "search" / args.problem / args.segment / f"{model_version}.yaml",
-        search_dir=None,
-        cfg_type="search",
-        env=env
-    )
-
-    X, _, _, entity_key = load_features_and_target(
-        model_cfg,
-        snapshot_selection=resolved_snapshots,
-        snapshot_binding_key=args.snapshot_bindings_id,
-        drop_entity_key=False,  # IMPORTANT: keep for monitoring joins
-        strict=True
-    )
-
-    return PrepareFeaturesReturn(
-        features=X,
-        entity_key=entity_key,
-        feature_lineage=training_metadata.lineage.feature_lineage
-    )
-
 @dataclass
 class ArtifactLoadingReturn:
     artifact: Any
     artifact_hash: str
     artifact_type: Literal["pipeline", "model"]
 
-# =========================================================
-# Artifact loading
-# =========================================================
 def load_and_validate_artifact(model_metadata: RegistryEntry) -> ArtifactLoadingReturn:
     pipeline_path = Path(model_metadata.artifacts.pipeline_path or "")
     model_path = Path(model_metadata.artifacts.model_path)
@@ -164,12 +98,17 @@ def load_and_validate_artifact(model_metadata: RegistryEntry) -> ArtifactLoading
 # Prediction
 # =========================================================
 def predict(X: pd.DataFrame, artifact: Any) -> tuple[pd.Series, pd.DataFrame]:
-    preds = pd.Series(artifact.predict(X), index=X.index)
+    try:
+        preds = pd.Series(artifact.predict(X), index=X.index)
 
-    if hasattr(artifact, "predict_proba"):
-        proba = pd.DataFrame(artifact.predict_proba(X), index=X.index)
-    else:
-        proba = pd.DataFrame()
+        if hasattr(artifact, "predict_proba"):
+            proba = pd.DataFrame(artifact.predict_proba(X), index=X.index)
+        else:
+            proba = pd.DataFrame()
+    except Exception as e:
+        msg = "Error during prediction. "
+        logger.exception(msg)
+        raise InferenceError(msg) from e
 
     return preds, proba
 
@@ -196,7 +135,6 @@ def hash_input_row(row: pd.Series) -> str:
 @dataclass
 class PredictionStoringReturn:
     file_path: Path
-    run_id: str
     cols: list[str]
 
 # =========================================================
@@ -206,9 +144,10 @@ def store_predictions(
     *,
     features: pd.DataFrame,
     entity_key: str,
+    run_id: str,
     input_hash: pd.Series,
-    timestamp: datetime,
     path: Path,
+    timestamp: datetime,
     predictions: pd.Series,
     probabilities: pd.DataFrame,
     model_metadata: RegistryEntry,
@@ -218,16 +157,15 @@ def store_predictions(
 
     path.mkdir(parents=True, exist_ok=True)
 
-    file_path = path / f"{uuid.uuid4().hex}.parquet"
+    file_path = path / "predictions.parquet"
 
     # Build schema-safe DataFrame
     df = pd.DataFrame()
 
     # --- identifiers ---
-    run_id = f"{timestamp}_{uuid4().hex[:8]}"
     df["run_id"] = run_id
-    df["prediction_id"] = [uuid.uuid4().hex for _ in range(len(features))]
     df["timestamp"] = timestamp.isoformat()
+    df["prediction_id"] = [uuid4().hex for _ in range(len(features))]
 
     # --- model metadata ---
     df["model_stage"] = stage
@@ -262,7 +200,6 @@ def store_predictions(
 
     return PredictionStoringReturn(
         file_path=file_path,
-        run_id=run_id,
         cols = cols
     )
 
@@ -340,7 +277,8 @@ def execute_inference(
     model_metadata: RegistryEntry,
     stage: Literal["production", "staging"],
     timestamp: datetime,
-    path: Path
+    path: Path,
+    run_id: str
 ):
     """Run inference for a given model and store predictions with monitoring-ready outputs.
 
@@ -354,7 +292,11 @@ def execute_inference(
 
     logger.info(f"Running inference for stage={stage} with model version={model_metadata.model_version}...")
 
-    prepare_features_return = prepare_features(args, model_metadata)
+    prepare_features_return = prepare_features(
+        args=args,
+        model_metadata=model_metadata,
+        snapshot_bindings_id=args.snapshot_bindings_id
+    )
 
     features = prepare_features_return.features
     entity_key = prepare_features_return.entity_key
@@ -384,6 +326,7 @@ def execute_inference(
     prediction_return = store_predictions(
         features=features,
         entity_key=entity_key,
+        run_id=run_id,
         timestamp=timestamp,
         path=path,
         predictions=preds,
@@ -393,7 +336,6 @@ def execute_inference(
         input_hash=input_hash
     )
 
-    run_id = prediction_return.run_id
     cols = prediction_return.cols
 
     metadata_raw = prepare_metadata(
@@ -459,48 +401,30 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
 
-    now = datetime.now(UTC)
-
+    timestamp = datetime.now()
+    run_id = f"{iso_no_colon(timestamp)}_{uuid4().hex[:8]}"
     base_path = Path("predictions") / args.problem / args.segment
 
-    partition_path = (
-        base_path
-        / f"date={now.strftime('%Y-%m-%d')}"
-        / f"hour={now.strftime('%H')}"
-    )
+    run_dir = base_path / run_id
 
-    log_path = partition_path / "inference.log"
+    log_path = run_dir / "inference.log"
 
     setup_logging(log_path, getattr(logging, args.logging_level, logging.INFO))
 
     try:
-        model_registry = Path("model_registry/models.yaml")
-        with open(model_registry) as f:
-            registry = yaml.safe_load(f)
+        model_registry_info = get_model_registry_info(args)
 
-        entry = registry.get(args.problem, {}).get(args.segment, {})
-
-        prod_meta_raw = entry.get("production")
-        stage_meta_raw = entry.get("staging")
-
-        if not prod_meta_raw and not stage_meta_raw:
-            msg = f"No production or staging model found in registry for problem '{args.problem}' and segment '{args.segment}'."
-            logger.error(msg)
-            raise PipelineContractError(msg)
-
-        prod_meta, stage_meta = None, None
-        if prod_meta_raw:
-            prod_meta = validate_registry_entry(prod_meta_raw)
-        if stage_meta_raw:
-            stage_meta = validate_registry_entry(stage_meta_raw)
+        prod_meta = model_registry_info.prod_meta
+        stage_meta = model_registry_info.stage_meta
 
         if prod_meta is not None:
             execute_inference(
                 args=args,
                 model_metadata=prod_meta,
                 stage="production",
-                timestamp=now,
-                path=partition_path / "production",
+                timestamp=timestamp,
+                path=run_dir / "production",
+                run_id=run_id
             )
 
         if stage_meta is not None:
@@ -508,8 +432,9 @@ def main() -> int:
                 args=args,
                 model_metadata=stage_meta,
                 stage="staging",
-                timestamp=now,
-                path=partition_path / "staging",
+                timestamp=timestamp,
+                path=run_dir / "staging",
+                run_id=run_id
             )
 
         return 0

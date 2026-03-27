@@ -9,6 +9,8 @@ from ml.cli.exit_codes import (
     EXIT_DATA_ERROR,
     EXIT_EVALUATION_ERROR,
     EXIT_EXPLAINABILITY_ERROR,
+    EXIT_INFERENCE_ERROR,
+    EXIT_MONITORING_ERROR,
     EXIT_PERSISTENCE_ERROR,
     EXIT_PIPELINE_ERROR,
     EXIT_SEARCH_ERROR,
@@ -20,6 +22,8 @@ from ml.exceptions import (
     DataError,
     EvaluationError,
     ExplainabilityError,
+    InferenceError,
+    MonitoringError,
     PersistenceError,
     PipelineContractError,
     RuntimeMLError,
@@ -37,6 +41,9 @@ EXCEPTION_EXIT_CODE_MAP = {
     EvaluationError: EXIT_EVALUATION_ERROR,
     ExplainabilityError: EXIT_EXPLAINABILITY_ERROR,
     PersistenceError: EXIT_PERSISTENCE_ERROR,
+    InferenceError: EXIT_INFERENCE_ERROR,
+    MonitoringError: EXIT_MONITORING_ERROR,
+
 }
 
 def resolve_exit_code(exc: Exception) -> int:
