@@ -78,4 +78,4 @@ def register_callbacks(app):
         result = r.json()
         if result.get("status") == "exists":
             return dbc.Alert(result.get("message"), color="warning"), False
-        return dbc.Alert("Config written successfully.", color="success"), False
+        return dbc.Alert(f"Config written successfully to {result.get('path')}.", color="success"), False

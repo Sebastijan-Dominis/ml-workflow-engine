@@ -66,9 +66,9 @@ See the [usage guide](docs/usage.md) for instructions on running the workflow.
 
 ### Usage examples (via `ml_service`):
 
-#### Modeling Configs Writing, Validation, Saving, and Viewing
+#### Interim Data Configs Writing, Validation, Saving, and Viewing
 
-!["Gif portrayal of writing modeling configs with ml_service"](assets/gifs/ml_service_modeling_configs_v3.gif)
+!["Gif portrayal of writing interim data configs with ml_service"](assets/gifs/ml_service_data_configs_v1.gif)
 
 **Similar functionality exists for other supported configs**
 

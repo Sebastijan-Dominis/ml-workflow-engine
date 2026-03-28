@@ -90,4 +90,4 @@ def register_callbacks(app):
         if result.get("status") == "exists":
             return dbc.Alert(result.get("message"), color="warning"), False
 
-        return dbc.Alert("Feature config written.", color="success"), False
+        return dbc.Alert(f"Feature set config written successfully to {result.get('path')}.", color="success"), False
