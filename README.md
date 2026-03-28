@@ -2,7 +2,7 @@
 
 ## Overview
 
-***A reproducible ML experimentation and model lifecycle system.***
+### A reproducible ML experimentation and model lifecycle system.
 
 - Currently supports the modeling of regression and classification tasks using the CatBoost algorithm.
 - Was initially formed based on a hotel_bookings dataset:
