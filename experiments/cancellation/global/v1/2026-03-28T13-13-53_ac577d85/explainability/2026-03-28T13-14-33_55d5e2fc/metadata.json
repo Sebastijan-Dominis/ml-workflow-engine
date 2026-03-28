@@ -1,0 +1,80 @@
+{
+  "run_identity": {
+    "stage": "explainability",
+    "explain_run_id": "2026-03-28T13-14-33_55d5e2fc",
+    "train_run_id": "2026-03-28T13-14-14_f2ddbee1",
+    "snapshot_id": "2026-03-28T13-13-53_ac577d85",
+    "status": "success"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-12-35_8900f29c",
+        "file_hash": "070251df59b78ae0f633c9e9e857bb3ad004a584415d2ea908b27362cc0c1b27",
+        "in_memory_hash": "96eea7a50f82f3713e177194ca2b2015",
+        "feature_schema_hash": "fd9b83dcc7039767c54a0e99b7f09f5f58dff7fbe7ca99904475a5df4260edc2",
+        "operator_hash": "2074c53b8d1e6124b67ba8e625315f86",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-12-50_3433eba9",
+        "file_hash": "f4dc41f38dee1a7c843bf0adf1c5bf04f7df59be1bcd8c432e6173ce92b28883",
+        "in_memory_hash": "0a1a73138caaecefd26415b027de91f8",
+        "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-12-58_bdfb1d30",
+        "file_hash": "e56270a4f3ae85689b4267ba27ec3067ac3fd064d9a5b86c1a160407769bd0e5",
+        "in_memory_hash": "b8c1ff6260e690160bb20ddd5ad53907",
+        "feature_schema_hash": "a4bbc08d48fcf27ef4d98c05db120e208c649dd186c86a3b907671918e3772dd",
+        "operator_hash": "fcd1d9ce4bbf0654b13d21aca2ba1b32",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-13-08_c6b7c5c4",
+        "file_hash": "920bc43b1d897da522512f5371cdccac7b3abe25206046e4dde7b1c79b9a0292",
+        "in_memory_hash": "034fbd2aa9b664e4ae34734ad3f5ac40",
+        "feature_schema_hash": "94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      }
+    ],
+    "target_column": "is_canceled",
+    "problem": "cancellation",
+    "segment": "global",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "d51aac400284c2917df43e4621294e2df17a58b4e5623d4e66845eb46ccb478c",
+    "pipeline_cfg_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89"
+  },
+  "artifacts": {
+    "model_hash": "bf07757a15b2464492886f36833da8cb3a609e8b0ef078d4abf2cd4301f9a3d7",
+    "model_path": "experiments/cancellation/global/v1/2026-03-28T13-13-53_ac577d85/training/2026-03-28T13-14-14_f2ddbee1/model.joblib",
+    "pipeline_path": "experiments/cancellation/global/v1/2026-03-28T13-13-53_ac577d85/training/2026-03-28T13-14-14_f2ddbee1/pipeline.joblib",
+    "pipeline_hash": "94d6b6dc63c659f9138d2b11d8b5e1ba927ea00f5204d5a7829918fe7bc932d4",
+    "top_k_feature_importances_path": "experiments/cancellation/global/v1/2026-03-28T13-13-53_ac577d85/explainability/2026-03-28T13-14-33_55d5e2fc/top_k_feature_importances.csv",
+    "top_k_feature_importances_hash": "b863846f63cbfd76820ec9000f695767bf59c5f9839e3b2c81d55a4f049149f0",
+    "top_k_shap_importances_path": "experiments/cancellation/global/v1/2026-03-28T13-13-53_ac577d85/explainability/2026-03-28T13-14-33_55d5e2fc/top_k_shap_importances.csv",
+    "top_k_shap_importances_hash": "7b6e880167ffaa7e30c6143cec0e95453e78032dc5d8b898f7f101311ddd9717"
+  },
+  "top_k": 20
+}

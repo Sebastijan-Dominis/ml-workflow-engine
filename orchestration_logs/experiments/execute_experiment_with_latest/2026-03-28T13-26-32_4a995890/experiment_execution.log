@@ -1,0 +1,39 @@
+2026-03-28 13:26:32,463 - __main__ - INFO - Starting experiment execution with run id: 2026-03-28T13-26-32_4a995890. Arguments: Namespace(problem='cancellation', segment='global', version='v1', env='test', strict=True, logging_level='INFO', owner='Sebastijan', clean_up_failure_management=True, experiment_id=None, overwrite_existing=False, top_k=None)
+2026-03-28 13:26:32,464 - __main__ - INFO - Running hyperparameter search with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.search.search --problem cancellation --segment global --version v1 --env test --strict True --logging-level INFO --owner Sebastijan --clean-up-failure-management True --overwrite-existing False
+2026-03-28 13:26:42,061 - __main__ - INFO - Running training with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.train --problem cancellation --segment global --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:26:50,001 - __main__ - INFO - Training output:
+Using experiment directory: experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b
+
+0:	learn: 0.5968999	test: 0.6050556	best: 0.6050556 (0)	total: 164ms	remaining: 1.47s
+9:	learn: 0.4523748	test: 0.4773468	best: 0.4773468 (9)	total: 291ms	remaining: 0us
+
+bestTest = 0.4773468481
+bestIteration = 9
+
+Model successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\training\2026-03-28T13-26-43_2e69cbe0\model.joblib.
+Pipeline successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\training\2026-03-28T13-26-43_2e69cbe0\pipeline.joblib.
+Metadata successfully saved to experiments/cancellation/global/v1/2026-03-28T13-26-33_75d58d1b/training/2026-03-28T13-26-43_2e69cbe0/metadata.json.
+Metrics successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\training\2026-03-28T13-26-43_2e69cbe0\metrics.json.
+Runtime snapshot successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\training\2026-03-28T13-26-43_2e69cbe0\runtime.json
+
+2026-03-28 13:26:50,001 - __main__ - INFO - Running evaluation with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.evaluate --problem cancellation --segment global --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:26:57,472 - __main__ - INFO - Evaluation output:
+Using experiment directory: experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b
+Using training directory: experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\training\2026-03-28T13-26-43_2e69cbe0
+Metrics successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\evaluation\2026-03-28T13-26-51_06696059\metrics.json.
+Saved predictions for the train split to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\evaluation\2026-03-28T13-26-51_06696059\predictions_train.parquet
+Saved predictions for the validation split to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\evaluation\2026-03-28T13-26-51_06696059\predictions_val.parquet
+Saved predictions for the test split to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\evaluation\2026-03-28T13-26-51_06696059\predictions_test.parquet
+Metadata successfully saved to experiments/cancellation/global/v1/2026-03-28T13-26-33_75d58d1b/evaluation/2026-03-28T13-26-51_06696059/metadata.json.
+Runtime snapshot successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\evaluation\2026-03-28T13-26-51_06696059\runtime.json
+
+2026-03-28 13:26:57,473 - __main__ - INFO - Running explainability with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.explain --problem cancellation --segment global --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:27:04,869 - __main__ - INFO - Explainability output:
+Using experiment directory: experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b
+Using training directory: experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\training\2026-03-28T13-26-43_2e69cbe0
+Feature importances successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\explainability\2026-03-28T13-26-58_925e2aef\top_k_feature_importances.csv.
+SHAP importances successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\explainability\2026-03-28T13-26-58_925e2aef\top_k_shap_importances.csv.
+Metadata successfully saved to experiments/cancellation/global/v1/2026-03-28T13-26-33_75d58d1b/explainability/2026-03-28T13-26-58_925e2aef/metadata.json.
+Runtime snapshot successfully saved to experiments\cancellation\global\v1\2026-03-28T13-26-33_75d58d1b\explainability\2026-03-28T13-26-58_925e2aef\runtime.json
+
+2026-03-28 13:27:04,869 - pipelines.orchestration.common.orchestration_logging - INFO - Experiment execution completed successfully for problem=cancellation, segment=global, version=v1 at 2026-03-28T13-27-04 after 32.41 seconds.

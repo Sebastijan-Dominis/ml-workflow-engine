@@ -15,6 +15,8 @@ from ml_service.backend.pipelines.models.pipelines_cli_args import (
     ExplainInput,
     FreezeAllFeatureSetsInput,
     FreezeFeaturesInput,
+    InferInput,
+    MonitorInput,
     PromoteInput,
     RegisterRawSnapshotInput,
     RunAllWorkflowsInput,
@@ -25,7 +27,7 @@ from ml_service.backend.pipelines.models.pipelines_cli_args import (
 router: APIRouter = APIRouter(prefix="/pipelines", tags=["pipelines"])
 
 @router.post("/register_raw_snapshot", status_code=200)
-@limiter.limit("1/30seconds")
+@limiter.limit("1/10seconds")
 def register_raw_snapshot(payload: Annotated[RegisterRawSnapshotInput, Body(...)], request: Request): # type: ignore
     """Registers a raw snapshot by executing the corresponding pipeline."""
     return execute_pipeline(
@@ -35,7 +37,7 @@ def register_raw_snapshot(payload: Annotated[RegisterRawSnapshotInput, Body(...)
     )
 
 @router.post("/build_interim_dataset", status_code=200)
-@limiter.limit("1/30seconds")
+@limiter.limit("1/10seconds")
 def build_interim_dataset(payload: Annotated[BuildInterimDatasetInput, Body(...)], request: Request): # type: ignore
     """Builds an interim dataset by executing the corresponding pipeline."""
     return execute_pipeline(
@@ -45,7 +47,7 @@ def build_interim_dataset(payload: Annotated[BuildInterimDatasetInput, Body(...)
     )
 
 @router.post("/build_processed_dataset", status_code=200)
-@limiter.limit("1/30seconds")
+@limiter.limit("1/10seconds")
 def build_processed_dataset(payload: Annotated[BuildProcessedDatasetInput, Body(...)], request: Request): # type: ignore
     """Builds a processed dataset by executing the corresponding pipeline."""
     return execute_pipeline(
@@ -160,6 +162,26 @@ def run_all_workflows(payload: Annotated[RunAllWorkflowsInput, Body(...)], reque
     """Executes the run all workflows pipeline."""
     return execute_pipeline(
         module_path="pipelines.orchestration.master.run_all_workflows",
+        payload=payload,
+        boolean_args=[],
+    )
+
+@router.post("/infer", status_code=200)
+@limiter.limit("10/minute")
+def infer(payload: Annotated[InferInput, Body(...)], request: Request): # type: ignore
+    """Executes the inference pipeline."""
+    return execute_pipeline(
+        module_path="pipelines.post_promotion.infer",
+        payload=payload,
+        boolean_args=[],
+    )
+
+@router.post("/monitor", status_code=200)
+@limiter.limit("10/minute")
+def monitor(payload: Annotated[MonitorInput, Body(...)], request: Request): # type: ignore
+    """Executes the monitoring pipeline."""
+    return execute_pipeline(
+        module_path="pipelines.post_promotion.monitor",
         payload=payload,
         boolean_args=[],
     )

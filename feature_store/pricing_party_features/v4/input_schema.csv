@@ -1,0 +1,3 @@
+feature,dtype,role
+adr,float32,input
+total_of_special_requests,int8,input

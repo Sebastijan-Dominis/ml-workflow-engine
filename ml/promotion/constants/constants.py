@@ -7,7 +7,7 @@ from typing import Literal
 from ml.metadata.schemas.runners.evaluation import EvaluationMetadata
 from ml.metadata.schemas.runners.explainability import ExplainabilityMetadata
 from ml.metadata.schemas.runners.training import TrainingMetadata
-from ml.promotion.config.models import Direction, MetricName, MetricSet
+from ml.promotion.config.promotion_thresholds import Direction, MetricName, MetricSet
 
 logger = logging.getLogger(__name__)
 

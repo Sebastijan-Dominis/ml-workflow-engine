@@ -76,12 +76,18 @@ def register_callbacks(app):
             print("Payload sent:", payload)
             result = call_script(script["endpoint"], payload)
 
+            bg_color="#81ff81" if result.get("status") == "SUCCESS" else "#ff8181"
+
             return dbc.Textarea(
                 value=str(result),
-                style={"width": "100%", "height": "200px"},
+                style={
+                    "width": "100%",
+                    "height": "200px",
+                    "backgroundColor": bg_color
+                },
                 className="mt-2",
                 id=f"{PAGE_PREFIX}-{script['name']}-result",
-                name=f"{PAGE_PREFIX}-{script['name']}-result"
+                name=f"{PAGE_PREFIX}-{script['name']}-result",
             )
 
     for s in FRONTEND_SCRIPTS:

@@ -24,9 +24,6 @@ def _import_trainer_module() -> types.ModuleType:
     model_specific_module_name = "ml.runners.training.utils.model_specific.catboost"
 
     sys.modules.pop(module_name, None)
-    original_loader = sys.modules.get(loader_module_name)
-    original_build_module = sys.modules.get(build_module_name)
-    original_model_specific = sys.modules.get(model_specific_module_name)
 
     fake_loader = types.ModuleType(loader_module_name)
     fake_loader.__dict__["load_features_and_target"] = lambda *args, **kwargs: None
@@ -39,24 +36,21 @@ def _import_trainer_module() -> types.ModuleType:
     fake_model_specific = types.ModuleType(model_specific_module_name)
     fake_model_specific.__dict__["prepare_model"] = lambda **kwargs: None
     sys.modules[model_specific_module_name] = fake_model_specific
+    # Stub trainer factory to avoid circular import importing the real trainer
+    trainer_factory_name = "ml.registries.factories.trainer_factory"
+    fake_trainer_factory = types.ModuleType(trainer_factory_name)
+    fake_trainer_factory.__dict__["TRAINERS"] = {"catboost": object}
+    sys.modules[trainer_factory_name] = fake_trainer_factory
+    # Provide a lightweight transform_target module stub used by downstream
+    # metric helpers to avoid importing project transformation utilities.
+    transform_mod_name = "ml.features.transforms.transform_target"
+    fake_transform = types.ModuleType(transform_mod_name)
+    fake_transform.__dict__["transform_target"] = lambda *a, **k: a[0] if a else None
+    fake_transform.__dict__["inverse_transform_target"] = lambda *a, **k: a[0] if a else None
+    sys.modules[transform_mod_name] = fake_transform
 
-    try:
-        return importlib.import_module(module_name)
-    finally:
-        if original_loader is None:
-            sys.modules.pop(loader_module_name, None)
-        else:
-            sys.modules[loader_module_name] = original_loader
-
-        if original_build_module is None:
-            sys.modules.pop(build_module_name, None)
-        else:
-            sys.modules[build_module_name] = original_build_module
-
-        if original_model_specific is None:
-            sys.modules.pop(model_specific_module_name, None)
-        else:
-            sys.modules[model_specific_module_name] = original_model_specific
+    # Import trainer module while keeping our fake modules available in sys.modules
+    return importlib.import_module(module_name)
 
 
 def _build_minimal_cfg(task_type: str) -> Any:
@@ -103,7 +97,12 @@ def test_train_executes_classification_flow_and_returns_expected_output(
     transformed_y_train = pd.Series([0], name="target")
     transformed_y_val = pd.Series([1], name="target")
 
-    monkeypatch.setattr(module, "load_features_and_target", lambda *args, **kwargs: (X, y, lineage, "entity_key"))
+    import sys as _sys
+    monkeypatch.setattr(
+        _sys.modules["ml.features.loading.features_and_target"],
+        "load_features_and_target",
+        lambda *args, **kwargs: (X, y, lineage, "entity_key"),
+    )
     monkeypatch.setattr(module, "get_splits", lambda **kwargs: (splits, {"kind": "holdout"}))
 
     transform_calls: list[str] = []
@@ -195,7 +194,12 @@ def test_train_skips_class_weight_resolution_for_regression(monkeypatch: pytest.
         y_val=y.iloc[1:2],
     )
 
-    monkeypatch.setattr(module, "load_features_and_target", lambda *args, **kwargs: (X, y, [], "entity_key"))
+    import sys as _sys
+    monkeypatch.setattr(
+        _sys.modules["ml.features.loading.features_and_target"],
+        "load_features_and_target",
+        lambda *args, **kwargs: (X, y, [], "entity_key"),
+    )
     monkeypatch.setattr(module, "get_splits", lambda **kwargs: (splits, {}))
     monkeypatch.setattr(module, "transform_target", lambda series, *, transform_config, split_name: series)
     monkeypatch.setattr(module, "load_schemas", lambda model_cfg, feature_lineage: ({}, []))

@@ -12,12 +12,11 @@ from ml.promotion.persister import PromotionPersister
 from ml.promotion.state_loader import PromotionStateLoader
 from ml.promotion.strategies.production import ProductionPromotionStrategy
 from ml.promotion.strategies.staging import StagingPromotionStrategy
-from ml.promotion.validation.validate import (
+from ml.promotion.validation.artifacts import (
     validate_artifacts_consistency,
     validate_explainability_artifacts,
-    validate_run_dirs,
-    validate_run_ids,
 )
+from ml.promotion.validation.runners import validate_run_dirs, validate_run_ids
 
 logger = logging.getLogger(__name__)
 

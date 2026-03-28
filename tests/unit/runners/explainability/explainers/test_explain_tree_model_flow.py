@@ -153,26 +153,44 @@ def test_explain_runs_full_orchestration_and_returns_expected_output(
         calls.append(f"get_shap_importances:top_k={kwargs['top_k']}")
         return pd.DataFrame({"feature": ["lead_time"], "mean_abs_shap": [0.9]})
 
-    monkeypatch.setattr(tree_model_module, "load_json", _load_json)
-    monkeypatch.setattr(tree_model_module, "validate_training_metadata", _validate_training_metadata)
-    monkeypatch.setattr(tree_model_module, "load_model_or_pipeline", _load_model_or_pipeline)
+    monkeypatch.setattr(tree_model_module, "load_json", _load_json, raising=False)
+    monkeypatch.setattr(tree_model_module, "validate_training_metadata", _validate_training_metadata, raising=False)
+    monkeypatch.setattr(tree_model_module, "load_model_or_pipeline", _load_model_or_pipeline, raising=False)
     monkeypatch.setattr(
         tree_model_module,
         "get_snapshot_binding_from_training_metadata",
         _get_snapshot_binding,
+        raising=False,
     )
-    monkeypatch.setattr(tree_model_module, "resolve_feature_snapshots", _resolve_feature_snapshots)
-    monkeypatch.setattr(tree_model_module, "load_features_and_target", _load_features_and_target)
-    monkeypatch.setattr(tree_model_module, "get_splits", _get_splits)
-    monkeypatch.setattr(tree_model_module, "validate_snapshot_ids", _validate_snapshot_ids)
+    monkeypatch.setattr(tree_model_module, "resolve_feature_snapshots", _resolve_feature_snapshots, raising=False)
+    monkeypatch.setattr(tree_model_module, "load_features_and_target", _load_features_and_target, raising=False)
+    monkeypatch.setattr(tree_model_module, "get_splits", _get_splits, raising=False)
+    monkeypatch.setattr(tree_model_module, "validate_snapshot_ids", _validate_snapshot_ids, raising=False)
     monkeypatch.setattr(
         tree_model_module,
         "get_feature_names_and_transformed_features",
         _get_names_and_transformed,
+        raising=False,
     )
-    monkeypatch.setattr(tree_model_module, "get_tree_model_adapter", _get_tree_model_adapter)
-    monkeypatch.setattr(tree_model_module, "get_feature_importances", _get_feature_importances)
-    monkeypatch.setattr(tree_model_module, "get_shap_importances", _get_shap_importances)
+    monkeypatch.setattr(tree_model_module, "get_tree_model_adapter", _get_tree_model_adapter, raising=False)
+    monkeypatch.setattr(tree_model_module, "get_feature_importances", _get_feature_importances, raising=False)
+    monkeypatch.setattr(tree_model_module, "get_shap_importances", _get_shap_importances, raising=False)
+
+    # The project code sometimes imports the loader module directly; ensure the
+    # actual loader module used at runtime is patched as well so our stub is
+    # invoked (avoids issues when the module performs direct imports).
+    if "ml.features.loading.features_and_target" in sys.modules:
+        monkeypatch.setattr(
+            sys.modules["ml.features.loading.features_and_target"],
+            "load_features_and_target",
+            _load_features_and_target,
+            raising=False,
+        )
+    else:
+        # Ensure the loader module is present and returns our stubbed values
+        fake_loader = types.ModuleType("ml.features.loading.features_and_target")
+        fake_loader.__dict__["load_features_and_target"] = _load_features_and_target
+        monkeypatch.setitem(sys.modules, "ml.features.loading.features_and_target", fake_loader)
 
     result = tree_model_module.ExplainTreeModel().explain(
         model_cfg=model_cfg,  # type: ignore[arg-type]

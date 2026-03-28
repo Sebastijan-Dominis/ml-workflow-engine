@@ -6,7 +6,7 @@ from typing import cast
 
 import pytest
 from ml.exceptions import RuntimeMLError
-from ml.promotion.config.models import Direction, MetricName, MetricSet
+from ml.promotion.config.promotion_thresholds import Direction, MetricName, MetricSet
 from ml.promotion.constants.constants import (
     PreviousProductionRunIdentity,
     ProductionComparisonResult,

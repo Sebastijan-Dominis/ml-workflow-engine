@@ -1,0 +1,105 @@
+{
+  "previous_production_run_identity": {
+    "experiment_id": "2026-03-28T13-13-53_ac577d85",
+    "train_run_id": "2026-03-28T13-14-14_f2ddbee1",
+    "eval_run_id": "2026-03-28T13-14-24_184914c0",
+    "explain_run_id": "2026-03-28T13-14-33_55d5e2fc",
+    "promotion_id": "2026-03-28T13-19-37_ee8c3e81"
+  },
+  "metrics": {
+    "train": {
+      "positive_rate": 0.34558823529411764,
+      "predicted_positive_rate": 0.38573529411764707,
+      "threshold": 0.32,
+      "accuracy": 0.7836764705882353,
+      "f1": 0.704202694550573,
+      "precision": 0.6675562333206252,
+      "recall": 0.7451063829787234,
+      "balanced_accuracy": 0.774575663399474,
+      "specificity": 0.8040449438202247,
+      "roc_auc": 0.855294525460196,
+      "pr_auc": 0.8048627029329974,
+      "log_loss": 0.450487966924587,
+      "brier_score": 0.1442558588166787,
+      "ece": 0.07376020827350924
+    },
+    "val": {
+      "positive_rate": 0.3458333333333333,
+      "predicted_positive_rate": 0.3958333333333333,
+      "threshold": 0.32,
+      "accuracy": 0.755,
+      "f1": 0.6696629213483146,
+      "precision": 0.6273684210526316,
+      "recall": 0.7180722891566265,
+      "balanced_accuracy": 0.7462972910751285,
+      "specificity": 0.7745222929936306,
+      "roc_auc": 0.8293684291305349,
+      "pr_auc": 0.7711048405986559,
+      "log_loss": 0.477346848050434,
+      "brier_score": 0.15565975050267816,
+      "ece": 0.052665197722679864
+    },
+    "test": {
+      "positive_rate": 0.3455,
+      "predicted_positive_rate": 0.4015,
+      "threshold": 0.32,
+      "accuracy": 0.778,
+      "f1": 0.7028112449799196,
+      "precision": 0.6537982565379825,
+      "recall": 0.7597684515195369,
+      "balanced_accuracy": 0.773696296042427,
+      "specificity": 0.787624140565317,
+      "roc_auc": 0.855413761347191,
+      "pr_auc": 0.8062913654683066,
+      "log_loss": 0.45027914768286975,
+      "brier_score": 0.14430463701442187,
+      "ece": 0.07311600671008225
+    }
+  },
+  "promotion_thresholds": {
+    "promotion_metrics": {
+      "sets": [
+        "test"
+      ],
+      "metrics": [
+        "roc_auc",
+        "f1"
+      ],
+      "directions": {
+        "roc_auc": "maximize",
+        "f1": "maximize"
+      }
+    },
+    "thresholds": {
+      "test": {
+        "roc_auc": 0.75,
+        "f1": 0.65
+      },
+      "val": {},
+      "train": {}
+    },
+    "lineage": {
+      "created_by": "Sebastijan",
+      "created_at": "2026-02-27T23:53:30Z"
+    }
+  },
+  "promotion_thresholds_hash": "59a9d63f36377924995679397ffd858286e83ec18d1e6ad327a07cd4f7dd96b3",
+  "context": {
+    "git_commit": "ef78dcfcdd378622afd94c0d7c066777e1c90138",
+    "promotion_conda_env_hash": "0b1e2aec2fef8167c2a1da52aa25556090abbc79f0125873f82d2954b3acd6af",
+    "training_conda_env_hash": "0b1e2aec2fef8167c2a1da52aa25556090abbc79f0125873f82d2954b3acd6af",
+    "timestamp": "2026-03-28T13-29-31"
+  },
+  "run_identity": {
+    "experiment_id": "2026-03-28T13-26-33_75d58d1b",
+    "train_run_id": "2026-03-28T13-26-43_2e69cbe0",
+    "eval_run_id": "2026-03-28T13-26-51_06696059",
+    "explain_run_id": "2026-03-28T13-26-58_925e2aef",
+    "stage": "staging",
+    "staging_id": "2026-03-28T13-29-31_c39af60e"
+  },
+  "decision": {
+    "promoted": true,
+    "reason": "Model beats the thresholds. No comparison against production model for staging promotion."
+  }
+}

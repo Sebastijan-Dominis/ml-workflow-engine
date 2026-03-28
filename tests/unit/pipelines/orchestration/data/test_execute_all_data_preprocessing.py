@@ -176,9 +176,19 @@ def test_main_runs_all_three_stage_commands_when_not_skipping(
 
     assert code == 0
     assert len(commands) == 3
-    assert commands[0][:3] == [module.sys.executable, "-m", "pipelines.data.register_raw_snapshot"]
-    assert commands[1][:3] == [module.sys.executable, "-m", "pipelines.data.build_interim_dataset"]
-    assert commands[2][:3] == [module.sys.executable, "-m", "pipelines.data.build_processed_dataset"]
+
+    # Normalize executable paths for cross-platform comparisons (Windows may
+    # use backslashes while the orchestration module sometimes converts to
+    # posix-style paths). Compare the exec path separately and the remaining
+    # args exactly.
+    assert Path(commands[0][0]).as_posix() == Path(module.sys.executable).as_posix()
+    assert commands[0][1:3] == ["-m", "pipelines.data.register_raw_snapshot"]
+
+    assert Path(commands[1][0]).as_posix() == Path(module.sys.executable).as_posix()
+    assert commands[1][1:3] == ["-m", "pipelines.data.build_interim_dataset"]
+
+    assert Path(commands[2][0]).as_posix() == Path(module.sys.executable).as_posix()
+    assert commands[2][1:3] == ["-m", "pipelines.data.build_processed_dataset"]
 
 
 def test_main_returns_subprocess_code_and_logs_completion_message_on_failure(

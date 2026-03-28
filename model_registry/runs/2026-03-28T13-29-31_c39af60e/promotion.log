@@ -1,0 +1,5 @@
+2026-03-28 13:29:32,113 - ml.promotion.strategies.staging - INFO - Model promoted to staging successfully.
+2026-03-28 13:29:32,120 - ml.promotion.persistence.registry - INFO - Model registry successfully updated at model_registry\models.yaml.
+2026-03-28 13:29:32,120 - ml.promotion.persister - INFO - Model promoted to staging successfully.
+2026-03-28 13:29:32,129 - ml.promotion.persistence.registry - INFO - Registry diff successfully saved to model_registry\runs\2026-03-28T13-29-31_c39af60e\registry_diff.yaml.
+2026-03-28 13:29:34,848 - ml.io.persistence.save_metadata - INFO - Metadata successfully saved to model_registry/runs/2026-03-28T13-29-31_c39af60e/metadata.json.

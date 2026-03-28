@@ -9,11 +9,12 @@
     - located in `data/raw/hotel_bookings/v1/2026-02-25T22-43-23_732dfdb7/data.csv`
     - originally from https://www.kaggle.com/datasets/mojtaba142/hotel-booking 
 - Current architecture expanded to support many datasets.
-- The ml workflow covers everything from the registration of a raw data snapshot to model promotion.
+- The ml workflow covers everything from the registration of a raw data snapshot to model monitoring.
 > Note: the repo was previously named `hotel_management`, so you will see that name around the repo; renamed for clarity on what the project does
 
 ## Features
 
+Pipelines for every part of the ml workflow:
 - Data preprocessing
   - Register raw data snapshots
   - Build interim and processed datasets
@@ -25,6 +26,25 @@
 - Model promotion
   - Includes model registry for staging and production
   - Archives past production models
+- Model inference
+- Model monitoring
+
+Maximum **decoupling** of datasets, feature sets, and modeling
+- Datasets merge at runtime, using predefined configs and DAG for ordering
+- Feature sets merge at runtime using a predefined entity key
+- Models can use any snapshots of datasets and feature sets via snapshot bindings registry
+- Validation ensures consistency and predefined minimum row presence
+
+Full **reproducibility**
+- Hashing and downstream validation of relevant `artifacts` and `configs`
+- Runtime info validation (hardware, git commit, environment...)
+
+Code **quality** ensured by CI, which includes:
+- `ruff` checks
+- `mypy` checks (moderate strictness)
+- import layer checks
+- naming conventions checks
+- **1235 tests** -> fails if coverage drops below 90%
 
 ## Installation
 
@@ -44,21 +64,33 @@ Two options:
 
 See the [usage guide](docs/usage.md) for instructions on running the workflow.
 
-### Usage examples (via `ml_service` and `Docker`):
+### Usage examples (via `ml_service`):
 
-#### Pipelines
+#### Modeling Configs Writing, Validation, Saving, and Viewing
 
-!["Gif portrayal of pipelines app from ml_service"](assets/gifs/ml_service_pipelines_v2.gif)
+!["Gif portrayal of writing modeling configs with ml_service"](assets/gifs/ml_service_modeling_configs_v3.gif)
 
-#### Modeling Configs
+**Similar functionality exists for other supported configs**
 
-!["Gif portrayal of modeling configs app from ml_service"](assets/gifs/ml_service_modeling_configs_v2.gif)
+#### Pipeline Running and Artifact Viewing
+
+!["Gif portrayal of running a pipeline with ml_service"](assets/gifs/ml_service_pipelines_v3.gif)
+
+**Similar functionality exists for scripts**
+
+#### Documentation Reading in Browser
+
+!["Gif portrayal of reading the docs with ml_service"](assets/gifs/ml_service_docs_v1.gif)
+
+#### Directory Structure Viewing in Browser
+
+["Gif portrayal of viewing directory structure with ml_service"](assets/gifs/ml_service_dir_viewer_v1.gif)
 
 ## Architecture
 
 ### Artifact Lineage (high-level overview)
 
-![Artifact Lineage Diagram](docs/architecture/img/artifact_lineage_v2.png)
+![Artifact Lineage Diagram](docs/architecture/img/artifact_lineage_v3.png)
 
 ### Details
 

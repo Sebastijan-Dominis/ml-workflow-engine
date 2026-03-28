@@ -1,0 +1,39 @@
+2026-03-28 13:16:31,404 - __main__ - INFO - Starting experiment execution with run id: 2026-03-28T13-16-31_eb49bf6c. Arguments: Namespace(problem='adr', segment='city_hotel_online_ta', version='v1', env='test', strict=True, logging_level='INFO', owner='Sebastijan', clean_up_failure_management=True, experiment_id=None, overwrite_existing=False, top_k=None)
+2026-03-28 13:16:31,405 - __main__ - INFO - Running hyperparameter search with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.search.search --problem adr --segment city_hotel_online_ta --version v1 --env test --strict True --logging-level INFO --owner Sebastijan --clean-up-failure-management True --overwrite-existing False
+2026-03-28 13:16:42,083 - __main__ - INFO - Running training with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.train --problem adr --segment city_hotel_online_ta --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:16:51,565 - __main__ - INFO - Training output:
+Using experiment directory: experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb
+
+0:	learn: 0.3884614	test: 0.3834488	best: 0.3834488 (0)	total: 159ms	remaining: 1.43s
+9:	learn: 0.2592599	test: 0.2605502	best: 0.2605502 (9)	total: 333ms	remaining: 0us
+
+bestTest = 0.2605502276
+bestIteration = 9
+
+Model successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\training\2026-03-28T13-16-43_6f8d3a3f\model.joblib.
+Pipeline successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\training\2026-03-28T13-16-43_6f8d3a3f\pipeline.joblib.
+Metadata successfully saved to experiments/adr/city_hotel_online_ta/v1/2026-03-28T13-16-32_45adb6fb/training/2026-03-28T13-16-43_6f8d3a3f/metadata.json.
+Metrics successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\training\2026-03-28T13-16-43_6f8d3a3f\metrics.json.
+Runtime snapshot successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\training\2026-03-28T13-16-43_6f8d3a3f\runtime.json
+
+2026-03-28 13:16:51,565 - __main__ - INFO - Running evaluation with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.evaluate --problem adr --segment city_hotel_online_ta --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:17:00,699 - __main__ - INFO - Evaluation output:
+Using experiment directory: experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb
+Using training directory: experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\training\2026-03-28T13-16-43_6f8d3a3f
+Metrics successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\evaluation\2026-03-28T13-16-52_74def34a\metrics.json.
+Saved predictions for the train split to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\evaluation\2026-03-28T13-16-52_74def34a\predictions_train.parquet
+Saved predictions for the validation split to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\evaluation\2026-03-28T13-16-52_74def34a\predictions_val.parquet
+Saved predictions for the test split to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\evaluation\2026-03-28T13-16-52_74def34a\predictions_test.parquet
+Metadata successfully saved to experiments/adr/city_hotel_online_ta/v1/2026-03-28T13-16-32_45adb6fb/evaluation/2026-03-28T13-16-52_74def34a/metadata.json.
+Runtime snapshot successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\evaluation\2026-03-28T13-16-52_74def34a\runtime.json
+
+2026-03-28 13:17:00,699 - __main__ - INFO - Running explainability with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.explain --problem adr --segment city_hotel_online_ta --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:17:09,611 - __main__ - INFO - Explainability output:
+Using experiment directory: experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb
+Using training directory: experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\training\2026-03-28T13-16-43_6f8d3a3f
+Feature importances successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\explainability\2026-03-28T13-17-02_75a45311\top_k_feature_importances.csv.
+SHAP importances successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\explainability\2026-03-28T13-17-02_75a45311\top_k_shap_importances.csv.
+Metadata successfully saved to experiments/adr/city_hotel_online_ta/v1/2026-03-28T13-16-32_45adb6fb/explainability/2026-03-28T13-17-02_75a45311/metadata.json.
+Runtime snapshot successfully saved to experiments\adr\city_hotel_online_ta\v1\2026-03-28T13-16-32_45adb6fb\explainability\2026-03-28T13-17-02_75a45311\runtime.json
+
+2026-03-28 13:17:09,612 - pipelines.orchestration.common.orchestration_logging - INFO - Experiment execution completed successfully for problem=adr, segment=city_hotel_online_ta, version=v1 at 2026-03-28T13-17-09 after 38.21 seconds.

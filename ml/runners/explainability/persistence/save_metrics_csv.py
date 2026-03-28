@@ -46,7 +46,10 @@ def save_metrics_csv(
             os.fsync(tmp_file.fileno())
 
         os.replace(temp_path, target_file)
-        logger.info(f'{name} successfully saved to {target_file}.')
+
+        msg = f"{name} successfully saved to {target_file}."
+        logger.info(msg)
+        print(msg)
     except Exception as e:
         if temp_path and Path(temp_path).exists():
             try:

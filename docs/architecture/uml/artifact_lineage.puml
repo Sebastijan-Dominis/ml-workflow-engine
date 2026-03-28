@@ -15,6 +15,8 @@ artifact train_run_snapshot as "Train Run Snapshot" <<artifact>>
 artifact evaluation_run_snapshot as "Evaluation Run Snapshot" <<artifact>>
 artifact explainability_run_snapshot as "Explainability Run Snapshot" <<artifact>>
 artifact promotion_run_snapshot as "Promotion Run Snapshot" <<artifact>>
+artifact inference_run_snapshot as "Inference Run Snapshot" <<artifact>>
+artifact monitoring_run_snapshot as "Monitoring Run Snapshot" <<artifact>>
 
 raw_data_snapshot --> interim_dataset_snapshot
 interim_dataset_snapshot --> processed_dataset_snapshot
@@ -26,6 +28,8 @@ train_run_snapshot --> evaluation_run_snapshot
 train_run_snapshot --> explainability_run_snapshot
 evaluation_run_snapshot --> promotion_run_snapshot
 explainability_run_snapshot --> promotion_run_snapshot
+promotion_run_snapshot --> inference_run_snapshot
+inference_run_snapshot --> monitoring_run_snapshot
 
 note right of feature_set_snapshot
 Input and derived schemas are stored at

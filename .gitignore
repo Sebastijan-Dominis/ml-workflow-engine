@@ -50,20 +50,20 @@ coverage.json
 *.py.cover
 .hypothesis/
 .pytest_cache/
-cover/
+/cover/
 
 # Translations
 *.mo
 *.pot
 
 # Django stuff:
-*.log
+# *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
 # Flask stuff:
-instance/
+/instance/
 .webassets-cache
 
 # Scrapy stuff:
@@ -74,7 +74,7 @@ docs/_build/
 
 # PyBuilder
 .pybuilder/
-target/
+/target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -139,9 +139,9 @@ celerybeat.pid
 .env
 .envrc
 .venv
-env/
+/env/
 venv/
-ENV/
+/ENV/
 env.bak/
 venv.bak/
 
@@ -212,7 +212,7 @@ __marimo__/
 .history/
 
 # CatBoost model snapshot files
-catboost_info/
+/catboost_info/
 
 # VSCodeCounter cache
 .vscodecounter/
@@ -220,8 +220,14 @@ catboost_info/
 # Failure management folder that helps deal with failed search and train runs by storing relevant information at runtime (best params from each search, training model snapshots) and deleting if the run is successful. Irrelevant for version control.
 /failure_management/
 
-# Temporarily ignore all experiments, data, feature sets, and model registry files. These are all relevant for version control, but we want to temporarily ignore them while we work on the registry and experiment tracking features.
+# Ignore all experiments, data, feature sets, model registry & archive, predictions, and monitoring files, as well as log files. 
+# These are all potentially relevant for version control, but we want to temporarily ignore them while we work 
+# on the registry and experiment tracking features.
 /experiments/
 /data/
 /feature_store/
 /model_registry/
+/predictions/
+/monitoring/
+/orchestration_logs/
+/scripts_logs/

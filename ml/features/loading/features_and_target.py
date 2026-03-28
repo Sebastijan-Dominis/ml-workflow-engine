@@ -48,7 +48,7 @@ def load_features_and_target(
         strict: Whether strict hash/integrity checks should be enforced.
 
     Returns:
-        tuple[pd.DataFrame, pd.Series, list[FeatureLineage]]: Features, target series, and feature-lineage metadata.
+        tuple[pd.DataFrame, pd.Series, list[FeatureLineage], str]: Features, target series, feature lineage information, and entity key name.
 
     Raises:
         DataError: If feature/target integrity checks fail, required metadata is
@@ -91,7 +91,7 @@ def load_features_and_target(
         "data_lineage",
         "in_memory_hash",
         "file_hash",
-        "entity_key"
+        "entity_key",
     ]
 
     for sel in snapshot_selection:
@@ -158,6 +158,8 @@ def load_features_and_target(
             "operator_hash": operator_hash,
             "feature_type": feature_type,
             "entity_key": entity_key_curr,
+            "file_name": fs.file_name,
+            "data_format": fs.data_format,
         })
 
     validate_set("Feature type", feature_types, feature_sets)

@@ -2,7 +2,7 @@
 import pytest
 from ml.exceptions import UserError
 from ml.promotion.comparisons.thresholds import compare_against_thresholds
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 
 pytestmark = pytest.mark.unit
 

@@ -8,7 +8,7 @@ from ml.exceptions import UserError
 from ml.metadata.schemas.runners.explainability import ExplainabilityMetadata
 from ml.metadata.schemas.runners.training import TrainingMetadata
 from ml.metadata.validation.promotion.promote import validate_promotion_metadata
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 from ml.promotion.constants.constants import PreviousProductionRunIdentity
 from ml.promotion.constants.promotion_metadata_dict import PromotionMetadataDict
 from ml.promotion.getters.get import get_pipeline_cfg_hash, get_training_conda_env_hash

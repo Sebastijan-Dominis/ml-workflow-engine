@@ -60,7 +60,10 @@ def save_metrics(metrics: dict[str, float] | dict[str, dict[str, float]], *, mod
             os.fsync(tmp_file.fileno())
 
         os.replace(temp_path, metrics_file)
-        logger.info(f"Metrics successfully saved to {metrics_file}.")
+
+        msg = f"Metrics successfully saved to {metrics_file}."
+        logger.info(msg)
+        print(msg)
         return str(metrics_file)
     except Exception as e:
         if temp_path and Path(temp_path).exists():

@@ -55,6 +55,7 @@ including its location, expected fields, validation logic, and usage examples.
 |---------------|-------------|
 | [Interim Data Configurations](configs/interim_data.md) | Data cleaning and validation |
 | [Processed Data Configurations](configs/processed_data.md) | Feature-ready dataset creation |
+| [Snapshot Bindings Registry](configs/bindings.md) | Sets of dataset and feature set snapshots |
 | [Feature Registry](configs/feature_registry.md) | Feature set definitions |
 | [Model Specifications](configs/model_specs.md) | Model specifications (canonical for model configurations) |
 | [Model Configurations](configs/model_config.md) | Modeling-specific configurations (used by search and train pipelines) |

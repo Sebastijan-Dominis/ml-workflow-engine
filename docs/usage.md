@@ -2,11 +2,29 @@
 
 How to use the hotel_management project for typical workflows.
 
-## Notes on orchestration
+## Notes on Orchestration
 
 - **IMPORTANT**: All of the provided orchestrators should be used with caution, preferably not outside of development and testing (**major side-effects are possible**)
 - Orchestrators were created almost exclusively for dev/test convenience and efficiency in single-owner, single-dev work
 - `skip-if-existing` flag determines whether an orchestrator will run the given pipelines if it notices at least one snapshot in the target location (e.g. if set to true and `feature_store/{feature_set_name}/{feature_set_version}/{snapshot_id}/` already exists, it will not freeze that feature set; otherwise it will - new snapshot gets created)
+
+## Included Artifacts and Configs
+
+This repo comes with a few artifacts for quick checking of what to expect with various pipelines. These include:
+- original dataset from kaggle
+- two sets of generated data (10k and 20k rows respectively)
+- interim and processed datasets related to the previous three
+- feature sets related to the mentioned processed datasets
+- four full experiment runs in test env
+    - search + train + evaluate + explain
+    - included models -> cancellation global v1, adr city_hotel_online_ta v1, no_show city_hotel v1
+- one promoted and one staging cancellation global model
+- one inference run and one monitoring run on cancellation global
+
+This repo also includes pre-defined configs for 14 different models, optimized to likely perform well.
+It also includes some of the other configs, all of which can be found in the `configs/` directory.
+This enables the user to start training some models immediately, while not occupying their local
+workspace with too many artifacts.
 
 ## Docker
 
@@ -46,6 +64,10 @@ docker compose up
     - Run pipelines
     - Create and store configs
         - Includes validation to ensure proper quality
+    - Run scripts
+    - Read docs
+    - View json and yaml files
+    - View directory structure
 
 #### Configurations
 
@@ -65,6 +87,8 @@ Currently *supports* the following configs:
     - `configs/pipelines/{data_type}/{algorithm}/{pipeline_version}.yaml`
 - promotion thresholds
     - `configs/promotion/thresholds.yaml`
+- snapshot bindings (via a script)
+    - `configs/snapshot_bindings_registry/bindings.yaml`
 
 ##### Not Supported
 
@@ -122,27 +146,31 @@ python -m ml_service.frontend.app
 ### Data Preprocessing
 
 - The `pipelines/data/register_raw_snapshot.py` pipeline registers raw data it finds in `data/raw/{dataset_name}/{dataset_version}/{snapshot_id}/data.{format}`, based on cli arguments
-- The `pipelines/data/build_interim_dataset.py` pipeline builds an interim dataset from one of the raw data snapshots, based on the interaction between cli arguments and configs from `configs/data/interim/{dataset_name}/{dataset_version}.yaml`
-- The `pipelines/data/build_processed_dataset.py` pipeline builds a processed dataset from one of the interim datasets, based on the interaction between cli arguments and configs from `configs/data/processed/{dataset_name}/{dataset_version}.yaml`
+- The `pipelines/data/build_interim_dataset.py` pipeline builds an interim dataset from one of the raw data snapshots, based on the interaction between cli arguments 
+and configs from `configs/data/interim/{dataset_name}/{dataset_version}.yaml`
+- The `pipelines/data/build_processed_dataset.py` pipeline builds a processed dataset from one of the interim datasets, based on the interaction between cli arguments 
+and configs from `configs/data/processed/{dataset_name}/{dataset_version}.yaml`
 - The `pipelines/orchestration/data/execute_all_data_preprocessing.py` orchestrator executes all of the three pipelines for all of the available raw snapshots and interim and processed configs
 
 ### Feature Set Freezing
 
-- The `pipelines/features/freeze.py` pipelines freezes a feature set based on the interaction of cli arguments with feature registry (`configs/feature_registry/features.yaml`)
+- The `pipelines/features/freeze.py` pipeline freezes a feature set based on the interaction of cli arguments with feature registry (`configs/feature_registry/features.yaml`)
 - The `pipelines/orchestration/features/freeze_all_feature_sets.py` orchestrator freezes all of the feature sets found in the feature registry (`configs/feature_registry/features.yaml`)
 
 ### Experiments
 
 #### Search (hyperparameter searching)
 
-- The `pipelines/search/search.py` pipeline performs a hyperparameter search for a given model, based on the interaction between cli arguments and resolved configs (a graph in [the architecture overview](architecture/overview.md) shows how configs are resolved at runtime)
+- The `pipelines/search/search.py` pipeline performs a hyperparameter search for a given model, based on the interaction between cli arguments and resolved configs 
+(a graph in [the architecture overview](architecture/overview.md) shows how configs are resolved at runtime)
 - A *search* run *defines* an *experiment* (one search = one experiment)
 
 #### Runners
 
 ##### Training
 
-- The `pipelines/runners/train.py` pipeline performs a training run, based on the interaction between cli arguments and resolved configs (a graph in [the architecture overview](architecture/overview.md) shows how configs are resolved at runtime)
+- The `pipelines/runners/train.py` pipeline performs a training run, based on the interaction between cli arguments and resolved configs 
+(a graph in [the architecture overview](architecture/overview.md) shows how configs are resolved at runtime)
 - A *training* run is *canonical* for *evaluation* and *explainability* runs
 
 ##### Evaluation
@@ -151,16 +179,29 @@ python -m ml_service.frontend.app
 
 ##### Explainability
 
-- The `pipelines/runners/explain.py` pipelines performs an explainability run, based on cli arguments
+- The `pipelines/runners/explain.py` pipeline performs an explainability run, based on cli arguments
 
 #### Orchestration
 
-- The `pipelines/orchestration/experiments/execute_experiment_with_latest.py` orchestrator executes `search.py`, `train.py`, `evalute.py` and `explain.py` in sequence by defaulting to the latest experiment id for all runners, and the latest train run id for evaluation and explainability runs
-- The `pipelines/orchestration/experiments/execute_all_experiments_with_latest.py` orchestrator executes `execute_experiment_with_latest.py` for all of the models, based on file structure within `configs/model_specs`, such that *problem type* + *segment* + *model version* = *one model*.
+- The `pipelines/orchestration/experiments/execute_experiment_with_latest.py` orchestrator executes `search.py`, `train.py`, `evalute.py` and `explain.py` in sequence by defaulting to the latest 
+experiment id for all runners, and the latest train run id for evaluation and explainability runs
+- The `pipelines/orchestration/experiments/execute_all_experiments_with_latest.py` orchestrator executes `execute_experiment_with_latest.py` for all of the models, based on file structure within 
+`configs/model_specs`, such that *problem type* + *segment* + *model version* = *one model*.
 
 ### Promotion
 
-- The `pipelines/promotion/promote.py` stages or promotes a model, and archives the previous one (if promotion occurs), based on cli arguments and predefined thresholds (`configs/promotion/thresholds.yaml`)
+- The `pipelines/promotion/promote.py` pipeline stages or promotes a model, and archives the previous one (if promotion occurs), based on cli arguments and 
+predefined thresholds (`configs/promotion/thresholds.yaml`)
+
+### Post-promotion
+
+#### Inference
+
+- The `pipelines/post_promotion/infer.py` pipeline runs inference using a defined trained model or pipeline with defined snapshot bindings, based on cli arguments
+
+#### Monitoring
+
+- The `pipelines/post_promotion/monitor.py` pipeline monitors model performance, based on cli arguments and relevant artifacts
 
 ### The Grand Orchestrator
 
@@ -258,6 +299,10 @@ python -m ml_service.frontend.app
 - Define configs for `freeze.py` in `configs/feature_registry/features.py`
 - Generate the operator hash with `scripts/generators/generate_operator_hash.py`
 
+## Snapshot Bindings
+
+- Define snapshot bindings for various pipelines in `configs/snapshot_bindings_registry/bindings.yaml`
+
 ### Model-specific Configs
 
 - Every model needs exactly three configs defined - model specs, search and training
@@ -265,7 +310,8 @@ python -m ml_service.frontend.app
 - The expected nesting is `configs/{current}/{problem_type}/{segment}/{model_version}.yaml`, where current = `model_specs`, `search` or `training`
 - Problem type can be cancellation, no_show, lead_time, etc.
 - Segment can be global, city_hotel, resort_hotel_online_ta, etc. - use clear abbrevations
-- Model specs are *foundational* for each model, while search and training configs help define what is relevant for search and training runs respectively (check [the architecture overview](architecture/overview.md) to understand how configs resolve at runtime)
+- Model specs are *foundational* for each model, while search and training configs help define what is relevant for search and training runs respectively 
+(check [the architecture overview](architecture/overview.md) to understand how configs resolve at runtime)
 - The repo comes with predefined model-specific configs for 14 models, spanning 7 problem types
 - The predefined configs to not guarantee the most optimal results, but are considered to be a good starting point - adjust them as you wish
 

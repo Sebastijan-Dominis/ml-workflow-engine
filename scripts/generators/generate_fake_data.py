@@ -30,6 +30,7 @@ from uuid import uuid4
 import numpy as np
 import pandas as pd
 import torch
+from faker import Faker
 from ml.io.formatting.iso_no_colon import iso_no_colon
 from ml.io.formatting.str_to_bool import str_to_bool
 from ml.logging_config import setup_logging
@@ -42,7 +43,6 @@ from sdv.single_table import CTGANSynthesizer
 
 logger = logging.getLogger(__name__)
 
-
 MONTH_MAP = {
     "January": 1, "February": 2, "March": 3, "April": 4,
     "May": 5, "June": 6, "July": 7, "August": 8,
@@ -51,6 +51,13 @@ MONTH_MAP = {
 
 REVERSE_MONTH_MAP = {v: k for k, v in MONTH_MAP.items()}
 
+FAKE_COLUMNS = [
+    "name",
+    "email",
+    "phone-number",
+    "credit_card",
+    "reservation_status_date"
+]
 
 def parse_args():
     """Parse CLI arguments."""
@@ -80,8 +87,8 @@ def parse_args():
     parser.add_argument(
         "--num-rows",
         type=int,
-        default=50000,
-        help="Number of synthetic rows to generate. Defaults to 500.",
+        default=10000,
+        help="Number of synthetic rows to generate. Defaults to 10000.",
     )
 
     parser.add_argument(
@@ -94,7 +101,7 @@ def parse_args():
     parser.add_argument(
         "--model-path",
         type=str,
-        default="synthetizers/2026-03-21T02-18-36_b682275d/ctgan_model.pkl",
+        default=None,
         help="Path to a pre-trained CTGAN model to load. If not provided, uses a default path."
     )
 
@@ -221,7 +228,13 @@ def _handle_temporal_flow(df_real: pd.DataFrame, df_synth: pd.DataFrame) -> pd.D
                 "day": pd.to_numeric(df["arrival_date_day_of_month"], errors="coerce"),
             })
 
-            return pd.to_datetime(date_df, errors="coerce")
+            dt = pd.to_datetime(date_df, errors="coerce")
+
+            n_invalid = dt.isna().sum()
+            if n_invalid > 0:
+                logger.warning(f"{n_invalid} invalid dates in synthetic data")
+
+            return dt.ffill().bfill()
 
         real_dates = build_datetime(df_real)
         synth_dates = build_datetime(df_synth)
@@ -301,9 +314,8 @@ def _apply_constraints(df: pd.DataFrame) -> pd.DataFrame:
 
 def _enforce_schema(df: pd.DataFrame, dtypes: dict, categories: dict) -> pd.DataFrame:
     """Reapply original schema with robust coercion + logging."""
-
     for col, dtype in dtypes.items():
-        if col not in df.columns:
+        if col not in df.columns or col in FAKE_COLUMNS:
             continue
 
         try:
@@ -366,6 +378,32 @@ def sanitize(obj):
         return [sanitize(v) for v in obj]
     return obj
 
+
+fake = Faker()
+
+def _add_fake_columns(df: pd.DataFrame) -> pd.DataFrame:
+    n = len(df)
+
+    if "name" in FAKE_COLUMNS:
+        df["name"] = [fake.name() for _ in range(n)]
+
+    if "email" in FAKE_COLUMNS:
+        df["email"] = [fake.email() for _ in range(n)]
+
+    if "phone-number" in FAKE_COLUMNS:
+        df["phone-number"] = [fake.phone_number() for _ in range(n)]
+
+    if "credit_card" in FAKE_COLUMNS:
+        df["credit_card"] = [fake.credit_card_number() for _ in range(n)]
+
+    if "reservation_status_date" in FAKE_COLUMNS:
+        df["reservation_status_date"] = [
+            fake.date_between(start_date="-2y", end_date="today")
+            for _ in range(n)
+        ]
+
+    return df
+
 # -------------------- MAIN -------------------- #
 
 def main() -> int:
@@ -380,6 +418,7 @@ def main() -> int:
     logger.info(f"Using random seed: {args.seed}")
     np.random.seed(args.seed)
     random.seed(args.seed)
+    fake.seed_instance(args.seed)
 
     try:
         base_path = Path(f"data/raw/{args.data}/{args.version}")
@@ -408,25 +447,20 @@ def main() -> int:
         original_categories = {
             col: df[col].dropna().unique()
             for col in df.select_dtypes(include="object").columns
+            if col not in FAKE_COLUMNS
         }
 
         df_raw = df.copy()
         df_model = _preprocess_for_sdv(df_raw)
 
-        DROP_COLS = ["name", "email", "phone-number", "credit_card"]
-
-        df_model = df_model.drop(columns=[c for c in DROP_COLS if c in df_model.columns])
+        # Drop high-cardinality / fake columns BEFORE training
+        cols_to_drop = [c for c in FAKE_COLUMNS if c in df_model.columns]
+        df_model = df_model.drop(columns=cols_to_drop)
 
         # Simplify 'country': keep top 20, others as 'Other'
         if "country" in df_model.columns:
             top_countries = df_model["country"].value_counts().nlargest(20).index
             df_model["country"] = df_model["country"].where(df_model["country"].isin(top_countries), "Other")
-
-        # Convert 'reservation_status_date' to month-year period to reduce cardinality
-        if "reservation_status_date" in df_model.columns:
-            df_model["reservation_status_date"] = pd.to_datetime(df_model["reservation_status_date"], errors="coerce")
-            df_model["reservation_status_month"] = df_model["reservation_status_date"].dt.to_period("M").astype(str)
-            df_model.drop(columns=["reservation_status_date"], inplace=True)
 
         # Fill sparse numeric columns with 0
         for col in ["agent", "company"]:
@@ -434,7 +468,11 @@ def main() -> int:
                 df_model[col] = df_model[col].fillna(0)
 
         # Ensure no NaNs remain before training
-        df_model.fillna("Unknown", inplace=True)
+        for col in df_model.columns:
+            if df_model[col].dtype.kind in "biufc":  # numeric
+                df_model[col] = df_model[col].fillna(np.median(df_model[col]))
+            else:
+                df_model[col] = df_model[col].fillna("Unknown")
 
         new_snapshot_id = run_id
         output_dir = base_path / new_snapshot_id
@@ -467,7 +505,7 @@ def main() -> int:
         metadata.save_to_json(metadata_path)
         logger.info(f"Saved metadata to {metadata_path}")
 
-        if args.model_path is not None:
+        if args.model_path and Path(args.model_path).exists():
             logger.info(f"Loading pre-trained model from {args.model_path}")
             try:
                 with open(args.model_path, "rb") as f:
@@ -534,11 +572,15 @@ def main() -> int:
 
         synthetic_df = _preprocess_for_sdv(synthetic_df)
 
+        synthetic_df = synthetic_df[df_model.columns]
+
         quality_report = evaluate_quality(
             real_data=df_model,
             synthetic_data=synthetic_df,
             metadata=metadata
         )
+
+        synthetic_df = _add_fake_columns(synthetic_df)
 
         # Save quality report as JSON with property-level details
         quality_file = output_dir / "quality_report.json"

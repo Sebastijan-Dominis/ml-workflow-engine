@@ -3,7 +3,7 @@
 import logging
 
 from ml.exceptions import ConfigError, UserError
-from ml.promotion.config.models import Direction, MetricName, MetricSet
+from ml.promotion.config.promotion_thresholds import Direction, MetricName, MetricSet
 from ml.promotion.constants.constants import COMPARISON_DIRECTIONS, ProductionComparisonResult
 
 logger = logging.getLogger(__name__)

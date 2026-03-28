@@ -12,3 +12,5 @@ class FeatureLineage(BaseModel):
     feature_schema_hash: str
     operator_hash: str
     feature_type: Literal["tabular", "time-series"]
+    file_name: str
+    data_format: str

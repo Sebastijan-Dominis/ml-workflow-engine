@@ -57,17 +57,23 @@ def save_predictions(prediction_dfs: PredictionArtifacts, target_dir: Path) -> P
     try:
         train_path = target_dir / "predictions_train.parquet"
         _write_parquet_atomic(prediction_dfs.train, train_path)
-        logger.info(f"Saved predictions for the train split to {train_path}")
+        msg = f"Saved predictions for the train split to {train_path}"
+        logger.info(msg)
+        print(msg)
         paths_raw["train_predictions_path"] = train_path.as_posix()
 
         val_path = target_dir / "predictions_val.parquet"
         _write_parquet_atomic(prediction_dfs.val, val_path)
-        logger.info(f"Saved predictions for the validation split to {val_path}")
+        msg = f"Saved predictions for the validation split to {val_path}"
+        logger.info(msg)
+        print(msg)
         paths_raw["val_predictions_path"] = val_path.as_posix()
 
         test_path = target_dir / "predictions_test.parquet"
         _write_parquet_atomic(prediction_dfs.test, test_path)
-        logger.info(f"Saved predictions for the test split to {test_path}")
+        msg = f"Saved predictions for the test split to {test_path}"
+        logger.info(msg)
+        print(msg)
         paths_raw["test_predictions_path"] = test_path.as_posix()
 
         paths = PredictionsPaths(**paths_raw)

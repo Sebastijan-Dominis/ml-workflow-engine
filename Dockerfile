@@ -5,7 +5,7 @@
 # For faster development iterations, consider using a local Conda environment on your machine with the 
 # same environment.yml file.
 
-# ===== Base image with GPU support =====
+# Base image with GPU support
 FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
 # NOTE: Uncomment the line below and comment out the line above only if you want to generate fake data.
 # For regular use, stick to the current image. If you use the image below, make sure to also uncomment
@@ -14,14 +14,14 @@ FROM pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
 
 # FROM nvidia/cuda:12.8.0-runtime-ubuntu22.04
 
-# ===== Set working directory =====
+# Set working directory
 WORKDIR /app
 
-# ===== Timezone fix =====
+# Timezone fix
 ENV TZ=Europe/Zagreb
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# ===== Install Miniconda and Git =====
+# Install Miniconda and Git
 RUN apt-get update && apt-get install -y wget bzip2 git && \
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -p /opt/conda && \
@@ -31,14 +31,14 @@ RUN apt-get update && apt-get install -y wget bzip2 git && \
 # Add conda to PATH
 ENV PATH="/opt/conda/bin:$PATH"
 
-# ===== Accept Conda Terms of Service =====
+# Accept Conda Terms of Service
 RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
     conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 
-# ===== Copy environment.yml first for faster rebuilds =====
+# Copy environment.yml first for faster rebuilds
 COPY environment.yml /tmp/environment.yml
 
-# ===== Create Conda environment =====
+# Create Conda environment
 # Create env
 RUN conda env create -f /tmp/environment.yml -n hotel_management
 
@@ -61,10 +61,10 @@ COPY pyproject.toml .
 # Install rest
 RUN conda run -n hotel_management pip install -r /tmp/requirements.txt
 
-# ===== Use the environment for all container commands =====
+# Use the environment for all container commands
 SHELL ["conda", "run", "-n", "hotel_management", "/bin/bash", "-c"]
 
-# ===== Copy the code =====
+# Copy the code
 COPY ml ./ml
 COPY pipelines ./pipelines
 COPY scripts ./scripts
@@ -73,11 +73,11 @@ COPY ml_service ./ml_service
 # Install the package
 RUN conda run -n hotel_management pip install -e .
 
-# ===== Expose ports =====
+# Expose ports
 EXPOSE 8000
 EXPOSE 8050
 
-# ===== Run all services =====
+# Run all services
 CMD bash -c "\
     uvicorn ml_service.backend.main:app --reload --host 0.0.0.0 --port 8000 & \
     python -m ml_service.frontend.app --host 0.0.0.0 --port 8050 & \

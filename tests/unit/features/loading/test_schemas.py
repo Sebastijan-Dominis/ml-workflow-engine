@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import types
 from collections import namedtuple
 from pathlib import Path
 from types import SimpleNamespace
@@ -13,6 +14,21 @@ import pandas as pd
 import pytest
 from ml.config.schemas.model_cfg import SearchModelConfig
 from ml.exceptions import DataError
+
+# Some registry modules import `catboost` at import time; provide a lightweight
+# stub to avoid needing the real dependency during unit tests.
+if "catboost" not in sys.modules:
+    _catboost_stub = types.ModuleType("catboost")
+    _catboost_stub.__dict__.update(
+        {
+            "CatBoostClassifier": type("CatBoostClassifier", (), {}),
+            "CatBoostRegressor": type("CatBoostRegressor", (), {}),
+            "CatBoost": type("CatBoost", (), {}),
+            "Pool": type("Pool", (), {}),
+        }
+    )
+    sys.modules["catboost"] = _catboost_stub
+
 from ml.feature_freezing.utils.operators import generate_operator_hash
 from ml.features.loading.schemas import aggregate_schema_dfs, load_feature_set_schemas, load_schemas
 from ml.modeling.models.feature_lineage import FeatureLineage
@@ -148,6 +164,8 @@ def test_load_schemas_aggregates_input_and_derived_schemas_across_feature_sets(t
                     feature_schema_hash="",
                     operator_hash=dummy_hash,
                     feature_type="tabular",
+                    file_name="features.py",
+                    data_format="parquet",
                 ),
                 FeatureLineage(
                     name="pricing_party_features",
@@ -158,6 +176,8 @@ def test_load_schemas_aggregates_input_and_derived_schemas_across_feature_sets(t
                     feature_schema_hash="",
                     operator_hash=dummy_hash,
                     feature_type="tabular",
+                    file_name="features.py",
+                    data_format="parquet",
                 ),
             ]
 

@@ -1,0 +1,138 @@
+2026-03-28 13:20:27,919 - __main__ - INFO - Using random seed: 42
+2026-03-28 13:20:27,919 - ml.utils.snapshots.snapshot_path - INFO - Auto-resolved latest snapshot ID: data\raw\hotel_bookings\v1\2026-02-25T22-43-23_732dfdb7
+2026-03-28 13:20:27,919 - __main__ - INFO - Resolved snapshot path: data\raw\hotel_bookings\v1\2026-02-25T22-43-23_732dfdb7
+2026-03-28 13:20:28,187 - __main__ - INFO - Loaded dataset shape: (119390, 36)
+2026-03-28 13:20:28,588 - sdv.metadata.multi_table - INFO - Detected metadata:
+{
+    "columns": {
+        "hotel": {
+            "sdtype": "categorical"
+        },
+        "is_canceled": {
+            "sdtype": "categorical"
+        },
+        "lead_time": {
+            "sdtype": "numerical"
+        },
+        "arrival_date_year": {
+            "sdtype": "categorical"
+        },
+        "arrival_date_month": {
+            "sdtype": "categorical"
+        },
+        "arrival_date_week_number": {
+            "sdtype": "numerical"
+        },
+        "arrival_date_day_of_month": {
+            "sdtype": "numerical"
+        },
+        "stays_in_weekend_nights": {
+            "sdtype": "numerical"
+        },
+        "stays_in_week_nights": {
+            "sdtype": "numerical"
+        },
+        "adults": {
+            "sdtype": "numerical"
+        },
+        "children": {
+            "sdtype": "categorical"
+        },
+        "babies": {
+            "sdtype": "categorical"
+        },
+        "meal": {
+            "sdtype": "categorical"
+        },
+        "country": {
+            "sdtype": "categorical"
+        },
+        "market_segment": {
+            "sdtype": "categorical"
+        },
+        "distribution_channel": {
+            "sdtype": "categorical"
+        },
+        "is_repeated_guest": {
+            "sdtype": "categorical"
+        },
+        "previous_cancellations": {
+            "sdtype": "numerical"
+        },
+        "previous_bookings_not_canceled": {
+            "sdtype": "numerical"
+        },
+        "reserved_room_type": {
+            "sdtype": "categorical"
+        },
+        "assigned_room_type": {
+            "sdtype": "categorical"
+        },
+        "booking_changes": {
+            "sdtype": "numerical"
+        },
+        "deposit_type": {
+            "sdtype": "categorical"
+        },
+        "agent": {
+            "sdtype": "numerical"
+        },
+        "company": {
+            "sdtype": "numerical"
+        },
+        "days_in_waiting_list": {
+            "sdtype": "numerical"
+        },
+        "customer_type": {
+            "sdtype": "categorical"
+        },
+        "adr": {
+            "sdtype": "numerical"
+        },
+        "required_car_parking_spaces": {
+            "sdtype": "categorical"
+        },
+        "total_of_special_requests": {
+            "sdtype": "categorical"
+        },
+        "reservation_status": {
+            "sdtype": "categorical"
+        }
+    }
+}
+2026-03-28 13:20:28,590 - MultiTableMetadata - INFO - 
+Metadata Save:
+  Timestamp: 2026-03-28 13:20:28.590004
+  Statistics about the metadata:
+    Total number of tables: 1
+    Total number of columns: 31
+    Total number of relationships: 0
+2026-03-28 13:20:28,590 - __main__ - INFO - Saved metadata to data\raw\hotel_bookings\v1\2026-03-28T13-20-27_43859088\synthesizer_metadata.json
+2026-03-28 13:20:28,590 - __main__ - INFO - Loading pre-trained model from synthetizers\2026-03-25T05-27-06_050f7ba0\ctgan_model.pkl
+2026-03-28 13:20:29,119 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 28, 803035), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:29,257 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 29, 119868), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:29,433 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 29, 257928), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:29,604 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 29, 433035), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:29,779 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 29, 604124), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:29,953 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 29, 779714), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:30,107 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 29, 953821), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:30,270 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 30, 108911), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:30,403 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 30, 270014), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:30,518 - SingleTableSynthesizer - INFO - {'EVENT': 'Sample', 'TIMESTAMP': datetime.datetime(2026, 3, 28, 13, 20, 30, 403085), 'SYNTHESIZER CLASS NAME': 'CTGANSynthesizer', 'SYNTHESIZER ID': 'CTGANSynthesizer_1.35.0_941e50fcf978454ebde1083d7361ea19', 'TOTAL NUMBER OF TABLES': 1, 'TOTAL NUMBER OF ROWS': 1000, 'TOTAL NUMBER OF COLUMNS': 32}
+2026-03-28 13:20:35,486 - __main__ - INFO - Saved quality report to data\raw\hotel_bookings\v1\2026-03-28T13-20-27_43859088\quality_report.json
+2026-03-28 13:20:35,486 - __main__ - INFO - Synthetic data quality score: 0.9005
+2026-03-28 13:20:35,503 - __main__ - WARNING - 26 invalid dates in synthetic data
+2026-03-28 13:20:35,506 - __main__ - INFO - Applied decomposed-date temporal shift
+2026-03-28 13:20:35,522 - __main__ - INFO - lead_time: clipped 17 outliers
+2026-03-28 13:20:35,524 - __main__ - INFO - arrival_date_year: clipped 9921 outliers
+2026-03-28 13:20:35,526 - __main__ - INFO - arrival_date_week_number: clipped 257 outliers
+2026-03-28 13:20:35,535 - __main__ - INFO - babies: clipped 198 outliers
+2026-03-28 13:20:35,543 - __main__ - INFO - agent: clipped 96 outliers
+2026-03-28 13:20:35,545 - __main__ - INFO - company: clipped 260 outliers
+2026-03-28 13:20:35,546 - __main__ - INFO - days_in_waiting_list: clipped 104 outliers
+2026-03-28 13:20:35,548 - __main__ - INFO - adr: clipped 320 outliers
+2026-03-28 13:20:35,549 - __main__ - INFO - required_car_parking_spaces: clipped 144 outliers
+2026-03-28 13:20:35,551 - __main__ - INFO - total_of_special_requests: clipped 151 outliers
+2026-03-28 13:20:35,557 - __main__ - WARNING - country: 874 unseen categories replaced with NaN
+2026-03-28 13:20:35,564 - __main__ - WARNING - Final dataset still contains missing values. Strict mode is disabled, so proceeding with save.
+2026-03-28 13:20:35,623 - __main__ - INFO - Saved synthetic dataset to data\raw\hotel_bookings\v1\2026-03-28T13-20-27_43859088\data.csv

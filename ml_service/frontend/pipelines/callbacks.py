@@ -73,12 +73,18 @@ def register_callbacks(app):
             print("Payload sent:", payload)
             result = call_pipeline(pipeline["endpoint"], payload)
 
+            bg_color="#81ff81" if result.get("status") == "SUCCESS" else "#ff8181"
+
             return dbc.Textarea(
                 value=str(result),
-                style={"width": "100%", "height": "200px"},
+                style={
+                    "width": "100%",
+                    "height": "200px",
+                    "backgroundColor": bg_color
+                },
                 className="mt-2",
                 id=f"{PAGE_PREFIX}-{pipeline['name']}-result",
-                name=f"{PAGE_PREFIX}-{pipeline['name']}-result"
+                name=f"{PAGE_PREFIX}-{pipeline['name']}-result",
             )
 
     for p in FRONTEND_PIPELINES:

@@ -21,6 +21,8 @@ def _valid_lineage_entry() -> dict[str, str]:
         "feature_schema_hash": "schema_hash_abc",
         "operator_hash": "operator_hash_abc",
         "feature_type": "tabular",
+        "file_name": "features.py",
+        "data_format": "parquet",
     }
 
 

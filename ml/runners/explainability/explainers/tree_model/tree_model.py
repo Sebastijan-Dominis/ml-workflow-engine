@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 
 from ml.config.schemas.model_cfg import TrainModelConfig
-from ml.features.loading.features_and_target import load_features_and_target
 from ml.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
 from ml.features.splitting.splitting import get_splits
 from ml.features.validation.validate_snapshot_ids import validate_snapshot_ids
@@ -59,6 +58,9 @@ class ExplainTreeModel(Explainer):
             Loads persisted training metadata/artifacts and may incur substantial
             compute for SHAP calculations.
         """
+
+        # Lazy import to avoid circular dependencies
+        from ml.features.loading.features_and_target import load_features_and_target
 
         splits: TabularSplits
 

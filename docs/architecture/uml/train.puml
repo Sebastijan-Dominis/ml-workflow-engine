@@ -8,6 +8,7 @@ skinparam linetype ortho
 skinparam packageStyle rectangle
 
 package "Configs"<<Configs>> {
+    artifact snapshot_bindings_registry as "Snapshot Bindings Registry\n(configs/snapshot_bindings_registry/)" <<env>>
     artifact global_cfg as "Global Default Configs\n(configs/defaults/)" <<config>>
     artifact algo_cfg as "Algorithm Default Configs\n(configs/defaults/)" <<config>>
     artifact model_spec as "Model Specs\n(configs/model_specs/...)" <<config>>
@@ -36,6 +37,7 @@ package "Produced Artifacts"<<ProducedArtifacts>> {
     artifact pipeline as "Trained Pipeline\n(experiments/.../training/...)\n(optional)" <<artifact_optional>>
 }
 
+script ..[#AAAAAA80]> snapshot_bindings_registry
 script ..> global_cfg
 script ..> algo_cfg
 script ..> model_spec
@@ -56,6 +58,13 @@ script --> training_runtime_info
 script --> training_metrics
 script --> model
 script --[#AAAAAA80]> pipeline
+
+note right of snapshot_bindings_registry
+Determines which dataset and feature
+set snapshots are used (defaults to
+latest if key is not provided via a 
+cli argument).
+end note
 
 note right of env_cfg
 dev/test for quick iterations;

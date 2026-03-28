@@ -1,0 +1,638 @@
+{
+  "metadata": {
+    "problem": "adr",
+    "segment": "city_hotel_online_ta",
+    "version": "v1",
+    "experiment_id": "2026-03-28T13-16-32_45adb6fb",
+    "sources": {
+      "main": "configs/search/adr/city_hotel_online_ta/v1.yaml",
+      "extends": [
+        "../../../../configs/defaults/global.yaml",
+        "../../../../configs/defaults/catboost.yaml",
+        "../../../../configs/model_specs/adr/city_hotel_online_ta/v1.yaml"
+      ]
+    },
+    "env": "test",
+    "best_params_path": "none",
+    "algorithm": "catboost",
+    "pipeline_version": "v1",
+    "created_by": "search.py",
+    "created_at": "2026-03-28T13-16-32",
+    "owner": "Sebastijan",
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-28T13-12-37_79276f03",
+        "file_hash": "7c9825b5a2c79ec45ac8d4a450d6914ee225a8d5fa89abfeef0423007e650f9c",
+        "in_memory_hash": "05b1f76a3bc1b2a4555ac39fb23e7222",
+        "feature_schema_hash": "48241647ac144b463f74ed546c0d2dde55f91f7593b971b40b2b550c7465c21e",
+        "operator_hash": "fec3f1ee5f443bac3e9f688f1ddddf5a",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-28T13-12-52_8e2e40cf",
+        "file_hash": "6e481642cc084e05d35df04f6f9e76786a339752830de81146c5bded959c0ae3",
+        "in_memory_hash": "4c780add4431fffdaa14e0aa7d931eaa",
+        "feature_schema_hash": "21afc96800d985c86b076b4a9774b17e36b795cd98766bb2ebbec6f6571645a5",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v3",
+        "snapshot_id": "2026-03-28T13-13-02_a269ad35",
+        "file_hash": "3cc0d08668842aa34a11bb057cb84d1ee41689c95715fb221c50e9a8dc3fe233",
+        "in_memory_hash": "6556edf5d4a820d9673280d57ba2978b",
+        "feature_schema_hash": "e05f1403f776dddd08b55e3ca0a931de87bcffbfefcebac4145b177a2f8f6e21",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-13-08_c6b7c5c4",
+        "file_hash": "920bc43b1d897da522512f5371cdccac7b3abe25206046e4dde7b1c79b9a0292",
+        "in_memory_hash": "034fbd2aa9b664e4ae34734ad3f5ac40",
+        "feature_schema_hash": "94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "room_allocation_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-28T13-13-17_dc0ddb69",
+        "file_hash": "d09a5b06f8bc52b692d57081e0cdc0a4a734d9883ac9b7d0724d2e148cce6f1e",
+        "in_memory_hash": "cc20f026c54cd687db8b62027af51950",
+        "feature_schema_hash": "c78c25c2a15b3c5954099579a6833444e511305955e39d31c0d98da93936f2cf",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      }
+    ],
+    "seed": 42,
+    "hardware": {
+      "task_type": "GPU",
+      "devices": [
+        0
+      ],
+      "allow_growth": false
+    },
+    "git_commit": "ef78dcfcdd378622afd94c0d7c066777e1c90138",
+    "config_hash": "a316a27683d6d729d9bd52d176d6880aa55b9eb29bfaf74b5f8d7d90ab732452",
+    "validation_status": "ok",
+    "pipeline_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89",
+    "scoring_method": "neg_root_mean_squared_error",
+    "splits_info": {
+      "train": {
+        "n_rows": 26347
+      },
+      "val": {
+        "n_rows": 4650
+      },
+      "test": {
+        "n_rows": 7750
+      }
+    },
+    "target_transform": {
+      "enabled": true,
+      "type": "log1p"
+    }
+  },
+  "config": {
+    "problem": "adr",
+    "segment": {
+      "name": "city_hotel_online_ta",
+      "description": "All bookings for City Hotel with market segment Online TA."
+    },
+    "version": "v1",
+    "task": {
+      "type": "regression",
+      "subtype": "single_target"
+    },
+    "target": {
+      "name": "adr",
+      "version": "v1",
+      "allowed_dtypes": [
+        "float64"
+      ],
+      "classes": null,
+      "constraints": {
+        "min_value": 0.0,
+        "max_value": null
+      },
+      "transform": {
+        "enabled": true,
+        "type": "log1p",
+        "lambda_value": null
+      }
+    },
+    "segmentation": {
+      "enabled": true,
+      "include_in_model": false,
+      "filters": [
+        {
+          "column": "hotel",
+          "op": "eq",
+          "value": "City Hotel"
+        },
+        {
+          "column": "market_segment",
+          "op": "eq",
+          "value": "Online TA"
+        }
+      ]
+    },
+    "min_rows": 10000,
+    "split": {
+      "strategy": "random",
+      "stratify_by": null,
+      "test_size": 0.2,
+      "val_size": 0.12,
+      "random_state": 42
+    },
+    "algorithm": "catboost",
+    "model_class": "CatBoostRegressor",
+    "pipeline": {
+      "version": "v1",
+      "path": "configs/pipelines/tabular/catboost/v1.yaml"
+    },
+    "scoring": {
+      "policy": "regression_default",
+      "fixed_metric": null,
+      "pr_auc_threshold": null
+    },
+    "class_weighting": {
+      "policy": "off",
+      "imbalance_threshold": null,
+      "strategy": null
+    },
+    "feature_store": {
+      "path": "feature_store/",
+      "feature_sets": [
+        {
+          "name": "booking_context_features",
+          "version": "v2",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "customer_history_features",
+          "version": "v2",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "pricing_party_features",
+          "version": "v3",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "channel_and_agent_features",
+          "version": "v1",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "room_allocation_features",
+          "version": "v2",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        }
+      ]
+    },
+    "explainability": {
+      "enabled": true,
+      "top_k": 20,
+      "methods": {
+        "feature_importances": {
+          "enabled": true,
+          "type": "PredictionValuesChange"
+        },
+        "shap": {
+          "enabled": true,
+          "approximate": "tree"
+        }
+      }
+    },
+    "data_type": "tabular",
+    "model_specs_lineage": {
+      "created_by": "Sebastijan",
+      "created_at": "2026-02-28T14-52-10+00-00"
+    },
+    "_meta": {
+      "sources": {
+        "main": "configs/search/adr/city_hotel_online_ta/v1.yaml",
+        "extends": [
+          "../../../../configs/defaults/global.yaml",
+          "../../../../configs/defaults/catboost.yaml",
+          "../../../../configs/model_specs/adr/city_hotel_online_ta/v1.yaml"
+        ]
+      },
+      "env": "test",
+      "best_params_path": null,
+      "validation_status": "ok",
+      "validation_errors": null,
+      "config_hash": "a316a27683d6d729d9bd52d176d6880aa55b9eb29bfaf74b5f8d7d90ab732452"
+    },
+    "extends": [],
+    "search": {
+      "random_state": 42,
+      "broad": {
+        "iterations": 10,
+        "n_iter": 2,
+        "param_distributions": {
+          "model": {
+            "depth": [
+              2,
+              4,
+              6,
+              8
+            ],
+            "learning_rate": [
+              0.005,
+              0.01,
+              0.03,
+              0.05,
+              0.1,
+              0.2,
+              0.3
+            ],
+            "l2_leaf_reg": [
+              1.0,
+              3.0,
+              5.0,
+              7.0,
+              10.0,
+              15.0
+            ],
+            "colsample_bylevel": null,
+            "random_strength": [
+              1.0,
+              2.0,
+              5.0,
+              8.0,
+              10.0,
+              12.0
+            ],
+            "min_data_in_leaf": [
+              3,
+              5,
+              8,
+              10,
+              15,
+              20,
+              30
+            ],
+            "border_count": [
+              32,
+              64,
+              128,
+              254
+            ]
+          },
+          "ensemble": {
+            "bagging_temperature": [
+              0.0,
+              0.25,
+              0.5,
+              0.75,
+              1.0,
+              2.0,
+              5.0
+            ]
+          }
+        }
+      },
+      "narrow": {
+        "enabled": true,
+        "iterations": 10,
+        "n_iter": 2,
+        "param_configurations": {
+          "model": {
+            "depth": {
+              "include": true,
+              "offsets": [
+                1,
+                2
+              ],
+              "low": 2,
+              "high": 12
+            },
+            "learning_rate": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 0.003,
+              "high": 0.5,
+              "decimals": 5
+            },
+            "l2_leaf_reg": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 1.0,
+              "high": 40.0,
+              "decimals": 2
+            },
+            "colsample_bylevel": null,
+            "random_strength": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 0.0,
+              "high": 20.0,
+              "decimals": 2
+            },
+            "min_data_in_leaf": {
+              "include": true,
+              "offsets": [
+                2,
+                5,
+                10
+              ],
+              "low": 1,
+              "high": 60
+            },
+            "border_count": {
+              "include": true,
+              "offsets": null,
+              "low": null,
+              "high": null
+            }
+          },
+          "ensemble": {
+            "bagging_temperature": {
+              "include": true,
+              "factors": [
+                0.6,
+                0.8,
+                1.0,
+                1.2,
+                1.5
+              ],
+              "low": 0.0,
+              "high": 5.0,
+              "decimals": 3
+            }
+          }
+        }
+      },
+      "hardware": {
+        "task_type": "GPU",
+        "devices": [
+          0
+        ],
+        "memory_limit_gb": null,
+        "allow_growth": false
+      },
+      "error_score": "raise"
+    },
+    "seed": 42,
+    "cv": 2,
+    "verbose": 100,
+    "search_lineage": {
+      "created_by": "Sebastijan",
+      "created_at": "2026-02-28T14-52-20+00-00"
+    },
+    "training": {
+      "early_stopping_rounds": 100,
+      "model": {
+        "learning_rate": 0.03,
+        "depth": 6,
+        "l2_leaf_reg": 3,
+        "random_strength": 1,
+        "border_count": 128
+      },
+      "ensemble": {
+        "bagging_temperature": 1.0
+      },
+      "iterations": 10,
+      "hardware": {
+        "task_type": "cpu"
+      },
+      "snapshot_interval_seconds": 300
+    }
+  },
+  "search_results": {
+    "best_pipeline_params": {
+      "Model__random_strength": 3.5,
+      "Model__min_data_in_leaf": 22,
+      "Model__learning_rate": 0.26,
+      "Model__l2_leaf_reg": 1.15,
+      "Model__depth": 3,
+      "Model__border_count": 32,
+      "Model__bagging_temperature": 0.6
+    },
+    "best_model_params": {
+      "random_strength": 3.5,
+      "min_data_in_leaf": 22,
+      "learning_rate": 0.26,
+      "l2_leaf_reg": 1.15,
+      "depth": 3,
+      "border_count": 32,
+      "bagging_temperature": 0.6
+    },
+    "phases": {
+      "broad": {
+        "best_params": {
+          "Model__random_strength": 5.0,
+          "Model__min_data_in_leaf": 20,
+          "Model__learning_rate": 0.2,
+          "Model__l2_leaf_reg": 1.0,
+          "Model__depth": 4,
+          "Model__border_count": 64,
+          "Model__bagging_temperature": 1.0
+        },
+        "best_score": -0.26417808743068705,
+        "best_index": 0,
+        "cv_results": {
+          "mean_test_score": [
+            -0.26417808743068705,
+            -0.36982163027714066
+          ],
+          "std_test_score": [
+            0.0011770610644606383,
+            0.0018700036629168137
+          ],
+          "rank_test_score": [
+            1,
+            2
+          ]
+        },
+        "param_distributions": {
+          "Model__depth": [
+            2,
+            4,
+            6,
+            8
+          ],
+          "Model__learning_rate": [
+            0.005,
+            0.01,
+            0.03,
+            0.05,
+            0.1,
+            0.2,
+            0.3
+          ],
+          "Model__l2_leaf_reg": [
+            1.0,
+            3.0,
+            5.0,
+            7.0,
+            10.0,
+            15.0
+          ],
+          "Model__random_strength": [
+            1.0,
+            2.0,
+            5.0,
+            8.0,
+            10.0,
+            12.0
+          ],
+          "Model__min_data_in_leaf": [
+            3,
+            5,
+            8,
+            10,
+            15,
+            20,
+            30
+          ],
+          "Model__border_count": [
+            32,
+            64,
+            128,
+            254
+          ],
+          "Model__bagging_temperature": [
+            0.0,
+            0.25,
+            0.5,
+            0.75,
+            1.0,
+            2.0,
+            5.0
+          ]
+        },
+        "n_iter": 2,
+        "cv": 2,
+        "scoring": "neg_root_mean_squared_error",
+        "random_state": 42,
+        "error_score": "raise",
+        "search_phase": "broad"
+      },
+      "narrow": {
+        "best_params": {
+          "Model__random_strength": 3.5,
+          "Model__min_data_in_leaf": 22,
+          "Model__learning_rate": 0.26,
+          "Model__l2_leaf_reg": 1.15,
+          "Model__depth": 3,
+          "Model__border_count": 32,
+          "Model__bagging_temperature": 0.6
+        },
+        "best_score": -0.2622752839867689,
+        "best_index": 1,
+        "cv_results": {
+          "mean_test_score": [
+            -0.2995805826598088,
+            -0.2622752839867689
+          ],
+          "std_test_score": [
+            0.000261302502292754,
+            0.0006741189142154547
+          ],
+          "rank_test_score": [
+            2,
+            1
+          ]
+        },
+        "param_distributions": {
+          "Model__depth": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "Model__learning_rate": [
+            0.14,
+            0.17,
+            0.2,
+            0.23,
+            0.26
+          ],
+          "Model__l2_leaf_reg": [
+            1.0,
+            1.15,
+            1.3
+          ],
+          "Model__bagging_temperature": [
+            0.6,
+            0.8,
+            1.0,
+            1.2,
+            1.5
+          ],
+          "Model__min_data_in_leaf": [
+            10,
+            15,
+            18,
+            20,
+            22,
+            25,
+            30
+          ],
+          "Model__random_strength": [
+            3.5,
+            4.25,
+            5.0,
+            5.75,
+            6.5
+          ],
+          "Model__border_count": [
+            32,
+            64,
+            128
+          ]
+        },
+        "n_iter": 2,
+        "cv": 2,
+        "scoring": "neg_root_mean_squared_error",
+        "random_state": 42,
+        "error_score": "raise",
+        "search_phase": "narrow"
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import pytest
 from ml.exceptions import ConfigError, UserError
 from ml.promotion.comparisons.production import compare_against_production_model
 from ml.promotion.comparisons.thresholds import compare_against_thresholds
-from ml.promotion.config.models import (
+from ml.promotion.config.promotion_thresholds import (
     Direction,
     MetricName,
     MetricSet,

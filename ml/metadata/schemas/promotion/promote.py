@@ -4,7 +4,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 from ml.modeling.models.metrics import EvaluationMetricsHelper
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 
 
 class RunIdentity(BaseModel):

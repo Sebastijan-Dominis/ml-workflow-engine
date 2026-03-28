@@ -1,0 +1,13 @@
+{
+  "task_type": "classification",
+  "algorithm": "catboost",
+  "metrics": {
+    "best_iteration": 9.0,
+    "train_auc": 0.9217890776788593,
+    "val_auc": 0.9223421707597002,
+    "threshold": {
+      "value": 0.37,
+      "f1": 0.7860262008733624
+    }
+  }
+}

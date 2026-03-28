@@ -1,0 +1,83 @@
+@startuml infer.py Architecture
+title infer.py Architecture
+!include architecture-theme.puml
+left to right direction
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+component script as "infer.py" <<script>>
+
+package "Configs"<<Configs>> {
+    artifact snapshot_bindings_registry as "Snapshot Bindings Registry\n(configs/snapshot_bindings_registry/)" <<config>>
+    artifact global_cfg as "Global Default Configs\n(configs/defaults/)" <<config>>
+    artifact algo_cfg as "Algorithm Default Configs\n(configs/defaults/)" <<config>>
+    artifact model_spec as "Model Specs\n(configs/model_specs/...)" <<config>>
+    artifact search_cfg as "Search Configs\n(configs/search/...)" <<config>>
+}
+
+package "Input Artifacts"<<InputArtifacts>> {
+    artifact model_registry as "Model registry\n(model_registry/models.yaml)" <<artifact>>
+    artifact feature_sets_metadata as "Feature Set(s) Metadata\n(feature_store/...)" <<artifact>>
+    artifact feature_sets as "Feature Set(s)\n(feature_store/...)" <<artifact>>
+    artifact processed_datasets as "Processed Dataset(s)\n(data/processed/...)" <<artifact>>
+    artifact input_schemas as "Input Schema(s)\n(feature_store/...)" <<artifact>>
+    artifact training_metadata as "Training Metadata\n(experiments/.../training/...)" <<artifact>>
+    artifact search_metadata as "Search Metadata\n(experiments/.../search/)" <<artifact>>
+    artifact pipeline as "Trained Pipeline\n(experiments/.../training/...)\n(optional)" <<artifact_optional>>
+    artifact model as "Trained Model\n(experiments/.../training/...)\n(optional)" <<artifact_optional>>
+    artifact derived_schemas as "Derived Schema(s)\n(feature_store/...)\n(optional)" <<artifact_optional>>
+}
+
+package "Produced Artifacts"<<ProducedArtifacts>> {
+    artifact metadata as "Inference Metadata\n(predictions/...)" <<artifact>>
+    artifact predictions as "Predictions\n(predictions/...)" <<artifact>>
+}
+
+script ..> snapshot_bindings_registry
+script ..> global_cfg
+script ..> algo_cfg
+script ..> model_spec
+script ..> search_cfg
+
+script ..> model_registry
+script ..> feature_sets_metadata
+script ..> feature_sets
+script ..> processed_datasets
+script ..> input_schemas
+script ..> training_metadata
+script ..> search_metadata
+script ..[#AAAAAA80]>pipeline
+script ..[#AAAAAA80]> model
+script ..[#AAAAAA80]> derived_schemas
+
+script --> metadata
+script --> predictions
+
+note right of derived_schemas
+Only the feature sets that
+create operators produce
+derived schemas.
+end note
+
+note right of pipeline
+Used if exists in training artifacts
+(priority over trained model).
+end note
+
+note right of model
+Used if a model does not include
+a trained pipeline.
+end note
+
+note right of predictions
+A singular parquet file.
+end note
+
+legend right
+..>   Config dependency / read
+-->   Create
+endlegend
+
+@enduml

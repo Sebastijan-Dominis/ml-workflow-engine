@@ -5,7 +5,6 @@ from pathlib import Path
 
 from ml.config.hashing import compute_model_config_hash
 from ml.features.extraction.cat_features import get_cat_features
-from ml.features.loading.features_and_target import load_features_and_target
 from ml.features.loading.schemas import load_schemas
 from ml.features.splitting.splitting import get_splits
 from ml.features.transforms.transform_target import transform_target
@@ -72,6 +71,10 @@ class PreparationStep(PipelineStep[SearchContext]):
             Reads data/config files from disk and mutates multiple context fields
             required by downstream search steps.
         """
+
+        # Lazy import to avoid circular dependencies
+        from ml.features.loading.features_and_target import load_features_and_target
+
         X, y, lineage, _ = load_features_and_target(
             ctx.model_cfg,
             snapshot_selection=None,

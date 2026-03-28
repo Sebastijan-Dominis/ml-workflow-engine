@@ -40,6 +40,7 @@ def save_metadata(
     """
 
     metadata_file = target_dir / "metadata.json"
+    metadata_file = Path(metadata_file.as_posix())
 
     metadata_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -66,7 +67,10 @@ def save_metadata(
             os.fsync(tmp_file.fileno())
 
         os.replace(temp_path, metadata_file)
-        logger.info(f"Metadata successfully saved to {metadata_file}.")
+
+        msg = f"Metadata successfully saved to {metadata_file.as_posix()}."
+        logger.info(msg)
+        print(msg)
     except Exception as e:
         if temp_path and Path(temp_path).exists():
             try:
@@ -74,6 +78,6 @@ def save_metadata(
             except OSError:
                 logger.warning("Failed to clean up temporary metadata file: %s", temp_path)
 
-        msg = f"Failed to save metadata to {metadata_file}"
+        msg = f"Failed to save metadata to {metadata_file.as_posix()}"
         logger.exception(msg)
         raise PersistenceError(msg) from e

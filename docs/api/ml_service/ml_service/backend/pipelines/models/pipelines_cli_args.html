@@ -34,6 +34,12 @@
                     <a class="variable" href="#LOGGING_LEVEL">LOGGING_LEVEL</a>
             </li>
             <li>
+                    <a class="variable" href="#ENV">ENV</a>
+            </li>
+            <li>
+                    <a class="variable" href="#STAGE">STAGE</a>
+            </li>
+            <li>
                     <a class="class" href="#RegisterRawSnapshotInput">RegisterRawSnapshotInput</a>
                             <ul class="memberlist">
                         <li>
@@ -402,6 +408,42 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#InferInput">InferInput</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#InferInput.problem">problem</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#InferInput.segment">segment</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#InferInput.snapshot_bindings_id">snapshot_bindings_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#InferInput.logging_level">logging_level</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#MonitorInput">MonitorInput</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#MonitorInput.problem">problem</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MonitorInput.segment">segment</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MonitorInput.inference_run_id">inference_run_id</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#MonitorInput.logging_level">logging_level</a>
+                        </li>
+                </ul>
+
+            </li>
     </ul>
 
 
@@ -431,143 +473,159 @@
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">]</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RegisterRawSnapshotInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the register_raw_snapshot pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BuildInterimDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the build_interim_dataset pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">raw_snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BuildProcessedDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the build_processed_dataset pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="n">interim_snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FreezeFeaturesInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the freeze_features pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">feature_set</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SearchInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the search pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the train pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="k">class</span><span class="w"> </span><span class="nc">EvaluateInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the evaluate pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExplainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the explain pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PromoteInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the promote pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">eval_run_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">explain_run_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllDataPreprocessingInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_data_preprocessing pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FreezeAllFeatureSetsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the freeze_all_feature_sets pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteExperimentWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_experiment_with_latest_input pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllExperimentsWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_experiments_with_latest_input pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RunAllWorkflowsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the run_all_workflows pipeline.&quot;&quot;&quot;</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="n">ENV</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;prod&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">]</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="n">STAGE</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;staging&quot;</span><span class="p">,</span> <span class="s2">&quot;production&quot;</span><span class="p">]</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RegisterRawSnapshotInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the register_raw_snapshot pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BuildInterimDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the build_interim_dataset pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">raw_snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BuildProcessedDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the build_processed_dataset pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="n">interim_snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FreezeFeaturesInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the freeze_features pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>    <span class="n">feature_set</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SearchInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the search pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the train pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="k">class</span><span class="w"> </span><span class="nc">EvaluateInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the evaluate pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExplainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the explain pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PromoteInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the promote pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="n">eval_run_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="n">explain_run_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="n">stage</span><span class="p">:</span> <span class="n">STAGE</span> <span class="o">=</span> <span class="s2">&quot;production&quot;</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllDataPreprocessingInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_data_preprocessing pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FreezeAllFeatureSetsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the freeze_all_feature_sets pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteExperimentWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_experiment_with_latest_input pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllExperimentsWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_experiments_with_latest_input pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RunAllWorkflowsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the run_all_workflows pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InferInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the inference pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">snapshot_bindings_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MonitorInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the monitoring pipeline.&quot;&quot;&quot;</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>    <span class="n">inference_run_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span></pre></div>
 
 
@@ -584,6 +642,30 @@
     
 
                 </section>
+                <section id="ENV">
+                    <div class="attr variable">
+            <span class="name">ENV</span>        =
+<span class="default_value">typing.Literal[&#39;dev&#39;, &#39;test&#39;, &#39;prod&#39;, &#39;default&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#ENV"></a>
+    
+    
+
+                </section>
+                <section id="STAGE">
+                    <div class="attr variable">
+            <span class="name">STAGE</span>        =
+<span class="default_value">typing.Literal[&#39;staging&#39;, &#39;production&#39;]</span>
+
+        
+    </div>
+    <a class="headerlink" href="#STAGE"></a>
+    
+    
+
+                </section>
                 <section id="RegisterRawSnapshotInput">
                             <input id="RegisterRawSnapshotInput-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
@@ -595,13 +677,13 @@
 
     </div>
     <a class="headerlink" href="#RegisterRawSnapshotInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RegisterRawSnapshotInput-9"><a href="#RegisterRawSnapshotInput-9"><span class="linenos"> 9</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RegisterRawSnapshotInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="RegisterRawSnapshotInput-10"><a href="#RegisterRawSnapshotInput-10"><span class="linenos">10</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the register_raw_snapshot pipeline.&quot;&quot;&quot;</span>
-</span><span id="RegisterRawSnapshotInput-11"><a href="#RegisterRawSnapshotInput-11"><span class="linenos">11</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RegisterRawSnapshotInput-12"><a href="#RegisterRawSnapshotInput-12"><span class="linenos">12</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="RegisterRawSnapshotInput-13"><a href="#RegisterRawSnapshotInput-13"><span class="linenos">13</span></a>    <span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="RegisterRawSnapshotInput-14"><a href="#RegisterRawSnapshotInput-14"><span class="linenos">14</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="RegisterRawSnapshotInput-15"><a href="#RegisterRawSnapshotInput-15"><span class="linenos">15</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RegisterRawSnapshotInput-11"><a href="#RegisterRawSnapshotInput-11"><span class="linenos">11</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RegisterRawSnapshotInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="RegisterRawSnapshotInput-12"><a href="#RegisterRawSnapshotInput-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the register_raw_snapshot pipeline.&quot;&quot;&quot;</span>
+</span><span id="RegisterRawSnapshotInput-13"><a href="#RegisterRawSnapshotInput-13"><span class="linenos">13</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RegisterRawSnapshotInput-14"><a href="#RegisterRawSnapshotInput-14"><span class="linenos">14</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="RegisterRawSnapshotInput-15"><a href="#RegisterRawSnapshotInput-15"><span class="linenos">15</span></a>    <span class="n">snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="RegisterRawSnapshotInput-16"><a href="#RegisterRawSnapshotInput-16"><span class="linenos">16</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="RegisterRawSnapshotInput-17"><a href="#RegisterRawSnapshotInput-17"><span class="linenos">17</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
 </span></pre></div>
 
 
@@ -681,13 +763,13 @@
 
     </div>
     <a class="headerlink" href="#BuildInterimDatasetInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BuildInterimDatasetInput-17"><a href="#BuildInterimDatasetInput-17"><span class="linenos">17</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BuildInterimDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="BuildInterimDatasetInput-18"><a href="#BuildInterimDatasetInput-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the build_interim_dataset pipeline.&quot;&quot;&quot;</span>
-</span><span id="BuildInterimDatasetInput-19"><a href="#BuildInterimDatasetInput-19"><span class="linenos">19</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="BuildInterimDatasetInput-20"><a href="#BuildInterimDatasetInput-20"><span class="linenos">20</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="BuildInterimDatasetInput-21"><a href="#BuildInterimDatasetInput-21"><span class="linenos">21</span></a>    <span class="n">raw_snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="BuildInterimDatasetInput-22"><a href="#BuildInterimDatasetInput-22"><span class="linenos">22</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="BuildInterimDatasetInput-23"><a href="#BuildInterimDatasetInput-23"><span class="linenos">23</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BuildInterimDatasetInput-19"><a href="#BuildInterimDatasetInput-19"><span class="linenos">19</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BuildInterimDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="BuildInterimDatasetInput-20"><a href="#BuildInterimDatasetInput-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the build_interim_dataset pipeline.&quot;&quot;&quot;</span>
+</span><span id="BuildInterimDatasetInput-21"><a href="#BuildInterimDatasetInput-21"><span class="linenos">21</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="BuildInterimDatasetInput-22"><a href="#BuildInterimDatasetInput-22"><span class="linenos">22</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="BuildInterimDatasetInput-23"><a href="#BuildInterimDatasetInput-23"><span class="linenos">23</span></a>    <span class="n">raw_snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="BuildInterimDatasetInput-24"><a href="#BuildInterimDatasetInput-24"><span class="linenos">24</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="BuildInterimDatasetInput-25"><a href="#BuildInterimDatasetInput-25"><span class="linenos">25</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
 </span></pre></div>
 
 
@@ -767,13 +849,13 @@
 
     </div>
     <a class="headerlink" href="#BuildProcessedDatasetInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BuildProcessedDatasetInput-25"><a href="#BuildProcessedDatasetInput-25"><span class="linenos">25</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BuildProcessedDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="BuildProcessedDatasetInput-26"><a href="#BuildProcessedDatasetInput-26"><span class="linenos">26</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the build_processed_dataset pipeline.&quot;&quot;&quot;</span>
-</span><span id="BuildProcessedDatasetInput-27"><a href="#BuildProcessedDatasetInput-27"><span class="linenos">27</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="BuildProcessedDatasetInput-28"><a href="#BuildProcessedDatasetInput-28"><span class="linenos">28</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="BuildProcessedDatasetInput-29"><a href="#BuildProcessedDatasetInput-29"><span class="linenos">29</span></a>    <span class="n">interim_snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="BuildProcessedDatasetInput-30"><a href="#BuildProcessedDatasetInput-30"><span class="linenos">30</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="BuildProcessedDatasetInput-31"><a href="#BuildProcessedDatasetInput-31"><span class="linenos">31</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BuildProcessedDatasetInput-27"><a href="#BuildProcessedDatasetInput-27"><span class="linenos">27</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BuildProcessedDatasetInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="BuildProcessedDatasetInput-28"><a href="#BuildProcessedDatasetInput-28"><span class="linenos">28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the build_processed_dataset pipeline.&quot;&quot;&quot;</span>
+</span><span id="BuildProcessedDatasetInput-29"><a href="#BuildProcessedDatasetInput-29"><span class="linenos">29</span></a>    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="BuildProcessedDatasetInput-30"><a href="#BuildProcessedDatasetInput-30"><span class="linenos">30</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="BuildProcessedDatasetInput-31"><a href="#BuildProcessedDatasetInput-31"><span class="linenos">31</span></a>    <span class="n">interim_snapshot_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="BuildProcessedDatasetInput-32"><a href="#BuildProcessedDatasetInput-32"><span class="linenos">32</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="BuildProcessedDatasetInput-33"><a href="#BuildProcessedDatasetInput-33"><span class="linenos">33</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
 </span></pre></div>
 
 
@@ -853,13 +935,13 @@
 
     </div>
     <a class="headerlink" href="#FreezeFeaturesInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FreezeFeaturesInput-33"><a href="#FreezeFeaturesInput-33"><span class="linenos">33</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FreezeFeaturesInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="FreezeFeaturesInput-34"><a href="#FreezeFeaturesInput-34"><span class="linenos">34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the freeze_features pipeline.&quot;&quot;&quot;</span>
-</span><span id="FreezeFeaturesInput-35"><a href="#FreezeFeaturesInput-35"><span class="linenos">35</span></a>    <span class="n">feature_set</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="FreezeFeaturesInput-36"><a href="#FreezeFeaturesInput-36"><span class="linenos">36</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="FreezeFeaturesInput-37"><a href="#FreezeFeaturesInput-37"><span class="linenos">37</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="FreezeFeaturesInput-38"><a href="#FreezeFeaturesInput-38"><span class="linenos">38</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="FreezeFeaturesInput-39"><a href="#FreezeFeaturesInput-39"><span class="linenos">39</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FreezeFeaturesInput-35"><a href="#FreezeFeaturesInput-35"><span class="linenos">35</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FreezeFeaturesInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="FreezeFeaturesInput-36"><a href="#FreezeFeaturesInput-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the freeze_features pipeline.&quot;&quot;&quot;</span>
+</span><span id="FreezeFeaturesInput-37"><a href="#FreezeFeaturesInput-37"><span class="linenos">37</span></a>    <span class="n">feature_set</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="FreezeFeaturesInput-38"><a href="#FreezeFeaturesInput-38"><span class="linenos">38</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="FreezeFeaturesInput-39"><a href="#FreezeFeaturesInput-39"><span class="linenos">39</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="FreezeFeaturesInput-40"><a href="#FreezeFeaturesInput-40"><span class="linenos">40</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="FreezeFeaturesInput-41"><a href="#FreezeFeaturesInput-41"><span class="linenos">41</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span></pre></div>
 
 
@@ -939,19 +1021,19 @@
 
     </div>
     <a class="headerlink" href="#SearchInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SearchInput-41"><a href="#SearchInput-41"><span class="linenos">41</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SearchInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="SearchInput-42"><a href="#SearchInput-42"><span class="linenos">42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the search pipeline.&quot;&quot;&quot;</span>
-</span><span id="SearchInput-43"><a href="#SearchInput-43"><span class="linenos">43</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="SearchInput-44"><a href="#SearchInput-44"><span class="linenos">44</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="SearchInput-45"><a href="#SearchInput-45"><span class="linenos">45</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="SearchInput-46"><a href="#SearchInput-46"><span class="linenos">46</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="SearchInput-47"><a href="#SearchInput-47"><span class="linenos">47</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="SearchInput-48"><a href="#SearchInput-48"><span class="linenos">48</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="SearchInput-49"><a href="#SearchInput-49"><span class="linenos">49</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="SearchInput-50"><a href="#SearchInput-50"><span class="linenos">50</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="SearchInput-51"><a href="#SearchInput-51"><span class="linenos">51</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="SearchInput-52"><a href="#SearchInput-52"><span class="linenos">52</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="SearchInput-53"><a href="#SearchInput-53"><span class="linenos">53</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SearchInput-43"><a href="#SearchInput-43"><span class="linenos">43</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SearchInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="SearchInput-44"><a href="#SearchInput-44"><span class="linenos">44</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the search pipeline.&quot;&quot;&quot;</span>
+</span><span id="SearchInput-45"><a href="#SearchInput-45"><span class="linenos">45</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="SearchInput-46"><a href="#SearchInput-46"><span class="linenos">46</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="SearchInput-47"><a href="#SearchInput-47"><span class="linenos">47</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="SearchInput-48"><a href="#SearchInput-48"><span class="linenos">48</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="SearchInput-49"><a href="#SearchInput-49"><span class="linenos">49</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="SearchInput-50"><a href="#SearchInput-50"><span class="linenos">50</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span id="SearchInput-51"><a href="#SearchInput-51"><span class="linenos">51</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="SearchInput-52"><a href="#SearchInput-52"><span class="linenos">52</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="SearchInput-53"><a href="#SearchInput-53"><span class="linenos">53</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="SearchInput-54"><a href="#SearchInput-54"><span class="linenos">54</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="SearchInput-55"><a href="#SearchInput-55"><span class="linenos">55</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -1021,8 +1103,8 @@
                             </div>
                             <div id="SearchInput.env" class="classattr">
                                 <div class="attr variable">
-            <span class="name">env</span><span class="annotation">: str | None</span>        =
-<span class="default_value">None</span>
+            <span class="name">env</span><span class="annotation">: Literal[&#39;dev&#39;, &#39;test&#39;, &#39;prod&#39;, &#39;default&#39;]</span>        =
+<span class="default_value">&#39;default&#39;</span>
 
         
     </div>
@@ -1103,19 +1185,19 @@
 
     </div>
     <a class="headerlink" href="#TrainInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TrainInput-55"><a href="#TrainInput-55"><span class="linenos">55</span></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="TrainInput-56"><a href="#TrainInput-56"><span class="linenos">56</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the train pipeline.&quot;&quot;&quot;</span>
-</span><span id="TrainInput-57"><a href="#TrainInput-57"><span class="linenos">57</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="TrainInput-58"><a href="#TrainInput-58"><span class="linenos">58</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="TrainInput-59"><a href="#TrainInput-59"><span class="linenos">59</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="TrainInput-60"><a href="#TrainInput-60"><span class="linenos">60</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="TrainInput-61"><a href="#TrainInput-61"><span class="linenos">61</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="TrainInput-62"><a href="#TrainInput-62"><span class="linenos">62</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="TrainInput-63"><a href="#TrainInput-63"><span class="linenos">63</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="TrainInput-64"><a href="#TrainInput-64"><span class="linenos">64</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="TrainInput-65"><a href="#TrainInput-65"><span class="linenos">65</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="TrainInput-66"><a href="#TrainInput-66"><span class="linenos">66</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="TrainInput-67"><a href="#TrainInput-67"><span class="linenos">67</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TrainInput-57"><a href="#TrainInput-57"><span class="linenos">57</span></a><span class="k">class</span><span class="w"> </span><span class="nc">TrainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="TrainInput-58"><a href="#TrainInput-58"><span class="linenos">58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the train pipeline.&quot;&quot;&quot;</span>
+</span><span id="TrainInput-59"><a href="#TrainInput-59"><span class="linenos">59</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="TrainInput-60"><a href="#TrainInput-60"><span class="linenos">60</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="TrainInput-61"><a href="#TrainInput-61"><span class="linenos">61</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="TrainInput-62"><a href="#TrainInput-62"><span class="linenos">62</span></a>    <span class="n">snapshot_binding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="TrainInput-63"><a href="#TrainInput-63"><span class="linenos">63</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="TrainInput-64"><a href="#TrainInput-64"><span class="linenos">64</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span id="TrainInput-65"><a href="#TrainInput-65"><span class="linenos">65</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="TrainInput-66"><a href="#TrainInput-66"><span class="linenos">66</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="TrainInput-67"><a href="#TrainInput-67"><span class="linenos">67</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="TrainInput-68"><a href="#TrainInput-68"><span class="linenos">68</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="TrainInput-69"><a href="#TrainInput-69"><span class="linenos">69</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -1185,8 +1267,8 @@
                             </div>
                             <div id="TrainInput.env" class="classattr">
                                 <div class="attr variable">
-            <span class="name">env</span><span class="annotation">: str | None</span>        =
-<span class="default_value">None</span>
+            <span class="name">env</span><span class="annotation">: Literal[&#39;dev&#39;, &#39;test&#39;, &#39;prod&#39;, &#39;default&#39;]</span>        =
+<span class="default_value">&#39;default&#39;</span>
 
         
     </div>
@@ -1267,16 +1349,16 @@
 
     </div>
     <a class="headerlink" href="#EvaluateInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="EvaluateInput-69"><a href="#EvaluateInput-69"><span class="linenos">69</span></a><span class="k">class</span><span class="w"> </span><span class="nc">EvaluateInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="EvaluateInput-70"><a href="#EvaluateInput-70"><span class="linenos">70</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the evaluate pipeline.&quot;&quot;&quot;</span>
-</span><span id="EvaluateInput-71"><a href="#EvaluateInput-71"><span class="linenos">71</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="EvaluateInput-72"><a href="#EvaluateInput-72"><span class="linenos">72</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="EvaluateInput-73"><a href="#EvaluateInput-73"><span class="linenos">73</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="EvaluateInput-74"><a href="#EvaluateInput-74"><span class="linenos">74</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="EvaluateInput-75"><a href="#EvaluateInput-75"><span class="linenos">75</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="EvaluateInput-76"><a href="#EvaluateInput-76"><span class="linenos">76</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="EvaluateInput-77"><a href="#EvaluateInput-77"><span class="linenos">77</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="EvaluateInput-78"><a href="#EvaluateInput-78"><span class="linenos">78</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EvaluateInput-71"><a href="#EvaluateInput-71"><span class="linenos">71</span></a><span class="k">class</span><span class="w"> </span><span class="nc">EvaluateInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="EvaluateInput-72"><a href="#EvaluateInput-72"><span class="linenos">72</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the evaluate pipeline.&quot;&quot;&quot;</span>
+</span><span id="EvaluateInput-73"><a href="#EvaluateInput-73"><span class="linenos">73</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="EvaluateInput-74"><a href="#EvaluateInput-74"><span class="linenos">74</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="EvaluateInput-75"><a href="#EvaluateInput-75"><span class="linenos">75</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="EvaluateInput-76"><a href="#EvaluateInput-76"><span class="linenos">76</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span id="EvaluateInput-77"><a href="#EvaluateInput-77"><span class="linenos">77</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="EvaluateInput-78"><a href="#EvaluateInput-78"><span class="linenos">78</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="EvaluateInput-79"><a href="#EvaluateInput-79"><span class="linenos">79</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="EvaluateInput-80"><a href="#EvaluateInput-80"><span class="linenos">80</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span></pre></div>
 
 
@@ -1322,8 +1404,8 @@
                             </div>
                             <div id="EvaluateInput.env" class="classattr">
                                 <div class="attr variable">
-            <span class="name">env</span><span class="annotation">: str | None</span>        =
-<span class="default_value">None</span>
+            <span class="name">env</span><span class="annotation">: Literal[&#39;dev&#39;, &#39;test&#39;, &#39;prod&#39;, &#39;default&#39;]</span>        =
+<span class="default_value">&#39;default&#39;</span>
 
         
     </div>
@@ -1392,17 +1474,17 @@
 
     </div>
     <a class="headerlink" href="#ExplainInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExplainInput-80"><a href="#ExplainInput-80"><span class="linenos">80</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExplainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="ExplainInput-81"><a href="#ExplainInput-81"><span class="linenos">81</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the explain pipeline.&quot;&quot;&quot;</span>
-</span><span id="ExplainInput-82"><a href="#ExplainInput-82"><span class="linenos">82</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ExplainInput-83"><a href="#ExplainInput-83"><span class="linenos">83</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ExplainInput-84"><a href="#ExplainInput-84"><span class="linenos">84</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ExplainInput-85"><a href="#ExplainInput-85"><span class="linenos">85</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ExplainInput-86"><a href="#ExplainInput-86"><span class="linenos">86</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="ExplainInput-87"><a href="#ExplainInput-87"><span class="linenos">87</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ExplainInput-88"><a href="#ExplainInput-88"><span class="linenos">88</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ExplainInput-89"><a href="#ExplainInput-89"><span class="linenos">89</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="ExplainInput-90"><a href="#ExplainInput-90"><span class="linenos">90</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExplainInput-82"><a href="#ExplainInput-82"><span class="linenos">82</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExplainInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="ExplainInput-83"><a href="#ExplainInput-83"><span class="linenos">83</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the explain pipeline.&quot;&quot;&quot;</span>
+</span><span id="ExplainInput-84"><a href="#ExplainInput-84"><span class="linenos">84</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ExplainInput-85"><a href="#ExplainInput-85"><span class="linenos">85</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ExplainInput-86"><a href="#ExplainInput-86"><span class="linenos">86</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ExplainInput-87"><a href="#ExplainInput-87"><span class="linenos">87</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+</span><span id="ExplainInput-88"><a href="#ExplainInput-88"><span class="linenos">88</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExplainInput-89"><a href="#ExplainInput-89"><span class="linenos">89</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="ExplainInput-90"><a href="#ExplainInput-90"><span class="linenos">90</span></a>    <span class="n">train_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="ExplainInput-91"><a href="#ExplainInput-91"><span class="linenos">91</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="ExplainInput-92"><a href="#ExplainInput-92"><span class="linenos">92</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
 
@@ -1448,8 +1530,8 @@
                             </div>
                             <div id="ExplainInput.env" class="classattr">
                                 <div class="attr variable">
-            <span class="name">env</span><span class="annotation">: str | None</span>        =
-<span class="default_value">None</span>
+            <span class="name">env</span><span class="annotation">: Literal[&#39;dev&#39;, &#39;test&#39;, &#39;prod&#39;, &#39;default&#39;]</span>        =
+<span class="default_value">&#39;default&#39;</span>
 
         
     </div>
@@ -1530,17 +1612,17 @@
 
     </div>
     <a class="headerlink" href="#PromoteInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PromoteInput-92"><a href="#PromoteInput-92"><span class="linenos"> 92</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PromoteInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="PromoteInput-93"><a href="#PromoteInput-93"><span class="linenos"> 93</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the promote pipeline.&quot;&quot;&quot;</span>
-</span><span id="PromoteInput-94"><a href="#PromoteInput-94"><span class="linenos"> 94</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PromoteInput-95"><a href="#PromoteInput-95"><span class="linenos"> 95</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PromoteInput-96"><a href="#PromoteInput-96"><span class="linenos"> 96</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PromoteInput-97"><a href="#PromoteInput-97"><span class="linenos"> 97</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PromoteInput-98"><a href="#PromoteInput-98"><span class="linenos"> 98</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PromoteInput-99"><a href="#PromoteInput-99"><span class="linenos"> 99</span></a>    <span class="n">eval_run_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PromoteInput-100"><a href="#PromoteInput-100"><span class="linenos">100</span></a>    <span class="n">explain_run_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PromoteInput-101"><a href="#PromoteInput-101"><span class="linenos">101</span></a>    <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="PromoteInput-102"><a href="#PromoteInput-102"><span class="linenos">102</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PromoteInput-94"><a href="#PromoteInput-94"><span class="linenos"> 94</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PromoteInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="PromoteInput-95"><a href="#PromoteInput-95"><span class="linenos"> 95</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the promote pipeline.&quot;&quot;&quot;</span>
+</span><span id="PromoteInput-96"><a href="#PromoteInput-96"><span class="linenos"> 96</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PromoteInput-97"><a href="#PromoteInput-97"><span class="linenos"> 97</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PromoteInput-98"><a href="#PromoteInput-98"><span class="linenos"> 98</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PromoteInput-99"><a href="#PromoteInput-99"><span class="linenos"> 99</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PromoteInput-100"><a href="#PromoteInput-100"><span class="linenos">100</span></a>    <span class="n">train_run_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PromoteInput-101"><a href="#PromoteInput-101"><span class="linenos">101</span></a>    <span class="n">eval_run_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PromoteInput-102"><a href="#PromoteInput-102"><span class="linenos">102</span></a>    <span class="n">explain_run_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="PromoteInput-103"><a href="#PromoteInput-103"><span class="linenos">103</span></a>    <span class="n">stage</span><span class="p">:</span> <span class="n">STAGE</span> <span class="o">=</span> <span class="s2">&quot;production&quot;</span>
+</span><span id="PromoteInput-104"><a href="#PromoteInput-104"><span class="linenos">104</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 </span></pre></div>
 
 
@@ -1634,8 +1716,8 @@
                             </div>
                             <div id="PromoteInput.stage" class="classattr">
                                 <div class="attr variable">
-            <span class="name">stage</span><span class="annotation">: str</span>        =
-<span class="default_value">PydanticUndefined</span>
+            <span class="name">stage</span><span class="annotation">: Literal[&#39;staging&#39;, &#39;production&#39;]</span>        =
+<span class="default_value">&#39;production&#39;</span>
 
         
     </div>
@@ -1668,9 +1750,9 @@
 
     </div>
     <a class="headerlink" href="#ExecuteAllDataPreprocessingInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteAllDataPreprocessingInput-104"><a href="#ExecuteAllDataPreprocessingInput-104"><span class="linenos">104</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllDataPreprocessingInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="ExecuteAllDataPreprocessingInput-105"><a href="#ExecuteAllDataPreprocessingInput-105"><span class="linenos">105</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_data_preprocessing pipeline.&quot;&quot;&quot;</span>
-</span><span id="ExecuteAllDataPreprocessingInput-106"><a href="#ExecuteAllDataPreprocessingInput-106"><span class="linenos">106</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteAllDataPreprocessingInput-106"><a href="#ExecuteAllDataPreprocessingInput-106"><span class="linenos">106</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllDataPreprocessingInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="ExecuteAllDataPreprocessingInput-107"><a href="#ExecuteAllDataPreprocessingInput-107"><span class="linenos">107</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_data_preprocessing pipeline.&quot;&quot;&quot;</span>
+</span><span id="ExecuteAllDataPreprocessingInput-108"><a href="#ExecuteAllDataPreprocessingInput-108"><span class="linenos">108</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -1702,11 +1784,11 @@
 
     </div>
     <a class="headerlink" href="#FreezeAllFeatureSetsInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FreezeAllFeatureSetsInput-108"><a href="#FreezeAllFeatureSetsInput-108"><span class="linenos">108</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FreezeAllFeatureSetsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="FreezeAllFeatureSetsInput-109"><a href="#FreezeAllFeatureSetsInput-109"><span class="linenos">109</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the freeze_all_feature_sets pipeline.&quot;&quot;&quot;</span>
-</span><span id="FreezeAllFeatureSetsInput-110"><a href="#FreezeAllFeatureSetsInput-110"><span class="linenos">110</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="FreezeAllFeatureSetsInput-111"><a href="#FreezeAllFeatureSetsInput-111"><span class="linenos">111</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="FreezeAllFeatureSetsInput-112"><a href="#FreezeAllFeatureSetsInput-112"><span class="linenos">112</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FreezeAllFeatureSetsInput-110"><a href="#FreezeAllFeatureSetsInput-110"><span class="linenos">110</span></a><span class="k">class</span><span class="w"> </span><span class="nc">FreezeAllFeatureSetsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="FreezeAllFeatureSetsInput-111"><a href="#FreezeAllFeatureSetsInput-111"><span class="linenos">111</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the freeze_all_feature_sets pipeline.&quot;&quot;&quot;</span>
+</span><span id="FreezeAllFeatureSetsInput-112"><a href="#FreezeAllFeatureSetsInput-112"><span class="linenos">112</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="FreezeAllFeatureSetsInput-113"><a href="#FreezeAllFeatureSetsInput-113"><span class="linenos">113</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="FreezeAllFeatureSetsInput-114"><a href="#FreezeAllFeatureSetsInput-114"><span class="linenos">114</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -1762,19 +1844,19 @@
 
     </div>
     <a class="headerlink" href="#ExecuteExperimentWithLatestInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteExperimentWithLatestInput-114"><a href="#ExecuteExperimentWithLatestInput-114"><span class="linenos">114</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteExperimentWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="ExecuteExperimentWithLatestInput-115"><a href="#ExecuteExperimentWithLatestInput-115"><span class="linenos">115</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_experiment_with_latest_input pipeline.&quot;&quot;&quot;</span>
-</span><span id="ExecuteExperimentWithLatestInput-116"><a href="#ExecuteExperimentWithLatestInput-116"><span class="linenos">116</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ExecuteExperimentWithLatestInput-117"><a href="#ExecuteExperimentWithLatestInput-117"><span class="linenos">117</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ExecuteExperimentWithLatestInput-118"><a href="#ExecuteExperimentWithLatestInput-118"><span class="linenos">118</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="ExecuteExperimentWithLatestInput-119"><a href="#ExecuteExperimentWithLatestInput-119"><span class="linenos">119</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
-</span><span id="ExecuteExperimentWithLatestInput-120"><a href="#ExecuteExperimentWithLatestInput-120"><span class="linenos">120</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="ExecuteExperimentWithLatestInput-121"><a href="#ExecuteExperimentWithLatestInput-121"><span class="linenos">121</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="ExecuteExperimentWithLatestInput-122"><a href="#ExecuteExperimentWithLatestInput-122"><span class="linenos">122</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="ExecuteExperimentWithLatestInput-123"><a href="#ExecuteExperimentWithLatestInput-123"><span class="linenos">123</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="ExecuteExperimentWithLatestInput-124"><a href="#ExecuteExperimentWithLatestInput-124"><span class="linenos">124</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ExecuteExperimentWithLatestInput-125"><a href="#ExecuteExperimentWithLatestInput-125"><span class="linenos">125</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="ExecuteExperimentWithLatestInput-126"><a href="#ExecuteExperimentWithLatestInput-126"><span class="linenos">126</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteExperimentWithLatestInput-116"><a href="#ExecuteExperimentWithLatestInput-116"><span class="linenos">116</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteExperimentWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="ExecuteExperimentWithLatestInput-117"><a href="#ExecuteExperimentWithLatestInput-117"><span class="linenos">117</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_experiment_with_latest_input pipeline.&quot;&quot;&quot;</span>
+</span><span id="ExecuteExperimentWithLatestInput-118"><a href="#ExecuteExperimentWithLatestInput-118"><span class="linenos">118</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ExecuteExperimentWithLatestInput-119"><a href="#ExecuteExperimentWithLatestInput-119"><span class="linenos">119</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ExecuteExperimentWithLatestInput-120"><a href="#ExecuteExperimentWithLatestInput-120"><span class="linenos">120</span></a>    <span class="n">version</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="ExecuteExperimentWithLatestInput-121"><a href="#ExecuteExperimentWithLatestInput-121"><span class="linenos">121</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
+</span><span id="ExecuteExperimentWithLatestInput-122"><a href="#ExecuteExperimentWithLatestInput-122"><span class="linenos">122</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExecuteExperimentWithLatestInput-123"><a href="#ExecuteExperimentWithLatestInput-123"><span class="linenos">123</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="ExecuteExperimentWithLatestInput-124"><a href="#ExecuteExperimentWithLatestInput-124"><span class="linenos">124</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="ExecuteExperimentWithLatestInput-125"><a href="#ExecuteExperimentWithLatestInput-125"><span class="linenos">125</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExecuteExperimentWithLatestInput-126"><a href="#ExecuteExperimentWithLatestInput-126"><span class="linenos">126</span></a>    <span class="n">experiment_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="ExecuteExperimentWithLatestInput-127"><a href="#ExecuteExperimentWithLatestInput-127"><span class="linenos">127</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="ExecuteExperimentWithLatestInput-128"><a href="#ExecuteExperimentWithLatestInput-128"><span class="linenos">128</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
 
@@ -1820,7 +1902,7 @@
                             </div>
                             <div id="ExecuteExperimentWithLatestInput.env" class="classattr">
                                 <div class="attr variable">
-            <span class="name">env</span><span class="annotation">: str | None</span>        =
+            <span class="name">env</span><span class="annotation">: Literal[&#39;dev&#39;, &#39;test&#39;, &#39;prod&#39;, &#39;default&#39;]</span>        =
 <span class="default_value">&#39;dev&#39;</span>
 
         
@@ -1926,16 +2008,16 @@
 
     </div>
     <a class="headerlink" href="#ExecuteAllExperimentsWithLatestInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteAllExperimentsWithLatestInput-128"><a href="#ExecuteAllExperimentsWithLatestInput-128"><span class="linenos">128</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllExperimentsWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-129"><a href="#ExecuteAllExperimentsWithLatestInput-129"><span class="linenos">129</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_experiments_with_latest_input pipeline.&quot;&quot;&quot;</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-130"><a href="#ExecuteAllExperimentsWithLatestInput-130"><span class="linenos">130</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-131"><a href="#ExecuteAllExperimentsWithLatestInput-131"><span class="linenos">131</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-132"><a href="#ExecuteAllExperimentsWithLatestInput-132"><span class="linenos">132</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-133"><a href="#ExecuteAllExperimentsWithLatestInput-133"><span class="linenos">133</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-134"><a href="#ExecuteAllExperimentsWithLatestInput-134"><span class="linenos">134</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-135"><a href="#ExecuteAllExperimentsWithLatestInput-135"><span class="linenos">135</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-136"><a href="#ExecuteAllExperimentsWithLatestInput-136"><span class="linenos">136</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="ExecuteAllExperimentsWithLatestInput-137"><a href="#ExecuteAllExperimentsWithLatestInput-137"><span class="linenos">137</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ExecuteAllExperimentsWithLatestInput-130"><a href="#ExecuteAllExperimentsWithLatestInput-130"><span class="linenos">130</span></a><span class="k">class</span><span class="w"> </span><span class="nc">ExecuteAllExperimentsWithLatestInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-131"><a href="#ExecuteAllExperimentsWithLatestInput-131"><span class="linenos">131</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the execute_all_experiments_with_latest_input pipeline.&quot;&quot;&quot;</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-132"><a href="#ExecuteAllExperimentsWithLatestInput-132"><span class="linenos">132</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-133"><a href="#ExecuteAllExperimentsWithLatestInput-133"><span class="linenos">133</span></a>    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-134"><a href="#ExecuteAllExperimentsWithLatestInput-134"><span class="linenos">134</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-135"><a href="#ExecuteAllExperimentsWithLatestInput-135"><span class="linenos">135</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-136"><a href="#ExecuteAllExperimentsWithLatestInput-136"><span class="linenos">136</span></a>    <span class="n">clean_up_failure_management</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-137"><a href="#ExecuteAllExperimentsWithLatestInput-137"><span class="linenos">137</span></a>    <span class="n">overwrite_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-138"><a href="#ExecuteAllExperimentsWithLatestInput-138"><span class="linenos">138</span></a>    <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="ExecuteAllExperimentsWithLatestInput-139"><a href="#ExecuteAllExperimentsWithLatestInput-139"><span class="linenos">139</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -1945,7 +2027,7 @@
 
                             <div id="ExecuteAllExperimentsWithLatestInput.env" class="classattr">
                                 <div class="attr variable">
-            <span class="name">env</span><span class="annotation">: str | None</span>        =
+            <span class="name">env</span><span class="annotation">: Literal[&#39;dev&#39;, &#39;test&#39;, &#39;prod&#39;, &#39;default&#39;]</span>        =
 <span class="default_value">&#39;dev&#39;</span>
 
         
@@ -2051,12 +2133,12 @@
 
     </div>
     <a class="headerlink" href="#RunAllWorkflowsInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RunAllWorkflowsInput-139"><a href="#RunAllWorkflowsInput-139"><span class="linenos">139</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RunAllWorkflowsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="RunAllWorkflowsInput-140"><a href="#RunAllWorkflowsInput-140"><span class="linenos">140</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the run_all_workflows pipeline.&quot;&quot;&quot;</span>
-</span><span id="RunAllWorkflowsInput-141"><a href="#RunAllWorkflowsInput-141"><span class="linenos">141</span></a>    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
-</span><span id="RunAllWorkflowsInput-142"><a href="#RunAllWorkflowsInput-142"><span class="linenos">142</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
-</span><span id="RunAllWorkflowsInput-143"><a href="#RunAllWorkflowsInput-143"><span class="linenos">143</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
-</span><span id="RunAllWorkflowsInput-144"><a href="#RunAllWorkflowsInput-144"><span class="linenos">144</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RunAllWorkflowsInput-141"><a href="#RunAllWorkflowsInput-141"><span class="linenos">141</span></a><span class="k">class</span><span class="w"> </span><span class="nc">RunAllWorkflowsInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="RunAllWorkflowsInput-142"><a href="#RunAllWorkflowsInput-142"><span class="linenos">142</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the run_all_workflows pipeline.&quot;&quot;&quot;</span>
+</span><span id="RunAllWorkflowsInput-143"><a href="#RunAllWorkflowsInput-143"><span class="linenos">143</span></a>    <span class="n">env</span><span class="p">:</span> <span class="n">ENV</span> <span class="o">=</span> <span class="s2">&quot;dev&quot;</span>
+</span><span id="RunAllWorkflowsInput-144"><a href="#RunAllWorkflowsInput-144"><span class="linenos">144</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span><span id="RunAllWorkflowsInput-145"><a href="#RunAllWorkflowsInput-145"><span class="linenos">145</span></a>    <span class="n">owner</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="s2">&quot;Sebastijan&quot;</span>
+</span><span id="RunAllWorkflowsInput-146"><a href="#RunAllWorkflowsInput-146"><span class="linenos">146</span></a>    <span class="n">skip_if_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -2066,7 +2148,7 @@
 
                             <div id="RunAllWorkflowsInput.env" class="classattr">
                                 <div class="attr variable">
-            <span class="name">env</span><span class="annotation">: str | None</span>        =
+            <span class="name">env</span><span class="annotation">: Literal[&#39;dev&#39;, &#39;test&#39;, &#39;prod&#39;, &#39;default&#39;]</span>        =
 <span class="default_value">&#39;dev&#39;</span>
 
         
@@ -2108,6 +2190,152 @@
         
     </div>
     <a class="headerlink" href="#RunAllWorkflowsInput.skip_if_existing"></a>
+    
+    
+
+                            </div>
+                </section>
+                <section id="InferInput">
+                            <input id="InferInput-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">InferInput</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
+
+                <label class="view-source-button" for="InferInput-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#InferInput"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="InferInput-148"><a href="#InferInput-148"><span class="linenos">148</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InferInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="InferInput-149"><a href="#InferInput-149"><span class="linenos">149</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the inference pipeline.&quot;&quot;&quot;</span>
+</span><span id="InferInput-150"><a href="#InferInput-150"><span class="linenos">150</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="InferInput-151"><a href="#InferInput-151"><span class="linenos">151</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="InferInput-152"><a href="#InferInput-152"><span class="linenos">152</span></a>    <span class="n">snapshot_bindings_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="InferInput-153"><a href="#InferInput-153"><span class="linenos">153</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Model for the input of the inference pipeline.</p>
+</div>
+
+
+                            <div id="InferInput.problem" class="classattr">
+                                <div class="attr variable">
+            <span class="name">problem</span><span class="annotation">: str</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#InferInput.problem"></a>
+    
+    
+
+                            </div>
+                            <div id="InferInput.segment" class="classattr">
+                                <div class="attr variable">
+            <span class="name">segment</span><span class="annotation">: str</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#InferInput.segment"></a>
+    
+    
+
+                            </div>
+                            <div id="InferInput.snapshot_bindings_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">snapshot_bindings_id</span><span class="annotation">: str</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#InferInput.snapshot_bindings_id"></a>
+    
+    
+
+                            </div>
+                            <div id="InferInput.logging_level" class="classattr">
+                                <div class="attr variable">
+            <span class="name">logging_level</span><span class="annotation">: Literal[&#39;DEBUG&#39;, &#39;INFO&#39;, &#39;WARNING&#39;, &#39;ERROR&#39;, &#39;CRITICAL&#39;]</span>        =
+<span class="default_value">&#39;INFO&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#InferInput.logging_level"></a>
+    
+    
+
+                            </div>
+                </section>
+                <section id="MonitorInput">
+                            <input id="MonitorInput-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">MonitorInput</span><wbr>(<span class="base">pydantic.main.BaseModel</span>):
+
+                <label class="view-source-button" for="MonitorInput-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MonitorInput"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MonitorInput-155"><a href="#MonitorInput-155"><span class="linenos">155</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MonitorInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span id="MonitorInput-156"><a href="#MonitorInput-156"><span class="linenos">156</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Model for the input of the monitoring pipeline.&quot;&quot;&quot;</span>
+</span><span id="MonitorInput-157"><a href="#MonitorInput-157"><span class="linenos">157</span></a>    <span class="n">problem</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="MonitorInput-158"><a href="#MonitorInput-158"><span class="linenos">158</span></a>    <span class="n">segment</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="MonitorInput-159"><a href="#MonitorInput-159"><span class="linenos">159</span></a>    <span class="n">inference_run_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="MonitorInput-160"><a href="#MonitorInput-160"><span class="linenos">160</span></a>    <span class="n">logging_level</span><span class="p">:</span> <span class="n">LOGGING_LEVEL</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Model for the input of the monitoring pipeline.</p>
+</div>
+
+
+                            <div id="MonitorInput.problem" class="classattr">
+                                <div class="attr variable">
+            <span class="name">problem</span><span class="annotation">: str</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MonitorInput.problem"></a>
+    
+    
+
+                            </div>
+                            <div id="MonitorInput.segment" class="classattr">
+                                <div class="attr variable">
+            <span class="name">segment</span><span class="annotation">: str</span>        =
+<span class="default_value">PydanticUndefined</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MonitorInput.segment"></a>
+    
+    
+
+                            </div>
+                            <div id="MonitorInput.inference_run_id" class="classattr">
+                                <div class="attr variable">
+            <span class="name">inference_run_id</span><span class="annotation">: str | None</span>        =
+<span class="default_value">None</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MonitorInput.inference_run_id"></a>
+    
+    
+
+                            </div>
+                            <div id="MonitorInput.logging_level" class="classattr">
+                                <div class="attr variable">
+            <span class="name">logging_level</span><span class="annotation">: Literal[&#39;DEBUG&#39;, &#39;INFO&#39;, &#39;WARNING&#39;, &#39;ERROR&#39;, &#39;CRITICAL&#39;]</span>        =
+<span class="default_value">&#39;INFO&#39;</span>
+
+        
+    </div>
+    <a class="headerlink" href="#MonitorInput.logging_level"></a>
     
     
 

@@ -1,7 +1,7 @@
 """Unit tests for promotion threshold configuration schema."""
 import pytest
 from ml.exceptions import ConfigError
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 
 pytestmark = pytest.mark.unit
 

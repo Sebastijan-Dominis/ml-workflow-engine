@@ -1,5 +1,5 @@
 """This module contains the function to validate the incoming configuration payload for promotion thresholds."""
-from ml.promotion.config.models import PromotionThresholds
+from ml.promotion.config.promotion_thresholds import PromotionThresholds
 
 
 def validate_config_payload(payload: dict) -> PromotionThresholds:

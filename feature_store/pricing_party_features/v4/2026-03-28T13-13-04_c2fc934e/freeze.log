@@ -1,0 +1,13 @@
+2026-03-28 13:13:04,772 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion - INFO - Starting data ingestion step.
+2026-03-28 13:13:04,884 - ml.feature_freezing.utils.data_loader - INFO - Completed loading 1 datasets. Final merged dataframe shape: (119385, 29).
+2026-03-28 13:13:04,885 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion - INFO - Completed data ingestion step.
+2026-03-28 13:13:04,885 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing - INFO - Starting data preprocessing step.
+2026-03-28 13:13:04,888 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing - INFO - Completed data preprocessing step.
+2026-03-28 13:13:04,888 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence - INFO - Starting data persistence step.
+2026-03-28 13:13:04,913 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Tabular features saved to feature_store\pricing_party_features\v4\2026-03-28T13-13-04_c2fc934e
+2026-03-28 13:13:04,914 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Persisted feature set snapshot to feature_store\pricing_party_features\v4\2026-03-28T13-13-04_c2fc934e\features.parquet using format parquet
+2026-03-28 13:13:04,918 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Input schema saved to feature_store\pricing_party_features\v4\input_schema.csv
+2026-03-28 13:13:04,918 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence - INFO - Completed data persistence step.
+2026-03-28 13:13:04,918 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata - INFO - Starting metadata step.
+2026-03-28 13:13:05,069 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata - INFO - Completed metadata step.
+2026-03-28 13:13:05,074 - ml.io.persistence.save_metadata - INFO - Metadata successfully saved to feature_store/pricing_party_features/v4/2026-03-28T13-13-04_c2fc934e/metadata.json.

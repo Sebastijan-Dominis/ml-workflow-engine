@@ -1,0 +1,13 @@
+2026-03-28 13:12:54,341 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion - INFO - Starting data ingestion step.
+2026-03-28 13:12:54,454 - ml.feature_freezing.utils.data_loader - INFO - Completed loading 1 datasets. Final merged dataframe shape: (119385, 29).
+2026-03-28 13:12:54,455 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion - INFO - Completed data ingestion step.
+2026-03-28 13:12:54,455 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing - INFO - Starting data preprocessing step.
+2026-03-28 13:12:54,458 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing - INFO - Completed data preprocessing step.
+2026-03-28 13:12:54,458 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence - INFO - Starting data persistence step.
+2026-03-28 13:12:54,480 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Tabular features saved to feature_store\customer_history_features\v3\2026-03-28T13-12-54_f1315c4e
+2026-03-28 13:12:54,480 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Persisted feature set snapshot to feature_store\customer_history_features\v3\2026-03-28T13-12-54_f1315c4e\features.parquet using format parquet
+2026-03-28 13:12:54,485 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Input schema saved to feature_store\customer_history_features\v3\input_schema.csv
+2026-03-28 13:12:54,485 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence - INFO - Completed data persistence step.
+2026-03-28 13:12:54,485 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata - INFO - Starting metadata step.
+2026-03-28 13:12:54,623 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata - INFO - Completed metadata step.
+2026-03-28 13:12:54,631 - ml.io.persistence.save_metadata - INFO - Metadata successfully saved to feature_store/customer_history_features/v3/2026-03-28T13-12-54_f1315c4e/metadata.json.

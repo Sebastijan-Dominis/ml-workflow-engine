@@ -86,8 +86,7 @@ def test_evaluate_warns_and_defaults_threshold_for_binary_when_missing(
     y = pd.Series([0, 1], name="target")
     lineage = [SimpleNamespace(feature_set="booking_context_features")]
     monkeypatch.setattr(
-        module,
-        "load_features_and_target",
+        "ml.features.loading.features_and_target.load_features_and_target",
         lambda *_args, **_kwargs: (X, y, lineage, "entity_key"),
     )
     monkeypatch.setattr(
@@ -261,8 +260,7 @@ def test_evaluate_loads_artifacts_and_returns_evaluate_output(
     y = pd.Series([0, 1, 0], name="target")
     lineage = [SimpleNamespace(feature_set="booking_context_features")]
     monkeypatch.setattr(
-        module,
-        "load_features_and_target",
+        "ml.features.loading.features_and_target.load_features_and_target",
         lambda *_args, **_kwargs: (X, y, lineage, "entity_key"),
     )
 

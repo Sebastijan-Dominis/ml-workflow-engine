@@ -1,0 +1,5 @@
+2026-03-28 13:21:13,479 - ml.utils.snapshots.snapshot_path - INFO - Auto-resolved latest snapshot ID: data\raw\hotel_bookings\v1\2026-03-28T13-20-27_43859088
+2026-03-28 13:21:13,572 - __main__ - INFO - Dropped duplicates. DataFrame now has 10000 rows.
+2026-03-28 13:21:13,600 - ml.data.utils.persistence.save_data - INFO - Data saved successfully at data\interim\hotel_bookings\v1\2026-03-28T13-21-13_d3d43d17\data.parquet in parquet format with compression snappy.
+2026-03-28 13:21:13,600 - __main__ - INFO - Interim data saved successfully at data\interim\hotel_bookings\v1\2026-03-28T13-21-13_d3d43d17\data.parquet with 10000 rows and 36 columns.
+2026-03-28 13:21:13,645 - ml.io.persistence.save_metadata - INFO - Metadata successfully saved to data/interim/hotel_bookings/v1/2026-03-28T13-21-13_d3d43d17/metadata.json.

@@ -1,0 +1,14 @@
+2026-03-28 13:12:58,509 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion - INFO - Starting data ingestion step.
+2026-03-28 13:12:58,622 - ml.feature_freezing.utils.data_loader - INFO - Completed loading 1 datasets. Final merged dataframe shape: (119385, 29).
+2026-03-28 13:12:58,623 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion - INFO - Completed data ingestion step.
+2026-03-28 13:12:58,623 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing - INFO - Starting data preprocessing step.
+2026-03-28 13:12:58,628 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing - INFO - Completed data preprocessing step.
+2026-03-28 13:12:58,628 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence - INFO - Starting data persistence step.
+2026-03-28 13:12:58,681 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Tabular features saved to feature_store\pricing_party_features\v1\2026-03-28T13-12-58_bdfb1d30
+2026-03-28 13:12:58,681 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Persisted feature set snapshot to feature_store\pricing_party_features\v1\2026-03-28T13-12-58_bdfb1d30\features.parquet using format parquet
+2026-03-28 13:12:58,685 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Input schema saved to feature_store\pricing_party_features\v1\input_schema.csv
+2026-03-28 13:12:58,687 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Derived schema saved to feature_store\pricing_party_features\v1\derived_schema.csv
+2026-03-28 13:12:58,687 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence - INFO - Completed data persistence step.
+2026-03-28 13:12:58,688 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata - INFO - Starting metadata step.
+2026-03-28 13:12:58,827 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata - INFO - Completed metadata step.
+2026-03-28 13:12:58,834 - ml.io.persistence.save_metadata - INFO - Metadata successfully saved to feature_store/pricing_party_features/v1/2026-03-28T13-12-58_bdfb1d30/metadata.json.

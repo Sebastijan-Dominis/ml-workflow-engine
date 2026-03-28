@@ -1,0 +1,54 @@
+{
+  "task_type": "classification",
+  "algorithm": "catboost",
+  "metrics": {
+    "train": {
+      "positive_rate": 0.34558823529411764,
+      "predicted_positive_rate": 0.38573529411764707,
+      "threshold": 0.32,
+      "accuracy": 0.7836764705882353,
+      "f1": 0.704202694550573,
+      "precision": 0.6675562333206252,
+      "recall": 0.7451063829787234,
+      "balanced_accuracy": 0.774575663399474,
+      "specificity": 0.8040449438202247,
+      "roc_auc": 0.855294525460196,
+      "pr_auc": 0.8048627029329974,
+      "log_loss": 0.450487966924587,
+      "brier_score": 0.1442558588166787,
+      "ece": 0.07376020827350924
+    },
+    "val": {
+      "positive_rate": 0.3458333333333333,
+      "predicted_positive_rate": 0.3958333333333333,
+      "threshold": 0.32,
+      "accuracy": 0.755,
+      "f1": 0.6696629213483146,
+      "precision": 0.6273684210526316,
+      "recall": 0.7180722891566265,
+      "balanced_accuracy": 0.7462972910751285,
+      "specificity": 0.7745222929936306,
+      "roc_auc": 0.8293684291305349,
+      "pr_auc": 0.7711048405986559,
+      "log_loss": 0.477346848050434,
+      "brier_score": 0.15565975050267816,
+      "ece": 0.052665197722679864
+    },
+    "test": {
+      "positive_rate": 0.3455,
+      "predicted_positive_rate": 0.4015,
+      "threshold": 0.32,
+      "accuracy": 0.778,
+      "f1": 0.7028112449799196,
+      "precision": 0.6537982565379825,
+      "recall": 0.7597684515195369,
+      "balanced_accuracy": 0.773696296042427,
+      "specificity": 0.787624140565317,
+      "roc_auc": 0.855413761347191,
+      "pr_auc": 0.8062913654683066,
+      "log_loss": 0.45027914768286975,
+      "brier_score": 0.14430463701442187,
+      "ece": 0.07311600671008225
+    }
+  }
+}

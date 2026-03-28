@@ -5,7 +5,6 @@ from pathlib import Path
 
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.exceptions import PipelineContractError
-from ml.features.loading.features_and_target import load_features_and_target
 from ml.features.loading.resolve_feature_snapshots import resolve_feature_snapshots
 from ml.features.splitting.splitting import get_splits
 from ml.features.validation.validate_snapshot_ids import validate_snapshot_ids
@@ -58,6 +57,10 @@ class EvaluateRegression(Evaluator):
             Loads persisted artifacts and executes split-wise inference on
             train/validation/test data.
         """
+
+        # Lazy import to avoid circular dependencies
+        from ml.features.loading.features_and_target import load_features_and_target
+
         prediction_dfs: PredictionArtifacts
         feature_lineage: list[FeatureLineage]
 

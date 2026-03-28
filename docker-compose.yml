@@ -4,7 +4,7 @@ services:
       context: .
     tty: true
     stdin_open: true
-    # ===== GPU support =====
+    # GPU support
     deploy:
       resources:
         reservations:
@@ -19,6 +19,11 @@ services:
       - ./experiments:/app/experiments
       - ./failure_management:/app/failure_management
       - ./orchestration_logs:/app/orchestration_logs
+      - ./model_registry:/app/model_registry
+      - ./predictions:/app/predictions
+      - ./monitoring:/app/monitoring
+      - ./docs:/app/docs
+      - ./assets:/app/assets
     ports:
       - "8000:8000"
       - "8050:8050"

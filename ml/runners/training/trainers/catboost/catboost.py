@@ -17,7 +17,6 @@ from pathlib import Path
 from ml.config.hashing import compute_model_config_hash
 from ml.config.schemas.model_cfg import TrainModelConfig
 from ml.features.extraction.cat_features import get_cat_features
-from ml.features.loading.features_and_target import load_features_and_target
 from ml.features.loading.schemas import load_schemas
 from ml.features.splitting.splitting import get_splits
 from ml.features.transforms.transform_target import transform_target
@@ -70,6 +69,9 @@ class CatBoostTrainer(Trainer):
             computationally intensive and may write failure-management artifacts
             through downstream helpers.
         """
+
+        # Lazy import to avoid circular dependencies
+        from ml.features.loading.features_and_target import load_features_and_target
 
         stats: DataStats
 

@@ -44,7 +44,7 @@ FRONTEND_SCRIPTS_REGISTRY: list[dict[str, Any]] = [
                 "optional": True
             },
             "num_rows": {
-                "placeholder": "Number of rows to generate (default: 50000)",
+                "placeholder": "Number of rows to generate (default: 10000)",
                 "optional": True
             },
             "include_old": {
@@ -53,7 +53,7 @@ FRONTEND_SCRIPTS_REGISTRY: list[dict[str, Any]] = [
                 "value": False
             },
             "model_path": {
-                "placeholder": "Path to the CTGAN model to use for generation (default: 'synthetizers/2026-03-21T02-18-36_b682275d/ctgan_model.pkl')",
+                "placeholder": "CTGAN model for generation; e.g. 'synthetizers/2026-03-25T05-27-06_050f7ba0/ctgan_model.pkl' (default = None)",
                 "optional": True
             },
             "strict_missing": {

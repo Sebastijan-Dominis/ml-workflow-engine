@@ -40,6 +40,9 @@ def save_data(df: pd.DataFrame, *, config: InterimConfig | ProcessedConfig, data
     try:
         if save_func == pd.DataFrame.to_parquet:
             save_func(df, data_path, compression=compression)
+            msg = f"Data saved successfully at {data_path} in parquet format with compression {compression}."
+            logger.info(msg)
+            print(msg)
         return data_path
     except Exception as e:
         msg = f"Error saving data to {data_path} with format {config.data.output.format} and compression {compression}. "
