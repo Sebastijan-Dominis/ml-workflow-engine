@@ -1,0 +1,7 @@
+2026-03-28 13:12:04,058 - ml.utils.snapshots.snapshot_path - INFO - Auto-resolved latest snapshot ID: data\raw\hotel_bookings\v1\2026-02-25T22-43-23_732dfdb7
+2026-03-28 13:12:04,363 - ml.data.interim.data_preparation.prepare_data - WARNING - Column 'children' had 4 missing values and drop_missing_ints is True, so rows with missing values in this column have been dropped.
+2026-03-28 13:12:04,720 - ml.data.interim.data_preparation.prepare_data - WARNING - Dropping 1 rows where adr < 0.0. Row indices: [14969]
+2026-03-28 13:12:04,860 - __main__ - INFO - Dropped duplicates. DataFrame now has 119385 rows.
+2026-03-28 13:12:05,011 - ml.data.utils.persistence.save_data - INFO - Data saved successfully at data\interim\hotel_bookings\v1\2026-03-28T13-12-04_2983adb1\data.parquet in parquet format with compression snappy.
+2026-03-28 13:12:05,011 - __main__ - INFO - Interim data saved successfully at data\interim\hotel_bookings\v1\2026-03-28T13-12-04_2983adb1\data.parquet with 119385 rows and 36 columns.
+2026-03-28 13:12:05,115 - ml.io.persistence.save_metadata - INFO - Metadata successfully saved to data/interim/hotel_bookings/v1/2026-03-28T13-12-04_2983adb1/metadata.json.

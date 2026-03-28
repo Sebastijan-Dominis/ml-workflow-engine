@@ -46,6 +46,7 @@ omit = [
   "feature_store/*",
   "data/*",
   "experiments/*",
+  "scripts/generators/generate_fake_data.py" # Purposefully not tested
 ]
 
 [tool.coverage.report]

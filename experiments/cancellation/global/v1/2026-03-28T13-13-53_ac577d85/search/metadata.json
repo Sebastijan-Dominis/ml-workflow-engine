@@ -1,0 +1,629 @@
+{
+  "metadata": {
+    "problem": "cancellation",
+    "segment": "global",
+    "version": "v1",
+    "experiment_id": "2026-03-28T13-13-53_ac577d85",
+    "sources": {
+      "main": "configs/search/cancellation/global/v1.yaml",
+      "extends": [
+        "../../../../configs/defaults/global.yaml",
+        "../../../../configs/defaults/catboost.yaml",
+        "../../../../configs/model_specs/cancellation/global/v1.yaml"
+      ]
+    },
+    "env": "test",
+    "best_params_path": "none",
+    "algorithm": "catboost",
+    "pipeline_version": "v1",
+    "created_by": "search.py",
+    "created_at": "2026-03-28T13-13-53",
+    "owner": "Sebastijan",
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-12-35_8900f29c",
+        "file_hash": "070251df59b78ae0f633c9e9e857bb3ad004a584415d2ea908b27362cc0c1b27",
+        "in_memory_hash": "96eea7a50f82f3713e177194ca2b2015",
+        "feature_schema_hash": "fd9b83dcc7039767c54a0e99b7f09f5f58dff7fbe7ca99904475a5df4260edc2",
+        "operator_hash": "2074c53b8d1e6124b67ba8e625315f86",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-12-50_3433eba9",
+        "file_hash": "f4dc41f38dee1a7c843bf0adf1c5bf04f7df59be1bcd8c432e6173ce92b28883",
+        "in_memory_hash": "0a1a73138caaecefd26415b027de91f8",
+        "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-12-58_bdfb1d30",
+        "file_hash": "e56270a4f3ae85689b4267ba27ec3067ac3fd064d9a5b86c1a160407769bd0e5",
+        "in_memory_hash": "b8c1ff6260e690160bb20ddd5ad53907",
+        "feature_schema_hash": "a4bbc08d48fcf27ef4d98c05db120e208c649dd186c86a3b907671918e3772dd",
+        "operator_hash": "fcd1d9ce4bbf0654b13d21aca2ba1b32",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-13-08_c6b7c5c4",
+        "file_hash": "920bc43b1d897da522512f5371cdccac7b3abe25206046e4dde7b1c79b9a0292",
+        "in_memory_hash": "034fbd2aa9b664e4ae34734ad3f5ac40",
+        "feature_schema_hash": "94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      }
+    ],
+    "seed": 42,
+    "hardware": {
+      "task_type": "GPU",
+      "devices": [
+        0
+      ],
+      "allow_growth": false
+    },
+    "git_commit": "ef78dcfcdd378622afd94c0d7c066777e1c90138",
+    "config_hash": "b8e88e60bb4a3c85a59f7a7d5e5278c0c94e28e9814d2018942ff9f61d48bf5d",
+    "validation_status": "ok",
+    "pipeline_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89",
+    "scoring_method": "roc_auc",
+    "splits_info": {
+      "train": {
+        "n_rows": 81181,
+        "class_distribution": {
+          "0": 0.6296054495510033,
+          "1": 0.37039455044899666
+        },
+        "positive_rate": 0.37039455044899666
+      },
+      "val": {
+        "n_rows": 14327,
+        "class_distribution": {
+          "0": 0.6295805123193969,
+          "1": 0.37041948768060307
+        },
+        "positive_rate": 0.37041948768060307
+      },
+      "test": {
+        "n_rows": 23877,
+        "class_distribution": {
+          "0": 0.6296017087573815,
+          "1": 0.3703982912426184
+        },
+        "positive_rate": 0.3703982912426184
+      }
+    },
+    "class_weighting": {
+      "policy": "if_imbalanced",
+      "imbalance_threshold": 0.1,
+      "strategy": "balanced"
+    }
+  },
+  "config": {
+    "problem": "cancellation",
+    "segment": {
+      "name": "global",
+      "description": "All bookings"
+    },
+    "version": "v1",
+    "task": {
+      "type": "classification",
+      "subtype": "binary"
+    },
+    "target": {
+      "name": "is_canceled",
+      "version": "v1",
+      "allowed_dtypes": [
+        "int64"
+      ],
+      "classes": {
+        "count": 2,
+        "positive_class": 1,
+        "min_class_count": 200
+      },
+      "constraints": {
+        "min_value": null,
+        "max_value": null
+      },
+      "transform": {
+        "enabled": false,
+        "type": null,
+        "lambda_value": null
+      }
+    },
+    "segmentation": {
+      "enabled": false,
+      "include_in_model": false,
+      "filters": []
+    },
+    "min_rows": 10000,
+    "split": {
+      "strategy": "random",
+      "stratify_by": "is_canceled",
+      "test_size": 0.2,
+      "val_size": 0.12,
+      "random_state": 42
+    },
+    "algorithm": "catboost",
+    "model_class": "CatBoostClassifier",
+    "pipeline": {
+      "version": "v1",
+      "path": "configs/pipelines/tabular/catboost/v1.yaml"
+    },
+    "scoring": {
+      "policy": "adaptive_binary",
+      "fixed_metric": null,
+      "pr_auc_threshold": 0.1
+    },
+    "class_weighting": {
+      "policy": "if_imbalanced",
+      "imbalance_threshold": 0.1,
+      "strategy": "balanced"
+    },
+    "feature_store": {
+      "path": "feature_store/",
+      "feature_sets": [
+        {
+          "name": "booking_context_features",
+          "version": "v1",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "customer_history_features",
+          "version": "v1",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "pricing_party_features",
+          "version": "v1",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        },
+        {
+          "name": "channel_and_agent_features",
+          "version": "v1",
+          "data_format": "parquet",
+          "file_name": "features.parquet"
+        }
+      ]
+    },
+    "explainability": {
+      "enabled": true,
+      "top_k": 20,
+      "methods": {
+        "feature_importances": {
+          "enabled": true,
+          "type": "PredictionValuesChange"
+        },
+        "shap": {
+          "enabled": true,
+          "approximate": "tree"
+        }
+      }
+    },
+    "data_type": "tabular",
+    "model_specs_lineage": {
+      "created_by": "Sebastijan",
+      "created_at": "2026-02-27T23-53-30+00-00"
+    },
+    "_meta": {
+      "sources": {
+        "main": "configs/search/cancellation/global/v1.yaml",
+        "extends": [
+          "../../../../configs/defaults/global.yaml",
+          "../../../../configs/defaults/catboost.yaml",
+          "../../../../configs/model_specs/cancellation/global/v1.yaml"
+        ]
+      },
+      "env": "test",
+      "best_params_path": null,
+      "validation_status": "ok",
+      "validation_errors": null,
+      "config_hash": "b8e88e60bb4a3c85a59f7a7d5e5278c0c94e28e9814d2018942ff9f61d48bf5d"
+    },
+    "extends": [],
+    "search": {
+      "random_state": 42,
+      "broad": {
+        "iterations": 10,
+        "n_iter": 2,
+        "param_distributions": {
+          "model": {
+            "depth": [
+              4,
+              6,
+              8,
+              10
+            ],
+            "learning_rate": [
+              0.005,
+              0.01,
+              0.03,
+              0.05,
+              0.1,
+              0.2,
+              0.3
+            ],
+            "l2_leaf_reg": [
+              1.0,
+              3.0,
+              5.0,
+              7.0,
+              10.0,
+              15.0
+            ],
+            "colsample_bylevel": null,
+            "random_strength": [
+              1.0,
+              2.0,
+              5.0,
+              8.0,
+              10.0,
+              12.0
+            ],
+            "min_data_in_leaf": [
+              1,
+              3,
+              5,
+              8,
+              10,
+              15,
+              20
+            ],
+            "border_count": [
+              32,
+              64,
+              128,
+              254
+            ]
+          },
+          "ensemble": {
+            "bagging_temperature": [
+              0.0,
+              0.25,
+              0.5,
+              0.75,
+              1.0,
+              2.0,
+              5.0
+            ]
+          }
+        }
+      },
+      "narrow": {
+        "enabled": true,
+        "iterations": 10,
+        "n_iter": 2,
+        "param_configurations": {
+          "model": {
+            "depth": {
+              "include": true,
+              "offsets": [
+                1,
+                2
+              ],
+              "low": 2,
+              "high": 12
+            },
+            "learning_rate": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 0.003,
+              "high": 0.5,
+              "decimals": 5
+            },
+            "l2_leaf_reg": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 1.0,
+              "high": 30.0,
+              "decimals": 2
+            },
+            "colsample_bylevel": null,
+            "random_strength": {
+              "include": true,
+              "factors": [
+                0.7,
+                0.85,
+                1.0,
+                1.15,
+                1.3
+              ],
+              "low": 0.0,
+              "high": 20.0,
+              "decimals": 2
+            },
+            "min_data_in_leaf": {
+              "include": true,
+              "offsets": [
+                2,
+                5,
+                10
+              ],
+              "low": 1,
+              "high": 50
+            },
+            "border_count": {
+              "include": true,
+              "offsets": null,
+              "low": null,
+              "high": null
+            }
+          },
+          "ensemble": {
+            "bagging_temperature": {
+              "include": true,
+              "factors": [
+                0.6,
+                0.8,
+                1.0,
+                1.2,
+                1.5
+              ],
+              "low": 0.0,
+              "high": 5.0,
+              "decimals": 3
+            }
+          }
+        }
+      },
+      "hardware": {
+        "task_type": "GPU",
+        "devices": [
+          0
+        ],
+        "memory_limit_gb": null,
+        "allow_growth": false
+      },
+      "error_score": "raise"
+    },
+    "seed": 42,
+    "cv": 2,
+    "verbose": 100,
+    "search_lineage": {
+      "created_by": "Sebastijan",
+      "created_at": "2026-02-27T23-53-30+00-00"
+    },
+    "training": {
+      "early_stopping_rounds": 100,
+      "model": {
+        "learning_rate": 0.03,
+        "depth": 6,
+        "l2_leaf_reg": 3,
+        "random_strength": 1,
+        "border_count": 128
+      },
+      "ensemble": {
+        "bagging_temperature": 1.0
+      },
+      "iterations": 10,
+      "hardware": {
+        "task_type": "cpu"
+      },
+      "snapshot_interval_seconds": 300
+    }
+  },
+  "search_results": {
+    "best_pipeline_params": {
+      "Model__random_strength": 3.5,
+      "Model__min_data_in_leaf": 17,
+      "Model__learning_rate": 0.26,
+      "Model__l2_leaf_reg": 1.15,
+      "Model__depth": 5,
+      "Model__border_count": 32,
+      "Model__bagging_temperature": 0.6
+    },
+    "best_model_params": {
+      "random_strength": 3.5,
+      "min_data_in_leaf": 17,
+      "learning_rate": 0.26,
+      "l2_leaf_reg": 1.15,
+      "depth": 5,
+      "border_count": 32,
+      "bagging_temperature": 0.6
+    },
+    "phases": {
+      "broad": {
+        "best_params": {
+          "Model__random_strength": 5.0,
+          "Model__min_data_in_leaf": 15,
+          "Model__learning_rate": 0.2,
+          "Model__l2_leaf_reg": 1.0,
+          "Model__depth": 6,
+          "Model__border_count": 64,
+          "Model__bagging_temperature": 1.0
+        },
+        "best_score": 0.9235674465604944,
+        "best_index": 0,
+        "cv_results": {
+          "mean_test_score": [
+            0.9235674465604944,
+            0.8906032467470089
+          ],
+          "std_test_score": [
+            0.00033198323036820465,
+            8.140579560805827e-05
+          ],
+          "rank_test_score": [
+            1,
+            2
+          ]
+        },
+        "param_distributions": {
+          "Model__depth": [
+            4,
+            6,
+            8,
+            10
+          ],
+          "Model__learning_rate": [
+            0.005,
+            0.01,
+            0.03,
+            0.05,
+            0.1,
+            0.2,
+            0.3
+          ],
+          "Model__l2_leaf_reg": [
+            1.0,
+            3.0,
+            5.0,
+            7.0,
+            10.0,
+            15.0
+          ],
+          "Model__random_strength": [
+            1.0,
+            2.0,
+            5.0,
+            8.0,
+            10.0,
+            12.0
+          ],
+          "Model__min_data_in_leaf": [
+            1,
+            3,
+            5,
+            8,
+            10,
+            15,
+            20
+          ],
+          "Model__border_count": [
+            32,
+            64,
+            128,
+            254
+          ],
+          "Model__bagging_temperature": [
+            0.0,
+            0.25,
+            0.5,
+            0.75,
+            1.0,
+            2.0,
+            5.0
+          ]
+        },
+        "n_iter": 2,
+        "cv": 2,
+        "scoring": "roc_auc",
+        "random_state": 42,
+        "error_score": "raise",
+        "search_phase": "broad"
+      },
+      "narrow": {
+        "best_params": {
+          "Model__random_strength": 3.5,
+          "Model__min_data_in_leaf": 17,
+          "Model__learning_rate": 0.26,
+          "Model__l2_leaf_reg": 1.15,
+          "Model__depth": 5,
+          "Model__border_count": 32,
+          "Model__bagging_temperature": 0.6
+        },
+        "best_score": 0.9229570753192105,
+        "best_index": 1,
+        "cv_results": {
+          "mean_test_score": [
+            0.9113110822538696,
+            0.9229570753192105
+          ],
+          "std_test_score": [
+            5.0960859077520126e-05,
+            0.00034098076873112504
+          ],
+          "rank_test_score": [
+            2,
+            1
+          ]
+        },
+        "param_distributions": {
+          "Model__depth": [
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "Model__learning_rate": [
+            0.14,
+            0.17,
+            0.2,
+            0.23,
+            0.26
+          ],
+          "Model__l2_leaf_reg": [
+            1.0,
+            1.15,
+            1.3
+          ],
+          "Model__bagging_temperature": [
+            0.6,
+            0.8,
+            1.0,
+            1.2,
+            1.5
+          ],
+          "Model__min_data_in_leaf": [
+            5,
+            10,
+            13,
+            15,
+            17,
+            20,
+            25
+          ],
+          "Model__random_strength": [
+            3.5,
+            4.25,
+            5.0,
+            5.75,
+            6.5
+          ],
+          "Model__border_count": [
+            32,
+            64,
+            128
+          ]
+        },
+        "n_iter": 2,
+        "cv": 2,
+        "scoring": "roc_auc",
+        "random_state": 42,
+        "error_score": "raise",
+        "search_phase": "narrow"
+      }
+    }
+  }
+}

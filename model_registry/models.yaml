@@ -1,0 +1,214 @@
+cancellation:
+  global:
+    production:
+      experiment_id: 2026-03-28T13-13-53_ac577d85
+      train_run_id: 2026-03-28T13-14-14_f2ddbee1
+      eval_run_id: 2026-03-28T13-14-24_184914c0
+      explain_run_id: 2026-03-28T13-14-33_55d5e2fc
+      model_version: v1
+      pipeline_cfg_hash: 68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89
+      artifacts:
+        model_hash: bf07757a15b2464492886f36833da8cb3a609e8b0ef078d4abf2cd4301f9a3d7
+        model_path: experiments/cancellation/global/v1/2026-03-28T13-13-53_ac577d85/training/2026-03-28T13-14-14_f2ddbee1/model.joblib
+        pipeline_path: experiments/cancellation/global/v1/2026-03-28T13-13-53_ac577d85/training/2026-03-28T13-14-14_f2ddbee1/pipeline.joblib
+        pipeline_hash: 94d6b6dc63c659f9138d2b11d8b5e1ba927ea00f5204d5a7829918fe7bc932d4
+        top_k_feature_importances_path: experiments/cancellation/global/v1/2026-03-28T13-13-53_ac577d85/explainability/2026-03-28T13-14-33_55d5e2fc/top_k_feature_importances.csv
+        top_k_feature_importances_hash: b863846f63cbfd76820ec9000f695767bf59c5f9839e3b2c81d55a4f049149f0
+        top_k_shap_importances_path: experiments/cancellation/global/v1/2026-03-28T13-13-53_ac577d85/explainability/2026-03-28T13-14-33_55d5e2fc/top_k_shap_importances.csv
+        top_k_shap_importances_hash: 7b6e880167ffaa7e30c6143cec0e95453e78032dc5d8b898f7f101311ddd9717
+      feature_lineage:
+      - name: booking_context_features
+        version: v1
+        snapshot_id: 2026-03-28T13-12-35_8900f29c
+        file_hash: 070251df59b78ae0f633c9e9e857bb3ad004a584415d2ea908b27362cc0c1b27
+        in_memory_hash: 96eea7a50f82f3713e177194ca2b2015
+        feature_schema_hash: fd9b83dcc7039767c54a0e99b7f09f5f58dff7fbe7ca99904475a5df4260edc2
+        operator_hash: 2074c53b8d1e6124b67ba8e625315f86
+        feature_type: tabular
+        file_name: features.parquet
+        data_format: parquet
+      - name: customer_history_features
+        version: v1
+        snapshot_id: 2026-03-28T13-12-50_3433eba9
+        file_hash: f4dc41f38dee1a7c843bf0adf1c5bf04f7df59be1bcd8c432e6173ce92b28883
+        in_memory_hash: 0a1a73138caaecefd26415b027de91f8
+        feature_schema_hash: 6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab
+        operator_hash: none
+        feature_type: tabular
+        file_name: features.parquet
+        data_format: parquet
+      - name: pricing_party_features
+        version: v1
+        snapshot_id: 2026-03-28T13-12-58_bdfb1d30
+        file_hash: e56270a4f3ae85689b4267ba27ec3067ac3fd064d9a5b86c1a160407769bd0e5
+        in_memory_hash: b8c1ff6260e690160bb20ddd5ad53907
+        feature_schema_hash: a4bbc08d48fcf27ef4d98c05db120e208c649dd186c86a3b907671918e3772dd
+        operator_hash: fcd1d9ce4bbf0654b13d21aca2ba1b32
+        feature_type: tabular
+        file_name: features.parquet
+        data_format: parquet
+      - name: channel_and_agent_features
+        version: v1
+        snapshot_id: 2026-03-28T13-13-08_c6b7c5c4
+        file_hash: 920bc43b1d897da522512f5371cdccac7b3abe25206046e4dde7b1c79b9a0292
+        in_memory_hash: 034fbd2aa9b664e4ae34734ad3f5ac40
+        feature_schema_hash: 94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109
+        operator_hash: none
+        feature_type: tabular
+        file_name: features.parquet
+        data_format: parquet
+      metrics:
+        train:
+          positive_rate: 0.37039455044899666
+          predicted_positive_rate: 0.44546137643044553
+          threshold: 0.37
+          accuracy: 0.8264125842253729
+          f1: 0.7872327575794178
+          precision: 0.7209025799850676
+          recall: 0.8670058864611394
+          balanced_accuracy: 0.834768790781047
+          specificity: 0.8025316951009548
+          roc_auc: 0.9233705048951402
+          pr_auc: 0.8894729999235532
+          log_loss: 0.3398507444706555
+          brier_score: 0.10986330189373349
+          ece: 0.04408681607049784
+        val:
+          positive_rate: 0.37041948768060307
+          predicted_positive_rate: 0.44475465903538774
+          threshold: 0.37
+          accuracy: 0.8255740908773644
+          f1: 0.7860262008733624
+          precision: 0.7203389830508474
+          recall: 0.8648954211418881
+          balanced_accuracy: 0.833667222766066
+          specificity: 0.802439024390244
+          roc_auc: 0.9237549703211714
+          pr_auc: 0.8901243734208415
+          log_loss: 0.3373523865002376
+          brier_score: 0.10925208298314804
+          ece: 0.038700325740121735
+        test:
+          positive_rate: 0.3703982912426184
+          predicted_positive_rate: 0.4434811743518868
+          threshold: 0.37
+          accuracy: 0.8326841730535662
+          f1: 0.7944218597231514
+          precision: 0.7289640192652753
+          recall: 0.8727951153324288
+          balanced_accuracy: 0.8409408956559703
+          specificity: 0.8090866759795118
+          roc_auc: 0.9265550095533832
+          pr_auc: 0.8943190625817384
+          log_loss: 0.33475144000425094
+          brier_score: 0.10765429830846764
+          ece: 0.046330811960170006
+      git_commit: ef78dcfcdd378622afd94c0d7c066777e1c90138
+      promotion_id: 2026-03-28T13-19-37_ee8c3e81
+      promoted_at: 2026-03-28T13-19-37
+    staging:
+      experiment_id: 2026-03-28T13-26-33_75d58d1b
+      train_run_id: 2026-03-28T13-26-43_2e69cbe0
+      eval_run_id: 2026-03-28T13-26-51_06696059
+      explain_run_id: 2026-03-28T13-26-58_925e2aef
+      model_version: v1
+      pipeline_cfg_hash: 68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89
+      artifacts:
+        model_hash: 334f4c0b0e391f1f9800363289dbb45126595aa06083cf3dff724ed98021626e
+        model_path: experiments/cancellation/global/v1/2026-03-28T13-26-33_75d58d1b/training/2026-03-28T13-26-43_2e69cbe0/model.joblib
+        pipeline_path: experiments/cancellation/global/v1/2026-03-28T13-26-33_75d58d1b/training/2026-03-28T13-26-43_2e69cbe0/pipeline.joblib
+        pipeline_hash: 62d165d0c75181287c7d1a86aa3000b48853d20411fd1eaa024dd97a26cccec2
+        top_k_feature_importances_path: experiments/cancellation/global/v1/2026-03-28T13-26-33_75d58d1b/explainability/2026-03-28T13-26-58_925e2aef/top_k_feature_importances.csv
+        top_k_feature_importances_hash: b67b81af6a0862043f45188de58e0f29c7b59340bc88de68211eae557411fbae
+        top_k_shap_importances_path: experiments/cancellation/global/v1/2026-03-28T13-26-33_75d58d1b/explainability/2026-03-28T13-26-58_925e2aef/top_k_shap_importances.csv
+        top_k_shap_importances_hash: 29241f29f564c1ae031a18c83d87af11117524d98e6f2867dd975777f8e46f8d
+      feature_lineage:
+      - name: booking_context_features
+        version: v1
+        snapshot_id: 2026-03-28T13-24-37_b5639ccc
+        file_hash: 21fe06c2f262a588a0ba5d90d100256436e759d225d366b46f435e5f90b44d0e
+        in_memory_hash: 0b14804194fadbdcca8e4eb878c17821
+        feature_schema_hash: fd9b83dcc7039767c54a0e99b7f09f5f58dff7fbe7ca99904475a5df4260edc2
+        operator_hash: 2074c53b8d1e6124b67ba8e625315f86
+        feature_type: tabular
+        file_name: features.parquet
+        data_format: parquet
+      - name: customer_history_features
+        version: v1
+        snapshot_id: 2026-03-28T13-24-51_b8f88868
+        file_hash: 3ce277e673bf3d8dcdfce64e3d78489e4d6a178155992aa190916a20de40f086
+        in_memory_hash: f6b709e9e9445e884d31b5ac517d93cd
+        feature_schema_hash: 6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab
+        operator_hash: none
+        feature_type: tabular
+        file_name: features.parquet
+        data_format: parquet
+      - name: pricing_party_features
+        version: v1
+        snapshot_id: 2026-03-28T13-24-58_292d410d
+        file_hash: decba90625866a5381e4211036f47691f38fc5ab73c5cf69b6a784950fa0531f
+        in_memory_hash: a19b4521846b2ca4def6a8d98c530f7d
+        feature_schema_hash: ca150cb76158bd790fe5ca3cc3473d2fcfc2ce68a5df7a591ade93ccfd33dd70
+        operator_hash: fcd1d9ce4bbf0654b13d21aca2ba1b32
+        feature_type: tabular
+        file_name: features.parquet
+        data_format: parquet
+      - name: channel_and_agent_features
+        version: v1
+        snapshot_id: 2026-03-28T13-25-08_0bad298e
+        file_hash: 68e969565fa391e975580cb7b5ea80b3cc2d1127231b9b987c871e6172940eb9
+        in_memory_hash: f31e1e0a5c5e8178933bd5296673b5a2
+        feature_schema_hash: 94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109
+        operator_hash: none
+        feature_type: tabular
+        file_name: features.parquet
+        data_format: parquet
+      metrics:
+        train:
+          positive_rate: 0.34558823529411764
+          predicted_positive_rate: 0.38573529411764707
+          threshold: 0.32
+          accuracy: 0.7836764705882353
+          f1: 0.704202694550573
+          precision: 0.6675562333206252
+          recall: 0.7451063829787234
+          balanced_accuracy: 0.774575663399474
+          specificity: 0.8040449438202247
+          roc_auc: 0.855294525460196
+          pr_auc: 0.8048627029329974
+          log_loss: 0.450487966924587
+          brier_score: 0.1442558588166787
+          ece: 0.07376020827350924
+        val:
+          positive_rate: 0.3458333333333333
+          predicted_positive_rate: 0.3958333333333333
+          threshold: 0.32
+          accuracy: 0.755
+          f1: 0.6696629213483146
+          precision: 0.6273684210526316
+          recall: 0.7180722891566265
+          balanced_accuracy: 0.7462972910751285
+          specificity: 0.7745222929936306
+          roc_auc: 0.8293684291305349
+          pr_auc: 0.7711048405986559
+          log_loss: 0.477346848050434
+          brier_score: 0.15565975050267816
+          ece: 0.052665197722679864
+        test:
+          positive_rate: 0.3455
+          predicted_positive_rate: 0.4015
+          threshold: 0.32
+          accuracy: 0.778
+          f1: 0.7028112449799196
+          precision: 0.6537982565379825
+          recall: 0.7597684515195369
+          balanced_accuracy: 0.773696296042427
+          specificity: 0.787624140565317
+          roc_auc: 0.855413761347191
+          pr_auc: 0.8062913654683066
+          log_loss: 0.45027914768286975
+          brier_score: 0.14430463701442187
+          ece: 0.07311600671008225
+      git_commit: ef78dcfcdd378622afd94c0d7c066777e1c90138
+      staging_id: 2026-03-28T13-29-31_c39af60e
+      staged_at: 2026-03-28T13-29-31

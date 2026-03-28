@@ -1,0 +1,113 @@
+{
+  "problem_type": "cancellation",
+  "segment": "global",
+  "timestamp": "2026-03-28T13:40:42.356928",
+  "run_id": "2026-03-28T13-40-42_5e31555f",
+  "inference_run_id": "latest",
+  "production": {
+    "drift_results": {
+      "row_id": 5.715916649882313,
+      "hotel": 0.00805576962309447,
+      "lead_time": 0.1183371157528747,
+      "arrival_date_year": 9.151583181445378,
+      "arrival_date_month": 0.0437177447759206,
+      "arrival_date_week_number": 0.024824361650915894,
+      "arrival_date_day_of_month": 0.06540935692383526,
+      "stays_in_weekend_nights": 0.016935731733515896,
+      "stays_in_week_nights": 0.042401533735260566,
+      "meal": 0.013604361875922923,
+      "deposit_type": 0.04371817180956527,
+      "days_in_waiting_list": 0.009867236252460554,
+      "country": 0.44178126538796403,
+      "agent": 3.2137384565853875,
+      "market_segment": 0.06138966328910818,
+      "distribution_channel": 0.10130635515480212,
+      "is_repeated_guest": 0.00027682612773869097,
+      "previous_cancellations": 0.016858430707584155,
+      "previous_bookings_not_canceled": 0.017397495497759374,
+      "customer_type": 0.013110702857423868,
+      "adr": 0.09314908400071398,
+      "required_car_parking_spaces": 0.03574039074106014,
+      "total_of_special_requests": 0.06182768976683617,
+      "adults": 0.0003835343463360563,
+      "children": 0.016240946884730094,
+      "babies": 0.0006338357351704572
+    },
+    "performance_results": {
+      "roc_auc": {
+        "status": "degradation",
+        "expected": 0.9265550095533832,
+        "current": 0.8219570106703875,
+        "direction": "maximize"
+      },
+      "f1": {
+        "status": "degradation",
+        "expected": 0.7944218597231514,
+        "current": 0.6358677122400272,
+        "direction": "maximize"
+      }
+    },
+    "model_version": "v1"
+  },
+  "staging": {
+    "drift_results": {
+      "row_id": 8.397212361481737,
+      "hotel": 5.6073665423177256e-05,
+      "lead_time": 0.010530561026107166,
+      "arrival_date_year": 0.0,
+      "arrival_date_month": 0.27394056989615734,
+      "arrival_date_week_number": 0.13140919557642788,
+      "arrival_date_day_of_month": 0.024103342927839222,
+      "stays_in_weekend_nights": 0.00067730072243834,
+      "stays_in_week_nights": 0.001001176184715551,
+      "meal": 0.0005846527918389131,
+      "deposit_type": 0.00016096610238195878,
+      "days_in_waiting_list": 0.0015128869363227881,
+      "country": 0.001895365388266313,
+      "agent": 0.14609749646092413,
+      "market_segment": 0.0013559229490694208,
+      "distribution_channel": 0.0005417948579791007,
+      "is_repeated_guest": 0.0001214112870619184,
+      "previous_cancellations": 5.218942238462081e-09,
+      "previous_bookings_not_canceled": 6.949809651714527e-05,
+      "customer_type": 0.0009177432843353308,
+      "adr": 0.01,
+      "required_car_parking_spaces": 0.0001431690106729284,
+      "total_of_special_requests": 0.0006280442085971423,
+      "adults": 0.00011766009382733366,
+      "children": 0.0001934876846135779,
+      "babies": 0.0
+    },
+    "performance_results": {
+      "roc_auc": {
+        "status": "degradation",
+        "expected": 0.855413761347191,
+        "current": 0.8383313996376915,
+        "direction": "maximize"
+      },
+      "f1": {
+        "status": "degradation",
+        "expected": 0.7028112449799196,
+        "current": 0.5862503636187336,
+        "direction": "maximize"
+      }
+    },
+    "model_version": "v1"
+  },
+  "staging_vs_production_comparison": {
+    "roc_auc": {
+      "production": 0.8219570106703875,
+      "staging": 0.8383313996376915,
+      "difference": 0.016374388967304032,
+      "status": "improvement",
+      "direction": "maximize"
+    },
+    "f1": {
+      "production": 0.6358677122400272,
+      "staging": 0.5862503636187336,
+      "difference": -0.04961734862129363,
+      "status": "degradation",
+      "direction": "maximize"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+2026-03-28 13:19:37,795 - ml.promotion.comparisons.production - WARNING - No current production model found. Skipping comparison against production model.
+2026-03-28 13:19:37,795 - ml.promotion.strategies.production - INFO - Model promoted and previous production model with promotion_id 'None' archived successfully.
+2026-03-28 13:19:37,800 - ml.promotion.persistence.registry - INFO - Model registry successfully updated at model_registry\models.yaml.
+2026-03-28 13:19:37,800 - ml.promotion.persister - INFO - Model promoted and previous production model with promotion_id None archived successfully.
+2026-03-28 13:19:37,804 - ml.promotion.persistence.registry - INFO - Registry diff successfully saved to model_registry\runs\2026-03-28T13-19-37_ee8c3e81\registry_diff.yaml.
+2026-03-28 13:19:40,500 - ml.io.persistence.save_metadata - INFO - Metadata successfully saved to model_registry/runs/2026-03-28T13-19-37_ee8c3e81/metadata.json.

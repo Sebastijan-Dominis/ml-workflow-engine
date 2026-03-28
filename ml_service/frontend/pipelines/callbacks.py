@@ -73,7 +73,7 @@ def register_callbacks(app):
             print("Payload sent:", payload)
             result = call_pipeline(pipeline["endpoint"], payload)
 
-            bg_color="#81ff81" if not result.get("error") else "#ff8181"
+            bg_color="#81ff81" if result.get("status") == "SUCCESS" else "#ff8181"
 
             return dbc.Textarea(
                 value=str(result),

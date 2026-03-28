@@ -1,0 +1,4 @@
+training:
+  snapshot_interval_seconds: 60
+
+verbose: 10

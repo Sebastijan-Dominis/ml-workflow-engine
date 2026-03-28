@@ -1,0 +1,4824 @@
+{
+    "overall_score": 0.9004647282801759,
+    "properties": [
+        {
+            "Property": "Column Shapes",
+            "Score": 0.9472818375127325
+        },
+        {
+            "Property": "Column Pair Trends",
+            "Score": 0.8536476190476191
+        }
+    ],
+    "details": {
+        "Column Shapes": [
+            {
+                "Column": "hotel",
+                "Metric": "TVComplement",
+                "Score": 0.9606389898651478
+            },
+            {
+                "Column": "is_canceled",
+                "Metric": "KSComplement",
+                "Score": 0.9751837172292487
+            },
+            {
+                "Column": "lead_time",
+                "Metric": "KSComplement",
+                "Score": 0.8898650473238965
+            },
+            {
+                "Column": "arrival_date_year",
+                "Metric": "TVComplement",
+                "Score": 0.896127221710361
+            },
+            {
+                "Column": "arrival_date_month",
+                "Metric": "TVComplement",
+                "Score": 0.911238210905436
+            },
+            {
+                "Column": "arrival_date_week_number",
+                "Metric": "KSComplement",
+                "Score": 0.9491872016081749
+            },
+            {
+                "Column": "arrival_date_day_of_month",
+                "Metric": "KSComplement",
+                "Score": 0.9220541251361085
+            },
+            {
+                "Column": "stays_in_weekend_nights",
+                "Metric": "KSComplement",
+                "Score": 0.9849693860457325
+            },
+            {
+                "Column": "stays_in_week_nights",
+                "Metric": "KSComplement",
+                "Score": 0.9569270960716978
+            },
+            {
+                "Column": "adults",
+                "Metric": "KSComplement",
+                "Score": 0.9950524080743781
+            },
+            {
+                "Column": "children",
+                "Metric": "KSComplement",
+                "Score": 0.9429490744618477
+            },
+            {
+                "Column": "babies",
+                "Metric": "KSComplement",
+                "Score": 0.9878807102772426
+            },
+            {
+                "Column": "meal",
+                "Metric": "TVComplement",
+                "Score": 0.9815557500628194
+            },
+            {
+                "Column": "country",
+                "Metric": "TVComplement",
+                "Score": 0.9207134852165173
+            },
+            {
+                "Column": "market_segment",
+                "Metric": "TVComplement",
+                "Score": 0.9383185107630455
+            },
+            {
+                "Column": "distribution_channel",
+                "Metric": "TVComplement",
+                "Score": 0.9003496021442331
+            },
+            {
+                "Column": "is_repeated_guest",
+                "Metric": "KSComplement",
+                "Score": 0.9990122204539743
+            },
+            {
+                "Column": "previous_cancellations",
+                "Metric": "KSComplement",
+                "Score": 0.9951094061479185
+            },
+            {
+                "Column": "previous_bookings_not_canceled",
+                "Metric": "KSComplement",
+                "Score": 0.9825948571907195
+            },
+            {
+                "Column": "reserved_room_type",
+                "Metric": "TVComplement",
+                "Score": 0.9194219197587739
+            },
+            {
+                "Column": "assigned_room_type",
+                "Metric": "TVComplement",
+                "Score": 0.8939258145573331
+            },
+            {
+                "Column": "booking_changes",
+                "Metric": "KSComplement",
+                "Score": 0.9560029650724516
+            },
+            {
+                "Column": "deposit_type",
+                "Metric": "TVComplement",
+                "Score": 0.9799205879889438
+            },
+            {
+                "Column": "agent",
+                "Metric": "KSComplement",
+                "Score": 0.8331812798391826
+            },
+            {
+                "Column": "company",
+                "Metric": "KSComplement",
+                "Score": 0.9769268196666387
+            },
+            {
+                "Column": "days_in_waiting_list",
+                "Metric": "KSComplement",
+                "Score": 0.9939649049334115
+            },
+            {
+                "Column": "customer_type",
+                "Metric": "TVComplement",
+                "Score": 0.9868636150431359
+            },
+            {
+                "Column": "adr",
+                "Metric": "KSComplement",
+                "Score": 0.9128701398777117
+            },
+            {
+                "Column": "required_car_parking_spaces",
+                "Metric": "TVComplement",
+                "Score": 0.9523157550883659
+            },
+            {
+                "Column": "total_of_special_requests",
+                "Metric": "TVComplement",
+                "Score": 0.9194226987184856
+            },
+            {
+                "Column": "reservation_status",
+                "Metric": "TVComplement",
+                "Score": 0.9511934416617807
+            }
+        ],
+        "Column Pair Trends": [
+            {
+                "Column 1": "hotel",
+                "Column 2": "is_canceled",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.14049454095537586,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "lead_time",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09711391730556053,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "arrival_date_year",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04192597319837532,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "arrival_date_month",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07404757960075414,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "arrival_date_week_number",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06872388187509584,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "arrival_date_day_of_month",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04004170416841129,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "stays_in_weekend_nights",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1957789495851601,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "stays_in_week_nights",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.16592000000000018,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.3275432270467534,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "adults",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.017721175345557706,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "children",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.042535604341034254,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "babies",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.050794096519550636,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.95492,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.3131346126461553,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.28316510771123166,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1399967408772531,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.18413811154235096,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "is_repeated_guest",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04748551540865877,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "previous_cancellations",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.048370438831689816,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.014709488403257831,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.9203399999999999,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.32667421373332556,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.89398,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.3850054709634723,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03933318260464659,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.17591359228483633,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.9204600000000001,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.6890699417390368,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.14098523176990324,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09061903003483952,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05331298997105624,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.2182954014061547,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.049248363651793914,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "hotel",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.13006663309850786,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "lead_time",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.29312335576071563,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "arrival_date_year",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.02144266694711689,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "arrival_date_month",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06965903671425486,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "arrival_date_week_number",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.008148065395053018,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "arrival_date_day_of_month",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.006130078862758635,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "stays_in_weekend_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.0017910780782611395,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "stays_in_week_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.024764629045872535,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "adults",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.06001721283956623,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "children",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0050362548364389775,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "babies",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.032491089208332144,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.050224343573430814,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.91908,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.35084754213684033,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.2659264287692863,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1722414882408194,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.08479341835708762,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.11013280822284309,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.05735772316594532,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0773018211012691,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.20636245685309249,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.1443809910613243,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.97136,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.4875863053346473,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.05171057799206465,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.011365955274709873,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.054185824117781875,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.13887696066653235,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.047556597880386034,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.20028989780441164,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.2689356713126703,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_canceled",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.941,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 1.0,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "arrival_date_year",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.10433513989855014,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "arrival_date_month",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.13258320909835777,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "arrival_date_week_number",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.1268708127454572,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "arrival_date_day_of_month",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0022675527028328487,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "stays_in_weekend_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0856711329488017,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "stays_in_week_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.16579936387933103,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "adults",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.11951869261297583,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "children",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.03761281605724172,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "babies",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.02091501627489023,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0893240436801625,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09301616083574767,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.17169843839551036,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.13302847162291642,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.12440990799896018,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.08604180192778833,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.0735481679437357,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05085145942638865,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06597865159806324,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0001488300727781281,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.2706094250551082,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.020967375190402333,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.01857074234425168,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.1700841842637794,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.12029306296234162,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.06307685251681934,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05798604602014807,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.058639519884696435,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "lead_time",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.20821493599549595,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "arrival_date_month",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.8588,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.42774890748872857,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "arrival_date_week_number",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.84924,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.42458868715605746,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "arrival_date_day_of_month",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.043252066338164086,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "stays_in_weekend_nights",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.031056549063757374,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "stays_in_week_nights",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.02581842345831795,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "adults",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.022180858591420913,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "children",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04428282445837346,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "babies",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.010660638073366629,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11053035135111337,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.16244233032195715,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.15874253345386521,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.026861927889272285,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "is_repeated_guest",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.013013300817079585,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "previous_cancellations",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04825693999910018,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.025839454896221845,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08228597967205752,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0546091683440229,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.019103324014563647,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.049444348299294956,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08683078985585628,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0687335651174511,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07121519335613075,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.21072430142910567,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.020935561372823024,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09169279457476223,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_year",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.022904996820791983,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "arrival_date_week_number",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.67572,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.7682681482618554,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "arrival_date_day_of_month",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06295156092964942,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "stays_in_weekend_nights",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0488945927319657,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "stays_in_week_nights",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05900032484354476,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "adults",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.019163690946885352,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "children",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07004563057511966,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "babies",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.021442599685452136,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08982924098604782,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07014738744109389,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09047099218835157,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07285869895248362,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "is_repeated_guest",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08102684417748886,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "previous_cancellations",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.035479981849508756,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.020927073435288768,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04716810538216124,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.029625094378723738,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.018995028097980628,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09797287891711548,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07427266328253054,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0617964054974069,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05964483587499147,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.10277069327922655,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.023956629492756818,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05336348594311018,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_month",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06439532742408678,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "arrival_date_day_of_month",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.06680925298848653,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "stays_in_weekend_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.018207652721387236,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "stays_in_week_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.01555829732775083,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "adults",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.025909057352615193,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "children",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.005515135623476004,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "babies",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.010395480054376132,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08440632119470518,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07134359166908238,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09045375045962316,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06905245019343906,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.03013075826957097,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.03550090912066411,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.02090355167404206,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.045871730430422086,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.02977234894333445,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.005507503474121411,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1092180030403165,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.019918734080677385,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.022807453740716268,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.022933026652449912,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.10999822706809634,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.07579064299569259,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.02398241702135789,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05395270643617062,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_week_number",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06449394556460139,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "stays_in_weekend_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.01635429954437216,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "stays_in_week_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.028173521388300714,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "adults",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.0015659790658871025,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "children",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.014552745781291383,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "babies",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.00023036467553966158,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05027433146153963,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.037134623073502245,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03404461666294747,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03302626017274098,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.006145020690603755,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.02701077611969893,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.0002997867639672904,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.017189635788368067,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.018400386452694338,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.010612855996026708,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.10395008939728512,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.00038832249047428,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.010174113510377655,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.022727535162519286,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.034826513874518135,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.03024519476196143,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.017078649057615206,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.019245366934054507,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "arrival_date_day_of_month",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.026676887327774623,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "stays_in_week_nights",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.49896881849552926,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "adults",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0918710201163195,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "children",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.045793885336910166,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "babies",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.018482810453094592,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06412780663882126,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07827651940330455,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07036215430133425,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.054644626950210086,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.08723937875528585,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.012774618878822107,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.04271523495025435,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05630643939524405,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05141329178178113,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.06328131589027694,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07307288758209457,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.15756843359262157,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.004639773082830478,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.054151113483591966,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08711462387064418,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0493419060259591,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.01212519557477632,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03787373197148793,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_weekend_nights",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.025937705571689038,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "adults",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.09297551260391348,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "children",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.044203353214821786,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "babies",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.020190974360631872,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08768761276116571,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0839503243509699,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05647098900335866,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03176114852988622,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.09724497214044527,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.013992430936177365,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.048742549533273026,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0711059274497305,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06418742105192028,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.09620944596835108,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08108194679335012,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.19209012222577648,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.032404283135946704,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.002019810099214119,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11131935803900352,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.06523748026533667,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03549604465392801,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.028696661538417267,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "stays_in_week_nights",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.023133601770780176,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "children",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.030440359497221733,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "babies",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.018145641876055812,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.006416404503025043,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.006974822703821312,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.013332160437076454,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.009837663496521206,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.1464261157396257,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.006738096139609663,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.10798317248274986,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.009012410670806855,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.009295129766586262,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.051672773531430814,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.003137293096969815,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.016803024605914263,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.023998167726300007,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.008283347421431192,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.12799303077538404,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.2306412155235104,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0013356608626203057,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.004309396103323791,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adults",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.011192656436429043,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "babies",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.024030234816430202,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04233289213591039,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05185485057112576,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.10032998516987696,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05123311765658197,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.03285774090349851,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.02472916567358156,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.021071663793861394,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.83694,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.35973626994386576,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.80494,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.3493751889381377,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0489516990312919,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07383223397748431,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.04909523787245605,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.001202541462328233,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.033271416235453974,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0600357282561233,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.3248530297425234,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.030180761397961112,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06492412115633757,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "children",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03734342400349612,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "meal",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.02122338443483992,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.02256871895728675,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.043102629784947145,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.046094717578221256,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "is_repeated_guest",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.008942634060322533,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.007500998451212863,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.0065504542793403476,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05443523684735854,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04761654758800682,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0834397814233211,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.023330668832798357,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.030927386099960194,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0014007926372924828,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.01062054267871859,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.012695630711032583,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.029185690256198396,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.028295011171383607,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07586144556788536,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "babies",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.027277796269311393,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "country",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1325690468725168,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.19311461840463567,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07979177737397553,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "is_repeated_guest",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.058967432909413184,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "previous_cancellations",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11324931482271375,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0161560801680113,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1052399533632917,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1190135165270856,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.016693055380806752,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09363219032024712,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.15910212349437086,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06444452749552615,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05590749134028832,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.13830567026673685,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.002424878303123831,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03097596939255691,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06286109030659168,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "meal",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.038000307100173956,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "market_segment",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.17568459482996127,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09386821586210907,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "is_repeated_guest",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1666968713017903,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "previous_cancellations",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.039004159753516586,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.025524513568079304,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07921831516942024,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06616588516489973,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.040543792100981385,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.879,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.30764086291550913,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.10222441099844241,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07853291575814127,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05737011715806799,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11097498420321122,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06253156188849628,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11729748756718399,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "country",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.24957454699907516,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "distribution_channel",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.89194,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.7925196358344397,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "is_repeated_guest",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.9332199999999999,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.3498732691180941,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "previous_cancellations",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05246148382052269,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09673270184391311,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.14033139187449425,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.12301891546530894,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.022811376487519203,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.90674,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.37168979504507266,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.20130445179409015,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.91276,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.3821088284304974,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07850249238307141,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.27848832448999294,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.00886848850377622,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09099230263176766,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.20976926633282297,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "market_segment",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.19196874828829144,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "is_repeated_guest",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.29732399471357857,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "previous_cancellations",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05492006588103652,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.10734022264121687,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1036385638481828,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09632176252130488,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.029481709546837813,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09132445094506929,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.15633978350507113,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.8858,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.3550032398987286,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.028892155309590575,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07794996529536892,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07850189190301486,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07069333797148102,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "distribution_channel",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.12932661985318022,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "previous_cancellations",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.08229323421675105,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.41805599493689644,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.039430597614206704,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.044879713280646556,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.012091787335539016,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0596718507966623,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.04126089945980069,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.11995985761238367,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.02223496533239238,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09395517784448228,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.13431444666341358,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0845336437100331,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.045620963095919634,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "is_repeated_guest",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08544765150279839,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "previous_bookings_not_canceled",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.15272811485691032,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.012627512963602826,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.013492575719553203,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.026992662591142965,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.044926144178259825,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.017066238862263484,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.029989036971465436,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.005928940884109725,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0111052335547105,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.06564563827526768,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.006765398859400657,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.01747185277764729,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_cancellations",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03403373137352473,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "reserved_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.009403302707906517,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.010274152732643298,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "booking_changes",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.011607528854568335,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.01585710581836362,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.03828495750702403,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.1664145891440092,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.0093969778543537,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.016431338932730775,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.07214419574746529,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.019777988114209628,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.040843943342229266,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "previous_bookings_not_canceled",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.031833188191432625,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "assigned_room_type",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.8613,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.7680705130966541,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.017394147727649384,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1533650301623109,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11677279180447869,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04324187201662481,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.027283824579583206,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.10925065602997994,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0027781067419095653,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08100556261185442,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07789397957067186,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "reserved_room_type",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.055920518258663815,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "booking_changes",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06286617841954899,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.19098023140618162,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11585881769458685,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0458431673170969,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.02803416696975019,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0925082904685214,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0034980668663448277,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09026108319534384,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06441655407765257,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "assigned_room_type",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.14911609552740182,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "deposit_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.030016311927896795,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "agent",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0403026144560913,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.04586159176414197,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.011633944594032117,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.04581962402557754,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.019617673785324502,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.027831397692780528,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03265618131753432,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "booking_changes",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.035892425951331734,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "deposit_type",
+                "Column 2": "agent",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09880237019466141,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "deposit_type",
+                "Column 2": "company",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1611229248258977,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "deposit_type",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.1275726535583185,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "deposit_type",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09697686018036439,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "deposit_type",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "deposit_type",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.06841674708287426,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "deposit_type",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.2213062062277568,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "deposit_type",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": 0.94314,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.3462059574426237,
+                "Meets Threshold?": true
+            },
+            {
+                "Column 1": "agent",
+                "Column 2": "company",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.00025582370090874973,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "agent",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.043240101148948155,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "agent",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11071600129334863,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "agent",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.010608024889465544,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "agent",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0874130800583924,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "agent",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.11177379494902036,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "agent",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05182069053402153,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "company",
+                "Column 2": "days_in_waiting_list",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.0021085796274209158,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "company",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09651405643321008,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "company",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": 0.0012185941094053345,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "company",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.03392728124629303,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "company",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.055351595442828985,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "company",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.07499399918056698,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "days_in_waiting_list",
+                "Column 2": "customer_type",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.08134775989944071,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "days_in_waiting_list",
+                "Column 2": "adr",
+                "Metric": "CorrelationSimilarity",
+                "Score": null,
+                "Real Correlation": -0.04075641204563464,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "days_in_waiting_list",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.02109039263867956,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "days_in_waiting_list",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.043948841492601316,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "days_in_waiting_list",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.05160788187428299,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "customer_type",
+                "Column 2": "adr",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0025975758006543583,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "customer_type",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0433058785275575,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "customer_type",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09907909154721004,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "customer_type",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.09435639291241511,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adr",
+                "Column 2": "required_car_parking_spaces",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.0011464126932817188,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adr",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": null,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "adr",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.005943288680657801,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "required_car_parking_spaces",
+                "Column 2": "total_of_special_requests",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.051554983788130254,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "required_car_parking_spaces",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.13747017271001308,
+                "Meets Threshold?": false
+            },
+            {
+                "Column 1": "total_of_special_requests",
+                "Column 2": "reservation_status",
+                "Metric": "ContingencySimilarity",
+                "Score": null,
+                "Real Correlation": null,
+                "Synthetic Correlation": null,
+                "Real Association": 0.19017097400989744,
+                "Meets Threshold?": false
+            }
+        ]
+    }
+}

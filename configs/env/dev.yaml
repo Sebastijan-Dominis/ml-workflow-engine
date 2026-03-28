@@ -1,0 +1,20 @@
+cv: 2
+
+training:
+  iterations: 1
+  hardware:
+    task_type: "cpu"
+  snapshot_interval_seconds: 300
+
+search:
+  broad:
+    iterations: 1
+    n_iter: 1
+  narrow:
+    iterations: 1
+    n_iter: 1
+  hardware:
+    task_type: "cpu"
+  error_score: "raise"
+
+verbose: 100

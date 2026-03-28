@@ -1,0 +1,11 @@
+feature,dtype,role
+hotel,category,input
+lead_time,int16,input
+arrival_date_year,int16,input
+arrival_date_month,category,input
+arrival_date_week_number,int8,input
+arrival_date_day_of_month,int8,input
+stays_in_weekend_nights,int8,input
+stays_in_week_nights,int8,input
+meal,category,input
+deposit_type,category,input

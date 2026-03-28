@@ -1,0 +1,14 @@
+2026-03-28 13:39:09,484 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion - INFO - Starting data ingestion step.
+2026-03-28 13:39:09,524 - ml.feature_freezing.utils.data_loader - INFO - Completed loading 1 datasets. Final merged dataframe shape: (19803, 29).
+2026-03-28 13:39:09,524 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.ingestion - INFO - Completed data ingestion step.
+2026-03-28 13:39:09,524 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing - INFO - Starting data preprocessing step.
+2026-03-28 13:39:09,525 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.preprocessing - INFO - Completed data preprocessing step.
+2026-03-28 13:39:09,525 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence - INFO - Starting data persistence step.
+2026-03-28 13:39:09,534 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Tabular features saved to feature_store\booking_context_features\v3\2026-03-28T13-39-09_e84f3e1f
+2026-03-28 13:39:09,534 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Persisted feature set snapshot to feature_store\booking_context_features\v3\2026-03-28T13-39-09_e84f3e1f\features.parquet using format parquet
+2026-03-28 13:39:09,535 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Input schema already exists at feature_store\booking_context_features\v3\input_schema.csv, skipping save.
+2026-03-28 13:39:09,535 - ml.feature_freezing.freeze_strategies.tabular.persistence - INFO - Derived schema already exists at feature_store\booking_context_features\v3\derived_schema.csv, skipping save.
+2026-03-28 13:39:09,535 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.persistence - INFO - Completed data persistence step.
+2026-03-28 13:39:09,535 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata - INFO - Starting metadata step.
+2026-03-28 13:39:09,664 - ml.feature_freezing.freeze_strategies.tabular.pipeline.steps.metadata - INFO - Completed metadata step.
+2026-03-28 13:39:09,666 - ml.io.persistence.save_metadata - INFO - Metadata successfully saved to feature_store/booking_context_features/v3/2026-03-28T13-39-09_e84f3e1f/metadata.json.

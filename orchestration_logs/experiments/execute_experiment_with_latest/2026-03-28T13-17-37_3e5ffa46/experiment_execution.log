@@ -1,0 +1,39 @@
+2026-03-28 13:17:37,212 - __main__ - INFO - Starting experiment execution with run id: 2026-03-28T13-17-37_3e5ffa46. Arguments: Namespace(problem='no_show', segment='city_hotel', version='v1', env='test', strict=True, logging_level='INFO', owner='Sebastijan', clean_up_failure_management=True, experiment_id=None, overwrite_existing=False, top_k=None)
+2026-03-28 13:17:37,212 - __main__ - INFO - Running hyperparameter search with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.search.search --problem no_show --segment city_hotel --version v1 --env test --strict True --logging-level INFO --owner Sebastijan --clean-up-failure-management True --overwrite-existing False
+2026-03-28 13:17:52,948 - __main__ - INFO - Running training with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.train --problem no_show --segment city_hotel --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:18:03,366 - __main__ - INFO - Training output:
+Using experiment directory: experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e
+
+0:	learn: 0.6687395	test: 0.6667077	best: 0.6667077 (0)	total: 179ms	remaining: 1.61s
+9:	learn: 0.5663199	test: 0.5524767	best: 0.5524767 (9)	total: 405ms	remaining: 0us
+
+bestTest = 0.5524767309
+bestIteration = 9
+
+Model successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\training\2026-03-28T13-17-54_34e203fa\model.joblib.
+Pipeline successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\training\2026-03-28T13-17-54_34e203fa\pipeline.joblib.
+Metadata successfully saved to experiments/no_show/city_hotel/v1/2026-03-28T13-17-38_d12eab5e/training/2026-03-28T13-17-54_34e203fa/metadata.json.
+Metrics successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\training\2026-03-28T13-17-54_34e203fa\metrics.json.
+Runtime snapshot successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\training\2026-03-28T13-17-54_34e203fa\runtime.json
+
+2026-03-28 13:18:03,366 - __main__ - INFO - Running evaluation with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.evaluate --problem no_show --segment city_hotel --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:18:13,081 - __main__ - INFO - Evaluation output:
+Using experiment directory: experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e
+Using training directory: experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\training\2026-03-28T13-17-54_34e203fa
+Metrics successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\evaluation\2026-03-28T13-18-04_eb2d5e11\metrics.json.
+Saved predictions for the train split to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\evaluation\2026-03-28T13-18-04_eb2d5e11\predictions_train.parquet
+Saved predictions for the validation split to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\evaluation\2026-03-28T13-18-04_eb2d5e11\predictions_val.parquet
+Saved predictions for the test split to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\evaluation\2026-03-28T13-18-04_eb2d5e11\predictions_test.parquet
+Metadata successfully saved to experiments/no_show/city_hotel/v1/2026-03-28T13-17-38_d12eab5e/evaluation/2026-03-28T13-18-04_eb2d5e11/metadata.json.
+Runtime snapshot successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\evaluation\2026-03-28T13-18-04_eb2d5e11\runtime.json
+
+2026-03-28 13:18:13,081 - __main__ - INFO - Running explainability with command: C:\Users\Sebastijan\anaconda3\envs\hotel_management\python.exe -m pipelines.runners.explain --problem no_show --segment city_hotel --version v1 --env test --strict True --logging-level INFO
+2026-03-28 13:18:22,192 - __main__ - INFO - Explainability output:
+Using experiment directory: experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e
+Using training directory: experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\training\2026-03-28T13-17-54_34e203fa
+Feature importances successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\explainability\2026-03-28T13-18-14_84787cd6\top_k_feature_importances.csv.
+SHAP importances successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\explainability\2026-03-28T13-18-14_84787cd6\top_k_shap_importances.csv.
+Metadata successfully saved to experiments/no_show/city_hotel/v1/2026-03-28T13-17-38_d12eab5e/explainability/2026-03-28T13-18-14_84787cd6/metadata.json.
+Runtime snapshot successfully saved to experiments\no_show\city_hotel\v1\2026-03-28T13-17-38_d12eab5e\explainability\2026-03-28T13-18-14_84787cd6\runtime.json
+
+2026-03-28 13:18:22,192 - pipelines.orchestration.common.orchestration_logging - INFO - Experiment execution completed successfully for problem=no_show, segment=city_hotel, version=v1 at 2026-03-28T13-18-22 after 44.98 seconds.

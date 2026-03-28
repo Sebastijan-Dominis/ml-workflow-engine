@@ -1,0 +1,86 @@
+{
+  "run_identity": {
+    "train_run_id": "2026-03-28T13-16-43_6f8d3a3f",
+    "snapshot_id": "2026-03-28T13-16-32_45adb6fb",
+    "status": "success",
+    "stage": "training"
+  },
+  "lineage": {
+    "feature_lineage": [
+      {
+        "name": "booking_context_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-28T13-12-37_79276f03",
+        "file_hash": "7c9825b5a2c79ec45ac8d4a450d6914ee225a8d5fa89abfeef0423007e650f9c",
+        "in_memory_hash": "05b1f76a3bc1b2a4555ac39fb23e7222",
+        "feature_schema_hash": "48241647ac144b463f74ed546c0d2dde55f91f7593b971b40b2b550c7465c21e",
+        "operator_hash": "fec3f1ee5f443bac3e9f688f1ddddf5a",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "customer_history_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-28T13-12-52_8e2e40cf",
+        "file_hash": "6e481642cc084e05d35df04f6f9e76786a339752830de81146c5bded959c0ae3",
+        "in_memory_hash": "4c780add4431fffdaa14e0aa7d931eaa",
+        "feature_schema_hash": "21afc96800d985c86b076b4a9774b17e36b795cd98766bb2ebbec6f6571645a5",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "pricing_party_features",
+        "version": "v3",
+        "snapshot_id": "2026-03-28T13-13-02_a269ad35",
+        "file_hash": "3cc0d08668842aa34a11bb057cb84d1ee41689c95715fb221c50e9a8dc3fe233",
+        "in_memory_hash": "6556edf5d4a820d9673280d57ba2978b",
+        "feature_schema_hash": "e05f1403f776dddd08b55e3ca0a931de87bcffbfefcebac4145b177a2f8f6e21",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "channel_and_agent_features",
+        "version": "v1",
+        "snapshot_id": "2026-03-28T13-13-08_c6b7c5c4",
+        "file_hash": "920bc43b1d897da522512f5371cdccac7b3abe25206046e4dde7b1c79b9a0292",
+        "in_memory_hash": "034fbd2aa9b664e4ae34734ad3f5ac40",
+        "feature_schema_hash": "94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      },
+      {
+        "name": "room_allocation_features",
+        "version": "v2",
+        "snapshot_id": "2026-03-28T13-13-17_dc0ddb69",
+        "file_hash": "d09a5b06f8bc52b692d57081e0cdc0a4a734d9883ac9b7d0724d2e148cce6f1e",
+        "in_memory_hash": "cc20f026c54cd687db8b62027af51950",
+        "feature_schema_hash": "c78c25c2a15b3c5954099579a6833444e511305955e39d31c0d98da93936f2cf",
+        "operator_hash": "none",
+        "feature_type": "tabular",
+        "file_name": "features.parquet",
+        "data_format": "parquet"
+      }
+    ],
+    "target_column": "adr",
+    "problem": "adr",
+    "segment": "city_hotel_online_ta",
+    "model_version": "v1"
+  },
+  "config_fingerprint": {
+    "config_hash": "132da638c08d4d7b5230d0b8110f10064da984012d3d0467c3e899414ccd78c0",
+    "pipeline_cfg_hash": "68c08723597edbb2967dba1b4e064f1f56c82049392db32ce74f109f98729c89"
+  },
+  "artifacts": {
+    "model_hash": "354ea068f44fb2f2419b315bbc6108222e8909b96d8ead4d245de6545efd923d",
+    "model_path": "experiments/adr/city_hotel_online_ta/v1/2026-03-28T13-16-32_45adb6fb/training/2026-03-28T13-16-43_6f8d3a3f/model.joblib",
+    "pipeline_path": "experiments/adr/city_hotel_online_ta/v1/2026-03-28T13-16-32_45adb6fb/training/2026-03-28T13-16-43_6f8d3a3f/pipeline.joblib",
+    "pipeline_hash": "32611640fcf947310ce9ffb32ed7966a2227d4d5504455192c2c696e694e7247"
+  }
+}

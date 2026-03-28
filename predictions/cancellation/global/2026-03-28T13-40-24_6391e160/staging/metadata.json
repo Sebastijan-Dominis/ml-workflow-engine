@@ -1,0 +1,75 @@
+{
+  "problem_type": "cancellation",
+  "segment": "global",
+  "model_version": "v1",
+  "model_stage": "staging",
+  "run_id": "2026-03-28T13-40-24_6391e160",
+  "timestamp": "2026-03-28T13:40:24.483202",
+  "columns": [
+    "entity_id",
+    "model_version",
+    "proba_0",
+    "model_stage",
+    "prediction_id",
+    "proba_1",
+    "schema_version",
+    "timestamp",
+    "run_id",
+    "prediction",
+    "input_hash"
+  ],
+  "snapshot_bindings_id": "2026-03-28T13-39-58_a0873bfa",
+  "feature_lineage": [
+    {
+      "name": "booking_context_features",
+      "version": "v1",
+      "snapshot_id": "2026-03-28T13-24-37_b5639ccc",
+      "file_hash": "21fe06c2f262a588a0ba5d90d100256436e759d225d366b46f435e5f90b44d0e",
+      "in_memory_hash": "0b14804194fadbdcca8e4eb878c17821",
+      "feature_schema_hash": "fd9b83dcc7039767c54a0e99b7f09f5f58dff7fbe7ca99904475a5df4260edc2",
+      "operator_hash": "2074c53b8d1e6124b67ba8e625315f86",
+      "feature_type": "tabular",
+      "file_name": "features.parquet",
+      "data_format": "parquet"
+    },
+    {
+      "name": "customer_history_features",
+      "version": "v1",
+      "snapshot_id": "2026-03-28T13-24-51_b8f88868",
+      "file_hash": "3ce277e673bf3d8dcdfce64e3d78489e4d6a178155992aa190916a20de40f086",
+      "in_memory_hash": "f6b709e9e9445e884d31b5ac517d93cd",
+      "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+      "operator_hash": "none",
+      "feature_type": "tabular",
+      "file_name": "features.parquet",
+      "data_format": "parquet"
+    },
+    {
+      "name": "pricing_party_features",
+      "version": "v1",
+      "snapshot_id": "2026-03-28T13-24-58_292d410d",
+      "file_hash": "decba90625866a5381e4211036f47691f38fc5ab73c5cf69b6a784950fa0531f",
+      "in_memory_hash": "a19b4521846b2ca4def6a8d98c530f7d",
+      "feature_schema_hash": "ca150cb76158bd790fe5ca3cc3473d2fcfc2ce68a5df7a591ade93ccfd33dd70",
+      "operator_hash": "fcd1d9ce4bbf0654b13d21aca2ba1b32",
+      "feature_type": "tabular",
+      "file_name": "features.parquet",
+      "data_format": "parquet"
+    },
+    {
+      "name": "channel_and_agent_features",
+      "version": "v1",
+      "snapshot_id": "2026-03-28T13-25-08_0bad298e",
+      "file_hash": "68e969565fa391e975580cb7b5ea80b3cc2d1127231b9b987c871e6172940eb9",
+      "in_memory_hash": "f31e1e0a5c5e8178933bd5296673b5a2",
+      "feature_schema_hash": "94337460958bc6bba524ba8ed6c1766f7bb4c1d17affcb674b21f63f5c7f9109",
+      "operator_hash": "none",
+      "feature_type": "tabular",
+      "file_name": "features.parquet",
+      "data_format": "parquet"
+    }
+  ],
+  "artifact_type": "pipeline",
+  "artifact_hash": "62d165d0c75181287c7d1a86aa3000b48853d20411fd1eaa024dd97a26cccec2",
+  "inference_latency_seconds": 0.1518629000056535
+}

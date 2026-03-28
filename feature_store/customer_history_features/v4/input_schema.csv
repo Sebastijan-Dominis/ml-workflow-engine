@@ -1,0 +1,5 @@
+feature,dtype,role
+is_repeated_guest,int8,input
+previous_cancellations,int8,input
+previous_bookings_not_canceled,int8,input
+customer_type,category,input

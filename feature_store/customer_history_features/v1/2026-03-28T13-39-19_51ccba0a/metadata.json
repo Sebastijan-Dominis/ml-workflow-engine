@@ -1,0 +1,65 @@
+{
+  "created_by": "freeze.py",
+  "created_at": "2026-03-28T13-39-19",
+  "owner": "Sebastijan",
+  "feature_type": "tabular",
+  "snapshot_path": "feature_store/customer_history_features/v1/2026-03-28T13-39-19_51ccba0a",
+  "snapshot_id": "2026-03-28T13-39-19_51ccba0a",
+  "schema_path": "feature_store/customer_history_features/v1",
+  "entity_key": "row_id",
+  "data_lineage": [
+    {
+      "ref": "data/processed",
+      "name": "hotel_bookings",
+      "version": "v1",
+      "format": "parquet",
+      "path_suffix": "data.{format}",
+      "merge_key": [
+        "row_id"
+      ],
+      "merge_how": "inner",
+      "merge_validate": "m:m",
+      "snapshot_id": "2026-03-28T13-38-31_8e9e9ec9",
+      "path": "data/processed/hotel_bookings/v1/2026-03-28T13-38-31_8e9e9ec9/data.parquet",
+      "loader_validation_hash": "553a747a6c888167775e1a19ed35ada0b61fe9d1194d3644bc9603d343eec010",
+      "data_hash": "a071c6a0beb84870a17ad6ac7b4a6f062992f115bd64fe48149584db7dffbb92",
+      "row_count": 19803,
+      "column_count": 29
+    }
+  ],
+  "in_memory_hash": "4a2aa5decf2f32871950e9cc4627d1ab",
+  "file_hash": "c6bf9b10c439bcfd643b50c95fd337e026c7e57d5b774e78769be9754de4f2ae",
+  "operator_hash": "none",
+  "config_hash": "6ce7fe932b8a3da1097f84031c50d957",
+  "feature_schema_hash": "6a9297bc87338f398ab5076f3c35ae644d8ed43348920feeb2ca1597fd2725ab",
+  "runtime": {
+    "git_commit": "ef78dcfcdd378622afd94c0d7c066777e1c90138",
+    "runtime_info": {
+      "os": "Windows",
+      "os_release": "10",
+      "architecture": "AMD64",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "ram_total_gb": 34.19,
+      "platform_string": "Windows-10-10.0.26200-SP0",
+      "hostname": "DESKTOP-U1KTCME",
+      "python_version": "3.11.14",
+      "python_impl": "CPython",
+      "python_build": [
+        "main",
+        "Oct 21 2025 18:30:03"
+      ]
+    },
+    "deps": {
+      "numpy": "1.26.4",
+      "pandas": "2.3.3",
+      "scikit_learn": "1.7.2",
+      "pyarrow": "22.0.0",
+      "pydantic": "2.12.5",
+      "PyYAML": "6.0.3"
+    },
+    "python_executable": "C:\\Users\\Sebastijan\\anaconda3\\envs\\hotel_management\\python.exe"
+  },
+  "row_count": 19803,
+  "column_count": 5,
+  "duration_seconds": 0.211
+}

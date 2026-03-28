@@ -1,0 +1,6 @@
+feature,dtype,role
+adr,float32,input
+total_of_special_requests,int8,input
+adults,int16,input
+children,float64,input
+babies,int8,input

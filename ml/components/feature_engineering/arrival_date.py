@@ -30,11 +30,13 @@ class ArrivalDate(FeatureOperator, SklearnFeatureMixin):
 
         month_series = X["arrival_date_month"].map(month_map)
         X = X.copy()
-        X["arrival_date"] = pd.to_datetime(
+        dt = pd.to_datetime(
             {
                 "year": X["arrival_date_year"],
                 "month": month_series,
                 "day": X["arrival_date_day_of_month"],
-            }
+            },
+            errors="coerce"
         )
+        X["arrival_date"] = dt.ffill().bfill()
         return X

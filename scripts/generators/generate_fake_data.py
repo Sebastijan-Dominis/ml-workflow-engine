@@ -228,7 +228,13 @@ def _handle_temporal_flow(df_real: pd.DataFrame, df_synth: pd.DataFrame) -> pd.D
                 "day": pd.to_numeric(df["arrival_date_day_of_month"], errors="coerce"),
             })
 
-            return pd.to_datetime(date_df, errors="coerce")
+            dt = pd.to_datetime(date_df, errors="coerce")
+
+            n_invalid = dt.isna().sum()
+            if n_invalid > 0:
+                logger.warning(f"{n_invalid} invalid dates in synthetic data")
+
+            return dt.ffill().bfill()
 
         real_dates = build_datetime(df_real)
         synth_dates = build_datetime(df_synth)

@@ -96,6 +96,18 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#InferenceError">InferenceError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#MonitoringError">MonitoringError</a>
+                            <ul class="memberlist">
+                </ul>
+
+            </li>
     </ul>
 
 
@@ -163,6 +175,12 @@ enabling consistent error handling, logging, and CLI exit-code mapping.</p>
 </span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PersistenceError</span><span class="p">(</span><span class="n">RuntimeMLError</span><span class="p">):</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Experiment or artifact saving failure.&quot;&quot;&quot;</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InferenceError</span><span class="p">(</span><span class="n">RuntimeMLError</span><span class="p">):</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Inference or prediction failure.&quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MonitoringError</span><span class="p">(</span><span class="n">RuntimeMLError</span><span class="p">):</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Monitoring or drift detection failure.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -400,6 +418,48 @@ an unrelated or incompatible experiment context.</p>
 
 
             <div class="docstring"><p>Experiment or artifact saving failure.</p>
+</div>
+
+
+                </section>
+                <section id="InferenceError">
+                            <input id="InferenceError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">InferenceError</span><wbr>(<span class="base"><a href="#RuntimeMLError">RuntimeMLError</a></span>):
+
+                <label class="view-source-button" for="InferenceError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#InferenceError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="InferenceError-44"><a href="#InferenceError-44"><span class="linenos">44</span></a><span class="k">class</span><span class="w"> </span><span class="nc">InferenceError</span><span class="p">(</span><span class="n">RuntimeMLError</span><span class="p">):</span>
+</span><span id="InferenceError-45"><a href="#InferenceError-45"><span class="linenos">45</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Inference or prediction failure.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Inference or prediction failure.</p>
+</div>
+
+
+                </section>
+                <section id="MonitoringError">
+                            <input id="MonitoringError-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">MonitoringError</span><wbr>(<span class="base"><a href="#RuntimeMLError">RuntimeMLError</a></span>):
+
+                <label class="view-source-button" for="MonitoringError-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#MonitoringError"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MonitoringError-47"><a href="#MonitoringError-47"><span class="linenos">47</span></a><span class="k">class</span><span class="w"> </span><span class="nc">MonitoringError</span><span class="p">(</span><span class="n">RuntimeMLError</span><span class="p">):</span>
+</span><span id="MonitoringError-48"><a href="#MonitoringError-48"><span class="linenos">48</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Monitoring or drift detection failure.&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Monitoring or drift detection failure.</p>
 </div>
 
 

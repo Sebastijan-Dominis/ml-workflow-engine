@@ -12,7 +12,7 @@ This document provides a high-level overview of the system architecture, includi
 
 ### Artifact Lineage (high-level overview)
 
-![Artifact Lineage Diagram](/assets/img/docs/architecture/artifact_lineage_v2.png)
+![Artifact Lineage Diagram](/assets/img/docs/architecture/artifact_lineage_v3.png)
 
 ### Orchestration (high-level overview)
 
@@ -42,19 +42,19 @@ This document provides a high-level overview of the system architecture, includi
 
 #### Feature Set Freezing
 
-![freeze.py Architecture Diagram](/assets/img/docs/architecture/freeze_v2.png)
+![freeze.py Architecture Diagram](/assets/img/docs/architecture/freeze_v3.png)
 
 ### Search
 
 #### Hyperparameter Search
 
-![search.py Architecture Diagram](/assets/img/docs/architecture/search_v2.png)
+![search.py Architecture Diagram](/assets/img/docs/architecture/search_v3.png)
 
 ### Runners
 
 #### Training
 
-![train.py Architecture Diagram](/assets/img/docs/architecture/train_v2.png)
+![train.py Architecture Diagram](/assets/img/docs/architecture/train_v3.png)
 
 #### Evaluation
 
@@ -69,6 +69,16 @@ This document provides a high-level overview of the system architecture, includi
 #### Model Staging, Promotion and Archiving
 
 ![promote.py Architecture Diagram](/assets/img/docs/architecture/promote_v2.png)
+
+### Post-promotion
+
+#### Inference
+
+![infer.py Architecture Diagram](/assets/img/docs/architecture/infer_v1.png)
+
+#### Monitoring
+
+![monitor.py Architecture Diagram](/assets/img/docs/architecture/monitor_v1.png)
 
 ## Design Decisions
 - See [decisions.md](decisions.md) for rationale behind architectural choices.

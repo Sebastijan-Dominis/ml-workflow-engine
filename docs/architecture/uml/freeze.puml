@@ -8,6 +8,7 @@ skinparam linetype ortho
 skinparam packageStyle rectangle
 
 package "Configs"<<Configs>> {
+    artifact snapshot_bindings_registry as "Snapshot Bindings Registry\n(configs/snapshot_bindings_registry/)" <<env>>
     artifact feature_registry as "Feature Registry\n(configs/feature_registry/)" <<config>>
 }
 
@@ -24,6 +25,7 @@ package "Produced Artifacts"<<ProducedArtifacts>> {
     artifact derived_schema as "Derived Schema\n(feature_store/...)" <<artifact_optional>>
 }
 
+script ..[#AAAAAA80]> snapshot_bindings_registry
 script ..> feature_registry
 
 script ..> processed_data
@@ -32,6 +34,12 @@ script --> feature_set_metadata
 script --> feature_set
 script --[#AAAAAA80]> input_schema
 script --[#AAAAAA80]> derived_schema
+
+note right of snapshot_bindings_registry
+Determines which dataset snapshots 
+are used (defaults to latest if key 
+is not provided via a cli argument).
+end note
 
 note right of input_schema
 Created at the version level
