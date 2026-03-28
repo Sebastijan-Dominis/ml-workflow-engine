@@ -84,13 +84,13 @@ See the [usage guide](docs/usage.md) for instructions on running the workflow.
 
 #### Directory Structure Viewing in Browser
 
-["Gif portrayal of viewing directory structure with ml_service"](assets/gifs/ml_service_dir_viewer_v1.gif)
+!["Gif portrayal of viewing directory structure with ml_service"](assets/gifs/ml_service_dir_viewer_v1.gif)
 
 ## Architecture
 
 ### Artifact Lineage (high-level overview)
 
-![Artifact Lineage Diagram](docs/architecture/img/artifact_lineage_v3.png)
+![Artifact Lineage Diagram](assets/img/docs/architecture/artifact_lineage_v3.png)
 
 ### Details
 
