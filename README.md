@@ -10,7 +10,11 @@
     - originally from https://www.kaggle.com/datasets/mojtaba142/hotel-booking 
 - Current architecture expanded to support many datasets.
 - The ml workflow covers everything from the registration of a raw data snapshot to model monitoring.
-> Note: the repo was previously named `hotel_management`, so you will see that name around the repo; renamed for clarity on what the project does
+> Note: The repo was previously named `hotel_management`, so you will see that name around the repo; renamed for clarity 
+> on what the project does.
+
+> Another note: A few artifacts are intentionally included, along with their respective logs.
+> This enables quick inspection of expected outputs of each pipeline, without having to run anything.
 
 ## Features
 
