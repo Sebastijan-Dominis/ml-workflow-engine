@@ -66,13 +66,13 @@ See the [usage guide](docs/usage.md) for instructions on running the workflow.
 
 ### Usage examples (via `ml_service`):
 
-#### Interim Data Configs Writing, Validation, Saving, and Viewing
+#### Configs Writing, Validation, Saving, and Viewing - Interim Data Configs Example
 
 !["Gif portrayal of writing interim data configs with ml_service"](assets/gifs/ml_service_data_configs_v1.gif)
 
 **Similar functionality exists for other supported configs**
 
-#### Pipeline Running and Artifact Viewing
+#### Pipeline Running and Artifact Viewing - freeze.py Example
 
 !["Gif portrayal of running a pipeline with ml_service"](assets/gifs/ml_service_pipelines_v3.gif)
 
