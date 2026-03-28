@@ -86,10 +86,6 @@ See the [usage guide](docs/usage.md) for instructions on running the workflow.
 
 !["Gif portrayal of reading the docs with ml_service"](assets/gifs/ml_service_docs_v1.gif)
 
-#### Directory Structure Viewing in Browser
-
-!["Gif portrayal of viewing directory structure with ml_service"](assets/gifs/ml_service_dir_viewer_v1.gif)
-
 ## Architecture
 
 ### Artifact Lineage (high-level overview)
