@@ -1,4 +1,64 @@
+import importlib
+
 import pytest
+from fastapi import Request
+
+
+class DummyModel:
+    def __init__(self, payload):
+        self._payload = payload
+
+    def model_dump(self, mode=None):
+        return {"dumped": True, "payload": self._payload}
+
+
+def test_validate_yaml_missing_fields_returns_invalid():
+    mod = importlib.import_module("ml_service.backend.routers.features")
+    orig = getattr(mod.validate_yaml, "__wrapped__", mod.validate_yaml)
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+
+    res = orig({}, req)
+    assert res["valid"] is False
+
+
+def test_validate_yaml_success_and_exists(monkeypatch, tmp_path):
+    mod = importlib.import_module("ml_service.backend.routers.features")
+    orig = getattr(mod.validate_yaml, "__wrapped__", mod.validate_yaml)
+
+    # stub dependencies
+    monkeypatch.setattr(mod, "load_yaml_and_add_lineage", lambda txt: {"k": "v"})
+    monkeypatch.setattr(mod, "validate_feature_config", lambda data: DummyModel(data))
+    monkeypatch.setattr(mod, "get_registry_path", lambda p: tmp_path, raising=False)
+    monkeypatch.setattr(mod, "registry_entry_exists", lambda name, version, p: True)
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    payload = {"name": "n", "version": "v", "config": "yaml: 1"}
+    res = orig(payload, req)
+
+    assert res["valid"] is True
+    assert res["exists"] is True
+    assert "normalized" in res
+
+
+def test_write_yaml_exists_and_write(monkeypatch, tmp_path):
+    mod = importlib.import_module("ml_service.backend.routers.features")
+    orig = getattr(mod.write_yaml, "__wrapped__", mod.write_yaml)
+
+    monkeypatch.setattr(mod, "load_yaml_and_add_lineage", lambda txt: {"k": "v"})
+    monkeypatch.setattr(mod, "validate_feature_config", lambda data: DummyModel(data))
+    monkeypatch.setattr(mod, "get_registry_path", lambda p: tmp_path, raising=False)
+
+    # case: exists -> short-circuit
+    monkeypatch.setattr(mod, "registry_entry_exists", lambda n, v, p: True)
+    payload = {"name": "n", "version": "v", "config": "yaml: 1"}
+    res = orig(payload, Request({"type": "http", "method": "POST", "path": "/", "headers": []}))
+    assert res["status"] == "exists"
+
+    # case: save proceeds
+    monkeypatch.setattr(mod, "registry_entry_exists", lambda n, v, p: False)
+    monkeypatch.setattr(mod, "save_feature_registry", lambda name, version, validated_config, registry_path: {"status": "saved"})
+    res2 = orig(payload, Request({"type": "http", "method": "POST", "path": "/", "headers": []}))
+    assert res2 == {"status": "saved"}
 
 
 def test_validate_yaml_success(monkeypatch):
