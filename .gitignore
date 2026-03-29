@@ -231,3 +231,6 @@ __marimo__/
 /monitoring/
 /orchestration_logs/
 /scripts_logs/
+
+# tools
+/tools/
