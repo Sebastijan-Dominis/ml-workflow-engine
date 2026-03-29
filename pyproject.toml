@@ -39,7 +39,7 @@ exclude = "(^notebooks/|^feature_store/|^data/|^experiments/)"
 
 [tool.coverage.run]
 branch = true
-source = ["ml", "pipelines", "scripts"]
+source = ["ml", "pipelines", "scripts", "ml_service"]
 omit = [
   "tests/*",
   "notebooks/*",
