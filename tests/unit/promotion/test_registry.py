@@ -1,6 +1,7 @@
 """Unit tests for promotion registry update and diff persistence helpers."""
 
 from pathlib import Path
+from typing import Any
 
 import pytest
 import yaml
@@ -25,7 +26,7 @@ def test_update_registry_and_archive_production_archives_previous_and_updates_re
             }
         }
     }
-    archive_registry = {"cancellation": {"city_hotel": {}}}
+    archive_registry: dict[str, Any] = {"cancellation": {"city_hotel": {}}}
     def _make_entry(promotion_id: str, metrics: dict | None = None) -> dict:
         return {
             "experiment_id": "exp-1",

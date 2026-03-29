@@ -1,5 +1,8 @@
 """Unit tests for stage-wise dataframe memory delta computation."""
 
+from pathlib import Path
+from typing import Any
+
 import pytest
 from ml.data.utils.memory.compute_memory_change import compute_memory_change
 from ml.exceptions import DataError
@@ -9,7 +12,7 @@ pytestmark = pytest.mark.unit
 
 def test_compute_memory_change_for_interim_stage_uses_root_memory_usage() -> None:
     """Read baseline memory from interim metadata root and compute deltas."""
-    metadata = {"memory_usage_mb": 100.0}
+    metadata: dict[str, Any] = {"memory_usage_mb": 100.0}
 
     result = compute_memory_change(
         target_metadata=metadata,
@@ -27,7 +30,7 @@ def test_compute_memory_change_for_interim_stage_uses_root_memory_usage() -> Non
 
 def test_compute_memory_change_for_processed_stage_uses_nested_memory_usage() -> None:
     """Read baseline memory from processed metadata nested memory block."""
-    metadata = {"memory": {"new_memory_mb": 50.0}}
+    metadata: dict[str, Any] = {"memory": {"new_memory_mb": 50.0}}
 
     result = compute_memory_change(
         target_metadata=metadata,
@@ -45,7 +48,7 @@ def test_compute_memory_change_for_processed_stage_uses_nested_memory_usage() ->
 
 def test_compute_memory_change_returns_zero_percentage_when_old_memory_is_zero() -> None:
     """Avoid division-by-zero and emit zero percentage when baseline is zero."""
-    metadata = {"memory_usage_mb": 0.0}
+    metadata: dict[str, Any] = {"memory_usage_mb": 0.0}
 
     result = compute_memory_change(
         target_metadata=metadata,
@@ -58,7 +61,7 @@ def test_compute_memory_change_returns_zero_percentage_when_old_memory_is_zero()
 
 def test_compute_memory_change_raises_data_error_when_required_keys_missing() -> None:
     """Raise DataError when stage-specific baseline metadata key is absent."""
-    metadata = {"memory": {}}
+    metadata: dict[str, Any] = {"memory": {}}
 
     with pytest.raises(DataError, match="missing the key required"):
         compute_memory_change(

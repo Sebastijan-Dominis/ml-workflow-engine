@@ -44,10 +44,10 @@ def _import_searcher_module_with_stubs() -> types.ModuleType:
             self.strict = strict
             self.failure_management_dir = failure_management_dir
             self.snapshot_binding_key = snapshot_binding_key
-            self.feature_lineage = []
-            self.pipeline_hash = ""
-            self.scoring = ""
-            self.splits_info = {}
+            self.feature_lineage: list[Any] = []
+            self.pipeline_hash: str = ""
+            self.scoring: str = ""
+            self.splits_info: dict[str, Any] = {}
 
         @property
         def require_feature_lineage(self) -> list[Any]:

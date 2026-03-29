@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 import pytest
@@ -63,33 +63,28 @@ def test_persist_explainability_run_minimal_path_without_optional_tables(
     csv_calls: list[tuple[Path, str]] = []
     validation_stub = _ArtifactsValidationStub(payload={"model_path": "model.cbm", "model_hash": "model-hash"})
 
-    monkeypatch.setattr(
-        persist_module,
-        "validate_explainability_artifacts",
-        lambda raw: captured_raw.update(raw) or validation_stub,
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "save_metadata",
-        lambda metadata, target_dir: save_metadata_calls.append(
-            {"metadata": metadata, "target_dir": target_dir}
-        ),
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "save_runtime_snapshot",
-        lambda **kwargs: runtime_calls.append(kwargs),
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "hash_artifact",
-        lambda path: hash_calls.append(path) or "unexpected-hash",
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "save_metrics_csv",
-        lambda metrics, *, target_file, name: csv_calls.append((target_file, name)),
-    )
+    def _validate_artifacts(raw: dict[str, Any]) -> _ArtifactsValidationStub:
+        captured_raw.update(raw)
+        return validation_stub
+
+    def _save_metadata(metadata: dict[str, Any], target_dir: Path) -> None:
+        save_metadata_calls.append({"metadata": metadata, "target_dir": target_dir})
+
+    def _save_runtime_snapshot(**kwargs: Any) -> None:
+        runtime_calls.append(kwargs)
+
+    def _hash_artifact(path: Path) -> str:
+        hash_calls.append(path)
+        return "unexpected-hash"
+
+    def _save_metrics_csv(metrics, *, target_file: Path, name: str) -> None:
+        csv_calls.append((target_file, name))
+
+    monkeypatch.setattr(persist_module, "validate_explainability_artifacts", _validate_artifacts)
+    monkeypatch.setattr(persist_module, "save_metadata", _save_metadata)
+    monkeypatch.setattr(persist_module, "save_runtime_snapshot", _save_runtime_snapshot)
+    monkeypatch.setattr(persist_module, "hash_artifact", _hash_artifact)
+    monkeypatch.setattr(persist_module, "save_metrics_csv", _save_metrics_csv)
 
     persist_module.persist_explainability_run(
         _model_cfg_stub(),  # type: ignore[arg-type]
@@ -98,7 +93,7 @@ def test_persist_explainability_run_minimal_path_without_optional_tables(
         experiment_dir=Path("experiments") / "snapshot-88",
         explain_run_dir=explain_run_dir,
         explainability_metrics=explainability_metrics,  # type: ignore[arg-type]
-        feature_lineage=[SimpleNamespace(model_dump=lambda: {"name": "lead_time"})],  # type: ignore[arg-type]
+        feature_lineage=cast(list[Any], [SimpleNamespace(model_dump=lambda: {"name": "lead_time"})]),
         start_time=12.34,
         timestamp="20260306T120000",
         artifacts=artifacts,  # type: ignore[arg-type]
@@ -149,30 +144,23 @@ def test_persist_explainability_run_full_path_with_pipeline_and_top_k_tables(
     save_metadata_calls: list[dict[str, Any]] = []
     validation_stub = _ArtifactsValidationStub(payload={"validated": True})
 
-    monkeypatch.setattr(
-        persist_module,
-        "save_metrics_csv",
-        lambda metrics, *, target_file, name: csv_calls.append(
-            {"metrics": metrics, "target_file": target_file, "name": name}
-        ),
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "hash_artifact",
-        lambda path: hash_calls.append(path) or f"hash::{path.name}",
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "validate_explainability_artifacts",
-        lambda raw: validation_stub,
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "save_metadata",
-        lambda metadata, target_dir: save_metadata_calls.append(
-            {"metadata": metadata, "target_dir": target_dir}
-        ),
-    )
+    def _save_metrics_csv_2(metrics, *, target_file: Path, name: str) -> None:
+        csv_calls.append({"metrics": metrics, "target_file": target_file, "name": name})
+
+    def _hash_artifact_2(path: Path) -> str:
+        hash_calls.append(path)
+        return f"hash::{path.name}"
+
+    def _validate_artifacts_2(raw: dict[str, Any]) -> _ArtifactsValidationStub:
+        return validation_stub
+
+    def _save_metadata_2(metadata: dict[str, Any], target_dir: Path) -> None:
+        save_metadata_calls.append({"metadata": metadata, "target_dir": target_dir})
+
+    monkeypatch.setattr(persist_module, "save_metrics_csv", _save_metrics_csv_2)
+    monkeypatch.setattr(persist_module, "hash_artifact", _hash_artifact_2)
+    monkeypatch.setattr(persist_module, "validate_explainability_artifacts", _validate_artifacts_2)
+    monkeypatch.setattr(persist_module, "save_metadata", _save_metadata_2)
     monkeypatch.setattr(persist_module, "save_runtime_snapshot", lambda **kwargs: None)
 
     persist_module.persist_explainability_run(
@@ -182,7 +170,7 @@ def test_persist_explainability_run_full_path_with_pipeline_and_top_k_tables(
         experiment_dir=Path("experiments") / "snapshot-99",
         explain_run_dir=explain_run_dir,
         explainability_metrics=explainability_metrics,  # type: ignore[arg-type]
-        feature_lineage=[SimpleNamespace(model_dump=lambda: {"name": "adr"})],  # type: ignore[arg-type]
+        feature_lineage=cast(list[Any], [SimpleNamespace(model_dump=lambda: {"name": "adr"})]),
         start_time=1.0,
         timestamp="20260306T120001",
         artifacts=artifacts,  # type: ignore[arg-type]

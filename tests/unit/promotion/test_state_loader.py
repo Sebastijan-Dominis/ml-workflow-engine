@@ -40,7 +40,7 @@ def test_state_loader_load_builds_full_state_with_production_identity(monkeypatc
             }
         }
     }
-    archive_registry = {"archive": []}
+    archive_registry: dict[str, Any] = {"archive": []}
     global_thresholds = {"raw": "thresholds"}
     metrics_file = {"metrics": {"val": {"f1": 0.82}}}
 
