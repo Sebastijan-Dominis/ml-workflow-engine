@@ -1,7 +1,81 @@
+"""Tests for `ml_service.backend.routers.features` routes and branches."""
+
+from __future__ import annotations
+
 import importlib
+from types import SimpleNamespace
+from typing import Any
 
 import pytest
 from fastapi import Request
+
+
+def test_validate_features_missing_fields() -> None:
+    mod = importlib.import_module("ml_service.backend.routers.features")
+    orig = getattr(mod.validate_yaml, "__wrapped__", mod.validate_yaml)
+    from fastapi import Request
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    body = orig({"name": "x"}, req)
+    assert body["valid"] is False
+    assert "Missing feature set name or version" in body["error"]
+
+
+def test_validate_features_missing_config(monkeypatch) -> None:
+    mod = importlib.import_module("ml_service.backend.routers.features")
+    orig = getattr(mod.validate_yaml, "__wrapped__", mod.validate_yaml)
+    from fastapi import Request
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    body = orig({"name": "n", "version": "v"}, req)
+    assert body["valid"] is False
+    assert "Missing feature_config payload" in body["error"]
+
+
+def test_validate_features_exists_and_normalized(monkeypatch) -> None:
+    mod = importlib.import_module("ml_service.backend.routers.features")
+    monkeypatch.setattr(mod, "load_yaml_and_add_lineage", lambda txt: {"data": {}})
+    monkeypatch.setattr(mod, "validate_feature_config", lambda d: SimpleNamespace(model_dump=lambda mode="json": {"ok": True}))
+    monkeypatch.setattr(mod, "get_registry_path", lambda *a, **k: SimpleNamespace())
+    monkeypatch.setattr(mod, "registry_entry_exists", lambda name, version, path: True)
+
+    orig = getattr(mod.validate_yaml, "__wrapped__", mod.validate_yaml)
+    from fastapi import Request
+
+    payload = {"name": "n", "version": "v", "config": "x: y"}
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    body = orig(payload, req)
+    assert body["valid"] is True
+    assert body["exists"] is True
+
+
+def test_write_features_exists_and_written(monkeypatch) -> None:
+    mod = importlib.import_module("ml_service.backend.routers.features")
+    monkeypatch.setattr(mod, "load_yaml_and_add_lineage", lambda txt: {"data": {}})
+    monkeypatch.setattr(mod, "validate_feature_config", lambda d: SimpleNamespace())
+    monkeypatch.setattr(mod, "get_registry_path", lambda *a, **k: SimpleNamespace())
+
+    # exists -> status exists
+    monkeypatch.setattr(mod, "registry_entry_exists", lambda name, version, path: True)
+    orig_write = getattr(mod.write_yaml, "__wrapped__", mod.write_yaml)
+    from fastapi import Request
+    payload = {"name": "n", "version": "v", "config": "x: y"}
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    res = orig_write(payload, req)
+    assert res["status"] == "exists"
+
+    # written -> save_feature_registry called
+    monkeypatch.setattr(mod, "registry_entry_exists", lambda name, version, path: False)
+    called: dict[str, Any] = {}
+
+    def fake_save(name, version, validated_config, registry_path):
+        called["ok"] = True
+        return {"status": "written", "path": "/x"}
+
+    monkeypatch.setattr(mod, "save_feature_registry", fake_save)
+    res2 = orig_write(payload, req)
+    assert res2["status"] in ("written", "success")
+    assert called.get("ok") is True
 
 
 class DummyModel:
@@ -218,3 +292,27 @@ def test_write_yaml_save_failure_raises(monkeypatch):
         orig(payload, req)
 
     assert "boom" in str(exc.value)
+
+
+def test_write_yaml_missing_name_or_version_raises() -> None:
+    import ml_service.backend.routers.features as fmod
+    orig = getattr(fmod.write_yaml, "__wrapped__", fmod.write_yaml)
+    from fastapi import Request
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    with pytest.raises(Exception) as exc:
+        orig({"config": "x: y"}, req)
+
+    assert "Missing feature set name or version" in str(exc.value)
+
+
+def test_write_yaml_missing_config_raises() -> None:
+    import ml_service.backend.routers.features as fmod
+    orig = getattr(fmod.write_yaml, "__wrapped__", fmod.write_yaml)
+    from fastapi import Request
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    with pytest.raises(Exception) as exc:
+        orig({"name": "n", "version": "v"}, req)
+
+    assert "Missing feature_config payload" in str(exc.value)

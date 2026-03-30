@@ -1,8 +1,71 @@
+"""Tests for `ml_service.frontend.scripts.callbacks` behavior."""
+
+from __future__ import annotations
+
 import importlib
 import types
+from types import SimpleNamespace
+from typing import Any
 
 import dash
 import dash_bootstrap_components as dbc
+
+
+class DummyApp:
+    def __init__(self) -> None:
+        self.callbacks: list[dict[str, Any]] = []
+
+    def callback(self, *a: Any, **k: Any):
+        def dec(f: Any) -> Any:
+            self.callbacks.append({"func": f, "args": a, "kwargs": k})
+            return f
+
+        return dec
+
+
+def _find(app: DummyApp, name: str):
+    for c in app.callbacks:
+        if c["func"].__name__ == name:
+            return c["func"]
+    raise AssertionError(name)
+
+
+def test_toggle_modal_and_run_pipeline(monkeypatch) -> None:
+    cb_mod = importlib.import_module("ml_service.frontend.scripts.callbacks")
+
+    custom = [
+        {"name": "x", "endpoint": "/scripts/x", "fields": [
+            {"name": "n", "type": "number"},
+            {"name": "flag", "type": "boolean"},
+            {"name": "ops", "type": "text"},
+        ]}
+    ]
+
+    # patch the FRONTEND_SCRIPTS used by callbacks
+    monkeypatch.setattr(cb_mod, "FRONTEND_SCRIPTS", custom)
+
+    app = DummyApp()
+    cb_mod.register_callbacks(app)
+
+    toggle = _find(app, "toggle_modal")
+    run = _find(app, "run_pipeline")
+
+    # simulate dash.callback_context.triggered
+    fake_ctx = SimpleNamespace(triggered=[{"prop_id": "/scripts-x-submit.n_clicks"}])
+    monkeypatch.setattr(cb_mod.dash, "callback_context", fake_ctx, raising=False)
+
+    # submit click should open modal
+    assert toggle(1, None, None, False) is True
+
+    # confirm click should close modal
+    fake_ctx.triggered = [{"prop_id": "/scripts-x-confirm.n_clicks"}]
+    assert toggle(None, 1, None, True) is False
+
+    # run pipeline: monkeypatch call_script to return SUCCESS
+    monkeypatch.setattr(cb_mod, "call_script", lambda ep, payload: {"status": "SUCCESS"})
+    res = run(1, "3", True, "a,b")
+    # returned is a dbc.Textarea-like object; its `value` should contain the status
+    assert "SUCCESS" in str(res)
 
 
 def test_register_scripts_toggle_and_run(monkeypatch):

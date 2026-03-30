@@ -1,4 +1,78 @@
+"""Tests for `ml_service.backend.routers.pipeline_cfg` validate and write branches."""
+
+from __future__ import annotations
+
+import importlib
+from types import SimpleNamespace
+
 import pytest
+
+
+def test_validate_pipeline_missing_config_payload() -> None:
+    mod = importlib.import_module("ml_service.backend.routers.pipeline_cfg")
+    orig = getattr(mod.validate_yaml, "__wrapped__", mod.validate_yaml)
+    from fastapi import Request
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    body = orig({}, req)
+    assert body["valid"] is False
+    assert "Missing config payload" in body["error"]
+
+
+def test_validate_pipeline_missing_required_fields(monkeypatch) -> None:
+    mod = importlib.import_module("ml_service.backend.routers.pipeline_cfg")
+    # create a yaml with version but missing data_type/algorithm
+    monkeypatch.setattr(mod, "load_yaml_and_add_lineage", lambda txt: {"version": "v1"})
+    monkeypatch.setattr(mod, "validate_config_payload", lambda d: SimpleNamespace(model_dump=lambda mode="json": {}))
+
+    orig = getattr(mod.validate_yaml, "__wrapped__", mod.validate_yaml)
+    from fastapi import Request
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    body = orig({"config": "version: v1"}, req)
+    assert body["valid"] is False
+    assert "Missing required fields" in body["error"]
+
+
+def test_validate_pipeline_exists(monkeypatch) -> None:
+    mod = importlib.import_module("ml_service.backend.routers.pipeline_cfg")
+    monkeypatch.setattr(mod, "load_yaml_and_add_lineage", lambda txt: {"version": "v1"})
+    monkeypatch.setattr(mod, "validate_config_payload", lambda d: SimpleNamespace(model_dump=lambda mode="json": {}))
+    monkeypatch.setattr(mod, "get_config_path", lambda **k: SimpleNamespace(exists=lambda : True) )
+
+    orig = getattr(mod.validate_yaml, "__wrapped__", mod.validate_yaml)
+    from fastapi import Request
+    payload = {"config": "version: v1", "data_type": "dt", "algorithm": "alg"}
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    body = orig(payload, req)
+    assert body["valid"] is True
+    assert body["exists"] is True
+
+
+def test_write_pipeline_exists_and_written(monkeypatch) -> None:
+    mod = importlib.import_module("ml_service.backend.routers.pipeline_cfg")
+    monkeypatch.setattr(mod, "load_yaml_and_add_lineage", lambda txt: {"version": "v1"})
+    monkeypatch.setattr(mod, "validate_config_payload", lambda d: SimpleNamespace())
+
+    # exists case
+    monkeypatch.setattr(mod, "get_config_path", lambda **k: SimpleNamespace(exists=lambda : True))
+    orig_write = getattr(mod.write_yaml, "__wrapped__", mod.write_yaml)
+    from fastapi import Request
+    payload = {"config": "version: v1", "data_type": "dt", "algorithm": "alg"}
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    r = orig_write(payload, req)
+    assert r["status"] == "exists"
+
+    # written case
+    fake_saved = {}
+    def fake_save(config, config_path):
+        fake_saved["ok"] = True
+
+    monkeypatch.setattr(mod, "get_config_path", lambda **k: SimpleNamespace(exists=lambda : False))
+    monkeypatch.setattr(mod, "save_config", fake_save)
+    r2 = orig_write(payload, req)
+    assert r2["success"] == "written"
+    assert "path" in r2
 
 
 def _fake_path(exists: bool, path_str: str = "/fake/pipeline/path"):
@@ -174,3 +248,28 @@ def test_write_yaml_save_failure_raises(monkeypatch):
         orig(payload, req)
 
     assert "no space" in str(exc.value)
+
+
+def test_write_yaml_missing_config_payload_raises() -> None:
+    mod = importlib.import_module("ml_service.backend.routers.pipeline_cfg")
+    orig = getattr(mod.write_yaml, "__wrapped__", mod.write_yaml)
+    from fastapi import Request
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    with pytest.raises(Exception) as exc:
+        orig({}, req)
+    assert "Missing config payload" in str(exc.value)
+
+
+def test_write_yaml_missing_required_fields_raises(monkeypatch) -> None:
+    mod = importlib.import_module("ml_service.backend.routers.pipeline_cfg")
+    monkeypatch.setattr(mod, "load_yaml_and_add_lineage", lambda txt: {"version": "v1"})
+    monkeypatch.setattr(mod, "validate_config_payload", lambda d: True)
+
+    orig = getattr(mod.write_yaml, "__wrapped__", mod.write_yaml)
+    from fastapi import Request
+
+    req = Request({"type": "http", "method": "POST", "path": "/", "headers": []})
+    with pytest.raises(Exception) as exc:
+        orig({"config": "version: v1"}, req)
+    assert "Missing required fields" in str(exc.value)
