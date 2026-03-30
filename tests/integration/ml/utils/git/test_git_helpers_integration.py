@@ -19,7 +19,6 @@ def test_get_git_commit_unknown(monkeypatch: Any) -> None:
 
     assert get_git_commit(Path(".")) == "unknown"
 
-
 def test_is_descendant_commit_true_and_false(monkeypatch: Any) -> None:
     """is_descendant_commit returns True on successful git run, False on error."""
 
@@ -35,7 +34,6 @@ def test_is_descendant_commit_true_and_false(monkeypatch: Any) -> None:
     monkeypatch.setattr(subprocess, "run", fake_run_fail)
     assert is_descendant_commit("a", "b") is False
 
-
 def test_get_git_commit_success(monkeypatch: Any) -> None:
     """When git commands succeed, `get_git_commit` returns the HEAD hash."""
 
@@ -50,4 +48,4 @@ def test_get_git_commit_success(monkeypatch: Any) -> None:
 
     monkeypatch.setattr(subprocess, "check_output", fake_check_output)
 
-    assert get_git_commit(Path(".") ) == "deadbeef"
+    assert get_git_commit(Path(".")) == "deadbeef"
