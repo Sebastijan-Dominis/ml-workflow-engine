@@ -113,3 +113,4 @@ def test_train_main_returns_resolve_code_on_exception(tmp_path: Path, monkeypatc
 
     rc = train_mod.main()
     assert rc == 42
+

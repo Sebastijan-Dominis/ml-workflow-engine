@@ -77,3 +77,18 @@ def test_search_main_success(tmp_path: Path, monkeypatch: Any) -> None:
     rc = search_mod.main()
     assert rc == 0
     assert persisted.get("called", False) is True
+"""Integration tests for the search CLI entrypoint."""
+
+
+def test_search_main_happy_path(monkeypatch: Any) -> None:
+    called = {}
+
+    def fake_run(*a, **k):
+        called['run'] = True
+        return 0
+
+    monkeypatch.setattr(search_mod, 'main', fake_run)
+
+    rc = search_mod.main()
+    assert rc == 0
+    assert called['run'] is True
