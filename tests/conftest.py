@@ -4,6 +4,7 @@ Provide lightweight stubs for heavy optional dependencies (like `catboost`)
 and ensure the project root is on `sys.path` for tests.
 """
 
+import contextlib
 import sys
 import types
 from pathlib import Path
@@ -89,6 +90,10 @@ def fastapi_client():
         raise RuntimeError("FastAPI TestClient or ml_service backend not importable in test environment")
 
     client = TestClient(_backend_main.app)
+    # During tests, disable slowapi rate limiting if present to avoid
+    # accidental 429 failures caused by shared TestClient remote address.
+    with contextlib.suppress(Exception):
+        _backend_main.app.state.limiter.enabled = False
     try:
         yield client
     finally:
