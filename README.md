@@ -5,7 +5,7 @@
 ### An end-to-end ML platform that guarantees reproducibility across datasets, features, and models — with full lineage tracking and validation.
 
 - Currently supports the modeling of regression and classification tasks using the CatBoost algorithm.
-- Was initially formed based on a hotel_bookings dataset:
+- Was initially formed based on a hotel booking dataset:
     - From: https://www.kaggle.com/datasets/mojtaba142/hotel-booking 
     - The architecture has since been expanded to support many datasets with minimal code changes.
 - The ML workflow covers everything from the registration of a raw data snapshot to model monitoring.
