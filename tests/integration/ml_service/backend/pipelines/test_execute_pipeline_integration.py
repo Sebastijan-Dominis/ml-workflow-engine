@@ -7,17 +7,53 @@ temporary test module under `tests/` and invoking it via
 Note: these tests create and remove transient files inside `tests/` and
 are safe to run on both Windows and Linux CI agents.
 """
-
 from __future__ import annotations
 
 import shutil
 from pathlib import Path
 from textwrap import dedent
+from types import SimpleNamespace
 from typing import Any
 from uuid import uuid4
 
+import ml_service.backend.pipelines.execute_pipeline as ep
+import pytest
 from ml_service.backend.pipelines.execute_pipeline import execute_pipeline
 from pydantic import BaseModel
+
+pytestmark = pytest.mark.integration
+
+
+class Payload(BaseModel):
+    name: str | None = None
+    flag: bool | None = None
+    empty: str | None = None
+
+
+def test_execute_pipeline_builds_cmd_and_returns_status(monkeypatch: Any) -> None:
+    payload = Payload(name="abc", flag=True, empty="")
+
+    captured: dict[str, Any] = {}
+
+    def fake_run(cmd, capture_output, text, env, cwd):
+        captured["cmd"] = cmd
+        return SimpleNamespace(returncode=0, stdout="ok", stderr="")
+
+    monkeypatch.setattr(ep, "subprocess", SimpleNamespace(run=fake_run))
+    monkeypatch.setattr(ep, "EXIT_MEANING", {0: "SUCCESS"})
+
+    res = ep.execute_pipeline("ml_service.pipelines.foo", payload, boolean_args=["flag"])  # type: ignore[arg-type]
+
+    assert captured["cmd"][:3] == ["python", "-m", "ml_service.pipelines.foo"]
+    # flags present and empty skipped
+    assert "--name" in captured["cmd"] and "abc" in captured["cmd"]
+    assert "--flag" in captured["cmd"] and "True" in captured["cmd"]
+    assert "--empty" not in captured["cmd"]
+
+    assert res["exit_code"] == 0
+    assert res["status"] == "SUCCESS"
+    assert res["stdout"] == "ok"
+    assert res["stderr"] == ""
 
 
 def _make_dummy_package(pkg_name: str, code: str) -> Path:
@@ -68,11 +104,11 @@ def test_execute_pipeline_runs_real_subprocess() -> None:
     try:
         base = _make_dummy_package(pkg_name, code)
 
-        class Payload(BaseModel):
+        class LocalPayload(BaseModel):
             param1: str | None = None
             flag: bool | None = None
 
-        payload = Payload(param1="ok", flag=True)
+        payload = LocalPayload(param1="ok", flag=True)
         res: dict[str, Any] = execute_pipeline(
             f"tests.{pkg_name}.dummy_pipeline", payload, boolean_args=["flag"]
         )
@@ -85,7 +121,7 @@ def test_execute_pipeline_runs_real_subprocess() -> None:
         assert "True" in res["stdout"] or '"flag"' in res["stdout"]
 
         # Non-zero exit path
-        payload2 = Payload(param1="fail", flag=False)
+        payload2 = LocalPayload(param1="fail", flag=False)
         res2 = execute_pipeline(f"tests.{pkg_name}.dummy_pipeline", payload2, boolean_args=["flag"])  # type: ignore[arg-type]
         assert res2["exit_code"] != 0
     finally:
