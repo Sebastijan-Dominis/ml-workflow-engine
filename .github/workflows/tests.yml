@@ -36,6 +36,7 @@ jobs:
           conda run -n hotel_management pip install -r requirements.txt
           conda run -n hotel_management pip install pytest
           conda run -n hotel_management pip install coverage
+          conda run -n hotel_management pip install httpx
 
       - name: Show environment
         run: conda run -n hotel_management conda list
