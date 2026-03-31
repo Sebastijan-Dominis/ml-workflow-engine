@@ -53,7 +53,7 @@
 - Metrics suitability for business objective
 - Absence of data leakage during CV
 - Param distribution quality
-- Compatibility between scoring function and specific algorithm beyong supported enum check
+- Compatibility between scoring function and specific algorithm beyond supported enum check
 
 ## Promotion Validation
 

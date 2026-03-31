@@ -2,53 +2,132 @@
 
 ## Overview
 
-### A reproducible ML experimentation and model lifecycle system.
+### An end-to-end ML platform that guarantees reproducibility across datasets, features, and models — with full lineage tracking and validation.
 
 - Currently supports the modeling of regression and classification tasks using the CatBoost algorithm.
 - Was initially formed based on a hotel_bookings dataset:
-    - located in `data/raw/hotel_bookings/v1/2026-02-25T22-43-23_732dfdb7/data.csv`
-    - originally from https://www.kaggle.com/datasets/mojtaba142/hotel-booking 
-- Current architecture expanded to support many datasets.
-- The ml workflow covers everything from the registration of a raw data snapshot to model monitoring.
+    - From: https://www.kaggle.com/datasets/mojtaba142/hotel-booking 
+    - The architecture has since been expanded to support many datasets with minimal code changes.
+- The ML workflow covers everything from the registration of a raw data snapshot to model monitoring.
+- Designed with **production ML system constraints in mind**: reproducibility, traceability, validation, and modularity.
 > Note: The repo was previously named `hotel_management`, so you will see that name around the repo; renamed for clarity 
 > on what the project does.
 
 > Another note: A few artifacts are intentionally included, along with their respective logs.
 > This enables quick inspection of expected outputs of each pipeline, without having to run anything.
 
+## Why?
+
+1. Many ML platforms are either overengineered for small teams, or lack essential safeguards:
+- For small teams, overengineering can be an issue:
+  - Most small teams (1-5 developers) do not need worry about run conditions, very scalable storage, and so on
+  - They need a simple, but strong and reliable platform
+- Some teams fail in the other direction:
+  - They fully rely on notebooks
+  - They forget about validation and lineage tracking
+  - They avoid elementary checks in order to "keep it simple"
+
+This project keeps the workflow simple, while still providing the most important sanity checks
+across the entire ML workflow. With minor modifications (dataset specificities, different algorithms), 
+this tool can be used by an individual, or a small team of data scientists.
+
+2. Most learning courses are too specific:
+- There are many courses on how to do regression or classification, or how to write python code
+- There are many tutorials on how to use specific algorithms, and how they work under the hood
+- There are very few courses/tutorials explaining the ML workflow in a simple manner
+- It is very hard to find a platform for quick experimentation to understand how ML workflows work
+
+This project can also serve as a learning tool for understanding ML workflows beyond notebook-based experimentation.
+It is easy to set up, and comes with a friendly UI, as well as some pre-saved artifacts for quick inspection.
+Users can quickly experiment and learn on their own, and the only assumption is that they know how
+to either set up Docker, or python and conda.
+
+## Inspiration
+
+This project started as part of my master's thesis, where the initial goal was to train several models on a hotel booking 
+dataset and expose them as tools for an LLM.
+
+While working on that, I quickly ran into practical issues that are common in real-world ML work but rarely addressed in tutorials:
+- Repetitive boilerplate for training and evaluation
+- Difficulty reusing pipelines across slightly different setups
+- Fragile experiment tracking (risk of losing artifacts or overwriting results)
+- Inability to reliably pause and resume long-running experiments
+- Lack of structure when working beyond notebooks
+
+To address these problems, I started building small utilities to make experimentation more reliable and less error-prone. Over time, 
+this evolved into a broader system focused on reproducibility, modularity, and traceability across the entire ML lifecycle.
+
+At some point, it became clear that building a proper ML workflow system was a more meaningful direction than the original project idea, 
+so I leaned into it and expanded the architecture into what it is today.
+
+## Key Achievements
+
+- **~17,500** lines of production code
+- **~29,000** lines of tests (auto-generated + custom)
+- **Fully reproducible pipelines** via artifact hashing
+- **End-to-end ML lifecycle support**
+- **4,000+** lines of pre-included configurations
+- Easy-to-use **ML service** (as a local web app)
+- Comprehensive documentation (**3,000+** lines of Markdown)
+
 ## Features
 
-Pipelines for every part of the ml workflow:
-- Data preprocessing
-  - Register raw data snapshots
-  - Build interim and processed datasets
+### End-to-End ML Pipelines:
+- Data registration and preprocessing
 - Feature (set) freezing
 - Hyperparameter search
-- Model training
-- Model evaluation
-- Model explainability
-- Model promotion
-  - Includes model registry for staging and production
-  - Archives past production models
-- Model inference
-- Model monitoring
+- Model training, evaluation and explainability
+- Model promotion and archiving
+- Model inference and monitoring
 
-Maximum **decoupling** of datasets, feature sets, and modeling
-- Datasets merge at runtime, using predefined configs and DAG for ordering
-- Feature sets merge at runtime using a predefined entity key
-- Models can use any snapshots of datasets and feature sets via snapshot bindings registry
-- Validation ensures consistency and predefined minimum row presence
+### Reproducibility & Validation
+- Artifact hashing across pipelines
+- Environment & runtime validation
+- Heavy versioning:
+  - All configurations
+    - Interim and processed data configurations
+    - Feature registry
+    - Global and algorithm defaults
+    - Model specifications + search and training configurations
+    - Pipeline configurations
+    - Environment overlay
+    - Promotion thresholds
+    - Snapshot bindings
+  - Target creation
+    - Splitting and target creation performed at runtime, based on model specifications
+  - Inference predictions schema
+- Heavily snapshot-based:
+  - datasets
+  - feature sets
+  - training, evaluation, and explainability runs
+  - promotion and post-promotion runs
 
-Full **reproducibility**
-- Hashing and downstream validation of relevant `artifacts` and `configs`
-- Runtime info validation (hardware, git commit, environment...)
+### Modular Architecture
+- Decoupled datasets, features, and models
+- Runtime datasets (DAG + configurations) and feature sets (entity key + configurations) merging
+- Flexible snapshot bindings
 
-Code **quality** ensured by CI, which includes:
-- `ruff` checks
-- `mypy` checks (moderate strictness)
-- import layer checks
-- naming conventions checks
-- **1235 tests** -> fails if coverage drops below 90%
+### Reliability
+- Atomic file writing
+- Runtime saving of best hyperparameters from each search phase (broad + narrow)
+- Runtime saving of model snapshots during training (e.g. every 30 seconds)
+
+### Code Quality
+- CI with linting (ruff), typing (mypy), and structure checks
+- **90%+** coverage enforced by CI across **1,500+** tests
+
+## Example Use Case
+
+A data scientist can:
+1. Register a new dataset snapshot
+2. Optimize its memory in one or more ways
+3. Process the dataset in one or more ways
+4. Define and freeze many feature sets, each based on one or more related datasets
+5. Perform one or more hyperparameter searches
+6. Train models based on the hyperparameter search results (many training runs allowed per each search)
+7. Evaluate and explain the trained models, however many times
+8. Stage, promote, and archive models
+9. Run inference and monitoring on incoming data
 
 ## Installation
 
@@ -68,7 +147,9 @@ Two options:
 
 See the [usage guide](docs/usage.md) for instructions on running the workflow.
 
-### Usage examples (via `ml_service`):
+### Usage examples:
+
+The system includes a browser-based interface (`ml_service`) for interacting with pipelines and configurations:
 
 #### Configs Writing, Validation, Saving, and Viewing - Interim Data Configs Example
 
