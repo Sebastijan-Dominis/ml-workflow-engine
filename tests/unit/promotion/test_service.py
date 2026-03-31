@@ -134,15 +134,17 @@ def test_run_executes_loader_strategy_and_persister_inside_registry_lock(monkeyp
 
     monkeypatch.setattr(service, "_validate", lambda got_context: got_context)
     monkeypatch.setattr(service, "_registry_lock", _fake_registry_lock)
-    monkeypatch.setattr(service._state_loader, "load", lambda got_context: state_obj)
+
+    def _load_state(got_context: PromotionContext) -> Any:
+        return state_obj
+
+    monkeypatch.setattr(service._state_loader, "load", _load_state)
     monkeypatch.setattr(service, "_get_strategy", lambda stage: _FakeStrategy())
-    monkeypatch.setattr(
-        service._persister,
-        "persist",
-        lambda got_context, got_state, got_result: events.append(
-            f"persist:{got_context is context}:{got_state is state_obj}:{got_result is result_obj}"
-        ),
-    )
+
+    def _persist(got_context: PromotionContext, got_state: Any, got_result: Any) -> None:
+        events.append(f"persist:{got_context is context}:{got_state is state_obj}:{got_result is result_obj}")
+
+    monkeypatch.setattr(service._persister, "persist", _persist)
 
     result = service.run(context)
 
@@ -198,10 +200,10 @@ def test_validate_fails_fast_when_run_dir_validation_raises(monkeypatch: pytest.
         raise _RunDirValidationError("missing run dir")
 
     monkeypatch.setattr("ml.promotion.service.validate_run_dirs", _validate_run_dirs)
-    monkeypatch.setattr(
-        "ml.promotion.service.get_runners_metadata",
-        lambda *_args, **_kwargs: side_calls.append("get_runners_metadata") or None,
-    )
+    def _get_runners_metadata(*_args: Any, **_kwargs: Any) -> None:
+        side_calls.append("get_runners_metadata")
+
+    monkeypatch.setattr("ml.promotion.service.get_runners_metadata", _get_runners_metadata)
 
     with pytest.raises(_RunDirValidationError, match="missing run dir"):
         service._validate(context)

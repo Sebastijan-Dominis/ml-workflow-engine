@@ -30,7 +30,7 @@
 ## New shared code goes into domain package first
 
 - avoid placing shared code in `ml.utils`
-- instead, try placing it where it logically belongs, e.g. in `ml.runners`, `ml.modeling`, `ml.promotion`, etc.
+- place it where it logically belongs, e.g. in `ml.runners`, `ml.modeling`, `ml.promotion`, etc.
 - `ml.utils` should only contain code that is genuinely reusable across multiple different domains
 - for instance, loading json and yaml files, getting the current git commit, and setting up a pipeline runner belong to `ml.utils`
 - `get_trainer.py` is only used by trainer, so it does not belong in `ml.utils`; instead it belongs to `ml.runners.training.utils`

@@ -112,7 +112,7 @@ def test_load_schemas_aggregates_input_and_derived_schemas_across_feature_sets(t
     Patching validate_operators in its original module to allow normal hashes
     and raise DataError for manually injected bad_hash.
     """
-    VersionInfo = namedtuple("version_info", ["major", "minor", "micro", "releaselevel", "serial"])
+    VersionInfo = namedtuple("VersionInfo", ["major", "minor", "micro", "releaselevel", "serial"])
     dummy_hash = "dummy_hash"
 
     # Patch sys.version_info for consistent hash environment

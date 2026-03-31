@@ -72,14 +72,12 @@ def test_perform_randomized_search_uses_gpu_safe_defaults_and_serializes_results
     captured_classifier_flags: list[bool] = []
 
     monkeypatch.setattr(randomized_search_module, "RandomizedSearchCV", _FakeRandomizedSearchCV)
-    monkeypatch.setattr(
-        randomized_search_module,
-        "check_cv",
-        lambda cv, y, classifier: (
-            captured_classifier_flags.append(classifier),
-            _ResolvedCV(3),
-        )[1],
-    )
+
+    def _check_cv_and_capture(cv, y, classifier):
+        captured_classifier_flags.append(classifier)
+        return _ResolvedCV(3)
+
+    monkeypatch.setattr(randomized_search_module, "check_cv", _check_cv_and_capture)
     monkeypatch.setattr(randomized_search_module, "is_classifier", lambda _: True)
 
     pipeline = Pipeline(steps=[("identity", FunctionTransformer(validate=False))])
@@ -140,14 +138,12 @@ def test_perform_randomized_search_respects_cpu_jobs_and_non_int_cv_label(
 
     monkeypatch.setattr(randomized_search_module, "RandomizedSearchCV", _FakeRandomizedSearchCV)
     captured_classifier_flags: list[bool] = []
-    monkeypatch.setattr(
-        randomized_search_module,
-        "check_cv",
-        lambda cv, y, classifier: (
-            captured_classifier_flags.append(classifier),
-            _ResolvedCV(4),
-        )[1],
-    )
+
+    def _check_cv_and_capture_2(cv, y, classifier):
+        captured_classifier_flags.append(classifier)
+        return _ResolvedCV(4)
+
+    monkeypatch.setattr(randomized_search_module, "check_cv", _check_cv_and_capture_2)
     monkeypatch.setattr(randomized_search_module, "is_classifier", lambda _: False)
 
     pipeline = Pipeline(steps=[("identity", FunctionTransformer(validate=False))])

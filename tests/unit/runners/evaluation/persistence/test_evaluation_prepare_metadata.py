@@ -100,11 +100,11 @@ def test_prepare_metadata_uses_experiment_dir_name_for_snapshot_id(
     metadata_stub = _ModelDumpStub(payload={"ok": True})
     raw_payloads: list[dict[str, Any]] = []
 
-    monkeypatch.setattr(
-        prepare_metadata_module,
-        "validate_evaluation_metadata",
-        lambda raw: raw_payloads.append(raw) or metadata_stub,
-    )
+    def _capture_and_return(raw: dict[str, Any]) -> _ModelDumpStub:
+        raw_payloads.append(raw)
+        return metadata_stub
+
+    monkeypatch.setattr(prepare_metadata_module, "validate_evaluation_metadata", _capture_and_return)
 
     prepare_metadata_module.prepare_metadata(
         model_cfg=model_cfg,  # type: ignore[arg-type]

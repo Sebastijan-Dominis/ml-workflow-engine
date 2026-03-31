@@ -70,7 +70,7 @@ class _TailStep(PipelineStep[dict]):
 
 def test_pipeline_runner_executes_before_run_after_in_order() -> None:
     """Verify hook execution order and in-place context updates."""
-    runner = PipelineRunner([_AppendStep("first"), _AppendStep("second")])
+    runner: PipelineRunner = PipelineRunner([_AppendStep("first"), _AppendStep("second")])
     ctx = {"events": [], "value": 0}
 
     result = runner.run(ctx)
@@ -89,7 +89,7 @@ def test_pipeline_runner_executes_before_run_after_in_order() -> None:
 
 def test_pipeline_runner_propagates_replaced_context_between_steps() -> None:
     """Verify that replaced context objects are propagated to later steps."""
-    runner = PipelineRunner([_ReplaceContextStep(), _AppendStep("next")])
+    runner: PipelineRunner = PipelineRunner([_ReplaceContextStep(), _AppendStep("next")])
     initial = {"events": [], "value": 1}
 
     result = runner.run(initial)
@@ -106,7 +106,7 @@ def test_pipeline_runner_propagates_replaced_context_between_steps() -> None:
 
 def test_pipeline_runner_returns_input_context_when_no_steps() -> None:
     """Verify that an empty runner returns the input context unchanged."""
-    runner = PipelineRunner([])
+    runner: PipelineRunner = PipelineRunner([])
     ctx = {"events": [], "value": 5}
 
     result = runner.run(ctx)
@@ -117,7 +117,7 @@ def test_pipeline_runner_returns_input_context_when_no_steps() -> None:
 
 def test_pipeline_runner_uses_default_noop_hooks_from_base_step() -> None:
     """Verify that default no-op hooks do not interfere with `run` execution."""
-    runner = PipelineRunner([_NoHookStep()])
+    runner: PipelineRunner = PipelineRunner([_NoHookStep()])
     ctx = {"events": [], "value": 0}
 
     result = runner.run(ctx)
@@ -127,7 +127,7 @@ def test_pipeline_runner_uses_default_noop_hooks_from_base_step() -> None:
 
 def test_pipeline_runner_stops_execution_after_failing_step() -> None:
     """Verify that runner execution stops and propagates on step failure."""
-    runner = PipelineRunner([_FailingStep(), _TailStep()])
+    runner: PipelineRunner = PipelineRunner([_FailingStep(), _TailStep()])
     ctx = {"events": [], "value": 0}
 
     with pytest.raises(RuntimeError, match="boom"):

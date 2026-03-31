@@ -10,11 +10,11 @@ repos:
         pass_filenames: false
 
       - id: mypy
-        name: mypy (ml + pipelines + ml_service)
+        name: mypy type checking
         entry: mypy
         language: system
         pass_filenames: false
-        args: ["ml", "pipelines", "ml_service"]
+        args: ["ml", "pipelines", "scripts", "ml_service", "tests"]
 
       - id: import-layers
         name: import layer guardrails

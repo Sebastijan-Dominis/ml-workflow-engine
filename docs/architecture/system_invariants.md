@@ -110,4 +110,4 @@
 
 - If any of the above differ, reproducibility is not fully guaranteed.
 - Config hash match is very important for reproducibility; python version, conda environment hash and git commit matches are moderately important; os and hardware matches are the least important.
-- It is technically possible to get the same results with config hash match alone, but the user assummes responsibility for any unexpected results in that case.
+- It is technically possible to get the same results with config hash match alone, but the user assumes responsibility for any unexpected results in that case.

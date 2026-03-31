@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any, cast
+
 import ml.data.config.validate_config as validate_config_module
 import pytest
 from ml.exceptions import ConfigError
@@ -52,7 +54,7 @@ def test_validate_config_wraps_schema_validation_failures(monkeypatch: pytest.Mo
     monkeypatch.setattr(validate_config_module, "InterimConfig", _FailingSchema)
 
     with pytest.raises(ConfigError, match="Configuration validation error") as exc_info:
-        validate_config_module.validate_config({}, "interim")
+        validate_config_module.validate_config(cast(dict[str, Any], {}), "interim")
 
     assert isinstance(exc_info.value.__cause__, ValueError)
 
@@ -60,7 +62,7 @@ def test_validate_config_wraps_schema_validation_failures(monkeypatch: pytest.Mo
 def test_validate_config_wraps_unsupported_type_with_cause() -> None:
     """Raise wrapper ``ConfigError`` for unsupported type selectors and preserve cause."""
     with pytest.raises(ConfigError, match="Configuration validation error") as exc_info:
-        validate_config_module.validate_config({}, "unknown")  # type: ignore[arg-type]
+        validate_config_module.validate_config(cast(dict[str, Any], {}), "unknown")  # type: ignore[call-overload]
 
     assert isinstance(exc_info.value.__cause__, ConfigError)
     assert "Unsupported config type" in str(exc_info.value.__cause__)

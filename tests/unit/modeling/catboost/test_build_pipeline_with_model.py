@@ -118,11 +118,11 @@ def test_build_pipeline_with_model_rejects_non_catboost_model(monkeypatch: pytes
     monkeypatch.setattr(build_module, "build_pipeline", lambda **_: Pipeline(steps=[]))
 
     add_model_calls: list[str] = []
-    monkeypatch.setattr(
-        build_module,
-        "add_model_to_pipeline",
-        lambda *_: add_model_calls.append("called") or Pipeline(steps=[]),
-    )
+    def _fake_add_model(*_args: Any) -> Pipeline:
+        add_model_calls.append("called")
+        return Pipeline(steps=[])
+
+    monkeypatch.setattr(build_module, "add_model_to_pipeline", _fake_add_model)
 
     with pytest.raises(PipelineContractError, match="not a CatBoostClassifier or CatBoostRegressor"):
         build_module.build_pipeline_with_model(

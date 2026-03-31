@@ -105,7 +105,7 @@ def check_ast(file: Path):
                 )
 
 
-def main():
+def main() -> int:
     """Main function to check naming conventions across the codebase.
 
     This script checks that:

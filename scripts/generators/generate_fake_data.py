@@ -484,7 +484,8 @@ def main() -> int:
         metadata.detect_table_from_dataframe(
             data=df_model,
             table_name="synthetic_data",
-            infer_keys=None # type: ignore -> None is actually a valid value for infer_keys
+            # None is actually a valid value for infer keys, but mypy doesn't like it
+            infer_keys=None # type: ignore
         )
 
         metadata.set_primary_key(

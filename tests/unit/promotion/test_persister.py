@@ -196,16 +196,23 @@ def test_persist_without_promotion_skips_registry_updates_and_saves_metadata(mon
 
     calls: list[str] = []
 
-    monkeypatch.setattr(
-        "ml.promotion.persister.update_registry_and_archive",
-        lambda **kwargs: calls.append("update_registry") or {"updated": 1},
-    )
-    monkeypatch.setattr("ml.promotion.persister.persist_registry_diff", lambda **kwargs: calls.append("persist_diff"))
-    monkeypatch.setattr("ml.promotion.persister.prepare_metadata", lambda **kwargs: {"metadata": 1})
-    monkeypatch.setattr(
-        "ml.promotion.persister.save_metadata",
-        lambda **kwargs: calls.append(f"save_metadata:{kwargs['target_dir'] == context.paths.run_dir}"),
-    )
+    def _update_registry_and_archive(**kwargs) -> dict:
+        calls.append("update_registry")
+        return {"updated": 1}
+
+    def _persist_registry_diff(**kwargs) -> None:
+        calls.append("persist_diff")
+
+    def _prepare_metadata(**kwargs) -> dict:
+        return {"metadata": 1}
+
+    def _save_metadata(**kwargs) -> None:
+        calls.append(f"save_metadata:{kwargs['target_dir'] == context.paths.run_dir}")
+
+    monkeypatch.setattr("ml.promotion.persister.update_registry_and_archive", _update_registry_and_archive)
+    monkeypatch.setattr("ml.promotion.persister.persist_registry_diff", _persist_registry_diff)
+    monkeypatch.setattr("ml.promotion.persister.prepare_metadata", _prepare_metadata)
+    monkeypatch.setattr("ml.promotion.persister.save_metadata", _save_metadata)
 
     persister.persist(context, state, result)
 
@@ -221,13 +228,23 @@ def test_persist_with_promotion_updates_registry_persists_diff_and_metadata(monk
 
     calls: list[str] = []
 
-    monkeypatch.setattr(
-        "ml.promotion.persister.update_registry_and_archive",
-        lambda **kwargs: calls.append("update_registry") or {"updated": 1},
-    )
-    monkeypatch.setattr("ml.promotion.persister.persist_registry_diff", lambda **kwargs: calls.append("persist_diff"))
-    monkeypatch.setattr("ml.promotion.persister.prepare_metadata", lambda **kwargs: {"metadata": 1})
-    monkeypatch.setattr("ml.promotion.persister.save_metadata", lambda **kwargs: calls.append("save_metadata"))
+    def _update_registry_and_archive_2(**kwargs) -> dict:
+        calls.append("update_registry")
+        return {"updated": 1}
+
+    def _persist_registry_diff_2(**kwargs) -> None:
+        calls.append("persist_diff")
+
+    def _prepare_metadata_2(**kwargs) -> dict:
+        return {"metadata": 1}
+
+    def _save_metadata_2(**kwargs) -> None:
+        calls.append("save_metadata")
+
+    monkeypatch.setattr("ml.promotion.persister.update_registry_and_archive", _update_registry_and_archive_2)
+    monkeypatch.setattr("ml.promotion.persister.persist_registry_diff", _persist_registry_diff_2)
+    monkeypatch.setattr("ml.promotion.persister.prepare_metadata", _prepare_metadata_2)
+    monkeypatch.setattr("ml.promotion.persister.save_metadata", _save_metadata_2)
 
     persister.persist(context, state, result)
 

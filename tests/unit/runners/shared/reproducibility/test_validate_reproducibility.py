@@ -20,13 +20,21 @@ def test_validate_reproducibility_runs_all_checks_in_expected_order(monkeypatch:
     runtime_info = SimpleNamespace(name="runtime-info")
     calls: list[str] = []
 
+    def _load_json(path: Path) -> dict[str, Any]:
+        calls.append(f"load_json:{path}")
+        return raw_payload
+
+    def _validate_runtime_info(payload: dict[str, Any]) -> Any:
+        calls.append(f"validate_runtime_info:{payload is raw_payload}")
+        return runtime_info
+
     monkeypatch.setattr(
         "ml.runners.shared.reproducibility.validate_reproducibility.load_json",
-        lambda path: calls.append(f"load_json:{path}") or raw_payload,
+        _load_json,
     )
     monkeypatch.setattr(
         "ml.runners.shared.reproducibility.validate_reproducibility.validate_runtime_info",
-        lambda payload: calls.append(f"validate_runtime_info:{payload is raw_payload}") or runtime_info,
+        _validate_runtime_info,
     )
     monkeypatch.setattr(
         "ml.runners.shared.reproducibility.validate_reproducibility.validate_git_commits_match",

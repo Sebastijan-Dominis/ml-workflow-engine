@@ -2,6 +2,18 @@
 
 This file records key architectural decisions, their rationale, and alternatives considered.
 
+## Key Architectural Decisions (Summary)
+
+The system is built around a few core principles:
+
+- **Immutability of artifacts** (datasets, features, experiments)
+- **Full reproducibility via configs + snapshot IDs**
+- **Decoupling of datasets, features, and models**
+- **Snapshot-based versioning instead of mutable state**
+- **Filesystem-based storage with strict validation**
+
+These decisions shape the entire architecture. Detailed breakdowns are provided below.
+
 ## Decision Classification
 
 Each decision is classified as one of:

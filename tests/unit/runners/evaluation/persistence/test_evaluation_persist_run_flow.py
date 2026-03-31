@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, cast
 
 import pytest
 from ml.exceptions import PersistenceError
@@ -57,48 +57,44 @@ def test_persist_evaluation_run_happy_path_calls_all_persistence_steps(
     runtime_calls: list[dict[str, Any]] = []
     validate_raw: dict[str, Any] = {}
 
-    monkeypatch.setattr(persist_module, "save_metrics", lambda *args, **kwargs: str(metrics_file))
-    monkeypatch.setattr(
-        persist_module,
-        "save_predictions",
-        lambda prediction_dfs, target_dir: SimpleNamespace(
+    def _save_metrics(*args, **kwargs) -> str:
+        return str(metrics_file)
+
+    def _save_predictions(prediction_dfs, target_dir: Path) -> Any:
+        return SimpleNamespace(
             train_predictions_path=Path(target_dir / "predictions_train.parquet").as_posix(),
             val_predictions_path=Path(target_dir / "predictions_val.parquet").as_posix(),
             test_predictions_path=Path(target_dir / "predictions_test.parquet").as_posix(),
-        ),
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "hash_artifact",
-        lambda path: hash_calls.append(path) or f"hash::{path.name}",
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "PredictionsPathsAndHashes",
-        lambda **kwargs: _ModelDumpStub(payload=kwargs),
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "validate_evaluation_artifacts",
-        lambda raw: validate_raw.update(raw) or _ModelDumpStub(payload={"validated": True}),
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "prepare_metadata",
-        lambda **kwargs: {"meta": "ok", "artifacts": kwargs["artifacts"].model_dump()},
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "save_metadata",
-        lambda metadata, target_dir: save_metadata_calls.append(
-            {"metadata": metadata, "target_dir": target_dir}
-        ),
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "save_runtime_snapshot",
-        lambda **kwargs: runtime_calls.append(kwargs),
-    )
+        )
+
+    def _hash_artifact(path: Path) -> str:
+        hash_calls.append(path)
+        return f"hash::{path.name}"
+
+    def _predictions_model(**kwargs: Any) -> _ModelDumpStub:
+        return _ModelDumpStub(payload=kwargs)
+
+    def _validate_evaluation_artifacts(raw: dict[str, Any]) -> _ModelDumpStub:
+        validate_raw.update(raw)
+        return _ModelDumpStub(payload={"validated": True})
+
+    def _prepare_metadata(**kwargs: Any) -> dict[str, Any]:
+        return {"meta": "ok", "artifacts": kwargs["artifacts"].model_dump()}
+
+    def _save_metadata(metadata: dict[str, Any], target_dir: Path) -> None:
+        save_metadata_calls.append({"metadata": metadata, "target_dir": target_dir})
+
+    def _save_runtime_snapshot(**kwargs: Any) -> None:
+        runtime_calls.append(kwargs)
+
+    monkeypatch.setattr(persist_module, "save_metrics", _save_metrics)
+    monkeypatch.setattr(persist_module, "save_predictions", _save_predictions)
+    monkeypatch.setattr(persist_module, "hash_artifact", _hash_artifact)
+    monkeypatch.setattr(persist_module, "PredictionsPathsAndHashes", _predictions_model)
+    monkeypatch.setattr(persist_module, "validate_evaluation_artifacts", _validate_evaluation_artifacts)
+    monkeypatch.setattr(persist_module, "prepare_metadata", _prepare_metadata)
+    monkeypatch.setattr(persist_module, "save_metadata", _save_metadata)
+    monkeypatch.setattr(persist_module, "save_runtime_snapshot", _save_runtime_snapshot)
 
     persist_module.persist_evaluation_run(
         _model_cfg_stub(),  # type: ignore[arg-type]
@@ -108,7 +104,7 @@ def test_persist_evaluation_run_happy_path_calls_all_persistence_steps(
         eval_run_dir=eval_run_dir,
         metrics={"val": {"auc": 0.8}},
         prediction_dfs=SimpleNamespace(),  # type: ignore[arg-type]
-        feature_lineage=[SimpleNamespace(model_dump=lambda: {"name": "adr"})],  # type: ignore[arg-type]
+        feature_lineage=cast(list[Any], [SimpleNamespace(model_dump=lambda: {"name": "adr"})]),  # type: ignore[arg-type]
         start_time=9.5,
         timestamp="20260306T130000",
         artifacts=_artifacts_stub(with_pipeline=True),  # type: ignore[arg-type]
@@ -177,18 +173,14 @@ def test_persist_evaluation_run_wraps_predictions_model_construction_failures(
 
     save_metadata_calls: list[dict[str, Any]] = []
     runtime_calls: list[dict[str, Any]] = []
-    monkeypatch.setattr(
-        persist_module,
-        "save_metadata",
-        lambda metadata, target_dir: save_metadata_calls.append(
-            {"metadata": metadata, "target_dir": target_dir}
-        ),
-    )
-    monkeypatch.setattr(
-        persist_module,
-        "save_runtime_snapshot",
-        lambda **kwargs: runtime_calls.append(kwargs),
-    )
+    def _save_metadata2(metadata: dict[str, Any], target_dir: Path) -> None:
+        save_metadata_calls.append({"metadata": metadata, "target_dir": target_dir})
+
+    def _save_runtime_snapshot2(**kwargs: Any) -> None:
+        runtime_calls.append(kwargs)
+
+    monkeypatch.setattr(persist_module, "save_metadata", _save_metadata2)
+    monkeypatch.setattr(persist_module, "save_runtime_snapshot", _save_runtime_snapshot2)
 
     with pytest.raises(
         PersistenceError,

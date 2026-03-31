@@ -34,7 +34,7 @@ def scan_latest_snapshots(base_dir: Path) -> dict[str, dict[str, str]]:
     Returns:
         dict[name][version] = snapshot_name (str)
     """
-    result = {}
+    result: dict[str, dict[str, str]] = {}
     if not base_dir.exists():
         logger.warning(f"Base directory {base_dir} does not exist. Skipping.")
         return result

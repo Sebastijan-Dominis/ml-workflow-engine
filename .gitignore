@@ -46,6 +46,10 @@ htmlcov/
 nosetests.xml
 coverage.xml
 coverage.json
+coverage_ml_service.xml
+coverage_e2e.xml
+coverage_unit.xml
+coverage_integration.xml
 *.cover
 *.py.cover
 .hypothesis/
@@ -231,3 +235,6 @@ __marimo__/
 /monitoring/
 /orchestration_logs/
 /scripts_logs/
+
+# tools
+/tools/

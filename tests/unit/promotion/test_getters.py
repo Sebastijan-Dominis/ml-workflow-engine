@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from types import SimpleNamespace
-from typing import cast
+from typing import Any, cast
 
 import pytest
 from ml.exceptions import PersistenceError, UserError
@@ -19,7 +19,7 @@ pytestmark = pytest.mark.unit
 
 def test_extract_thresholds_returns_problem_segment_threshold_mapping() -> None:
     """Select the exact threshold dictionary for the requested problem and segment."""
-    thresholds = {
+    thresholds: dict[str, Any] = {
         "cancellation": {
             "city_hotel": {"promotion_metrics": {"sets": ["val"]}},
         }
@@ -32,7 +32,7 @@ def test_extract_thresholds_returns_problem_segment_threshold_mapping() -> None:
 
 def test_extract_thresholds_raises_when_problem_segment_not_found() -> None:
     """Raise UserError when no threshold config exists for requested problem/segment."""
-    thresholds = {"cancellation": {}}
+    thresholds: dict[str, Any] = {"cancellation": {}}
 
     with pytest.raises(UserError, match="No promotion thresholds found"):
         extract_thresholds(thresholds, "cancellation", "city_hotel")
@@ -105,18 +105,21 @@ def test_get_runners_metadata_loads_each_stage_metadata_and_validates_in_order(
         raise AssertionError(f"Unexpected path: {path}")
 
     monkeypatch.setattr("ml.promotion.getters.get.load_json", _load_json)
-    monkeypatch.setattr(
-        "ml.promotion.getters.get.validate_training_metadata",
-        lambda payload: calls.append(f"validate_training:{payload['stage']}") or "training-validated",
-    )
-    monkeypatch.setattr(
-        "ml.promotion.getters.get.validate_evaluation_metadata",
-        lambda payload: calls.append(f"validate_evaluation:{payload['stage']}") or "evaluation-validated",
-    )
-    monkeypatch.setattr(
-        "ml.promotion.getters.get.validate_explainability_metadata",
-        lambda payload: calls.append(f"validate_explainability:{payload['stage']}") or "explainability-validated",
-    )
+    def _validate_training(payload: dict[str, Any]) -> str:
+        calls.append(f"validate_training:{payload['stage']}")
+        return "training-validated"
+
+    def _validate_evaluation(payload: dict[str, Any]) -> str:
+        calls.append(f"validate_evaluation:{payload['stage']}")
+        return "evaluation-validated"
+
+    def _validate_explainability(payload: dict[str, Any]) -> str:
+        calls.append(f"validate_explainability:{payload['stage']}")
+        return "explainability-validated"
+
+    monkeypatch.setattr("ml.promotion.getters.get.validate_training_metadata", _validate_training)
+    monkeypatch.setattr("ml.promotion.getters.get.validate_evaluation_metadata", _validate_evaluation)
+    monkeypatch.setattr("ml.promotion.getters.get.validate_explainability_metadata", _validate_explainability)
 
     result = get_runners_metadata(train_run_dir, eval_run_dir, explain_run_dir)
 
