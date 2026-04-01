@@ -1,5 +1,21 @@
 # ML Workflow Engine
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Why](#why)
+- [Inspiration](#inspiration)
+- [Key Achievements](#key-achievements)
+- [Features](#features)
+- [Example Use Case](#example-use-case)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Architecture](#architecture)
+- [Documentation](#documentation)
+- [Licence](#license)
+- [Author](#author)
+- [Contact](#contact)
+
 ## Overview
 
 ### An end-to-end ML platform that guarantees reproducibility across datasets, features, and models — with full lineage tracking and validation.
