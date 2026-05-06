@@ -110,12 +110,6 @@ Snapshots are immutable.
 - **Alternatives:** Same as with the [experiments](#flexible-snapshot-usage-for-each-of-the-experiments-feature-sets)
 - **Type:** Structural
 
-### Absence of the inference and monitoring pipelines
-- **Decision:** Do not implement inference and monitoring pipelines
-- **Rationale:** The current snapshot logic (full snaphots with old and new rows) renders these two obsolete; not needed at this stage
-- **Alternatives:** Run inference and monitoring on all rows (those used for training the model + new ones) (rejected - results could be misleading)
-- **Type:** Structural
-
 ### Absence of cron jobs
 - **Decision:** Do not implement cron jobs
 - **Rationale:** The current architecture implies they are not needed
